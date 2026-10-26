@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="23" time="8.611" timestamp="2026-10-26T23:19:49.010804+08:00" hostname="冢"><testcase classname="tests.test_file_backend_safety_independent" name="test_guarded_committed_capture_does_not_borrow_rollback_buffer[local]" time="0.210" /><testcase classname="tests.test_file_backend_safety_independent" name="test_guarded_committed_capture_does_not_borrow_rollback_buffer[collaboration]" time="0.030" /><testcase classname="tests.test_file_backend_safety_independent" name="test_guarded_reentrant_other_instance_commit_is_not_overwritten[False]" time="0.033" /><testcase classname="tests.test_file_backend_safety_independent" name="test_guarded_reentrant_other_instance_commit_is_not_overwritten[True]" time="0.037" /><testcase classname="tests.test_file_backend_safety_independent" name="test_guarded_read_compares_physical_bytes_not_decoded_equivalence" time="0.033" /><testcase classname="tests.test_file_backend_safety_independent" name="test_exception_context_resets_and_other_thread_can_use_original_writer[strict-missing]" time="0.036" /><testcase classname="tests.test_file_backend_safety_independent" name="test_exception_context_resets_and_other_thread_can_use_original_writer[budget]" time="0.036" /><testcase classname="tests.test_file_backend_safety_independent" name="test_budget_admission_does_not_weaken_duplicate_metadata_rejection[experimental]" time="0.020" /><testcase classname="tests.test_file_backend_safety_independent" name="test_budget_admission_does_not_weaken_duplicate_metadata_rejection[identity]" time="0.010" /><testcase classname="tests.test_file_backend_safety_independent" name="test_budget_admission_does_not_weaken_duplicate_metadata_rejection[scope]" time="0.010" /><testcase classname="tests.test_file_backend_safety_independent" name="test_budget_admission_does_not_weaken_duplicate_metadata_rejection[grant]" time="0.010" /><testcase classname="tests.test_file_backend_safety_independent" name="test_current_actor_observation_survives_unrelated_user_writes_under_budget" time="0.029" /><testcase classname="tests.test_file_backend_safety_independent" name="test_selected_source_proofs_ignore_unselected_collection_with_guarded_reads[local]" time="0.026" /><testcase classname="tests.test_file_backend_safety_independent" name="test_selected_source_proofs_ignore_unselected_collection_with_guarded_reads[collaboration]" time="0.023" /><testcase classname="tests.test_file_backend_safety_independent" name="test_export_guarded_selected_window_ignores_foreign_actor_and_hidden_tail" time="0.024" /><testcase classname="tests.test_file_backend_safety_independent" name="test_export_guarded_failure_is_not_empty_success_and_original_writer_recovers" time="0.025" /><testcase classname="tests.test_file_backend_safety_independent" name="test_export_equal_duplicate_metadata_is_rejected_under_budget" time="0.012" /><testcase classname="tests.test_file_backend_safety_independent" name="test_strict_http_missing_original_lock_never_initializes_then_writer_recovers[/api]" time="1.642" /><testcase classname="tests.test_file_backend_safety_independent" name="test_strict_http_missing_original_lock_never_initializes_then_writer_recovers[/api/v1]" time="1.172" /><testcase classname="tests.test_file_backend_safety_independent" name="test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api]" time="0.233"><failure message="AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'&#10;  &#10;  - STUDIO_USAGE_RESOURCE_UNAVAILABLE&#10;  ?            ---------&#10;  + STUDIO_GRAPH_USAGE_UNAVAILABLE&#10;  ?        ++++++">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257EB8566D0&gt;, nid='query-509738bfc954...a', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000257ECF00790&gt;
+prefix = '/api', strict = False
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+&gt;       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError</failure></testcase><testcase classname="tests.test_file_backend_safety_independent" name="test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api/v1]" time="0.237"><failure message="AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'&#10;  &#10;  - STUDIO_USAGE_RESOURCE_UNAVAILABLE&#10;  ?            ---------&#10;  + STUDIO_GRAPH_USAGE_UNAVAILABLE&#10;  ?        ++++++">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257EC3FB190&gt;, nid='query-8916ee2cfd88...4', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000257EC4E3950&gt;
+prefix = '/api/v1', strict = False
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+&gt;       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError</failure></testcase><testcase classname="tests.test_file_backend_safety_independent" name="test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api]" time="0.229"><failure message="AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'&#10;  &#10;  - STUDIO_USAGE_RESOURCE_UNAVAILABLE&#10;  ?            ---------&#10;  + STUDIO_GRAPH_USAGE_UNAVAILABLE&#10;  ?        ++++++">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257EEBB5B50&gt;, nid='query-450bcf6915bc...d', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000257ECDD9410&gt;
+prefix = '/api', strict = True
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+&gt;       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError</failure></testcase><testcase classname="tests.test_file_backend_safety_independent" name="test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api/v1]" time="0.235"><failure message="AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'&#10;  &#10;  - STUDIO_USAGE_RESOURCE_UNAVAILABLE&#10;  ?            ---------&#10;  + STUDIO_GRAPH_USAGE_UNAVAILABLE&#10;  ?        ++++++">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257EED30550&gt;, nid='query-1e66dc5c2c8c...1', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000257EC439410&gt;
+prefix = '/api/v1', strict = True
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+&gt;       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError</failure></testcase></testsuite></testsuites>

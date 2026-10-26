@@ -1,0 +1,12 @@
+{
+  "classification": "read_only_static_review_not_http_runtime_acceptance",
+  "source_head": "66e5c97c22ff719aa75f036988073bc24ebf9c57",
+  "source_tree": "50c1ef09896dc94ad097e806ce9805bacef935ea",
+  "production_merge": "f6ae6c5fb2bda8b875bdbd1f32b5bafd18d9d070",
+  "app_diff_exit_code": 0,
+  "reviewed_files": {
+    "tests/file_safety_http_server.py": "4ac58cd375506b880186ccf28d53e03e861bbfaffe5a654fe16e1978a95a6fdd",
+    "tests/test_file_backend_safety_http.py": "b871ff33c5c9d082078551a021a7a840b9414b41205ff173b6fdfa99ea39b9d4"
+  },
+  "result": "No additional actionable defect found at specified original-stub, command-observer, GET-completion-barrier and collaboration-403 boundaries."
+}
