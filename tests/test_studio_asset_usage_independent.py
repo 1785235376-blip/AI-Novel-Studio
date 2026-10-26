@@ -66,6 +66,39 @@ def test_independent_four_hundred_positions_are_neither_lost_nor_duplicated(usag
     assert snapshot(e.rig.root) == before
 
 
+def test_independent_timeline_multitrack_positions_survive_page_boundaries(usage_rig):
+    e = usage_rig
+    expected = set()
+    for index in range(8):
+        body = {"expected_version": 0, "title": f"Independent timeline {index}",
+            "timeline": {"schema_version": 3, "media_kind": "AUDIO", "duration_ms": 100,
+                "tracks": [{"id": f"track-{track}", "kind": "AUDIO", "order": track,
+                    "clips": [{"id": f"clip-{track}-{clip}", "source_snapshot": e.source,
+                        "start_ms": 0, "in_ms": 0, "out_ms": 100} for clip in range(15)]}
+                    for track in range(2)]}}
+        response = e.client.post(e.base + "/production/timelines", headers=e.headers, json=body)
+        assert response.status_code == 201, response.text
+        tid = response.json()["id"]
+        expected.update((tid, f"track-{track}", f"clip-{track}-{clip}")
+                        for track in range(2) for clip in range(15))
+    before = snapshot(e.rig.root)
+    found, cursor = [], None
+    for _ in range(100):
+        params = {"limit": 13}
+        if cursor:
+            params["cursor"] = cursor
+        body = page(query(e, params, owner="timeline"))
+        found.extend((item["id"], item["track_id"], item["clip_id"]) for item in body["items"])
+        if not body["has_more"]:
+            assert body["total"] == 240
+            break
+        cursor = body["next_cursor"]
+    else:
+        pytest.fail("timeline pagination did not terminate")
+    assert len(found) == len(set(found)) == 240 and set(found) == expected
+    assert snapshot(e.rig.root) == before
+
+
 @pytest.mark.parametrize("mutation", ["add", "move", "remove_pin", "asset_version", "recreate"])
 def test_independent_continuation_rejects_changed_source_or_selected_consumer(usage_rig, mutation):
     e = usage_rig
