@@ -104,9 +104,11 @@ def test_independent_unactivated_project_is_not_provisioned_by_read(usage_rig):
     assert not marker.exists()
     before = snapshot(e.rig.root)
     url = e.usage_base.replace(e.rig.nid, nid)
-    for owner in ("graph", "timeline", "asset"):
+    # Legacy invokers translate the missing original incarnation to 404 before
+    # callback entry; the new mixed adapter sanitizes its own failure as 409.
+    for owner, expected in (("graph", 404), ("timeline", 404), ("asset", 409)):
         response = e.client.get(url + f"/studio-{owner}-usages", headers=e.headers, params={"limit": 1})
-        assert response.status_code == 409, response.text
+        assert response.status_code == expected, response.text
         assert not marker.exists()
     assert snapshot(e.rig.root) == before
 
