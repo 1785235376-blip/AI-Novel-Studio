@@ -157,3 +157,35 @@ def test_independent_scope_over_four_mib_refused_before_payload_read(usage_rig, 
         refused(query(e, {"limit": 1}), e)
     assert opened == [], "oversized payload was opened before its stat bound"
     assert snapshot(e.rig.root) == before
+
+
+@pytest.mark.parametrize("change", ["actor", "branch"])
+def test_independent_continuation_cannot_cross_real_collaboration_authority(usage_rig, change):
+    from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+    from test_studio_asset_query import shared_scope
+    e = usage_rig
+    scope, headers = shared_scope(e.rig)
+    grant_scope = AuthorizationScope(ScopeKind.PROJECT, "query-workspace", e.rig.nid)
+    for user, permission in (("reader", "domain.write"), ("no-grants", "domain.read")):
+        e.rig.grants.assign_permission(PermissionAssignment("independent-" + user, user, permission,
+            ModalityDomain.NOVEL, grant_scope, "synthetic independent fixture"))
+    e.headers = headers
+    activated = e.client.post(e.base + "/activate", headers=headers)
+    assert activated.status_code == 200, activated.text
+    asset = e.rig.seed("collaboration.wav", "audio", scope_value=scope)
+    e.usage_base = e.usage_base.replace(e.asset["id"], asset["id"])
+    e.asset = asset
+    graph_create(e, 3)
+    first = page(query(e, {"limit": 1}, owner="asset"))
+    if change == "actor":
+        changed = {**headers, "X-Session-Token": "token-no-grants"}
+        # Another authorized actor sees no private consumers, rather than being
+        # rejected merely because they are different from the first reader.
+        assert page(query(e, {"limit": 1}, owner="asset", headers=changed))["total"] == 0
+    else:
+        changed = {**headers, "X-Branch-Id": "query-branch-b"}
+        response = e.client.post(e.base + "/activate", headers=changed)
+        assert response.status_code == 200, response.text
+    before = snapshot(e.rig.root)
+    refused(query(e, {"limit": 1, "cursor": first["next_cursor"]}, owner="asset", headers=changed), e)
+    assert snapshot(e.rig.root) == before
