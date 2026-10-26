@@ -5,6 +5,7 @@
 //  T1 light theme: no large dark surface (bg luminance < .25, area > 2500px²) inside main, incl. svg node boxes; dark theme: canvas stays dark (lum < .1)
 //  D1 (PHASE=after, pro) IMAGE/VIDEO dual view renders upper + lower canvases stacked vertically (upper above lower), each with own role=application
 //  D2 (PHASE=after) upper canvas adds a node while lower is empty; lower node count unchanged
+//  R1 (normal mode) IMAGE:canvas / VIDEO:studio render >=1 .rcv and every .rcv width > 0 (Vera P1 on 7c964d66; guards be3f67b0)
 //  X  axe serious/critical = 0
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
@@ -57,7 +58,8 @@ const probe = (p, theme) => p.evaluate(theme => {
   }
   const cv = [...document.querySelectorAll('.rcv')].filter(vis).map(e => lum(getComputedStyle(e).backgroundColor));
   const panes = [...document.querySelectorAll('[data-canvas-layer]')].filter(vis).map(e => { const r = e.getBoundingClientRect(); return {layer: e.getAttribute('data-canvas-layer'), top: Math.round(r.top), left: Math.round(r.left), w: Math.round(r.width), h: Math.round(r.height), apps: e.querySelectorAll('[role=application]').length}; });
-  return {dark: [...new Set(dark)].slice(0, 12), darkN: dark.length, cv, panes};
+  const rcvW = [...document.querySelectorAll('.rcv')].map(e => Math.round(e.getBoundingClientRect().width));
+  return {dark: [...new Set(dark)].slice(0, 12), darkN: dark.length, cv, panes, rcvW};
 }, theme);
 const fails = [], rows = [];
 const views = [['NOVEL', null], ['IMAGE', 'canvas'], ['IMAGE', 'dual'], ['VIDEO', 'studio'], ['VIDEO', 'dual'], ['AUDIO', null], ['EDIT', null], ['ASSETS', null]];
@@ -81,6 +83,7 @@ for (const theme of ['light', 'dark']) for (const mode of ['normal', 'pro']) {
         if (!up || !lo) v.push('D1 missing upper/lower ' + JSON.stringify(r.panes));
         else { if (!(up.top < lo.top)) v.push('D1 upper not above lower'); if (up.apps !== 1 || lo.apps !== 1) v.push('D1 each layer must own one canvas'); }
       }
+      if (mode === 'normal' && ((mod === 'IMAGE' && view === 'canvas') || (mod === 'VIDEO' && view === 'studio')) && (!r.rcvW.length || r.rcvW.some(x => !(x > 0)))) v.push('R1 normal .rcv width must be >0: ' + JSON.stringify(r.rcvW));
       let ax = [];
       if (AXE) { await p.addScriptTag({content: AXE}); ax = await p.evaluate(async () => (await axe.run(document, {resultTypes: ['violations']})).violations.filter(x => ['serious', 'critical'].includes(x.impact)).map(x => `${x.id}:${x.nodes.length}`)); if (ax.length) v.push('X axe ' + ax.join(',')); }
       const key = `${theme}|${mode}|${mod}${view ? ':' + view : ''}|${w}`; rows.push({key, ...r, v});
