@@ -40,3 +40,23 @@ def graph_create(e, count=1, request_id="usage-graph"):
 def snapshot(root):
     return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in root.rglob("*") if p.is_file()}
+
+
+def copied_graph_consumers(e, count=30, references=16):
+    """Saved-schema synthetic scale fixture; >25 exceeds normal create capacity.
+
+    Only fixture preparation bulk-copies the original owner record; every query
+    still goes through the production reader and validates its original schema.
+    """
+    original = graph_create(e, references, 'scale-template')
+    path = e.graph.store.path(e.rig.nid, e.rig.scope)
+    import json
+    state = json.loads(path.read_text(encoding='utf-8'))
+    records = state['collections'][e.graph.GRAPHS]
+    template = records.pop(original['id'])
+    for i in range(count):
+        row = deepcopy(template)
+        row['id'] = f'synthetic-consumer-{i:04d}'
+        records[row['id']] = row
+    path.write_text(json.dumps(state), encoding='utf-8')
+    return count * references
