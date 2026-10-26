@@ -1,19 +1,31 @@
 # Studio frontend/backend alignment, 2026-10-26
 
-Status: **ACTUAL TARGET CONFIRMED, SOURCE UNAVAILABLE; target tests NOT_RUN**.
-All earlier claims that `048c5ebb` was the intended frontend are superseded;
-original evidence is retained. The confirmed actual target is
+Status: **ACTUAL TARGET SOURCE VERIFIED; wire compatibility PARTIAL**.
+Final target source is now published at
+`03e8034a41adc18ab0e32a35688e6ec2ff889d9f`, tree
+`ebbffb2f8938f80b98df8ab779eec34a0014b706`. This supersedes the temporary
+source-unavailable state below. Formal image-node command parsing is
+**FRONTEND_BLOCKED**; the new dual canvas is explicitly a local draft UI with
+no generation/execution HTTP caller. This unit does not claim browser acceptance.
+Earlier selection of `048c5ebb` is superseded; original evidence is retained.
+The confirmed actual target is
 **`work/hermia-theme-dualcanvas-20261026`**, created from the i18n branch and
-merging default-uw-port. It is still being merged and is **unpublished**.
-Its exact SHA is **NOT_AVAILABLE**; actual-target contract and browser tests are
-**NOT_RUN**. Neither `048c5ebb` nor `34eb95c7` is the final target. Prior
-provisional-target conclusions are superseded. The source-reviewed published
-parents below are references only; their compatibility risks cannot establish
-the behavior of the missing merge result. Backend work is independently tested.
+merging default-uw-port. It was initially unavailable, so earlier target tests
+were correctly NOT_RUN at that checkpoint. It has since been fetched and read
+at the exact SHA above. Neither `048c5ebb` nor `34eb95c7` is the final target.
+Prior target choices and their browser-acceptance applicability remain superseded;
+their evidence is retained rather than relabeled as final-target runs.
 
 ## Fixed sources and ownership
 
 - Backend baseline: `ffe1937911cff32d4ebd4770b350674627501d3a`.
+- Actual target: `origin/work/hermia-theme-dualcanvas-20261026` at
+  `03e8034a41adc18ab0e32a35688e6ec2ff889d9f`; parent
+  `f8d76863792335babf30fa47d030989c6482e5d7`. Git merge-base with each
+  user-specified code parent below equals that parent, proving both are included.
+  Actual default `App.tsx` and SDK callers were read from this target, not inferred
+  from the parents. Target Production and Storyboard client blobs match the
+  source-reviewed hashes below.
 - Published parent reference: `origin/work/hermia-default-uw-port-20261025`,
   `34eb95c7f247e90168b27f96e33e6feacd80fc8d`, commit time
   `2026-10-26 10:14:02 +0800`; includes `f7174b6b` identity-pending/default
@@ -23,7 +35,7 @@ the behavior of the missing merge result. Backend work is independently tested.
   `5e279fb65073468cd94b59936378af70a94eddb0` (i18n) and
   `2ed4c99cd2360179c6b9593f457bb3ff1c8d0c69` (default-uw-port).
   `048c5ebb` and `34eb95c7` are their respective review-only descendants;
-  none supplies the unpublished theme/dual-canvas merge result.
+  those parent snapshots were insufficient until the actual target was fetched.
 - The published uw-port ref contains `work/hermia-fe-contracts-20261025` at
   `3e72db70f6270e4f27d21647b229e6cf0d2c1b32` and
   `work/hermia-loop-u4-20261025` at
@@ -52,10 +64,10 @@ the behavior of the missing merge result. Backend work is independently tested.
   cursor/collaboration, audio history owner, permissions, model runtime,
   dependencies, or protected checkout was modified.
 
-## Published parent callers and wire contracts — PARENT_REFERENCE_ONLY
+## Actual confirmed target callers and wire contracts
 
-All frontend paths in this table are under `frontend/src` at the published
-uw-port parent reference `34eb95c7`, not the unpublished actual target.
+All frontend paths in this table are under `frontend/src` at confirmed target
+`03e8034a`. The new UI changes were compared against the published uw-port parent.
 `studio` means `/api/projects/{projectId}/studio`.
 Creative Storyboard documents use a separate root:
 `/api/novels/{projectId}/experimental/creative`. In the published parent,
@@ -67,12 +79,13 @@ source-reviewed frontend calls shown here use `/api`.
 
 | Consumer / source | Request and response contract | Backend owner / boundary |
 | --- | --- | --- |
+| `rebuild/canvas/DualStack.tsx`, mounted by `rebuild/image/ImageRebuild.tsx` and `rebuild/video/VideoRebuild.tsx` in Pro mode | No generation/execution HTTP call. Lower-to-upper explicit confirmation copies a local graph snapshot using `readCanvasGraph` / `writeCanvasGraph`. UI explicitly declares generation/execution unavailable | Local draft editing only; no server asset, queue, reviewed result or graph execution is created by this UI. A backend image-chain PASS does not close this frontend handoff gap |
 | `App.tsx:191-192,2162`, `workspace/defaultui/DefaultTasksDrawer.tsx:32-37` | Default entry stays `LegacyApp` and mounts the new tasks/results/history drawer; `?uw=1` remains an opt-in alternate. Drawer constructs clients only for a real actor and complete collaboration scope | User-facing default integration, not proof that local placeholder identities may access collaboration; no identity means no reads |
 | `workspace/tasks/useLiveTasks.ts:31` | Actual default-drawer feed calls TaskCenter `readTasks` plus Production `list` and `get`; uses original session/branch headers and retires late-response leases | Existing read routes; Production pagination SDK is not used by this feed |
 | `workspace/integration/useUnifiedLoop.ts:20,40-42` | Result target exists only when selected command has `canvas_return`; asset reads call `sc.assets(false)`, history/restore use existing `graphs.canvasViews` | No new execution owner. No target capsule means the drawer shows a gap rather than inventing an adoption target |
-| `creative/useStoryboardProductionController.ts:160`, `creative/studioStoryboardClient.ts:23` | POST `/api/novels/{projectId}/experimental/creative/documents/{id}/shots/{shot}/image-request`; `expected_version`, `shot_version`, `shot_digest`, explicit operation/provider/model/request ID/parameters; response command must retain the selected shot pin | Original Storyboard service; produces reviewed input, not an executed job |
+| `creative/useStoryboardProductionController.ts:160`, `creative/studioStoryboardClient.ts:23` | POST `/api/novels/{projectId}/experimental/creative/documents/{id}/shots/{shot}/image-request`; `expected_version`, `shot_version`, `shot_digest`, explicit operation/provider/model/request ID/parameters; response `shot_pin` must equal the requested document/shot snapshot | Original Storyboard service; produces reviewed input, not an executed job |
 | `creative/studioProductionClient.ts` `preview/create` | POST `studio/production/preview` with command; POST `/jobs` with command and `reviewed_preview_digest`; create uses original request ID as idempotency key | Original Production owner and ImageJobService; preview does not dispatch |
-| Same client's `get/execute/refresh/cancel/reconcile/review/candidate` | `GET /jobs/{owner}/{id}`; actions POST exact `expected_version` and `expected_request_digest`; review adds `reviewed_output_digest`; candidate reads bytes from `/candidate` | Original job lifecycle; candidate is not a reviewed asset; later manual review and Storyboard binding remain separate |
+| Same client's `get/execute/refresh/cancel/reconcile/review/candidate` | `GET /jobs/{owner}/{id}`; actions POST exact `expected_version` and `expected_request_digest`; review adds `reviewed_output_digest`; candidate reads bytes from `/candidate`; backend refresh route is specifically `/jobs/video/{id}/refresh` | Original job lifecycle; candidate is not a reviewed asset; later manual review and Storyboard binding remain separate |
 | `creative/studioStoryboardClient.ts:22`, `useStoryboardProductionController.ts` `bind` / exact-image flow | POST `/api/novels/{projectId}/experimental/creative/documents/{id}/shots/{shot}/image-binding` with current document/shot versions/digest and `asset_id/version/digest/kind`; response advances document exactly one version and preserves the shot | Original Storyboard image-binding owner; no alternate adoption store |
 | `workspace/UnifiedWorkspacePreview.tsx:150-178`, `workspace/state/projectIncarnation.ts` | GET `studio`; require matching `project.id`, printable nonempty `project.incarnation` <=200 chars; different incarnation retires owned UI geometry | Original File project incarnation; failed reads are not deletion evidence |
 | `creative/studioCanvasViewClient.ts:80-122`, `workspace/history/restoreFlow.ts` | History has current incarnation/version/digest and ascending version snapshots; restore posts current CAS pins plus selected historical version/digest | Existing CanvasView metadata history; no binary restoration or execution authority |
@@ -87,18 +100,35 @@ TaskCenter's selected client has opt-in offset paging and a single fallback on
 
 Feature/authority mapping remains original: Studio requires
 `narrative_production_v2`; model Production routes additionally call the original
-execution gate (including `ai_execution_v2`). Production rechecks trusted Host
+execution gate requiring `ai_execution_v2`, `narrative_production_v2`,
+`model_broker_v2`, and `author_context_inspector_v2`. Production rechecks trusted Host
 session, model-host binding, scope and permission before and after its callback.
-Preview uses `domain.read`; create uses `domain.write`. Test fixtures retain those
+Preview uses `domain.read`; create/execute/cancel/reconcile use `domain.write`;
+review uses `domain.review`. Test fixtures retain those
 mounted guards and configure original temporary File owners. A disabled Studio
 feature returns 404 rather than an empty successful task list. Invalid Production
 query returns 422 with `EXPERIMENTAL_INVALID` /
 `STUDIO_PRODUCTION_QUERY_INVALID`, without echoing private input. Stale Canvas
 restore returns 409 and does not overwrite current content.
 
-## Published-parent compatibility risk: formal image-node provenance
+The actual image-request response parser requires the closed envelope
+`contract/shot_pin/command/automatic_dispatch/model_called/output_policy/product_acceptance`:
+contract `studio-storyboard-image-request/1`, both automatic/model booleans false,
+output policy `PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW`, acceptance
+`LOCAL_REQUIRED`. Its command has `allow_cloud=false`, a request ID of 1..100
+allowed identifier characters, and a `CREATIVE_DOCUMENT` source matching the
+document snapshot; this is not a `canvas_image_node` or invented shot-command
+field. Production preview/create returns the existing preview/job contracts;
+candidate bytes carry original `X-Asset-SHA256`, `X-Asset-Version`, media type,
+and `Cache-Control: no-store`. Host absence/binding errors remain 403
+`CREATIVE_MODEL_HOST_REQUIRED` / `CREATIVE_MODEL_HOST_BINDING_REQUIRED`;
+original owner CAS conflicts are sanitized to 409
+`STUDIO_PRODUCTION_VERSION_CONFLICT` with current version. Source-reviewed
+frontend parsing never turns a capability hint into an authorization grant.
 
-At the published parents' `creative/studioProductionClient.ts:376`, `job()` parses all
+## Confirmed-target compatibility failure: formal image-node provenance
+
+At confirmed target `creative/studioProductionClient.ts:376`, `job()` parses all
 Production list, get and action responses. Its exact command-key allowlist at
 line **426** excludes `canvas_image_node`. The fixed backend legitimately emits
 this field for formal image-node jobs, binding project incarnation, canvas and
@@ -113,7 +143,7 @@ failure is:
 ```text
 Historical 048c5ebb probe: rejects original backend command fields: ['canvas_image_node']
 5e279fb6 / 2ed4c99c and their review descendants have the identical validator blob.
-Unpublished theme-dualcanvas target: SHA NOT_AVAILABLE, test NOT_RUN.
+Confirmed target 03e8034a retains the identical validator blob and rejection.
 ```
 
 This probe is a wire-contract reproduction, not execution of the complete
@@ -185,11 +215,45 @@ Evidence: `.runtime/frontend-provisional-34eb95c7.log` and
 The expected failure is now retained as **PARENT_REFERENCE_ONLY**, not an
 actual-target failure or product PASS. This is a backend wire regression run against source-reviewed constraints;
 the complete TypeScript parser, default drawer UI and browser were not executed.
-The test module now records the confirmed branch, `FRONTEND_TARGET_SHA=None`,
+At that checkpoint the test module recorded the confirmed branch, `FRONTEND_TARGET_SHA=None`,
 `NOT_AVAILABLE_NOT_RUN`, and both published parent SHAs. Its named expected
 failure is `test_published_parent_frontends_admit_formal_image_node_job_command`.
-This metadata/name correction changes no production logic; unchanged tests were
-not rerun merely to relabel evidence. Once the bot publishes the actual branch,
-fetch its exact SHA, inspect its real default UI callers/validators, and run
-actual-target contract and browser acceptance. Do not infer a merged implementation
-from the two parents or treat prior browser work as final-target acceptance.
+That metadata/name correction changed no production logic; unchanged tests were
+not rerun merely to relabel evidence. The pending action was to fetch the bot's
+actual published SHA and inspect its real callers before new target verification.
+The final section below records that later source retrieval and wire run.
+Prior browser work must not be relabeled as final-target acceptance.
+
+### Final actual-target source and wire verification — supersedes pending state
+
+Remote target `03e8034a41adc18ab0e32a35688e6ec2ff889d9f` was fetched after the
+pending checkpoint. Its tree is `ebbffb2f8938f80b98df8ab779eec34a0014b706`;
+both user-specified source parents are verified ancestors. Source reads confirm
+the current default App drawer, the new Image/Video Pro `DualStack`, and the
+unchanged strict Production and Storyboard validators. The new canvas code
+copies local snapshots only and declares generation/execution unavailable.
+
+Test metadata is now bound to the exact actual SHA with
+`SOURCE_VERIFIED_WIRE_CHECKS_ONLY` and `CONFIRMED_TARGET_WIRE_CONTRACT`.
+The named regression is
+`test_confirmed_frontend_admits_formal_image_node_job_command`.
+Executed in this unit's baseline-derived backend worktree with only the separately
+reported Asset portability repair; the coordinator's merged-backend and actual
+browser results remain separate evidence:
+
+```text
+python scripts/run_studio_backend_tests.py -q tests/test_studio_frontend_alignment_v2.py
+10 passed, 1 xfailed, 3 warnings in 11.03s
+
+python scripts/run_studio_backend_tests.py -q --runxfail tests/test_studio_frontend_alignment_v2.py::test_confirmed_frontend_admits_formal_image_node_job_command
+1 failed, 3 warnings in 4.84s
+AssertionError: Confirmed frontend 03e8034a41adc18ab0e32a35688e6ec2ff889d9f rejects original backend command fields: ['canvas_image_node']
+```
+
+Retained evidence: `.runtime/frontend-confirmed-03e8034a.log`,
+`.runtime/frontend-confirmed-03e8034a-results.xml`,
+`.runtime/frontend-confirmed-03e8034a-failure.log`, and
+`.runtime/frontend-confirmed-03e8034a-failure.xml`.
+The strict expected failure is a confirmed-target **wire blocker**, not a pass.
+No production authority or frontend file was changed to hide it. Earlier
+unavailable/provisional sections above record chronology, not current status.
