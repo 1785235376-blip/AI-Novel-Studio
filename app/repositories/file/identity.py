@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import copy
+import hashlib
+from uuid import UUID, uuid4
 from pathlib import Path
 from functools import wraps
 
@@ -22,14 +25,76 @@ class FileIdentityRepository:
     def __init__(self, root: Path):
         self.path = Path(root) / "identity.json"
 
+    _LIFECYCLE = "_identity_lifecycle_v1"
+
     def _read(self) -> dict:
         if not self.path.exists():
             return {"users": [], "memberships": []}
-        value = json.loads(self.path.read_text(encoding="utf-8"))
-        return {"users": list(value.get("users", [])), "memberships": list(value.get("memberships", []))}
+        def unique(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("duplicate identity key")
+                result[key] = value
+            return result
+        value = json.loads(self.path.read_text(encoding="utf-8"), object_pairs_hook=unique)
+        result = {"users": list(value.get("users", [])), "memberships": list(value.get("memberships", []))}
+        if self._LIFECYCLE in value:
+            meta = value[self._LIFECYCLE]
+            def nonce(v):
+                try:
+                    return isinstance(v, str) and str(UUID(v)) == v and UUID(v).version == 4
+                except (ValueError, TypeError):
+                    return False
+            if (not isinstance(meta, dict) or set(meta) != {"incarnation", "users", "memberships"}
+                    or not nonce(meta["incarnation"])):
+                raise ValueError("invalid identity lifecycle")
+            for key in ("users", "memberships"):
+                ids = [row["id"] for row in result[key]]
+                if (len(set(ids)) != len(ids) or not isinstance(meta[key], dict)
+                        or set(meta[key]) != set(ids) or not all(nonce(v) for v in meta[key].values())):
+                    raise ValueError("invalid identity lifecycle rows")
+            result[self._LIFECYCLE] = meta
+        return result
 
+    @identity_mutation
     def _write(self, value: dict) -> None:
-        atomic_write(self.path, json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2))
+        exists = self.path.exists()
+        previous = self._read()
+        key = self._LIFECYCLE
+        if ((key in value) != (key in previous)
+                or (key in previous and value[key] != previous[key])):
+            raise ValueError("identity lifecycle is owner-managed")
+        result = copy.deepcopy(value)
+        if not exists or key in previous:
+            meta = copy.deepcopy(previous.get(key, {"incarnation": str(uuid4()), "users": {}, "memberships": {}}))
+            for collection in ("users", "memberships"):
+                old = {row["id"]: row for row in previous[collection]}
+                rows = result[collection]
+                if len({row["id"] for row in rows}) != len(rows):
+                    raise ValueError("duplicate identity row")
+                meta[collection] = {row["id"]: meta[collection][row["id"]]
+                    if row["id"] in old and old[row["id"]] == row else str(uuid4()) for row in rows}
+            result[key] = meta
+        atomic_write(self.path, json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))
+
+    @identity_mutation
+    def binding_observation(self, user_id: str, workspace_id: str) -> str:
+        """Observe selected original rows only; never bind or migrate legacy files."""
+        data = self._read()
+        if self._LIFECYCLE not in data:
+            raise ValueError("IDENTITY_OBSERVATION_UNSUPPORTED")
+        user = next((r for r in data["users"] if r["id"] == user_id), None)
+        members = [r for r in data["memberships"] if r["user_id"] == user_id and r["workspace_id"] == workspace_id]
+        if user is None or len(members) != 1:
+            raise KeyError("identity binding unavailable")
+        member = members[0]
+        meta = data[self._LIFECYCLE]
+        payload = [meta["incarnation"], user, member, meta["users"][user_id], meta["memberships"][member["id"]]]
+        return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+    def revalidate_binding(self, user_id: str, workspace_id: str, observation: str) -> bool:
+        return self.binding_observation(user_id, workspace_id) == observation
 
     @identity_mutation
     def _save(self, key: str, item: dict, uniqueness: tuple[str, ...]) -> dict:

@@ -1,5 +1,8 @@
 # TaskCenter 类型筛选、覆盖报告与游标依赖边界
 
+> 最新重建切片：非 packaged File 的 local semantic_import 与 collaboration 无 source 引用 agent_team 两个互斥模式，见
+> [协作重建稳定切片](delivery/taskcenter-collaboration-rebuild-20261026/stable-slice.md)。下文保留历史阶段记录，不代表最新支持范围。
+
 > 历史阶段说明：本文保留上一轮“HTTP 始终 501”的交付记录。
 > 后续已实现受限的 File/local semantic-import 真实游标切片；当前条件、
 > 观察行生命周期保证及未覆盖边界见

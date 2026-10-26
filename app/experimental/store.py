@@ -23,6 +23,10 @@ from ..storage import atomic_write
 # claimed or migrated by a read or by an ordinary business transaction.
 LIFECYCLE = "_taskcenter_lifecycle_v1"
 OBSERVED_COLLECTION = "semantic_import_jobs"
+TEAM_LIFECYCLE = "_taskcenter_team_lifecycle_v1"
+TEAM_COLLECTION = "team_runs"
+LIFECYCLE_MODES = {LIFECYCLE: ("local", OBSERVED_COLLECTION),
+                   TEAM_LIFECYCLE: ("collaboration", TEAM_COLLECTION)}
 OBSERVATION_UNSUPPORTED = "EXPERIMENTAL_OBSERVATION_UNSUPPORTED"
 
 
@@ -88,8 +92,10 @@ class ExperimentalStore:
             or not isinstance(doc.get("collections"), dict)
             or any(not isinstance(rows, dict) for rows in doc["collections"].values())):
             raise ValueError("experimental store corrupt or scope mismatch; restore a verified backup")
-        if LIFECYCLE in doc:
-            metadata = doc[LIFECYCLE]
+        for lifecycle, (mode, collection) in LIFECYCLE_MODES.items():
+            if lifecycle not in doc:
+                continue
+            metadata = doc[lifecycle]
             if (not isinstance(metadata, dict)
                     or set(metadata) != {"schema_version", "project_identity", "document_incarnation", "rows"}
                     or type(metadata.get("schema_version")) is not int or metadata["schema_version"] != 1
@@ -100,8 +106,8 @@ class ExperimentalStore:
                     or not isinstance(metadata.get("rows"), dict)
                     or any(not isinstance(rid, str) or not rid or not _nonce(nonce)
                            for rid, nonce in metadata["rows"].items())
-                    or scope.get("mode") != "local"
-                    or set(doc["collections"].get(OBSERVED_COLLECTION, {})) != set(metadata["rows"])):
+                    or scope.get("mode") != mode
+                    or set(doc["collections"].get(collection, {})) != set(metadata["rows"])):
                 raise ValueError("experimental lifecycle metadata is invalid")
         canonical(doc)
         return doc
@@ -132,7 +138,7 @@ class ExperimentalStore:
             yield identity
 
     def _initial_project_identity(self, nid, scope):
-        if scope.get("mode") != "local":
+        if scope.get("mode") not in {"local", "collaboration"}:
             return None
         try:
             with self._existing_project_owner(nid) as identity:
@@ -144,15 +150,17 @@ class ExperimentalStore:
 
     @staticmethod
     def _advance_lifecycles(document, previous, identity=None):
-        if LIFECYCLE in previous:
-            metadata = copy.deepcopy(previous[LIFECYCLE])
+        lifecycle = LIFECYCLE if document["scope"]["mode"] == "local" else TEAM_LIFECYCLE
+        collection = LIFECYCLE_MODES[lifecycle][1]
+        if lifecycle in previous:
+            metadata = copy.deepcopy(previous[lifecycle])
         elif identity is not None:
             metadata = {"schema_version": 1, "project_identity": identity,
                         "document_incarnation": str(uuid4()), "rows": {}}
         else:
             return
-        before = previous["collections"].get(OBSERVED_COLLECTION, {})
-        after = document["collections"].get(OBSERVED_COLLECTION, {})
+        before = previous["collections"].get(collection, {})
+        after = document["collections"].get(collection, {})
         metadata["rows"] = {rid: nonce for rid, nonce in metadata["rows"].items() if rid in after}
         for rid in after:
             if rid not in before or canonical(before[rid]) != canonical(after[rid]):
@@ -160,7 +168,7 @@ class ExperimentalStore:
                 # row ID/content/version repeats. Retaining deleted IDs is not
                 # needed for that property and would grow without a bound.
                 metadata["rows"][rid] = str(uuid4())
-        document[LIFECYCLE] = metadata
+        document[lifecycle] = metadata
 
     def capture_committed_collection(self, nid, scope, collection=OBSERVED_COLLECTION):
         """Return one committed File/local source with original-owner proofs.
@@ -172,15 +180,17 @@ class ExperimentalStore:
         legacy migration and no guarantee against external byte-for-byte backup
         replay, which does not participate in this owner's commit boundary.
         """
-        if (self.backend != "file" or not isinstance(scope, dict)
-                or scope.get("mode") != "local" or collection != OBSERVED_COLLECTION):
+        mode = scope.get("mode") if isinstance(scope, dict) else None
+        lifecycle = next((key for key, pair in LIFECYCLE_MODES.items()
+                          if pair == (mode, collection)), None)
+        if self.backend != "file" or lifecycle is None:
             raise ValueError(OBSERVATION_UNSUPPORTED)
         key = self.key(nid, scope)
         with workspace_mutation(self.root, f"experimental:{key}"):
             raw, document = self._file_snapshot(nid, scope)
-            if raw is None or LIFECYCLE not in document:
+            if raw is None or lifecycle not in document:
                 raise ValueError(OBSERVATION_UNSUPPORTED)
-            metadata = document[LIFECYCLE]
+            metadata = document[lifecycle]
             try:
                 with self._existing_project_owner(nid) as identity:
                     if identity != metadata["project_identity"]:
@@ -233,12 +243,13 @@ class ExperimentalStore:
                     # Reserved metadata is owner-maintained. Accept detached
                     # deep copies (CreativeProjectStore.clear/update), not a
                     # caller's removal, injection, rollback or replacement.
-                    if ((LIFECYCLE in doc) != (LIFECYCLE in original)
-                            or (LIFECYCLE in original and canonical(doc[LIFECYCLE]) != canonical(original[LIFECYCLE]))):
-                        raise ValueError("experimental lifecycle metadata is owner-managed")
-                    # New live rows have not received their owner nonce yet.
+                    for lifecycle in LIFECYCLE_MODES:
+                        if ((lifecycle in doc) != (lifecycle in original)
+                                or (lifecycle in original and canonical(doc[lifecycle]) != canonical(original[lifecycle]))):
+                            raise ValueError("experimental lifecycle metadata is owner-managed")
                     business = copy.deepcopy(doc)
-                    business.pop(LIFECYCLE, None)
+                    for lifecycle in LIFECYCLE_MODES:
+                        business.pop(lifecycle, None)
                     self.validate(business, nid, scope)
                     # The workspace lock is reentrant across store instances.
                     # Compare existence and exact committed bytes even for an

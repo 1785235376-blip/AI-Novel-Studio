@@ -1,0 +1,40 @@
+{
+  "collected_nodeids": [],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_query_backend.py",
+    "tests/test_taskcenter_consistent_query.py",
+    "tests/test_taskcenter_cursor_independent.py",
+    "tests/test_taskcenter_private_cache.py",
+    "tests/test_taskcenter_store_lifecycle.py",
+    "tests/test_taskcenter_store_process.py",
+    "tests/test_taskcenter_store_consumers.py",
+    "tests/test_taskcenter_team_rebuilt.py",
+    "tests/test_identity_binding_rebuild.py",
+    "tests/test_taskcenter_scope_grant_observation.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-rebuild-evidence/freeze-core.xml",
+    "--basetemp=/tmp/tmp8zpapg8d/freeze-core/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp8zpapg8d/freeze-core/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-resume-20261026",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": false,
+    "tests": 0
+  },
+  "loaded_module_evidence_present": false,
+  "outside_source_modules": [
+    "EVIDENCE_MISSING"
+  ],
+  "returncode": 124,
+  "timed_out": true
+}

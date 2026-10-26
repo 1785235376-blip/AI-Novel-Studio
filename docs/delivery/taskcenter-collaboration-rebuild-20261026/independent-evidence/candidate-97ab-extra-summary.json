@@ -1,0 +1,56 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_external_window.py::test_source_document_replacement_same_payload_invalidates",
+    "tests/test_taskcenter_external_window.py::test_unmatched_private_row_change_does_not_invalidate_filtered_window"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_external_window.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/../taskcenter-rebuild-independent-evidence/candidate-97ab-extra.xml",
+    "--basetemp=/tmp/independent-taskcenter-ah8b1k2z/candidate-97ab-extra/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/independent-taskcenter-ah8b1k2z/candidate-97ab-extra/pytest-cache"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent",
+  "failed_reports": [
+    {
+      "failure_message": "file /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_window.py, line 7\n  def test_source_document_replacement_same_payload_invalidates(env):\nfile /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py, line 14\n  @pytest.fixture\n  def env(rig, monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, env, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py:14",
+      "nodeid": "tests/test_taskcenter_external_window.py::test_source_document_replacement_same_payload_invalidates",
+      "when": "setup"
+    },
+    {
+      "failure_message": "file /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_window.py, line 17\n  def test_unmatched_private_row_change_does_not_invalidate_filtered_window(env):\nfile /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py, line 14\n  @pytest.fixture\n  def env(rig, monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, env, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py:14",
+      "nodeid": "tests/test_taskcenter_external_window.py::test_unmatched_private_row_change_does_not_invalidate_filtered_window",
+      "when": "setup"
+    }
+  ],
+  "junit": {
+    "errors": [
+      {
+        "classname": "tests.test_taskcenter_external_window",
+        "message": "failed on setup with \"file /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_window.py, line 7\n  def test_source_document_replacement_same_payload_invalidates(env):\nfile /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py, line 14\n  @pytest.fixture\n  def env(rig, monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, env, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py:14\"",
+        "name": "test_source_document_replacement_same_payload_invalidates",
+        "type": null
+      },
+      {
+        "classname": "tests.test_taskcenter_external_window",
+        "message": "failed on setup with \"file /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_window.py, line 17\n  def test_unmatched_private_row_change_does_not_invalidate_filtered_window(env):\nfile /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py, line 14\n  @pytest.fixture\n  def env(rig, monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, env, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/tests/test_taskcenter_external_adversarial.py:14\"",
+        "name": "test_unmatched_private_row_change_does_not_invalidate_filtered_window",
+        "type": null
+      }
+    ],
+    "failures": [],
+    "present": true,
+    "tests": 2
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

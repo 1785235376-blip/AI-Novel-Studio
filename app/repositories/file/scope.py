@@ -1,6 +1,7 @@
 import json
 from datetime import datetime,timezone
-from uuid import uuid4
+from uuid import UUID, uuid4
+from copy import deepcopy
 from pathlib import Path
 from threading import RLock
 from functools import wraps
@@ -26,12 +27,92 @@ def authorization_file_mutation(method):
   with self.mutation():return method(self,*args,**kwargs)
  return coordinated
 
+# Original-owner same-file evidence. No read or ordinary legacy write migrates it.
+_SCOPE_LIFECYCLE = "_scope_lifecycle_v1"
+_GRANT_LIFECYCLE = "_grant_lifecycle_v1"
+_BINDING_UNSUPPORTED = "COLLABORATION_BINDING_UNSUPPORTED"
+_SCOPE_FIELDS = {
+ "workspaces": ("id",),
+ "project_workspaces": ("id", "workspace_id"),
+ "storylines": ("id", "workspace_id", "project_id"),
+ "branches": ("id", "workspace_id", "project_id", "storyline_id", "parent_branch_id"),
+}
+
+def _canonical(value):
+ return json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,allow_nan=False)
+
+def _nonce(value):
+ try:return isinstance(value,str) and str(UUID(value))==value and UUID(value).version==4
+ except (ValueError,TypeError,AttributeError):return False
+
+def _rows(data,kind):
+ rows=data.get(kind,[])
+ if not isinstance(rows,list):raise ValueError(_BINDING_UNSUPPORTED)
+ result={}
+ for row in rows:
+  if not isinstance(row,dict) or not isinstance(row.get("id"),str) or not row["id"] or row["id"] in result:
+   raise ValueError(_BINDING_UNSUPPORTED)
+  result[row["id"]]=row
+ return result
+
+def _validate_lifecycle(data,key,kinds):
+ if key not in data:return
+ meta=data[key]
+ if (not isinstance(meta,dict) or set(meta)!={"schema_version","incarnation","rows"}
+     or type(meta["schema_version"]) is not int or meta["schema_version"]!=1
+     or not _nonce(meta["incarnation"]) or not isinstance(meta["rows"],dict)
+     or set(meta["rows"])!=set(kinds)):
+  raise ValueError(_BINDING_UNSUPPORTED)
+ for kind in kinds:
+  values=meta["rows"][kind]
+  if not isinstance(values,dict) or set(values)!=set(_rows(data,kind)) or not all(_nonce(v) for v in values.values()):
+   raise ValueError(_BINDING_UNSUPPORTED)
+
+def _advance_lifecycle(data,before,key,kinds,fresh,project):
+ # Presence, not get(), rejects null injection into absent or legacy files.
+ if ((key in data)!=(key in before) or (key in before and _canonical(data[key])!=_canonical(before[key]))):
+  raise ValueError("collaboration lifecycle metadata is owner-managed")
+ if key not in before and not fresh:return deepcopy(data)
+ meta=deepcopy(before[key]) if key in before else {"schema_version":1,"incarnation":str(uuid4()),"rows":{k:{} for k in kinds}}
+ result=deepcopy(data)
+ for kind in kinds:
+  old,new=_rows(before,kind),_rows(data,kind)
+  meta["rows"][kind]={rid:(meta["rows"][kind][rid] if rid in old and project(kind,old[rid])==project(kind,row) else str(uuid4())) for rid,row in new.items()}
+ result[key]=meta
+ _validate_lifecycle(result,key,kinds)
+ return result
+
+def _scope_projection(kind,row):
+ return {key:row.get(key) for key in _SCOPE_FIELDS[kind]}
+
 class FileScopeRepository:
  def __init__(self,root:Path):self.path=Path(root)/"collaboration_scope.json"
  def _read(self):
   if not self.path.exists():return {"workspaces":[],"project_workspaces":[],"storylines":[],"branches":[]}
-  return json.loads(self.path.read_text(encoding="utf-8"))
- def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
+  data=json.loads(self.path.read_text(encoding="utf-8"))
+  _validate_lifecycle(data,_SCOPE_LIFECYCLE,_SCOPE_FIELDS)
+  return data
+ @scope_file_mutation
+ def _write(self,data):
+  fresh=not self.path.exists();before=self._read()
+  updated=_advance_lifecycle(data,before,_SCOPE_LIFECYCLE,_SCOPE_FIELDS,fresh,_scope_projection)
+  atomic_write(self.path,json.dumps(updated,ensure_ascii=False,sort_keys=True,indent=2))
+ @scope_file_mutation
+ def binding_observation(self,scope):
+  data=self._read()
+  if _SCOPE_LIFECYCLE not in data:raise ValueError(_BINDING_UNSUPPORTED)
+  ids={"workspaces":scope.workspace_id,"project_workspaces":scope.project_id,"storylines":scope.storyline_id,"branches":scope.branch_id}
+  selected={kind:_rows(data,kind).get(rid) for kind,rid in ids.items()}
+  if (not all(selected.values()) or selected["project_workspaces"]["workspace_id"]!=scope.workspace_id
+      or selected["storylines"].get("workspace_id")!=scope.workspace_id
+      or selected["storylines"].get("project_id")!=scope.project_id
+      or selected["branches"].get("workspace_id")!=scope.workspace_id
+      or selected["branches"].get("project_id")!=scope.project_id
+      or selected["branches"].get("storyline_id")!=scope.storyline_id):raise ValueError(_BINDING_UNSUPPORTED)
+  meta=data[_SCOPE_LIFECYCLE]
+  return {"incarnation":meta["incarnation"],"rows":{kind:{"id":rid,"lifecycle":meta["rows"][kind][rid]} for kind,rid in ids.items()}}
+ def revalidate_binding(self,scope,observation):
+  return self.binding_observation(scope)==observation
  @scope_file_mutation
  def create(self,kind,item):
   if kind=="branches":item={**item,"revision":int(item.get("revision",0))}
@@ -154,8 +235,33 @@ class FileAuthorizationRepository:
  def _read(self):
   if not self.path.exists():return {"role_assignments":[],"permission_assignments":[],"audit_events":[]}
   data=json.loads(self.path.read_text(encoding="utf-8"))
-  return {key:list(data.get(key,[])) for key in ("role_assignments","permission_assignments","audit_events")}
- def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
+  result={key:list(data.get(key,[])) for key in ("role_assignments","permission_assignments","audit_events")}
+  if _GRANT_LIFECYCLE in data:result[_GRANT_LIFECYCLE]=data[_GRANT_LIFECYCLE]
+  _validate_lifecycle(result,_GRANT_LIFECYCLE,("role_assignments","permission_assignments"))
+  return result
+ @authorization_file_mutation
+ def _write(self,data):
+  fresh=not self.path.exists();before=self._read()
+  updated=_advance_lifecycle(data,before,_GRANT_LIFECYCLE,("role_assignments","permission_assignments"),fresh,lambda kind,row:row)
+  atomic_write(self.path,json.dumps(updated,ensure_ascii=False,sort_keys=True,indent=2))
+ @authorization_file_mutation
+ def binding_observation(self,service,principal_id,permission,domain,scope):
+  # AuthorizationService remains the only policy evaluator, including ADMIN.
+  from ...services.authorization_service import AuthorizationService
+  if type(service) is not AuthorizationService or service.repository is not self:raise ValueError(_BINDING_UNSUPPORTED)
+  explanation=service.explain(principal_id,permission,domain,scope)
+  if not explanation["allowed"]:raise PermissionError("authorization binding is not allowed")
+  data=self._read()
+  if _GRANT_LIFECYCLE not in data:raise ValueError(_BINDING_UNSUPPORTED)
+  meta=data[_GRANT_LIFECYCLE];selected=[]
+  for source in explanation["sources"]:
+   kind="permission_assignments" if source["source_type"]=="DIRECT_PERMISSION" else "role_assignments"
+   rid=source["assignment_id"];row=_rows(data,kind).get(rid)
+   if row is None or row.get("principal_id")!=principal_id:raise ValueError(_BINDING_UNSUPPORTED)
+   selected.append({"kind":kind,"id":rid,"lifecycle":meta["rows"][kind][rid]})
+  return {"incarnation":meta["incarnation"],"principal_id":principal_id,"permission":permission,"domain":domain.value,"scope":_scope_dict(scope),"rows":sorted(selected,key=lambda row:(row["kind"],row["id"]))}
+ def revalidate_binding(self,service,principal_id,permission,domain,scope,observation):
+  return self.binding_observation(service,principal_id,permission,domain,scope)==observation
  @authorization_file_mutation
  def _save(self,key,item):
   data=self._read();old=next((x for x in data[key] if x["id"]==item["id"]),None)

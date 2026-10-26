@@ -3,6 +3,10 @@ from __future__ import annotations
 from threading import RLock
 from contextlib import contextmanager
 import json
+import hashlib
+import hmac
+import secrets
+from dataclasses import asdict
 
 from .actor_context import ActorContext, SessionContext
 
@@ -19,6 +23,7 @@ class TrustedSessionResolver:
         self._sessions: dict[str, SessionContext] = {}
         self._binding_generations: dict[str, int] = {}
         self._generation = 0
+        self._observation_secret = secrets.token_bytes(32)
         self._lock = RLock()
         # Mutation fencing may span storage work; ordinary owner-held authority
         # reads must never wait for that work while holding their storage lease.
@@ -44,6 +49,18 @@ class TrustedSessionResolver:
             if token not in self._sessions:
                 raise KeyError("unknown or expired session")
             return self._binding_generations[token]
+
+    def binding_observation(self, token: str) -> str:
+        """Private commitment; no token, registry epoch or session details escape."""
+        with self._lock:
+            session = self._sessions.get(token)
+            if session is None:
+                raise KeyError("unknown or expired session")
+            payload = json.dumps([token, self._binding_generations[token], asdict(session)], sort_keys=True)
+            return hmac.new(self._observation_secret, payload.encode(), hashlib.sha256).hexdigest()
+
+    def revalidate_binding(self, token: str, observation: str) -> bool:
+        return hmac.compare_digest(self.binding_observation(token), observation)
 
     @contextmanager
     def binding_lease(self, token: str):

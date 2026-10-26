@@ -127,9 +127,10 @@ class TaskCenterQuery:
                 "description": (
                     "Explicit opt-in query mode; repeated values use the last value. "
                     "Omitted preserves legacy behavior. offset preserves existing bounded response paging. "
-                    "cursor supports only the explicitly selected semantic_import authority with actual File "
-                    "repositories, non-packaged local-author mode, no session/branch headers and existing "
-                    "project/source lifecycle evidence. Other modes return TASKCENTER_CURSOR_UNSUPPORTED; "
+                    "cursor supports two exclusive non-packaged File modes: explicit local semantic_import "
+                    "without session/branch headers, or collaboration source-free agent_team with original "
+                    "session, membership, topology and grant evidence. Existing project/source lifecycle "
+                    "evidence is required. Mixed sources and other modes return TASKCENTER_CURSOR_UNSUPPORTED; "
                     "it cannot be mixed with an explicit offset, including offset=0."
                 ),
             },
@@ -152,10 +153,10 @@ def static_capabilities():
         "authority_filter": {"supported": True, "operator": "OR"},
         "cursor": {
             "supported": True,
-            "mode": "FILE_LOCAL_SEMANTIC_IMPORT_ONLY",
-            "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED_LOCAL_AUTHOR",
-                           "NO_SESSION_OR_BRANCH_HEADER", "EXPLICIT_SEMANTIC_IMPORT_ONLY",
-                           "EXISTING_PROJECT_AND_SOURCE_LIFECYCLE"],
+            "mode": "FILE_TWO_EXCLUSIVE_MODES",
+            "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED",
+                           "LOCAL_SEMANTIC_IMPORT_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM",
+                           "EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES", "NO_MIXED_SOURCES"],
         },
         "cross_owner_atomic_snapshot": False,
         "full_history_query": False,
@@ -206,7 +207,7 @@ def openapi_responses():
                 "Legacy envelopes remain unchanged without authority/page_mode. "
                 "authority alone retains the 500-item cap and adds bounded observed_total. "
                 "page_mode=offset activates existing 50/0 defaults; limit stays at most 100. "
-                "cursor requires the documented File/local semantic_import conditions and emits "
+                "cursor requires the documented File exclusive local semantic_import or collaboration source-free agent_team conditions and emits "
                 "next_cursor/has_more without offset fallback. An empty or final page never "
                 "establishes complete history."
             ),
@@ -230,7 +231,7 @@ def openapi_responses():
         501: {
             "description": (
                 "TASKCENTER_CURSOR_UNSUPPORTED after original authorization. "
-                "The request does not satisfy the narrow File/local semantic_import conditions, "
+                "The request does not satisfy the narrow File exclusive local semantic_import or collaboration source-free agent_team conditions, "
                 "or an initial observation lacks reliable existing original lifecycle binding."
             ),
             "content": {"application/json": {"example": {"detail": unsupported}}},

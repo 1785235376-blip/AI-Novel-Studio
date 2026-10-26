@@ -183,6 +183,9 @@ class TaskCenterCursorHTTPAdapter:
 
     def tasks(self, ctx, selection, page, require_flag, query, failed_only,
               reauthorize):
+        if ctx.scope.get("mode") == "collaboration" and getattr(self, "collaboration_adapter", None) is not None:
+            return self.collaboration_adapter.tasks(ctx, selection, page, require_flag, query,
+                                                    failed_only, reauthorize)
         reauthorize()
         self._gate(ctx, selection)
         # Use the existing engine's exact token grammar/MAC behavior. Tokens
@@ -214,7 +217,7 @@ class TaskCenterCursorHTTPAdapter:
         binding = canonical_digest({"project": ctx.novel_id, "scope": ctx.scope,
             "actor": ctx.actor, "project_identity": identity,
             "document_incarnation": after["document_incarnation"],
-            "session_member_grant": "NOT_APPLICABLE_LOCAL_SINGLE_PRINCIPAL"})
+            "session_member_grant": after.get("authority", "NOT_APPLICABLE_LOCAL_SINGLE_PRINCIPAL")})
         query_digest = canonical_digest({"authorities": selection.authorities,
             "query_casefold": query.casefold(), "failed_only": failed_only,
             "limit": limit, "order": "ORIGINAL_READER_COLLECTION_ORDER_V1"})

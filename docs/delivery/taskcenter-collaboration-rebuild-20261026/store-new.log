@@ -1,0 +1,15 @@
+cwd=/workspace/shared/taskcenter-resume-20261026
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_team_rebuilt.py", "tests/test_taskcenter_store_lifecycle.py", "tests/test_taskcenter_store_process.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-rebuild-evidence/store-new.xml", "--basetemp=/tmp/tmpqrv9dogm/store-new/pytest-tmp", "-o", "cache_dir=/tmp/tmpqrv9dogm/store-new/pytest-cache"]
+.........................................................                [100%]
+=============================== warnings summary ===============================
+tests/test_taskcenter_team_rebuilt.py::test_original_team_boundary[aba]
+  /workspace/shared/taskcenter-resume-20261026/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_team_rebuilt.py::test_original_team_boundary[aba]
+  /workspace/shared/taskcenter-resume-20261026/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-rebuild-evidence/store-new.xml -
+57 passed, 2 warnings in 92.20s (0:01:32)

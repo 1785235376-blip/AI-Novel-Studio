@@ -210,6 +210,15 @@ taskcenter_cursor_adapter = TaskCenterCursorHTTPAdapter(
     actual_repositories=lambda: (legacy_api.novel_service, legacy_api.chapter_service),
     runtime_mode=lambda: (settings.enable_packaged_runtime, settings.enable_collaboration_runtime),
 )
+from .taskcenter_collaboration_cursor import CollaborationTaskCenterCursorAdapter
+taskcenter_cursor_adapter.collaboration_adapter = CollaborationTaskCenterCursorAdapter(
+    workspace_tools_service, team_service,
+    next(reader for reader in workspace_tools_service.task_readers if reader.name == 'agent_team'),
+    actual_repositories=lambda: (legacy_api.novel_service, legacy_api.chapter_service),
+    runtime_mode=lambda: (settings.enable_packaged_runtime, settings.enable_collaboration_runtime),
+    actual_authorities=lambda: (legacy_api.trusted_session_resolver,
+        legacy_api.membership_authorization_service, legacy_api.collaboration_scope_service),
+)
 router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag,
                                      cursor_adapter=taskcenter_cursor_adapter))
 
