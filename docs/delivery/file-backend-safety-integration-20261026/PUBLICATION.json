@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_AND_EVIDENCE_PUBLISHED",
+  "overall_acceptance": "PARTIAL",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "visibility": "public",
+  "branch": "work/file-backend-safety-integration-20261026",
+  "source_freeze": {
+    "sha": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+    "tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef"
+  },
+  "remote_observed_before_receipt_archive": {
+    "sha": "91eedc376ccfc7002632793b07f97a221caebbd5",
+    "tree": "4fdf7368728eb75145c312c0add813044b42867f",
+    "git_fetch_matches": true,
+    "github_git_commit_api_matches": true,
+    "source_test_script_diff_from_freeze": []
+  },
+  "input_refs_after_publish": {
+    "A": "856d1ed3341fe0c24df1daff9a8bc1242c260e6c",
+    "B": "31b6cb56ba3d2fa08719cf917c2c75ee8f168c8f"
+  },
+  "raw_coordinator_payloads_verified_against_staged_git_blobs": 111,
+  "operation": "Normal new-branch push; no force, release, deployment, main/A/B/BOT update or Actions rerun",
+  "receipt_archive_note": "The next docs-only commit archives this observation. Its final HEAD/tree are read back again and reported in the delivery chat; the accepted app/tests/scripts remain byte-identical to the source freeze.",
+  "github_verification_urls": [
+    "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio",
+    "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/91eedc376ccfc7002632793b07f97a221caebbd5"
+  ]
+}
