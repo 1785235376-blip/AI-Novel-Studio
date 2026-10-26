@@ -1,10 +1,8 @@
 # Studio frontend/backend alignment, 2026-10-26
 
 Status: **ACTUAL TARGET CONFIRMED, SOURCE UNAVAILABLE; target tests NOT_RUN**.
-The user explicitly rejected the initially selected `048c5ebb` frontend:
-"你使用的前端是错误的，bot做了个新的，更友好的". All earlier claims that
-`048c5ebb` was the intended frontend are superseded; original evidence is retained.
-The user subsequently confirmed the actual target is
+All earlier claims that `048c5ebb` was the intended frontend are superseded;
+original evidence is retained. The confirmed actual target is
 **`work/hermia-theme-dualcanvas-20261026`**, created from the i18n branch and
 merging default-uw-port. It is still being merged and is **unpublished**.
 Its exact SHA is **NOT_AVAILABLE**; actual-target contract and browser tests are
