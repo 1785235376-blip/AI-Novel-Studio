@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from contextlib import closing
 from dataclasses import dataclass
+from functools import lru_cache
 import hashlib
 import json
 import os
@@ -46,9 +47,81 @@ def _hash(value):
     return hashlib.sha256(_json(value).encode("utf-8")).hexdigest()
 
 
-def _signature(value):
+def _stat_signature(value):
     return (value.st_dev, value.st_ino, value.st_mode, value.st_size,
             value.st_mtime_ns, value.st_ctime_ns)
+
+
+@lru_cache(maxsize=1)
+def _windows_signature_api():
+    """Cache API declarations only; never cache a source handle or its state."""
+    import ctypes
+    from ctypes import wintypes
+
+    class BasicInfo(ctypes.Structure):
+        _fields_ = [(name, ctypes.c_int64) for name in
+            ("creation", "access", "write", "change")] + [("attributes", wintypes.DWORD)]
+
+    dll = ctypes.WinDLL("kernel32", use_last_error=True)
+    dll.CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+        ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+    dll.CreateFileW.restype = wintypes.HANDLE
+    dll.GetFileInformationByHandleEx.argtypes = [wintypes.HANDLE, ctypes.c_int,
+        ctypes.c_void_p, wintypes.DWORD]
+    dll.GetFileInformationByHandleEx.restype = wintypes.BOOL
+    dll.CloseHandle.argtypes = [wintypes.HANDLE]
+    dll.CloseHandle.restype = wintypes.BOOL
+    return dll, BasicInfo
+
+
+def _windows_signature(path, value):
+    """Read native ChangeTime, not Python 3.11's Windows creation-time ctime.
+
+    FILE_READ_ATTRIBUTES reads no content. OPEN_REPARSE_POINT prevents following
+    a replacement leaf link; the brief handle denies writers/deletion while its
+    identity and time are observed. Existing owner leases still span the query.
+    Missing native support fails closed, never reuses an untrustworthy cache.
+    """
+    import ctypes
+    import msvcrt
+
+    handle, descriptor = None, None
+    try:
+        dll, BasicInfo = _windows_signature_api()
+        name = os.path.abspath(path)
+        if not name.startswith("\\\\?\\"):
+            name = "\\\\?\\UNC\\" + name[2:] if name.startswith("\\\\") else "\\\\?\\" + name
+        # FILE_READ_ATTRIBUTES, FILE_SHARE_READ, OPEN_EXISTING,
+        # FILE_FLAG_OPEN_REPARSE_POINT. No creation or content read is allowed.
+        handle = dll.CreateFileW(name, 0x80, 0x1, None, 3, 0x00200000, None)
+        if handle in (None, ctypes.c_void_p(-1).value):
+            handle = None
+            raise AssetQueryUnavailable()
+        descriptor = msvcrt.open_osfhandle(handle, os.O_RDONLY | os.O_BINARY)
+        handle = None  # descriptor owns the native handle from this point.
+        opened = os.fstat(descriptor)
+        basic = BasicInfo()
+        if not dll.GetFileInformationByHandleEx(msvcrt.get_osfhandle(descriptor), 0,
+                ctypes.byref(basic), ctypes.sizeof(basic)):
+            raise AssetQueryUnavailable()
+        if (not stat.S_ISREG(opened.st_mode) or basic.attributes & (0x400 | 0x10)
+                or basic.change <= 0):
+            raise AssetQueryUnavailable()
+        expected = _stat_signature(value)
+        if _stat_signature(opened) != expected or _stat_signature(os.lstat(path)) != expected:
+            raise AssetQueryChanged()
+        return (*expected[:-1], basic.change)
+    except (OSError, AttributeError, ImportError, ValueError):
+        raise AssetQueryUnavailable() from None
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        elif handle is not None:
+            dll.CloseHandle(handle)
+
+
+def _signature(value, path):
+    return _windows_signature(path, value) if os.name == "nt" else _stat_signature(value)
 
 
 def _revision(fingerprints):
@@ -69,13 +142,14 @@ class AssetQuerySnapshot:
 class FileAssetQueryIndex:
     """A derived SQLite index with bounded source reconciliation and cold reopen.
 
-    Source signatures include ctime, inode and size, so an in-place edit is not
+    Source signatures include change time, inode and size, so an in-place edit is not
     mistaken for an unchanged directory. This detects ordinary writes; it does
     not defend against a privileged local actor forging filesystem metadata.
     A revision conservatively covers all asset metadata, including other scopes.
     """
 
-    FORMAT_VERSION = "1"
+    # Old Windows signatures contained creation time and must be rebuilt once.
+    FORMAT_VERSION = "2-windows-change-time" if os.name == "nt" else "1"
     MAX_METADATA_FILES = 50_000
     MAX_DIRECTORY_ENTRIES = 200_000
     MAX_METADATA_BYTES = 1024 * 1024
@@ -120,7 +194,8 @@ class FileAssetQueryIndex:
                     entry.name.encode("utf-8")
                     if len(fingerprints) >= self.MAX_METADATA_FILES:
                         raise AssetQueryBudgetExceeded()
-                    info = entry.stat(follow_symlinks=False)
+                    # Windows DirEntry.stat may omit inode/device identity.
+                    info = os.lstat(entry.path) if os.name == "nt" else entry.stat(follow_symlinks=False)
                     if not stat.S_ISREG(info.st_mode):
                         raise AssetQueryUnavailable()
                     if info.st_size > self.MAX_METADATA_BYTES:
@@ -128,7 +203,7 @@ class FileAssetQueryIndex:
                     source_bytes += info.st_size
                     if source_bytes > self.MAX_SOURCE_BYTES:
                         raise AssetQueryBudgetExceeded()
-                    fingerprints.append((entry.name, _signature(info)))
+                    fingerprints.append((entry.name, _signature(info, entry.path)))
         except FileNotFoundError:
             raise AssetQueryChanged() from None
         except (OSError, UnicodeError):
@@ -202,7 +277,7 @@ class FileAssetQueryIndex:
             raise AssetQueryUnavailable()
         if info.st_size > self.MAX_INDEX_BYTES:
             raise AssetQueryBudgetExceeded()
-        return _signature(info)
+        return _signature(info, self.path)
 
     def _connect(self, path, *, readonly=False):
         if readonly:
