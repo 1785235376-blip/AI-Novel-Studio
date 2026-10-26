@@ -11,7 +11,7 @@ from pathlib import Path
 from threading import Event, Thread
 
 import pytest
-from studio_asset_usage_fixture import usage_rig, graph_create, create_timeline, snapshot
+from studio_asset_usage_fixture import usage_rig, audio_history, rig, graph_create, create_timeline, snapshot
 from studio_asset_usage_resource_meter import measured_cost
 
 pytestmark = [pytest.mark.file_backend_only,
