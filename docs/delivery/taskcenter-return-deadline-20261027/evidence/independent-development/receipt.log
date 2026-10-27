@@ -1,0 +1,54 @@
+..........FFF.................                                           [100%]
+=================================== FAILURES ===================================
+_________ test_type_coercion_cannot_rescue_replaced_position[change0] __________
+
+change = {'offset': False}
+
+    @pytest.mark.parametrize('change', [{'offset': False}, {'offset': 0.0}, {'has_more': 1}])
+    def test_type_coercion_cannot_rescue_replaced_position(change):
+        engine, _, page = setup()
+>       with pytest.raises(TaskCenterCursorRestart):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.experimental.taskcenter_cursor.TaskCenterCursorRestart'>
+
+tests/test_taskcenter_return_receipt_independent.py:59: Failed
+_________ test_type_coercion_cannot_rescue_replaced_position[change1] __________
+
+change = {'offset': 0.0}
+
+    @pytest.mark.parametrize('change', [{'offset': False}, {'offset': 0.0}, {'has_more': 1}])
+    def test_type_coercion_cannot_rescue_replaced_position(change):
+        engine, _, page = setup()
+>       with pytest.raises(TaskCenterCursorRestart):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.experimental.taskcenter_cursor.TaskCenterCursorRestart'>
+
+tests/test_taskcenter_return_receipt_independent.py:59: Failed
+_________ test_type_coercion_cannot_rescue_replaced_position[change2] __________
+
+change = {'has_more': 1}
+
+    @pytest.mark.parametrize('change', [{'offset': False}, {'offset': 0.0}, {'has_more': 1}])
+    def test_type_coercion_cannot_rescue_replaced_position(change):
+        engine, _, page = setup()
+>       with pytest.raises(TaskCenterCursorRestart):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.experimental.taskcenter_cursor.TaskCenterCursorRestart'>
+
+tests/test_taskcenter_return_receipt_independent.py:59: Failed
+=============================== warnings summary ===============================
+tests/test_taskcenter_return_receipt_independent.py::test_exact_deadline_rejects_even_ephemeral_first_page[0]
+  /workspace/scratch/20a0022d2b33/hermia-taskcenter-continuation-20261027/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_return_receipt_independent.py::test_exact_deadline_rejects_even_ephemeral_first_page[0]
+  /workspace/scratch/20a0022d2b33/hermia-taskcenter-continuation-20261027/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/hermia-taskcenter-continuation-20261027/.runtime/independent/receipt.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_return_receipt_independent.py::test_type_coercion_cannot_rescue_replaced_position[change0]
+FAILED tests/test_taskcenter_return_receipt_independent.py::test_type_coercion_cannot_rescue_replaced_position[change1]
+FAILED tests/test_taskcenter_return_receipt_independent.py::test_type_coercion_cannot_rescue_replaced_position[change2]
+3 failed, 27 passed, 2 warnings in 4.35s

@@ -1,4 +1,4 @@
-"""Unwired, bounded TaskCenter cursor metadata; never an authority or task cache.
+"""Bounded TaskCenter cursor metadata; never an authority or task cache.
 
 The HTTP adapter must still perform its original authorization, scope fencing,
 bounded readers and current safe-projection checks before and after each page.
@@ -8,13 +8,13 @@ may opt in with supported=True. This module cannot establish that evidence.
 Each observation stores three digests, page size, observed count and one fixed
 deadline. Tokens contain a random handle, a non-sensitive page position and an
 HMAC. They contain no query, task text, credentials, private path or digest.
-No business or credential files are read or written. This candidate is NOT wired
-to an HTTP route; default callers explicitly receive UNSUPPORTED.
+No business or credential files are read or written. Supported HTTP adapters
+retain all original owner checks; default callers receive UNSUPPORTED.
 """
 from __future__ import annotations
 
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import hashlib
 import hmac
 import json
@@ -56,6 +56,17 @@ class CursorPage:
     offset: int
     next_cursor: str | None
     has_more: bool
+    # Internal, bounded final-return receipt; never included in HTTP responses.
+    _receipt: object = field(default=None, repr=False, compare=False)
+
+
+@dataclass(frozen=True)
+class _ReturnReceipt:
+    issuer: object
+    epoch: object
+    observation: object
+    handle: str | None
+    position: tuple
 
 
 @dataclass(frozen=True)
@@ -127,6 +138,8 @@ class TaskCenterCursorEngine:
         self._key = self._new_key()
         self._pid = os.getpid()
         self._last_now = None
+        self._receipt_issuer = object()
+        self._receipt_epoch = object()
 
     @staticmethod
     def _new_key():
@@ -153,9 +166,11 @@ class TaskCenterCursorEngine:
                 raise TaskCenterCursorUnsupported()
         except Exception:
             self._states.clear()
+            self._receipt_epoch = object()
             raise TaskCenterCursorUnsupported() from None
         if self._last_now is not None and value < self._last_now:
             self._states.clear()
+            self._receipt_epoch = object()
             self._last_now = value
             raise TaskCenterCursorRestart()
         self._last_now = value
@@ -251,4 +266,32 @@ class TaskCenterCursorEngine:
                 while len(self._states) >= self._capacity:
                     self._states.popitem(last=False)
                 self._states[handle] = observation
-            return CursorPage(offset, next_cursor, has_more)
+            receipt = _ReturnReceipt(self._receipt_issuer, self._receipt_epoch,
+                                     observation, handle, (offset, next_cursor, has_more))
+            return CursorPage(offset, next_cursor, has_more, receipt)
+
+    def validate_return(self, page):
+        """Recheck a position after the adapter's final owner observations.
+
+        This private receipt is not authorization and is not accepted from HTTP.
+        No callback runs under the engine lock; no observation is allocated or
+        renewed here. Even an empty/single first page retains its original
+        ephemeral deadline, and a last page still binds its input observation.
+        """
+        self._current_process()
+        if (type(page) is not CursorPage or type(page._receipt) is not _ReturnReceipt
+                or type(page.offset) is not int or type(page.has_more) is not bool
+                or (page.next_cursor is not None and type(page.next_cursor) is not str)):
+            raise TaskCenterCursorRestart()
+        receipt = page._receipt
+        with self._lock:
+            now = self._now()
+            self._prune(now)
+            if (receipt.issuer is not self._receipt_issuer
+                    or receipt.epoch is not self._receipt_epoch
+                    or receipt.position != (page.offset, page.next_cursor, page.has_more)
+                    or now >= receipt.observation.deadline
+                    or (receipt.handle is not None
+                        and self._states.get(receipt.handle) is not receipt.observation)):
+                raise TaskCenterCursorRestart()
+

@@ -1,0 +1,38 @@
+{
+  "status": "PARTIAL",
+  "base": "048fe2a12212df85c272cdc0741659498378d334",
+  "source_freeze": "d5845afafcbe83105374b861760cb7f0543b3d99",
+  "groups_overlap": true,
+  "groups": {
+    "final-taskcenter": {
+      "tests": 567,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "receipt": "final-taskcenter-receipt.json"
+    },
+    "final-consumers": {
+      "tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "receipt": "final-consumers-receipt.json"
+    },
+    "final-independent": {
+      "tests": 66,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "receipt": "final-independent-receipt.json"
+    }
+  },
+  "production_files": [
+    "app/experimental/taskcenter_cursor.py",
+    "app/experimental/taskcenter_cursor_http.py"
+  ],
+  "original_409_fixed": false,
+  "remote_publication": "NOT_UPLOADED"
+}

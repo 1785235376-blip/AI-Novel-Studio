@@ -240,7 +240,8 @@ class TaskCenterCursorHTTPAdapter:
         reauthorize()
         self._gate(ctx, selection)
         try:
-            position = self.engine.page(binding=binding, query=query_digest,
+            issuing_engine = self.engine
+            position = issuing_engine.page(binding=binding, query=query_digest,
                 projection=projection, observed_total=len(result["items"]),
                 limit=limit, token=selection.cursor, supported=True)
         except TaskCenterCursorInvalid:
@@ -257,6 +258,16 @@ class TaskCenterCursorHTTPAdapter:
         if final != after:
             self._unavailable(selection)
         self._gate(ctx, selection)
+        # Final observations above may be slow. They cannot extend the fixed
+        # cursor deadline, nor return a position from a replaced/evicted engine.
+        if self.engine is not issuing_engine:
+            raise HTTPException(409, RESTART_ERROR)
+        try:
+            issuing_engine.validate_return(position)
+        except TaskCenterCursorRestart:
+            raise HTTPException(409, RESTART_ERROR) from None
+        except TaskCenterCursorUnsupported:
+            self._unavailable(selection)
         return add_query_metadata({**result,
             "items": result["items"][position.offset:position.offset + limit],
             "page_mode": "cursor", "limit": limit, "has_more": position.has_more,
