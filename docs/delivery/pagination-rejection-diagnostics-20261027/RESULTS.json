@@ -1,0 +1,19 @@
+{
+  "baseline": "6bced268539cee6938f346a27f945a9a290ee4f6",
+  "freeze": "99258ef5b2dbc4b20065e4b624a42deee9306f94",
+  "final_passed": 22,
+  "independent_passed": 10,
+  "groups_overlap": true,
+  "production_changed": false,
+  "original_409_explained": false,
+  "status": "PARTIAL",
+  "archive_sha256": "4e66e9567e1f1af69edf4efbc02231201bfb69b4669878a19c609d01c73acba8",
+  "events": 28,
+  "error_types": [
+    "HTTPException",
+    "ReadOnlyCoordinationUnavailable",
+    "StaleSourceError",
+    "UsageBudgetError"
+  ],
+  "maximum_success_budget_elapsed": 6.170949103000112
+}

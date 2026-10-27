@@ -1,0 +1,1268 @@
+[
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_ASSET_USAGE_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 259,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "UsageBudgetError",
+        "code": "STUDIO_USAGE_RESOURCE_UNAVAILABLE",
+        "status": null,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 243,
+            "function": "admitted"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 116,
+            "function": "graph_invoke"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 104,
+            "function": "checked"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 91,
+            "function": "checked_graph"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 82,
+            "function": "current"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 67,
+            "function": "host_required"
+          },
+          {
+            "file": "project_store.py",
+            "line": 154,
+            "function": "read"
+          },
+          {
+            "file": "store.py",
+            "line": 233,
+            "function": "read"
+          },
+          {
+            "file": "store.py",
+            "line": 138,
+            "function": "_file_read"
+          },
+          {
+            "file": "store.py",
+            "line": 125,
+            "function": "_file_snapshot"
+          },
+          {
+            "file": "store.py",
+            "line": 120,
+            "function": "_file_bytes"
+          },
+          {
+            "file": "asset_usage_budget.py",
+            "line": 311,
+            "function": "read_json_bytes"
+          },
+          {
+            "file": "file_safety_http_server.py",
+            "line": 153,
+            "function": "observe_read_bytes"
+          },
+          {
+            "file": "asset_usage_budget.py",
+            "line": 261,
+            "function": "_read_bytes"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.028263048000098934,
+    "budget_elapsed": 0.037589901000046666,
+    "budget": {
+      "reads": 17,
+      "read_bytes": 2528,
+      "json_tokens": 272,
+      "json_documents": 16,
+      "json_input_bytes": 2528
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/exhausted.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 256,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "ReadOnlyCoordinationUnavailable",
+        "code": "STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE",
+        "status": null,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 201,
+            "function": "operation"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 193,
+            "function": "access"
+          },
+          {
+            "file": "api.py",
+            "line": 65,
+            "function": "authorize"
+          },
+          {
+            "file": "api.py",
+            "line": 3854,
+            "function": "_workbench_authorize"
+          },
+          {
+            "file": "api.py",
+            "line": 555,
+            "function": "guard"
+          },
+          {
+            "file": "novel_service.py",
+            "line": 30,
+            "function": "get"
+          },
+          {
+            "file": "novel.py",
+            "line": 22,
+            "function": "get"
+          },
+          {
+            "file": "file_project_lifecycle.py",
+            "line": 91,
+            "function": "guarded"
+          },
+          {
+            "file": "contextlib.py",
+            "line": 137,
+            "function": "__enter__"
+          },
+          {
+            "file": "file_project_lifecycle.py",
+            "line": 30,
+            "function": "project_operation"
+          },
+          {
+            "file": "contextlib.py",
+            "line": 137,
+            "function": "__enter__"
+          },
+          {
+            "file": "mutation_coordinator.py",
+            "line": 94,
+            "function": "workspace_mutation"
+          },
+          {
+            "file": "mutation_coordinator.py",
+            "line": 58,
+            "function": "workspace_mutation_lock"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.007828053000025648,
+    "budget_elapsed": 0.01793038499999966,
+    "budget": {
+      "reads": 0,
+      "read_bytes": 0,
+      "json_tokens": 0,
+      "json_documents": 0,
+      "json_input_bytes": 0
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.4587177460000476,
+    "budget_elapsed": 5.468118147000041,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.6001225630000135,
+    "budget_elapsed": 5.6109924080000155,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 4.886171807999972,
+    "budget_elapsed": 4.89817271000004,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.63918304799995,
+    "budget_elapsed": 5.6506007209999325,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.280635441999948,
+    "budget_elapsed": 5.289915382000004,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.6023981939999885,
+    "budget_elapsed": 5.610524541999894,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.84552548399995,
+    "budget_elapsed": 5.855160149999961,
+    "budget": {
+      "reads": 1678,
+      "read_bytes": 48593156,
+      "json_tokens": 7648927,
+      "json_documents": 1678,
+      "json_input_bytes": 48593156
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 4.7491259029999355,
+    "budget_elapsed": 4.757368385999939,
+    "budget": {
+      "reads": 1190,
+      "read_bytes": 34231548,
+      "json_tokens": 5388813,
+      "json_documents": 1190,
+      "json_input_bytes": 34231548
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 1.3678810989999874,
+    "budget_elapsed": 1.3786531439999408,
+    "budget": {
+      "reads": 356,
+      "read_bytes": 9614512,
+      "json_tokens": 1514627,
+      "json_documents": 356,
+      "json_input_bytes": 9614512
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.878971978999971,
+    "budget_elapsed": 5.886847430999865,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 42007730,
+      "json_tokens": 7054315,
+      "json_documents": 1505,
+      "json_input_bytes": 42007730
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_ASSET_USAGE_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 262,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "HTTPException",
+        "code": null,
+        "status": 409,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 243,
+            "function": "admitted"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 116,
+            "function": "graph_invoke"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 104,
+            "function": "checked"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 93,
+            "function": "checked_graph"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 242,
+            "function": "graph_observe"
+          },
+          {
+            "file": "production_execution_api.py",
+            "line": 177,
+            "function": "call"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 59,
+            "function": "api_call"
+          }
+        ]
+      },
+      {
+        "type": "StaleSourceError",
+        "code": "STUDIO_USAGE_RESTART_REQUIRED",
+        "status": null,
+        "frames": [
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "production_execution_api.py",
+            "line": 161,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 241,
+            "function": "both"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 226,
+            "function": "observe"
+          },
+          {
+            "file": "asset_usage_paging.py",
+            "line": 163,
+            "function": "paged_usages"
+          },
+          {
+            "file": "asset_usage_paging.py",
+            "line": 212,
+            "function": "_paged_usages"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.3576062360000378,
+    "budget_elapsed": 0.3658900469999935,
+    "budget": {
+      "reads": 106,
+      "read_bytes": 2502598,
+      "json_tokens": 424160,
+      "json_documents": 106,
+      "json_input_bytes": 2502598
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.887895310999966,
+    "budget_elapsed": 5.896439553000164,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 44265742,
+      "json_tokens": 7498667,
+      "json_documents": 1505,
+      "json_input_bytes": 44265742
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/reopened.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_ASSET_USAGE_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 259,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "UsageBudgetError",
+        "code": "STUDIO_USAGE_RESOURCE_UNAVAILABLE",
+        "status": null,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 243,
+            "function": "admitted"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 116,
+            "function": "graph_invoke"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 104,
+            "function": "checked"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 91,
+            "function": "checked_graph"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 82,
+            "function": "current"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 67,
+            "function": "host_required"
+          },
+          {
+            "file": "project_store.py",
+            "line": 154,
+            "function": "read"
+          },
+          {
+            "file": "store.py",
+            "line": 233,
+            "function": "read"
+          },
+          {
+            "file": "store.py",
+            "line": 138,
+            "function": "_file_read"
+          },
+          {
+            "file": "store.py",
+            "line": 125,
+            "function": "_file_snapshot"
+          },
+          {
+            "file": "store.py",
+            "line": 120,
+            "function": "_file_bytes"
+          },
+          {
+            "file": "asset_usage_budget.py",
+            "line": 311,
+            "function": "read_json_bytes"
+          },
+          {
+            "file": "file_safety_http_server.py",
+            "line": 153,
+            "function": "observe_read_bytes"
+          },
+          {
+            "file": "asset_usage_budget.py",
+            "line": 261,
+            "function": "_read_bytes"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.038455247999991116,
+    "budget_elapsed": 0.04951028599998608,
+    "budget": {
+      "reads": 17,
+      "read_bytes": 2528,
+      "json_tokens": 272,
+      "json_documents": 16,
+      "json_input_bytes": 2528
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/exhausted.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 256,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "ReadOnlyCoordinationUnavailable",
+        "code": "STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE",
+        "status": null,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 201,
+            "function": "operation"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 193,
+            "function": "access"
+          },
+          {
+            "file": "api.py",
+            "line": 65,
+            "function": "authorize"
+          },
+          {
+            "file": "api.py",
+            "line": 3854,
+            "function": "_workbench_authorize"
+          },
+          {
+            "file": "api.py",
+            "line": 555,
+            "function": "guard"
+          },
+          {
+            "file": "novel_service.py",
+            "line": 30,
+            "function": "get"
+          },
+          {
+            "file": "novel.py",
+            "line": 22,
+            "function": "get"
+          },
+          {
+            "file": "file_project_lifecycle.py",
+            "line": 91,
+            "function": "guarded"
+          },
+          {
+            "file": "contextlib.py",
+            "line": 137,
+            "function": "__enter__"
+          },
+          {
+            "file": "file_project_lifecycle.py",
+            "line": 30,
+            "function": "project_operation"
+          },
+          {
+            "file": "contextlib.py",
+            "line": 137,
+            "function": "__enter__"
+          },
+          {
+            "file": "mutation_coordinator.py",
+            "line": 94,
+            "function": "workspace_mutation"
+          },
+          {
+            "file": "mutation_coordinator.py",
+            "line": 58,
+            "function": "workspace_mutation_lock"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.00521033199993326,
+    "budget_elapsed": 0.022012556999925437,
+    "budget": {
+      "reads": 0,
+      "read_bytes": 0,
+      "json_tokens": 0,
+      "json_documents": 0,
+      "json_input_bytes": 0
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.434033745000079,
+    "budget_elapsed": 5.443248965000066,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.477354506999973,
+    "budget_elapsed": 5.488977139999861,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.191471187999923,
+    "budget_elapsed": 5.20524311500003,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.695174837000195,
+    "budget_elapsed": 5.7037074830000165,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.955206954999994,
+    "budget_elapsed": 5.968477294000195,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.810719605000031,
+    "budget_elapsed": 5.819969375000028,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 43465442,
+      "json_tokens": 6841891,
+      "json_documents": 1505,
+      "json_input_bytes": 43465442
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.8058392519999416,
+    "budget_elapsed": 5.816873020000003,
+    "budget": {
+      "reads": 1678,
+      "read_bytes": 48593156,
+      "json_tokens": 7648927,
+      "json_documents": 1678,
+      "json_input_bytes": 48593156
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 4.554494543999908,
+    "budget_elapsed": 4.563913966999962,
+    "budget": {
+      "reads": 1190,
+      "read_bytes": 34231548,
+      "json_tokens": 5388813,
+      "json_documents": 1190,
+      "json_input_bytes": 34231548
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 1.4661086199998863,
+    "budget_elapsed": 1.4828484100000878,
+    "budget": {
+      "reads": 356,
+      "read_bytes": 9614512,
+      "json_tokens": 1514627,
+      "json_documents": 356,
+      "json_input_bytes": 9614512
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 5.945084598999983,
+    "budget_elapsed": 5.954014930000085,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 42007730,
+      "json_tokens": 7054315,
+      "json_documents": 1505,
+      "json_input_bytes": 42007730
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [
+      {
+        "type": "HTTPException",
+        "code": "STUDIO_ASSET_USAGE_UNAVAILABLE",
+        "status": 409,
+        "frames": [
+          {
+            "file": "usage_endpoint_diagnostics.py",
+            "line": 38,
+            "function": "observed"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 262,
+            "function": "saved_asset_usages"
+          }
+        ]
+      },
+      {
+        "type": "HTTPException",
+        "code": null,
+        "status": 409,
+        "frames": [
+          {
+            "file": "graph_api.py",
+            "line": 254,
+            "function": "saved_asset_usages"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 243,
+            "function": "admitted"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 116,
+            "function": "graph_invoke"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 104,
+            "function": "checked"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 93,
+            "function": "checked_graph"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 242,
+            "function": "graph_observe"
+          },
+          {
+            "file": "production_execution_api.py",
+            "line": 177,
+            "function": "call"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 220,
+            "function": "invoke"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 24,
+            "function": "api_call"
+          },
+          {
+            "file": "common.py",
+            "line": 59,
+            "function": "api_call"
+          }
+        ]
+      },
+      {
+        "type": "StaleSourceError",
+        "code": "STUDIO_USAGE_RESTART_REQUIRED",
+        "status": null,
+        "frames": [
+          {
+            "file": "common.py",
+            "line": 55,
+            "function": "api_call"
+          },
+          {
+            "file": "production_lineage_api.py",
+            "line": 21,
+            "function": "checked"
+          },
+          {
+            "file": "workspace_api.py",
+            "line": 211,
+            "function": "operation"
+          },
+          {
+            "file": "production_execution_api.py",
+            "line": 161,
+            "function": "operation"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 241,
+            "function": "both"
+          },
+          {
+            "file": "graph_api.py",
+            "line": 226,
+            "function": "observe"
+          },
+          {
+            "file": "asset_usage_paging.py",
+            "line": 163,
+            "function": "paged_usages"
+          },
+          {
+            "file": "asset_usage_paging.py",
+            "line": 212,
+            "function": "_paged_usages"
+          }
+        ]
+      }
+    ],
+    "elapsed": 0.3449937369998679,
+    "budget_elapsed": 0.35379953300002853,
+    "budget": {
+      "reads": 106,
+      "read_bytes": 2502598,
+      "json_tokens": 424160,
+      "json_documents": 106,
+      "json_input_bytes": 2502598
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log"
+  },
+  {
+    "event": "asset_usage_endpoint",
+    "errors": [],
+    "elapsed": 6.160931201000039,
+    "budget_elapsed": 6.170949103000112,
+    "budget": {
+      "reads": 1505,
+      "read_bytes": 44265742,
+      "json_tokens": 7498667,
+      "json_documents": 1505,
+      "json_input_bytes": 44265742
+    },
+    "log": "diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/reopened.log"
+  }
+]

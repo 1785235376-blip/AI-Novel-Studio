@@ -1,0 +1,307 @@
+[
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-modules.json",
+    "bytes": 120369,
+    "sha256": "35efb74e993bb939f3b763416c59d0c153bd1087b4583b36eeecdb4f56b70965"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+    "bytes": 155779,
+    "sha256": "c1c571896b52df6e79d6ee0317b7a25404bc2837ad5216d276039437ae7cf479"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+    "bytes": 2703356,
+    "sha256": "496ee7cae583cc17a9a643920336a5b8ac37b1a9c7434ad62354c9869b8f66f9"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+    "bytes": 440441,
+    "sha256": "73cce88c751fb3b59d7b50a143944c820e4ccb1693afec08995153666e7a7a6d"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/exhausted.log",
+    "bytes": 517,
+    "sha256": "e4984019dbade6c83066fb342a0db60a5ef6986ca14730188a9f3a71ab0f959c"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log",
+    "bytes": 517,
+    "sha256": "e4984019dbade6c83066fb342a0db60a5ef6986ca14730188a9f3a71ab0f959c"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/reopened.log",
+    "bytes": 517,
+    "sha256": "e4984019dbade6c83066fb342a0db60a5ef6986ca14730188a9f3a71ab0f959c"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic.log",
+    "bytes": 344,
+    "sha256": "eadd9bb74c0eddc2e5c4bdf027f4c374015540226dff388828be3563527b4757"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic.receipt.json",
+    "bytes": 133005,
+    "sha256": "d71dba23154c3ab69bac6a46113457ca65a9461a5f2d7eefe899fe259a765682"
+  },
+  {
+    "path": "exploratory-hook-not-attached/endpoint-diagnostic.xml",
+    "bytes": 409,
+    "sha256": "5181a7821df19de772cd7d8d56f896715d91fb0fafb324fa9b57add26969cf73"
+  },
+  {
+    "path": "exploratory-hook-not-attached/testserver-first-attempt.py",
+    "bytes": 12075,
+    "sha256": "5378ba9b2bddc8e1f01aaccef354a4e05a487836d28e991c9f792e2a63626464"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-modules.json",
+    "bytes": 120369,
+    "sha256": "35efb74e993bb939f3b763416c59d0c153bd1087b4583b36eeecdb4f56b70965"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+    "bytes": 155779,
+    "sha256": "7f8cbb34cd151692a039efdf4f3faeae07ec8809a6bfbd47a94a08686494e914"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+    "bytes": 2703356,
+    "sha256": "8f7746f496b18f609b4c8e87413aa8b9dfd9393ae4b6634920c26f2fdfbc962f"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+    "bytes": 440441,
+    "sha256": "a6c30388e1c088aa20e8f88cdfb7cde40f8b0d5191b85c0958841e72b6a2da10"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/exhausted.log",
+    "bytes": 2809,
+    "sha256": "5e2d9f1c16d17ef4149ae24ac464b777a347ae83cb2866e5454d5f31ce51aac7"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log",
+    "bytes": 7624,
+    "sha256": "11e274e145b9bf2fc8a175fbe98df652879e804204f9db543330174bce4fdfb4"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/reopened.log",
+    "bytes": 814,
+    "sha256": "9c49748ff8a974fe8a8e0a79102eee15a7a552871340640ada10546eeaa8751c"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic.log",
+    "bytes": 343,
+    "sha256": "bddc7fceacca1d82ff12bb6c0a16a59c0e897813ca2e739c844c4d75657938c6"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic.receipt.json",
+    "bytes": 133004,
+    "sha256": "554e9e5ade05c2ea03e5dc2ee697badc799b7f00e08646707a408b93909ca293"
+  },
+  {
+    "path": "exploratory-attached/endpoint-diagnostic.xml",
+    "bytes": 408,
+    "sha256": "955161368cdd0c763884eaa3ebc7fe618e59b8daf39c29632aa388ccd05522f8"
+  },
+  {
+    "path": "exploratory-attached/testserver-instrumented.py",
+    "bytes": 12726,
+    "sha256": "5f29fa9aeacb97b479f78a0fc6a72f74b360f40d4bb7a9fb266b841b0e8a6ec5"
+  },
+  {
+    "path": "exploratory-unit8/diagnostic-tests-modules.json",
+    "bytes": 120107,
+    "sha256": "4102e51323e6f0616b4e2b4fe546a69d9a9e7333b74ff79413f9603ddf234180"
+  },
+  {
+    "path": "exploratory-unit8/diagnostic-tests.log",
+    "bytes": 329,
+    "sha256": "bf9ac744d6f8723b7139aa811fb247847bbcde78e897ac13ebf72bcec9ed525c"
+  },
+  {
+    "path": "exploratory-unit8/diagnostic-tests.receipt.json",
+    "bytes": 132921,
+    "sha256": "88368d96033645a6976c62d86c04528bcbd568bb152082728642a592caec9e5b"
+  },
+  {
+    "path": "exploratory-unit8/diagnostic-tests.xml",
+    "bytes": 1359,
+    "sha256": "abae511ff86a6b55104cfabc2183354e7e730f918ff1395501860554cdbb321c"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-modules.json",
+    "bytes": 120369,
+    "sha256": "35efb74e993bb939f3b763416c59d0c153bd1087b4583b36eeecdb4f56b70965"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+    "bytes": 155779,
+    "sha256": "f418a6ee4a69b89fc97a8035ad6940ddd0d2104b65e554cbf6eff287c7254dfa"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+    "bytes": 2703356,
+    "sha256": "9885bc8606fce901d1a8bfaabb5e597460eb546df738156a581f402beeab0ade"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+    "bytes": 440441,
+    "sha256": "024b48eca47f3089c523c4f28a2205471761259dd42019e7d76d932497b6e3e9"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/exhausted.log",
+    "bytes": 2840,
+    "sha256": "12a169140ec8b3811915f1a25b8d059a1c58435b13dbfd30ac9bd3856868d5f5"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log",
+    "bytes": 7694,
+    "sha256": "fe2f0f032b0b2ecaeb7214714ff4ffb2b7fcee08665afe12e6cad8d6cfb082f0"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/reopened.log",
+    "bytes": 814,
+    "sha256": "50dc7d75ae7015dde4e9f7a3e5ac210114e73ec0f7b452221ca669dd4b9729e4"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic.log",
+    "bytes": 342,
+    "sha256": "d22f1fc1de582ec94b22ec833305abe3989fde15a77f3a74cd55d553cec37bbc"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic.receipt.json",
+    "bytes": 133047,
+    "sha256": "6c10a5852ba1e29a7acc9b4f521fef81c121c55f488e0d7c339ec2f8e791f6fc"
+  },
+  {
+    "path": "exploratory-helper-edited/final-diagnostic.xml",
+    "bytes": 1649,
+    "sha256": "1fc7401e2ed7332e9ecbf6c2ccb8165e98e1798e947229571b8f87dedfb6be22"
+  },
+  {
+    "path": "independent/red.log",
+    "bytes": 8324,
+    "sha256": "367751b2007094fffb73e7ac5ce6574c591521fff453a376fb30c3073bc698a8"
+  },
+  {
+    "path": "independent/red.xml",
+    "bytes": 8685,
+    "sha256": "b9837e5a6801784bd648abb64c498bd5e8ad49ff4afe637cd8053c680567a7a0"
+  },
+  {
+    "path": "independent/red2.log",
+    "bytes": 227,
+    "sha256": "79222ad4c482bfad856a7a8c91f17c7a7095c0e6a13f927e381acacdd8908f2f"
+  },
+  {
+    "path": "independent/red2.xml",
+    "bytes": 1461,
+    "sha256": "3d7b42e4432ac02e44550d1db01636fed735ffb0c4de581e272e8f4865774ba0"
+  },
+  {
+    "path": "independent/red3.log",
+    "bytes": 228,
+    "sha256": "f3e8cb2d86def3e32db6881fd8e1d56ffbb09739694bc2c0eea1bdf11a0230ae"
+  },
+  {
+    "path": "independent/red3.xml",
+    "bytes": 1748,
+    "sha256": "7b35929555d98bbd1c052e42489b9c1d095876405a758335d6811cebde480578"
+  },
+  {
+    "path": "independent-final/junit.xml",
+    "bytes": 1748,
+    "sha256": "1127280e5a9091acee0d4b11728c8f81c414f64220f66c5474e913afefb22cca"
+  },
+  {
+    "path": "independent-final/receipt.json",
+    "bytes": 1456,
+    "sha256": "0fb79f95f4bc4774d459301c2fc5e6696d692b3b283870edd94a3dfbddbffc64"
+  },
+  {
+    "path": "independent-final/test.log",
+    "bytes": 235,
+    "sha256": "4314ebfde026108de9c4d1a5a1821d035fb804b17ebb7864b78debb11c67c528"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-modules.json",
+    "bytes": 117974,
+    "sha256": "16414da044bbd46a653d5962ff3b39b03f881439d1bd82749604865765a02dab"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+    "bytes": 153364,
+    "sha256": "18238f54c1783fe1784a6570c7a2b1606217e12aec2665613aac28e134f1d726"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+    "bytes": 2700826,
+    "sha256": "e4b756e374faea51491b2b80804ac149684b78a6bb87fde3cbe45d1af025dc6f"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+    "bytes": 437997,
+    "sha256": "e67eeac2236eb1f5ac7e85232119cd0665ed3321d57263da6fb181d104f2f78f"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw1-exhausted-receipt.json",
+    "bytes": 153379,
+    "sha256": "32ae1ff0b63b052851ed48448cba02a077cb6a57c1858f6a63e5cbeff07f3e44"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw1-normal-receipt.json",
+    "bytes": 2700946,
+    "sha256": "1c73d53822bd91a637b4e0c73a1357673fe71b9d0baf1d501e6fb41d163c6051"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/http-evidence/combined-test_socket_local_asset_and_tw1-reopened-receipt.json",
+    "bytes": 438036,
+    "sha256": "8c8a81bfcf87a7b222e6747e70b86344f232aecacbe6a43f1f780a2a905faa0a"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/exhausted.log",
+    "bytes": 2832,
+    "sha256": "c43a2e49d68021f00edfcdb423ec2361ef38040b0ff36cb9933a427cf78cd4dd"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/normal.log",
+    "bytes": 7689,
+    "sha256": "023aceb710cea22d000a471a67a07f22c7b79be4c5c548e9f305ea75e98d2ac5"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw0/reopened.log",
+    "bytes": 804,
+    "sha256": "165bc6286ea8115cfd5206938269dee9a9d8c21f5785dcc941f45bda1987faf8"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/exhausted.log",
+    "bytes": 2831,
+    "sha256": "55b557db7796c1b7f46edf334de2b3890fcaaf2e645cc2bbf5056e3e0c056b05"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/normal.log",
+    "bytes": 7688,
+    "sha256": "ec504a1d04649dd56ef1af01cbc2307ba73fe5fe0d2273f722d77b84e9fad7fe"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance-runtime/tmp/pytest-of-agent/pytest-0/combined-test_socket_local_asset_and_tw1/reopened.log",
+    "bytes": 804,
+    "sha256": "6e550df8c967ae4c883754090c38aef0d181b02d6bc182be7c4445d9514ac7ad"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance.log",
+    "bytes": 352,
+    "sha256": "87f69255ea319d7b9a5351e9552e1742be2b6e6174e751b3786c293563cd969a"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance.receipt.json",
+    "bytes": 133108,
+    "sha256": "7b3ddb7d656917461408d5422a619885811540cdabaa189bb528f1f9b0fdd134"
+  },
+  {
+    "path": "final-immutable-99258ef5/diagnostic-acceptance.xml",
+    "bytes": 3437,
+    "sha256": "2803b568f22f943527788a5b59bc16676c79bd0ee968c80fc90a52d98e59a09a"
+  }
+]

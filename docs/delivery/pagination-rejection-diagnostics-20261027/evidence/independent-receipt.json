@@ -1,0 +1,28 @@
+{
+  "head": "99258ef5b2dbc4b20065e4b624a42deee9306f94",
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "tests/test_usage_endpoint_diagnostics_independent.py",
+    "-q",
+    "--junitxml=/workspace/scratch/20a0022d2b33/hermia-pagination-diagnostics-20261027/.diagnostics/independent-final/junit.xml"
+  ],
+  "exit_code": 0,
+  "elapsed": 0.3654627650000748,
+  "before": {
+    "tests/usage_endpoint_diagnostics.py": "b106cb012d808436b906a1efa46b000cd5143c5fc1b63475434fa4e72f1dfd67",
+    "tests/test_usage_endpoint_diagnostics.py": "6298a3f21947e84caa2860bce2d5c4c80f55a02debffcd12d677c5bdb30393ef",
+    "tests/test_usage_endpoint_diagnostics_independent.py": "c532272a5c84258e93a88c784e1ca20cfc59a3bdffaf5bf00e4913b574c99368",
+    "tests/file_safety_http_server.py": "d9407a2404d1d135d3cb3a82fbe8ec83c9c4952465f0839e69a8a22be54fcbf5"
+  },
+  "after": {
+    "tests/usage_endpoint_diagnostics.py": "b106cb012d808436b906a1efa46b000cd5143c5fc1b63475434fa4e72f1dfd67",
+    "tests/test_usage_endpoint_diagnostics.py": "6298a3f21947e84caa2860bce2d5c4c80f55a02debffcd12d677c5bdb30393ef",
+    "tests/test_usage_endpoint_diagnostics_independent.py": "c532272a5c84258e93a88c784e1ca20cfc59a3bdffaf5bf00e4913b574c99368",
+    "tests/file_safety_http_server.py": "d9407a2404d1d135d3cb3a82fbe8ec83c9c4952465f0839e69a8a22be54fcbf5"
+  },
+  "unchanged": true,
+  "production_changed": false
+}
