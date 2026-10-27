@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="6.953" timestamp="2026-10-27T16:52:46.335577+09:00" hostname="0248db93a94b"><testcase classname="tests.test_export_recovery_ownership_process" name="test_second_process_must_not_recover_live_exporter" time="6.224"><failure message="AssertionError: startup B invoked the same exporter while A remained alive and paused&#10;assert not True">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/hermia-export-recovery-ownership-20261027/.runtime/tmp/test_second_process_must_not_r0')
+
+    def test_second_process_must_not_recover_live_exporter(tmp_path):
+        root=tmp_path/'data'; root.mkdir(); control=tmp_path/'control';control.mkdir();children=[]
+        try:
+            a=launch(root,control,'a');children.append(a)
+            assert wait(control/'a-entered') and wait(control/'job.json')
+            job_id=json.loads((control/'job.json').read_text())['id']
+            before=json.loads((root/'export_jobs.json').read_text())[job_id]
+            assert before['status']=='running' and before['recovery_count']==0 and a.poll() is None
+            b=launch(root,control,'b');children.append(b)
+            assert wait(control/'b-constructed')
+            duplicated=wait(control/'b-entered',1)
+            during=json.loads((root/'export_jobs.json').read_text())[job_id]
+            (control/'b-release').touch(); finish(b)
+            after_b=json.loads((root/'export_jobs.json').read_text())[job_id]
+            assert a.poll() is None
+            (control/'a-release').touch();finish(a)
+            final=json.loads((root/'export_jobs.json').read_text())[job_id]
+            print(json.dumps({'live_duplicate':duplicated,'before_recovery':before['recovery_count'],
+                'during_recovery':during['recovery_count'],'after_b_content':(after_b.get('result') or {}).get('content'),
+                'final_content':(final.get('result') or {}).get('content')},sort_keys=True))
+&gt;           assert not duplicated, 'startup B invoked the same exporter while A remained alive and paused'
+E           AssertionError: startup B invoked the same exporter while A remained alive and paused
+E           assert not True
+
+tests/test_export_recovery_ownership_process.py:78: AssertionError</failure></testcase><testcase classname="tests.test_export_recovery_ownership_process" name="test_dead_process_original_job_is_recovered" time="0.639" /></testsuite></testsuites>

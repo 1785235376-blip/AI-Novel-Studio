@@ -1,0 +1,13 @@
+{
+  "status": "PASS_WITH_LIMITS",
+  "tests": 19,
+  "exit_code": 0,
+  "files": {
+    "app/services/export_execution_claim.py": "1b52bb3b46092d013ac58db5f6e555e00604c3999dbfa00f8f540f80992509f5",
+    "app/services/export_job_service.py": "fdb50ad0ba7d9888923b98f3a3d5bd82f8a781b921b655ae3ecda4682e186b64",
+    "tests/test_export_execution_claim_independent.py": "a83f898dab2d934d3e146f01837061aa1462bfe67fbacb234ae52c30f3657bca",
+    "tests/test_export_owner_independent_process.py": "c7b2d97925cf62d4e70b46b2105eda00ae43ff4d5aa012c270e5b80ba8b95d98"
+  },
+  "fixture_review": "DeferredPool preserves actual submit/claim and Future cancellation; not a process death proof",
+  "limit": "No Windows/network filesystem/live-fork/external held lock replacement/exactly-once claims"
+}

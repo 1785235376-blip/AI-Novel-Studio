@@ -1,0 +1,46 @@
+{"after_b_content": "b", "before_recovery": 0, "during_recovery": 1, "final_content": "a", "live_duplicate": true}
+F.
+=================================== FAILURES ===================================
+______________ test_second_process_must_not_recover_live_exporter ______________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/hermia-export-recovery-ownership-20261027/.runtime/tmp/test_second_process_must_not_r0')
+
+    def test_second_process_must_not_recover_live_exporter(tmp_path):
+        root=tmp_path/'data'; root.mkdir(); control=tmp_path/'control';control.mkdir();children=[]
+        try:
+            a=launch(root,control,'a');children.append(a)
+            assert wait(control/'a-entered') and wait(control/'job.json')
+            job_id=json.loads((control/'job.json').read_text())['id']
+            before=json.loads((root/'export_jobs.json').read_text())[job_id]
+            assert before['status']=='running' and before['recovery_count']==0 and a.poll() is None
+            b=launch(root,control,'b');children.append(b)
+            assert wait(control/'b-constructed')
+            duplicated=wait(control/'b-entered',1)
+            during=json.loads((root/'export_jobs.json').read_text())[job_id]
+            (control/'b-release').touch(); finish(b)
+            after_b=json.loads((root/'export_jobs.json').read_text())[job_id]
+            assert a.poll() is None
+            (control/'a-release').touch();finish(a)
+            final=json.loads((root/'export_jobs.json').read_text())[job_id]
+            print(json.dumps({'live_duplicate':duplicated,'before_recovery':before['recovery_count'],
+                'during_recovery':during['recovery_count'],'after_b_content':(after_b.get('result') or {}).get('content'),
+                'final_content':(final.get('result') or {}).get('content')},sort_keys=True))
+>           assert not duplicated, 'startup B invoked the same exporter while A remained alive and paused'
+E           AssertionError: startup B invoked the same exporter while A remained alive and paused
+E           assert not True
+
+tests/test_export_recovery_ownership_process.py:78: AssertionError
+=============================== warnings summary ===============================
+tests/test_export_recovery_ownership_process.py::test_second_process_must_not_recover_live_exporter
+  /workspace/scratch/20a0022d2b33/hermia-export-recovery-ownership-20261027/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_recovery_ownership_process.py::test_second_process_must_not_recover_live_exporter
+  /workspace/scratch/20a0022d2b33/hermia-export-recovery-ownership-20261027/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/export-recovery-ownership-evidence/baseline.xml -
+=========================== short test summary info ============================
+FAILED tests/test_export_recovery_ownership_process.py::test_second_process_must_not_recover_live_exporter
+1 failed, 1 passed, 2 warnings in 6.95s

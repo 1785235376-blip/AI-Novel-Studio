@@ -1,0 +1,19 @@
+{
+  "status": "PASS_WITH_LIMITS",
+  "tests": 18,
+  "exit_code": 0,
+  "source_sha256": {
+    "app/services/export_execution_claim.py": "1b52bb3b46092d013ac58db5f6e555e00604c3999dbfa00f8f540f80992509f5",
+    "app/services/export_job_service.py": "fdb50ad0ba7d9888923b98f3a3d5bd82f8a781b921b655ae3ecda4682e186b64",
+    "tests/test_export_execution_claim_independent.py": "a83f898dab2d934d3e146f01837061aa1462bfe67fbacb234ae52c30f3657bca"
+  },
+  "scope": "same-host File process/thread ownership; no publication",
+  "limits": [
+    "Windows NOT_RUN",
+    "network filesystems/cross-host NOT_RUN",
+    "live fork without exec excluded",
+    "external replacement/removal of held coordination files excluded",
+    "create to submit permits another owner to win; no creator affinity",
+    "crash after external effect is not exactly once"
+  ]
+}

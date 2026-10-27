@@ -1,0 +1,13 @@
+......................                                                   [100%]
+=============================== warnings summary ===============================
+tests/test_export_recovery_ownership_process.py::test_second_process_must_not_recover_live_exporter
+  /workspace/scratch/20a0022d2b33/export-recovery-ownership-final2/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_recovery_ownership_process.py::test_second_process_must_not_recover_live_exporter
+  /workspace/scratch/20a0022d2b33/export-recovery-ownership-final2/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/export-recovery-ownership-evidence/final-focused.xml -
+22 passed, 2 warnings in 10.50s

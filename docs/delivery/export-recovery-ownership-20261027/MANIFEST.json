@@ -1,0 +1,206 @@
+{
+  "docs/delivery/export-recovery-ownership-20261027/DELIVERY.md": {
+    "sha256": "20483c7617ed91871c3127078f7ceda3b0339f0117748b2b7214d67c78f41bab",
+    "bytes": 3956
+  },
+  "docs/delivery/export-recovery-ownership-20261027/RESULTS.json": {
+    "sha256": "ec42e1f00c001db6c4cf8c19a665307c072e82a4aa31b00a841b3df1cd87c48d",
+    "bytes": 1000
+  },
+  "docs/delivery/export-recovery-ownership-20261027/WORK_HANDOFF.md": {
+    "sha256": "45e6961d84611bc247a41077f8553778dc398ff3342f6285e1f2c30260bbb353",
+    "bytes": 2535
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/baseline-exit.txt": {
+    "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/baseline.log": {
+    "sha256": "338b4e3fafc33771d5e098c6cec7a0e42e4dd6bdb183aa36ef9a06d811dbb5fb",
+    "bytes": 3353
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/baseline.xml": {
+    "sha256": "a76e02f187b911427e213c8e11296fe92dd95aa3284216d1e27e06d745e73d11",
+    "bytes": 2521
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-consumers-exit.txt": {
+    "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-consumers-receipt.json": {
+    "sha256": "441b1e2611918efb67600a679fdf33498d2dbbe0916d973a3da382e0b667d8e5",
+    "bytes": 199721
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-consumers.log": {
+    "sha256": "0912ef4abd5c6423b47ba6c175ea03d3d984d467c5eb261c66143d4bb9693010",
+    "bytes": 3447
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-consumers.xml": {
+    "sha256": "ef0c05fe84c87e3475b5fd90d94d7a46551963f50c13878741d5fdba0a652183",
+    "bytes": 29415
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-focused-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-focused-receipt.json": {
+    "sha256": "f7a79add329150d1f134aca0c67ecce3ed5c1e096c79e83c66781ee247339e1c",
+    "bytes": 198584
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-focused.log": {
+    "sha256": "4d6dba89a20b097ff14ed63f2d53a2c11bb77759ed6d255eae224181819c76d9",
+    "bytes": 1086
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-focused.xml": {
+    "sha256": "b55d63ce083716a7d700d9d7bb5cbddf99695888f18ccdb988488aaad3623aeb",
+    "bytes": 3398
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-taskcenter-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-taskcenter-receipt.json": {
+    "sha256": "c686eda7cca8a46bdc1fe64b3c116220ac5e39ed077d6388043d15b9879bea51",
+    "bytes": 199973
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-taskcenter.log": {
+    "sha256": "82163f63f593434f3844d90a1e11130a3991bb1c3c6223ad8db5ebb0cb6bbba2",
+    "bytes": 1928
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/earlier-8f6/final-taskcenter.xml": {
+    "sha256": "9862cc7397c9853211ac4756a5ce6f3708275c68892e9f0eff44e127db715a37",
+    "bytes": 76668
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/environment-error.log": {
+    "sha256": "cd49a5cb56b81312d95f83472ad9be8a5bb5e1002b1ba4955c1dad2bd352c5bd",
+    "bytes": 5120
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-consumers-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-consumers-receipt.json": {
+    "sha256": "7432ff8eef5ef30e1de1f74f0c94de93bc75a795dbc9d6021a7c9189cc889cf9",
+    "bytes": 200205
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-consumers.log": {
+    "sha256": "eb092726ef3a893c95c9d121385676279a6cf34382072a26b2f1c80f1b22ad57",
+    "bytes": 1534
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-consumers.xml": {
+    "sha256": "08a708b768d4ffe4761dad4b96190c2b7832672cae056f0d2fe7b3bd273405ff",
+    "bytes": 27708
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-focused-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-focused-receipt.json": {
+    "sha256": "847d3772e19ae33bb2d1244124d89bda739e611991c88c4b4065d979e1c69feb",
+    "bytes": 199065
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-focused.log": {
+    "sha256": "c8166c83d0a19ff46432c8257a29879671980d8448cadc9b81ae1e49170bdfa3",
+    "bytes": 1089
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-focused.xml": {
+    "sha256": "43f130915bb711f0210de699225fbd20acf0fb2d0de80030c096b9a953c0894d",
+    "bytes": 3399
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-taskcenter-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-taskcenter-receipt.json": {
+    "sha256": "1a78a926e27fedc6a18581ca80bff886a5646ce6463292f9f8d4ef1c8c75224a",
+    "bytes": 200455
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-taskcenter.log": {
+    "sha256": "c16d1a655937ce99d6263ee261e741ce502bed8ad54970a3a0235f90d9795cac",
+    "bytes": 1930
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/final-taskcenter.xml": {
+    "sha256": "ada9f475247a1b4620fe6658371454463879b7d26e45422e85176ab7ba322072",
+    "bytes": 76668
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/fixture-adjustment.log": {
+    "sha256": "9a4a822ce376f595e09227037cbca03b80190527faf65d6e80e335751d440a6f",
+    "bytes": 1040
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/green-initial.log": {
+    "sha256": "c0bcc84a5990435111e8fcf3cb90afc249ab8f1150555b80a9cb6b5068a59833",
+    "bytes": 1481
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/final-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/final.log": {
+    "sha256": "f01d56bda32ad93bd2306b51d5353327a8dffc152dbcdcdb1cf4795ede939d46",
+    "bytes": 1101
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/final.xml": {
+    "sha256": "d4dc6ffe232f338e4619c8606cb0f6cd2b6d76875583dfcf553c0819417fdcf1",
+    "bytes": 2834
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/initial-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/initial.log": {
+    "sha256": "27e29a6a8b11ff6663275c7f9330fed07ef9c6c4c5248a17512d1ba92f2fffbb",
+    "bytes": 1103
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/initial.xml": {
+    "sha256": "4582ee7b6f677195fb126979feda12a63f2a797418373bb5db05aca55705cdee",
+    "bytes": 2536
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/review.json": {
+    "sha256": "b5766268bb35c687e8fc7e4888963aba8c65f9bbc4f40a8b078d0f1fa9bc7982",
+    "bytes": 837
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/revised-exit.txt": {
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/revised-review.json": {
+    "sha256": "51c1fde4d6dd1b380dc2ee558746f7f245d66a715feca34f374821b05c5bf7d5",
+    "bytes": 776
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/revised.log": {
+    "sha256": "44bb8e2326af505d9464f73ca420f32447475ac1c85ca744af0b5ebaf846c821",
+    "bytes": 1103
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/independent/revised.xml": {
+    "sha256": "d838c99baadb5d91a0e761a626eccd87da0c9b62051ad366a69082d7cf9e8978",
+    "bytes": 2996
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/process-green.log": {
+    "sha256": "336b3ac6bfefc361432ff2cc69ea037b4c7f1ec27d19ebc9e096271b93cd8fc8",
+    "bytes": 996
+  },
+  "docs/delivery/export-recovery-ownership-20261027/evidence/run_frozen.py": {
+    "sha256": "39c2b190613835d7b6235f7d920d5a0744fc4b16709dd2df32da3a847646a0eb",
+    "bytes": 1364
+  },
+  "app/services/export_job_service.py": {
+    "sha256": "fdb50ad0ba7d9888923b98f3a3d5bd82f8a781b921b655ae3ecda4682e186b64",
+    "bytes": 40011
+  },
+  "app/services/export_execution_claim.py": {
+    "sha256": "1b52bb3b46092d013ac58db5f6e555e00604c3999dbfa00f8f540f80992509f5",
+    "bytes": 4144
+  },
+  "tests/test_export_recovery_ownership_process.py": {
+    "sha256": "630ff4264bb7775bf603ea488c190ca619bd0eb1dfd7732741f3205c897e1358",
+    "bytes": 6910
+  },
+  "tests/test_export_execution_claim_independent.py": {
+    "sha256": "a83f898dab2d934d3e146f01837061aa1462bfe67fbacb234ae52c30f3657bca",
+    "bytes": 10090
+  },
+  "tests/test_export_owner_independent_process.py": {
+    "sha256": "c7b2d97925cf62d4e70b46b2105eda00ae43ff4d5aa012c270e5b80ba8b95d98",
+    "bytes": 10155
+  }
+}

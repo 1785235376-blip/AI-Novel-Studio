@@ -1,0 +1,39 @@
+{
+  "status": "PARTIAL",
+  "freeze": "ead7d004386f1a23be3fb22b4a2ea104fc28aa44",
+  "groups": {
+    "final-focused": {
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "app_files": 602,
+      "loaded_app_modules": 479,
+      "log_sha256": "c8166c83d0a19ff46432c8257a29879671980d8448cadc9b81ae1e49170bdfa3"
+    },
+    "final-consumers": {
+      "tests": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "app_files": 602,
+      "loaded_app_modules": 483,
+      "log_sha256": "eb092726ef3a893c95c9d121385676279a6cf34382072a26b2f1c80f1b22ad57"
+    },
+    "final-taskcenter": {
+      "tests": 501,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit": 0,
+      "app_files": 602,
+      "loaded_app_modules": 480,
+      "log_sha256": "c16d1a655937ce99d6263ee261e741ce502bed8ad54970a3a0235f90d9795cac"
+    }
+  },
+  "counts_overlap": true,
+  "windows": "NOT_RUN",
+  "publication": "NOT_UPLOADED"
+}

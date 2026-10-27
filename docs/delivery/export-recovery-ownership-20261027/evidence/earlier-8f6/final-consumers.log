@@ -1,0 +1,50 @@
+........................................................................ [ 40%]
+..............F......................................................... [ 81%]
+.................................                                        [100%]
+=================================== FAILURES ===================================
+__ test_original_startup_recovery_and_cancel_still_advance_selected_evidence ___
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f1995063020>
+
+    def test_original_startup_recovery_and_cancel_still_advance_selected_evidence(owner):
+        from app.services.export_job_service import ExportJobService
+        job=owner.create('book','txt','recovery',permission_context={'mode':'local','novel_id':'book','actor_id':'a'})
+        first=owner.binding_observation([job['id']])
+>       restarted=ExportJobService(owner.path.parent,lambda *a:pytest.fail('real exporter forbidden'))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_export_owner_independent_process.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/export_job_service.py:120: in __init__
+    self._recover_on_startup()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.export_job_service.ExportJobService object at 0x7f199499bdd0>
+
+    def _recover_on_startup(self) -> None:
+        """Recover only candidates for which no current executor holds a claim."""
+        candidates = [str(jid) for jid, raw in self._read().items()
+                      if isinstance(raw, dict) and str(raw.get("status") or "").lower() in {"queued", "running"}]
+        for job_id in candidates:
+>           self._submit(job_id, recovery=True)
+E           TypeError: owner.<locals>.<lambda>() got an unexpected keyword argument 'recovery'
+
+app/services/export_job_service.py:273: TypeError
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/export-recovery-ownership-final/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/export-recovery-ownership-final/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/export-recovery-ownership-evidence/final-consumers.xml -
+=========================== short test summary info ============================
+FAILED tests/test_export_owner_independent_process.py::test_original_startup_recovery_and_cancel_still_advance_selected_evidence
+1 failed, 176 passed, 3 warnings in 55.28s
