@@ -1,0 +1,127 @@
+[
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/DELIVERY.md",
+    "bytes": 3940,
+    "sha256": "6a2836c4ec6aee79f3a21c757e422c8c70606f08f5af24dae5aef5d970369e27"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/RESULTS.json",
+    "bytes": 632,
+    "sha256": "b91c031556264e93145878be0d148cdf2cdcf03247e5ac6127830e8f5d1e6d3b"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/baseline-tcp.log",
+    "bytes": 40858,
+    "sha256": "df878ad3bc79dfed811740bd77278237688d3330e7c28c0e535a96979c6474f3"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/baseline-tcp.xml",
+    "bytes": 83403,
+    "sha256": "6c9af621d01852c7f199df1b88c489ff9bce1c4878aae9a1f07ba3ce893c6ab6"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-consumers-exit.txt",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-consumers-receipt.json",
+    "bytes": 205893,
+    "sha256": "9c1328c0d42cc54b3983932791e48070a0209e5301b0af25ea422b87b9619ad3"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-consumers.log",
+    "bytes": 1439,
+    "sha256": "a3ecd245a1331a2f714eb45f90bad4a4cb26495d19364e435804d15a91dcb2a5"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-consumers.xml",
+    "bytes": 22811,
+    "sha256": "a0827fa4f0a0c4313f090c3a91f41d0513e5edf870acdba7b6accd5fde7a729a"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-focused-exit.txt",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-focused-receipt.json",
+    "bytes": 204990,
+    "sha256": "31c6ee3c696eba2d5595faa2a5ab0189270eb09ca677b9e71da141cb9e8abaf0"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-focused.log",
+    "bytes": 1582,
+    "sha256": "8d6e6965249f65f7f567cc98696ea670c9ae5a77674368e443bb05131726f765"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-focused.xml",
+    "bytes": 18135,
+    "sha256": "7bc9404e46963bb5018721272d1bc0c3a655ca0c5444e19f842e6f018730233b"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-taskcenter-exit.txt",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-taskcenter-receipt.json",
+    "bytes": 206588,
+    "sha256": "9cc2f7537488c4587979a2de01694802c6cdf25b8d13e53f56d2277d4644038f"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-taskcenter.log",
+    "bytes": 2175,
+    "sha256": "2a3f38318c28cc75c43ade27940baa78c42871895f993018c10ec38cd5638d39"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/final-taskcenter.xml",
+    "bytes": 105178,
+    "sha256": "fa06583bfab2672cd15ab3a15338f2a40d2f573087463a1606c7160e92281db1"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/independent-development.log",
+    "bytes": 1550,
+    "sha256": "5c275a228d8a53f89442beea4f8e9d0ef9616087963327c0301c34e820f77b6f"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/independent-development.xml",
+    "bytes": 3883,
+    "sha256": "67c1f6f7a202d76b81aa98c864f8d8e04e745f7219a9375dc215110625704884"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/run_frozen.py",
+    "bytes": 1408,
+    "sha256": "90d98908faeb901881c42ea284626212c41467baf091c07d819b3393bc94d7c4"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-denial-green.log",
+    "bytes": 1482,
+    "sha256": "7508105ee3ebc5417b31ddf01ab08cb868de05effa9deb98d7b01ae9a3358719"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-denial-green.xml",
+    "bytes": 4977,
+    "sha256": "2eef64c030c489cc06a199870f5d0a3061eb0d98b2eeea62ba553bb6c0c12c92"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-denial.log",
+    "bytes": 20897,
+    "sha256": "d2bb765a6099e9997a34dafd8aad2acedfb23d9f17fe03c280c39b9c0d56b956"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-denial.xml",
+    "bytes": 41298,
+    "sha256": "f85b3aff8372e2918a16df8dfedea2746ab2ac3733dcab53ff537f7851e4afb3"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-receipts-full.log",
+    "bytes": 1594,
+    "sha256": "fa7a7669c07124311e8de097f47084a0df14bad8b39608b1a349e1cd3bee1add"
+  },
+  {
+    "path": "docs/delivery/taskcenter-single-reader-receipts-20261027/evidence/single-receipts-full.xml",
+    "bytes": 14500,
+    "sha256": "1f15ea42fcb5be957599eca1e18006d15ef8f39cc2fb08a945c47c5704a15a87"
+  }
+]

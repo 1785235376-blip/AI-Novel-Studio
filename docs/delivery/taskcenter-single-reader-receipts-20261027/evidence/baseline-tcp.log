@@ -1,0 +1,243 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF................................         [100%]
+=================================== FAILURES ===================================
+___ test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api] ___
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api/v1] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[empty-mounted-403-exports-/api] _______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[empty-mounted-403-exports-/api/v1] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+___ test_actual_single_reader_denial[empty-mounted-404-semantic_import-/api] ___
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[empty-mounted-404-semantic_import-/api/v1] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[empty-mounted-404-exports-/api] _______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[empty-mounted-404-exports-/api/v1] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[empty-tcp-403-semantic_import-/api] _____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+___ test_actual_single_reader_denial[empty-tcp-403-semantic_import-/api/v1] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_________ test_actual_single_reader_denial[empty-tcp-403-exports-/api] _________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[empty-tcp-403-exports-/api/v1] ________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[empty-tcp-404-semantic_import-/api] _____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+___ test_actual_single_reader_denial[empty-tcp-404-semantic_import-/api/v1] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_________ test_actual_single_reader_denial[empty-tcp-404-exports-/api] _________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[empty-tcp-404-exports-/api/v1] ________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[filtered-mounted-403-semantic_import-/api] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[filtered-mounted-403-semantic_import-/api/v1] _
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[filtered-mounted-403-exports-/api] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+____ test_actual_single_reader_denial[filtered-mounted-403-exports-/api/v1] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[filtered-mounted-404-semantic_import-/api] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_ test_actual_single_reader_denial[filtered-mounted-404-semantic_import-/api/v1] _
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_____ test_actual_single_reader_denial[filtered-mounted-404-exports-/api] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+____ test_actual_single_reader_denial[filtered-mounted-404-exports-/api/v1] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+___ test_actual_single_reader_denial[filtered-tcp-403-semantic_import-/api] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+__ test_actual_single_reader_denial[filtered-tcp-403-semantic_import-/api/v1] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[filtered-tcp-403-exports-/api] ________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+______ test_actual_single_reader_denial[filtered-tcp-403-exports-/api/v1] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+___ test_actual_single_reader_denial[filtered-tcp-404-semantic_import-/api] ____
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+__ test_actual_single_reader_denial[filtered-tcp-404-semantic_import-/api/v1] __
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+_______ test_actual_single_reader_denial[filtered-tcp-404-exports-/api] ________
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+______ test_actual_single_reader_denial[filtered-tcp-404-exports-/api/v1] ______
+tests/test_taskcenter_single_reader_receipts.py:53: in test_actual_single_reader_denial
+    assert response.status_code == (409 if shape == 'continuation' else 501), response.text
+E   AssertionError: {"items":[],"unavailable":[],"truncated":false,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":0,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":false,"next_cursor":null,"capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E   assert 200 == 501
+E    +  where 200 = <Response [200 OK]>.status_code
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-single-denial-baseline-d584/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-single-denial-baseline-d584/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/taskcenter-single-denial-baseline-d584/.runtime/baseline-tcp.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-403-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-404-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-404-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-404-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-mounted-404-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-403-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-403-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-403-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-403-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-404-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-404-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-404-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[empty-tcp-404-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-403-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-403-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-403-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-403-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-404-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-404-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-404-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-mounted-404-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-403-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-403-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-403-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-403-exports-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-404-semantic_import-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-404-semantic_import-/api/v1]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-404-exports-/api]
+FAILED tests/test_taskcenter_single_reader_receipts.py::test_actual_single_reader_denial[filtered-tcp-404-exports-/api/v1]
+32 failed, 32 passed, 24 deselected, 3 warnings in 18.73s

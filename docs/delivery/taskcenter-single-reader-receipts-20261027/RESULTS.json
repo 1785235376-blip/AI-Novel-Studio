@@ -1,0 +1,31 @@
+{
+  "code_tests_freeze": "c7282fdd5877b857de9d266489f01e47fa9163df",
+  "groups_overlap_do_not_sum": true,
+  "results": {
+    "final-taskcenter": {
+      "tests": 675,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final-consumers": {
+      "tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final-focused": {
+      "tests": 108,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "baseline": "d5845afafcbe83105374b861760cb7f0543b3d99",
+  "baseline_tcp_mounted": {
+    "passed": 32,
+    "failed": 32
+  },
+  "production_files": 1,
+  "status": "PARTIAL"
+}

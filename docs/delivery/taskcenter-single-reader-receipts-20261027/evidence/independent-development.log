@@ -1,0 +1,17 @@
+....................                                                     [100%]
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_single_reader_independent.py::test_transient_denial_does_not_destroy_earlier_valid_cursor[/api-403-semantic_import]
+  /workspace/scratch/20a0022d2b33/taskcenter-single-denial-probe/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_single_reader_independent.py::test_transient_denial_does_not_destroy_earlier_valid_cursor[/api-403-semantic_import]
+  /workspace/scratch/20a0022d2b33/taskcenter-single-denial-probe/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/taskcenter-single-denial-probe/.runtime/independent-single/review.xml -
+20 passed, 3 warnings in 8.32s

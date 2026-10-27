@@ -184,8 +184,33 @@ class TaskCenterCursorHTTPAdapter:
             self._unavailable(selection)
 
     def _read_aggregate(self, ctx, selection, require_flag, query, failed_only, reauthorize):
-        return self.service.tasks(ctx, require_flag, query, failed_only,
-                                  reauthorize, authorities=selection.authorities)
+        # Legacy aggregation intentionally hides denied sources. A local
+        # single-source cursor must distinguish a successful empty read from
+        # an actual reader's 403/404, even when both have the same projection.
+        # This receipt is request-local and does not alter legacy/offset calls
+        # or the separately guarded mixed/collaboration contracts.
+        if (ctx.scope.get("mode") != "local"
+                or selection.authorities not in (("semantic_import",), ("exports",))):
+            return self.service.tasks(ctx, require_flag, query, failed_only,
+                                      reauthorize, authorities=selection.authorities)
+        self._gate(ctx, selection)
+        expected = [reader for reader in self.service.task_readers
+                    if reader.name in selection.authorities]
+        receipts = []
+        def observed(reader, completed):
+            receipts.append((reader.name, reader, completed))
+        result = self.service.tasks(ctx, require_flag, query, failed_only,
+                                    reauthorize, authorities=selection.authorities,
+                                    _read_observer=observed)
+        current = [reader for reader in self.service.task_readers
+                   if reader.name in selection.authorities]
+        if (len(expected) != 1 or len(current) != 1 or len(receipts) != 1
+                or expected[0] is not self.reader or current[0] is not expected[0]
+                or receipts[0][0] != selection.authorities[0]
+                or receipts[0][1] is not expected[0] or receipts[0][2] is not True):
+            self._unavailable(selection)
+        self._gate(ctx, selection)
+        return result
 
     def tasks(self, ctx, selection, page, require_flag, query, failed_only,
               reauthorize):
