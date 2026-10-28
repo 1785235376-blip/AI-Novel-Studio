@@ -62,3 +62,16 @@
 - 导出 Windows 定向组 UTF-8 模式为 106 passed、9 skipped、3 deselected。符号链接测试因 WinError 1314 排除，POSIX SIGKILL 等场景未验收；同机锁不表示分布式 exactly-once。默认 GBK 下测试读取 UTF-8 文件的失败保留在本地证据。
 - 资产列表原反例在 Windows、隔离 File/Mock 环境再次返回 503。`load_signing_key` 先检查目录相对 no-follow 安全原语；本环境 `os.open`/`os.stat` 不支持 `dir_fd`，且无 `O_NOFOLLOW` 和 `O_DIRECTORY`，因此该守卫必然拒绝。此为此次复现的直接拒绝层；尚无符合原私密密钥及防替换合同的 Windows 实现，保持 OPEN，不降级到普通路径。历史 F 37 与 Hermia strict warm 409 尚未复现，仍为 UNKNOWN，不能据此合并结论。
 - 这些是开发切片结果，尚未在统一最终源码完成独立验收；真实模型、PostgreSQL、POSIX、完整浏览器及托管 CI 依然 NOT_RUN。
+
+## 后续开发与验收记录（截至本地冻结前）
+
+以下结果均是指定固定切片的限定环境证据，彼此有重叠，不相加当覆盖率；上文能力表对 `395ac26` 的描述保持历史口径。
+
+- **Q1/Q2/E1 已整合、部分验收**：`47eace6` 加入 TaskCenter 末次期限复验及单来源实际读取回执，同一测试在其父版本为 115 failed / 59 passed、在该切片为 174 passed。`ed3a179` 修复导出 claim 异常后的显式幂等重试，另有独立审查发现并通过测试修复关闭线程池、任务已终态的竞态；争用时返回 queued 不保证已派发，持有者随后异常需再次重试或重启恢复。同机锁不代表分布式 exactly-once。
+- **Q3 分别保留状态**：Windows 列表 503 在隔离环境复现，直接拒绝层是缺少签名密钥安全文件原语，未实现 Windows 等价安全后端；F 的 37 个历史拒绝在固定 F 的本轮尝试中未复现，UNKNOWN；strict warm 首屏 409 的原合成场景本轮带诊断通过，但运行过程中源码树发生其他开发变更，属于探索性结果，不覆盖原失败，根因 UNKNOWN。
+- **V1 部分实证**：固定源码中的合成 provider 经两个真实 mounted API 入口完成预检、明确执行、实际 MP4 解码、候选审核和分镜回填；迟到结果在取消后被拒且不重发。它们不是实际模型、浏览器或真实进程重启验收。共享 SDK 对 VIDEO 非空 media_measurement 的解码兼容问题需要原 owner 协调；原 phase1 视频测试 4 项失败也在固定 `395ac26` 独立复现，不能计通过。
+- **G1/G2 部分实证**：本地分支图执行、人工审核和 File owner 重建读回；另外两级 IMAGE 分支在审核后由下游读取上游真实落盘字节，逐项核对版本和摘要。下游响应丢失保留 UNKNOWN，明确读取和取消不自动重发。测试 provider 为确定性替身，媒体图局部重跑及真实进程恢复未验收。
+- **A2 未整合**：旧音频头已从公开投影移除；只读无隐式迁移的 File owner 反例通过。隔离复现表明旧历史头经当前普通元数据更新后无法继续读取；现有项目计费不覆盖历史、prepared、不可归属失败残留。旧历史读取与恢复保持关闭。需要兼容性方案：绑定 project scope/incarnation 的持久预约、不可变版本、全部原写入口接线及故障恢复；不得以统一拒绝旧写入替代兼容。
+- **T1/T2 部分实证**：File 双轨合成 PCM 通过原时间线/FFmpeg 导出，独立检查 1 秒、48 kHz、双声道及频率幅度，验证静音和约 -6.02 dB，审核后原资产读回。另验证缺失输入不产候选、不自动重播；取消和探测输出写失败会回收子进程。候选写盘失败、完整多轨恢复与其他格式未由此证明。
+- **K1 部分实现**：新增独立 `GET /api[/v1]/projects/{nid}/studio/production-contracts/runtime`，通过原读权限、项目 scope/incarnation 与返回前 guard，声明游标签名原语 PRESENT/UNAVAILABLE 与端到端 NOT_VERIFIED/UNSUPPORTED、音频资产版本历史读/恢复 UNAVAILABLE、模型验收 NOT_EVALUATED。它不是覆盖所有存储、模型和操作的完整能力清单；原 ProductionCatalog schema 不变。两入口已测功能关闭、跨项目、项目重建及最终撤权反例。
+- **环境**：Windows/File 与本机 FFmpeg 的限定合成测试有证据；POSIX、PostgreSQL、真实模型和最终浏览器链未运行。Windows 符号链接权限受限的三个测试未通过；默认 GBK 解码失败保留，显式 UTF-8 重跑不抹除原结果。GitHub Actions 无本轮实际运行证据，CI NOT_RUN。
