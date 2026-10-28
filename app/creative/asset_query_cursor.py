@@ -221,6 +221,12 @@ def _create_private_file(directory_fd, name, value):
     os.fsync(directory_fd)
 
 
+def signing_key_primitives_available() -> bool:
+    """Report required interpreter primitives, not filesystem or key health."""
+    return (os.open in os.supports_dir_fd and os.stat in os.supports_dir_fd
+            and hasattr(os, "O_NOFOLLOW") and hasattr(os, "O_DIRECTORY"))
+
+
 def load_signing_key(directory: Path) -> bytes:
     """Load/create the independent persistent cursor key under an owner lease.
 
@@ -234,8 +240,7 @@ def load_signing_key(directory: Path) -> bytes:
     Complete loss of both files cannot be distinguished from first creation.
     """
     directory = Path(directory)
-    if (os.open not in os.supports_dir_fd or os.stat not in os.supports_dir_fd
-            or not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY")):
+    if not signing_key_primitives_available():
         raise AssetQueryCursorUnavailable()
     descriptor = None
     try:
