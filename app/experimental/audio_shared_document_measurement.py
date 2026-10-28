@@ -20,6 +20,59 @@ MIX_COLLECTION = 'audio_v2_mix_proposals'
 MAX_DOCUMENT_BYTES = 128 * 1024 * 1024
 MAX_MIX_BYTES = 25 * 1024 * 1024
 
+# AudiobookV2Service.mix / new_row, promotion checkpoint and review, including
+# DirectedAudiobookService._mix_origin. Unknown fields are not proof that the
+# bytes belong to an audio candidate and therefore make measurement unknown.
+ROW_FIELDS = frozenset('id novel_id scope version created_by updated_by created_at updated_at status privacy_level plan_id plan_version sources source_asset_ids mixer_id content_base64 content_sha256 verification media asset_id required_features voice_direction timeline promotion_token promotion_started_at promotion_actor promotion_asset_id promotion_asset_digest promotion_state approved_at approved_by'.split())
+REQUIRED_FIELDS = frozenset('id novel_id scope version created_by updated_by created_at updated_at status privacy_level plan_id plan_version sources source_asset_ids mixer_id content_base64 content_sha256 verification media asset_id'.split())
+MEDIA_FIELDS = frozenset('media_type extension duration_ms sample_rate channels sample_width validation codec'.split())
+TIMELINE_FIELDS = frozenset('id audio_asset_id start_ms end_ms pause_after_ms frame_timing'.split())
+
+
+def _scalar(value):
+    return value is None or type(value) in (str, int, float, bool)
+
+
+def _fields(value, allowed):
+    if not isinstance(value, dict) or not set(value) <= allowed:
+        raise ValueError('unknown candidate fields')
+
+
+def _shape(row, item_id, nid, scope, snapshot=False):
+    _fields(row, ROW_FIELDS if snapshot else ROW_FIELDS | {'history'})
+    if not REQUIRED_FIELDS <= set(row) or row['id'] != item_id or row['novel_id'] != nid or row['scope'] != scope:
+        raise ValueError('invalid candidate identity')
+    for key, value in row.items():
+        if key not in {'scope', 'sources', 'media', 'source_asset_ids', 'required_features', 'timeline', 'history'} and not _scalar(value):
+            raise ValueError('unknown candidate value')
+    for key in ('source_asset_ids', 'required_features'):
+        if key in row and (not isinstance(row[key], list) or any(not isinstance(v, str) for v in row[key])):
+            raise ValueError('invalid candidate list')
+    _fields(row['media'], MEDIA_FIELDS)
+    if any(not _scalar(v) for v in row['media'].values()):
+        raise ValueError('invalid candidate media')
+    sources = row['sources']
+    if not isinstance(sources, dict):
+        raise ValueError('invalid sources')
+    for chapter, source in sources.items():
+        if not isinstance(chapter, str):
+            raise ValueError('invalid source id')
+        _fields(source, {'version', 'digest', 'scope'})
+        if any(not _scalar(v) for k, v in source.items() if k != 'scope') or ('scope' in source and source['scope'] != scope):
+            raise ValueError('invalid source metadata')
+    if 'timeline' in row:
+        if not isinstance(row['timeline'], list):
+            raise ValueError('invalid timeline')
+        for item in row['timeline']:
+            _fields(item, TIMELINE_FIELDS)
+            if any(not _scalar(v) for k, v in item.items() if k != 'frame_timing'):
+                raise ValueError('invalid timeline value')
+            frames = item.get('frame_timing')
+            if frames is not None:
+                _fields(frames, {'frames', 'sample_rate'})
+                if any(not _scalar(v) for v in frames.values()):
+                    raise ValueError('invalid frame timing')
+
 
 def _candidate(row):
     """Check actual embedded bytes, including retained snapshot copies."""
@@ -58,12 +111,14 @@ def measure_file_scope_document(raw, nid, scope):
         rows = document['collections'].get(MIX_COLLECTION, {})
         if not isinstance(rows, dict):
             raise ValueError('invalid collection')
-        for row in rows.values():
+        for item_id, row in rows.items():
+            _shape(row, item_id, nid, scope)
             _candidate(row)
             history = row.get('history', [])
             if not isinstance(history, list):
                 raise ValueError('invalid candidate history')
             for snapshot in history:
+                _shape(snapshot, item_id, nid, scope, snapshot=True)
                 _candidate(snapshot)
         without = copy.deepcopy(document)
         without['collections'].pop(MIX_COLLECTION, None)

@@ -10,15 +10,24 @@ import pytest
 
 from app.experimental.audio_shared_document_measurement import measure_file_scope_document
 from app.experimental.store import canonical
+from app.experimental.common import change_row, new_row, snapshot
 from test_studio_asset_query import rig
 from test_audio_shared_document_quota_observation import audio_candidate, initialized
+
+
+def owner_candidate(rig):
+    payload = audio_candidate()
+    payload.pop('id')
+    payload.pop('title')  # Not a field written by AudiobookV2Service.mix.
+    payload.update(plan_version=1, sources={}, mixer_id='synthetic')
+    return new_row(rig.nid, rig.scope, 'synthetic-actor', payload)
 
 
 def test_real_mixed_owner_document_exact_bytes_and_full_atomic_peak(rig, monkeypatch):
     import app.storage as storage
     store, unrelated = initialized(rig)
-    candidate = audio_candidate()
-    candidate['history'] = [copy.deepcopy(candidate)]
+    candidate = owner_candidate(rig)
+    candidate['history'] = [snapshot(candidate)]
     document = store.read(rig.nid, rig.scope)
     document['collections']['audio_v2_mix_proposals'][candidate['id']] = candidate
     # Dedicated audio configuration is not a candidate and must not be billed.
@@ -60,7 +69,7 @@ def test_absent_and_empty_collection_have_exact_different_storage(rig):
 def test_unrelated_changes_do_not_charge_unrelated_content(rig):
     store, _ = initialized(rig)
     doc = store.read(rig.nid, rig.scope)
-    candidate = audio_candidate()
+    candidate = owner_candidate(rig)
     doc['collections']['audio_v2_mix_proposals'][candidate['id']] = candidate
     before = measure_file_scope_document(canonical(doc).encode(), rig.nid, rig.scope)
     doc['collections']['unrelated_synthetic']['large'] = {'body':'雪' * 1000}
@@ -73,7 +82,7 @@ def test_unrelated_changes_do_not_charge_unrelated_content(rig):
 def test_corrupt_candidate_or_history_is_unknown(rig, bad):
     store, _ = initialized(rig)
     doc = store.read(rig.nid, rig.scope)
-    candidate = audio_candidate()
+    candidate = owner_candidate(rig)
     if bad == 'missing_content': candidate.pop('content_base64')
     elif bad == 'bad_base64': candidate['content_base64'] = 'not base64!'
     elif bad == 'wrong_digest': candidate['content_sha256'] = '0' * 64
@@ -81,6 +90,41 @@ def test_corrupt_candidate_or_history_is_unknown(rig, bad):
     doc['collections']['audio_v2_mix_proposals'][candidate['id']] = candidate
     with pytest.raises(ValueError, match='MEASUREMENT_UNAVAILABLE'):
         measure_file_scope_document(canonical(doc).encode(), rig.nid, rig.scope)
+
+
+@pytest.mark.parametrize('bad', ['row', 'snapshot', 'media', 'source', 'timeline', 'frame', 'identity'])
+def test_unknown_fields_and_mismatched_identity_fail_closed(rig, bad):
+    store, _ = initialized(rig)
+    doc = store.read(rig.nid, rig.scope)
+    row = owner_candidate(rig)
+    row['history'] = [snapshot(row)]
+    if bad == 'row': row['unrelated_payload'] = 'secret'
+    elif bad == 'snapshot': row['history'][0]['unrelated_payload'] = 'secret'
+    elif bad == 'media': row['media']['unrelated_payload'] = 'secret'
+    elif bad == 'source': row['sources'] = {'chapter': {'version': 1, 'digest': 'x', 'unknown': 'secret'}}
+    elif bad == 'timeline': row['timeline'] = [{'id': 'a', 'unknown': 'secret'}]
+    elif bad == 'frame': row['timeline'] = [{'id': 'a', 'frame_timing': {'frames': 1, 'sample_rate': 1, 'unknown': 'secret'}}]
+    else: row['id'] = 'wrong-id'
+    doc['collections']['audio_v2_mix_proposals']['different-id' if bad == 'identity' else row['id']] = row
+    with pytest.raises(ValueError, match='MEASUREMENT_UNAVAILABLE'):
+        measure_file_scope_document(canonical(doc).encode(), rig.nid, rig.scope)
+
+
+@pytest.mark.parametrize('final', ['REJECTED', 'APPROVED'])
+def test_original_change_row_history_preserves_candidate_body(rig, final):
+    store, _ = initialized(rig)
+    doc = store.read(rig.nid, rig.scope)
+    row = owner_candidate(rig)
+    if final == 'APPROVED':
+        change_row(row, 'actor', 1, lambda r: r.update(status='APPROVING', promotion_token='t', promotion_started_at='now', promotion_actor='actor'))
+        change_row(row, 'actor', 2, lambda r: r.update(promotion_asset_id='a', promotion_asset_digest='d', promotion_state='ASSET_CREATED'))
+        change_row(row, 'actor', 3, lambda r: r.update(status='APPROVED', asset_id='a', approved_at='now', approved_by='actor'))
+    else:
+        change_row(row, 'actor', 1, lambda r: r.update(status='REJECTED'))
+    doc['collections']['audio_v2_mix_proposals'][row['id']] = row
+    raw = canonical(doc).encode('utf-8')
+    assert raw.count(row['content_base64'].encode()) == len(row['history']) + 1
+    assert measure_file_scope_document(raw, rig.nid, rig.scope)['mix_collection_bytes'] > len(row['content_base64']) * (len(row['history']) + 1)
 
 
 def test_duplicate_key_noncanonical_and_wrong_scope_rejected(rig):
