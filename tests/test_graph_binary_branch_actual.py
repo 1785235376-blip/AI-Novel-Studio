@@ -32,7 +32,8 @@ def graph_job(run, node):
     return execution['job']
 
 
-def test_reviewed_upstream_image_bytes_reach_downstream_edit(studio, monkeypatch):
+@pytest.mark.parametrize('fail_downstream', [False, True])
+def test_reviewed_upstream_image_bytes_reach_downstream_edit(studio, monkeypatch, fail_downstream):
     e = studio
     image = BytesIO(); Image.new('RGB', (64, 64), (220, 40, 30)).save(image, format='PNG')
     second_bytes = image.getvalue()
@@ -43,6 +44,8 @@ def test_reviewed_upstream_image_bytes_reach_downstream_edit(studio, monkeypatch
         assert len(images) == 1 and images[0].startswith('data:image/png;base64,')
         received = base64.b64decode(images[0].split(',', 1)[1], validate=True)
         seen.append(received)
+        if fail_downstream:
+            raise RuntimeError('synthetic reply lost after dispatch')
         return AssetGenerationResult(request.provider_id, request.model_id,
             'data:image/png;base64,' + base64.b64encode(second_bytes).decode('ascii'))
     monkeypatch.setattr(e.provider, 'image_recipe_descriptor', {
@@ -89,6 +92,9 @@ def test_reviewed_upstream_image_bytes_reach_downstream_edit(studio, monkeypatch
         run = rt.execute_job(e.nid, e.scope, e.actor, rid, {'node_id': node, 'expected_version': run['version'],
             'expected_job_version': job['version'], 'expected_request_digest': job['request_digest']}, guard)
         job = graph_job(run, node)
+        if node == 'second' and fail_downstream:
+            assert job['status'] == 'UNKNOWN'
+            return run
         assert job['status'] == 'AWAITING_REVIEW' and run['current_node_id'] == review
         run = rt.review(e.nid, e.scope, e.actor, rid, {'node_id': review, 'expected_version': run['version'],
             'expected_job_version': job['version'], 'expected_request_digest': job['request_digest'],
@@ -108,7 +114,24 @@ def test_reviewed_upstream_image_bytes_reach_downstream_edit(studio, monkeypatch
     downstream_source = stored['media_previews']['second']['command']['source_snapshots'][0]
     assert (downstream_source['id'], downstream_source['version'], downstream_source['digest']) == (
         upstream['asset_id'], upstream['version'], upstream['digest'])
-    output = stored['typed_outputs']['review_b']['asset']
-    assert e.workspace.assets._bin_path(output['asset_id']).read_bytes() == second_bytes
-    assert hashlib.sha256(second_bytes).hexdigest() == output['digest']
-    assert graph.get_run(e.nid, e.scope, e.actor, run['id'])['status'] == run['status']
+    if fail_downstream:
+        assert 'second' not in stored['typed_outputs'] and 'review_b' not in stored['typed_outputs']
+        assert entry(run, 'second')['execution']['send_reserved'] is True
+        job = graph_job(run, 'second')
+        with pytest.raises(ValueError):
+            graph.media_runtime.execute_job(e.nid, e.scope, e.actor, run['id'], {
+                'node_id': 'second', 'expected_version': run['version'],
+                'expected_job_version': job['version'], 'expected_request_digest': job['request_digest']}, lambda: None)
+        for _ in range(3):
+            observed = graph.get_run(e.nid, e.scope, e.actor, run['id'])
+            assert graph_job(observed, 'second')['status'] == 'UNKNOWN'
+        assert seen == [content]
+        stopped = graph.action(e.nid, e.scope, e.actor, observed['id'], 'cancel', {'expected_version': observed['version']})
+        assert stopped['status'] == 'CANCELLED' and seen == [content]
+        after = e.workspace.store.read(e.nid, e.scope)['collections'][graph.RUNS][run['id']]
+        assert 'second' not in after['typed_outputs'] and 'review_b' not in after['typed_outputs']
+    else:
+        output = stored['typed_outputs']['review_b']['asset']
+        assert e.workspace.assets._bin_path(output['asset_id']).read_bytes() == second_bytes
+        assert hashlib.sha256(second_bytes).hexdigest() == output['digest']
+        assert graph.get_run(e.nid, e.scope, e.actor, run['id'])['status'] == run['status']
