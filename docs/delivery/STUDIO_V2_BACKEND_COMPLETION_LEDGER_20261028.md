@@ -75,3 +75,9 @@
 - **T1/T2 部分实证**：File 双轨合成 PCM 通过原时间线/FFmpeg 导出，独立检查 1 秒、48 kHz、双声道及频率幅度，验证静音和约 -6.02 dB，审核后原资产读回。另验证缺失输入不产候选、不自动重播；取消和探测输出写失败会回收子进程。候选写盘失败、完整多轨恢复与其他格式未由此证明。
 - **K1 部分实现**：新增独立 `GET /api[/v1]/projects/{nid}/studio/production-contracts/runtime`，通过原读权限、项目 scope/incarnation 与返回前 guard，声明游标签名原语 PRESENT/UNAVAILABLE 与端到端 NOT_VERIFIED/UNSUPPORTED、音频资产版本历史读/恢复 UNAVAILABLE、模型验收 NOT_EVALUATED。它不是覆盖所有存储、模型和操作的完整能力清单；原 ProductionCatalog schema 不变。两入口已测功能关闭、跨项目、项目重建及最终撤权反例。
 - **环境**：Windows/File 与本机 FFmpeg 的限定合成测试有证据；POSIX、PostgreSQL、真实模型和最终浏览器链未运行。Windows 符号链接权限受限的三个测试未通过；默认 GBK 解码失败保留，显式 UTF-8 重跑不抹除原结果。GitHub Actions 无本轮实际运行证据，CI NOT_RUN。
+
+## 补充：受限图片叶节点重跑与文档导出
+
+- `75deff4` 在原 Graph/Production owner 内新增显式图片叶节点重跑：仅限已完成且媒体均已审核的 schema 4 图、纯本地祖先、单个 t2i 叶节点与唯一审核节点；创建新 run 时只排队，预览、派发、执行和审核仍分别明确触发，不复制旧媒体输出或自动重发 UNKNOWN。其他来源节点、上游媒体依赖和任意媒体图重跑不支持。`/api` 与 `/api/v1` 的原会话授权和撤销有合成 HTTP 证据；未打包协作由原 Host 拒绝，打包 Host 协作撤权 NOT_RUN。
+- 独立检查发现并修复源 run 资产在 provider 返回后变化、以及最终磁盘准入期间重跑确认到期两个提交窗口；固定补丁的独立定向组 35 passed。已发送后到期保持 UNKNOWN、无候选/自动重发；到期后仍可只读观察。原 IMAGE owner 与锁顺序的限定回归通过，真实模型、PG 和进程中断仍 NOT_RUN。
+- `ef1371c` 增加 DOCX/PDF 真实 HTTP、File 产物解析、损坏拒绝、缺失文件回退与后端重启测试。两种合成格式各自验证，不代表生成中断后的重新入队或其他格式通过。
