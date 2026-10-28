@@ -17,14 +17,16 @@ const PHASE = process.env.PHASE || 'after';
 const SHOTS = process.env.SHOTS; if (SHOTS) fs.mkdirSync(SHOTS, {recursive: true});
 const AXE = process.env.AXE ? fs.readFileSync(process.env.AXE, 'utf8') : null;
 const WS = (process.env.WS || '1366,1024').split(',').map(Number);
+const HEIGHT = Number(process.env.HEIGHT || '800');
 const b = await chromium.launch({executablePath: process.env.CHROME || '/usr/bin/google-chrome'});
 const ch = P => [{id: 'ch-001', novel_id: P, number: 1, title: '第一章', content: '<p>雾</p>', document: {type: 'doc', content: [{type: 'paragraph', content: [{type: 'text', text: '雾从港口漫上来。'}]}]}, version: 3, word_count: 8, status: 'draft'}];
 const plays = [{id: 'sp1', shot_status: 'DRAFT', shots: [{id: 'x1', shot_size: '近景', description: '雾港码头'}, {id: 'x2', shot_size: '远景', description: '灯塔'}, {id: 'x3', shot_size: '特写', description: '煤油灯'}]}];
 async function session(theme) {
   const be = createBackend(), P = be.d.P;
-  const ctx = await b.newContext({viewport: {width: 1366, height: 800}});
+  const ctx = await b.newContext({viewport: {width: 1366, height: HEIGHT}});
   await ctx.route('**/*', async rt => {
     const q = rt.request(), u = new URL(q.url());
+    if (!['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) return rt.abort();
     if (!['GET', 'HEAD'].includes(q.method())) return rt.abort();
     if (!u.pathname.startsWith('/api/')) return rt.continue();
     if (/\/chapters$/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(ch(P))});
@@ -68,12 +70,12 @@ for (const theme of ['light', 'dark']) for (const mode of ['normal', 'pro']) {
   if (mode === 'pro') { await p.locator('.shell-mode-toggle button').nth(1).click().catch(() => {}); await p.waitForTimeout(500); }
   for (const [mod, view] of views) {
     if (view === 'dual' && mode !== 'pro') continue;
-    await p.setViewportSize({width: 1366, height: 800});
+    await p.setViewportSize({width: 1366, height: HEIGHT});
     await p.locator(`[data-module-tab="${mod}"]`).click().catch(() => {}); await p.waitForTimeout(700); await skipGate(p);
     if (mod === 'IMAGE') { await p.locator(`.nv-tabs__tab[data-view="${view}"]`).first().click().catch(() => {}); await p.waitForTimeout(500); }
     if (mod === 'VIDEO') { if (view === 'dual') { const d = p.locator('[data-open-dual]'); if (await d.count()) await d.first().click(); } else { const back = p.getByRole('button', {name: '回视频工作室'}); if (await back.count()) await back.first().click(); } await p.waitForTimeout(600); }
     for (const w of WS) {
-      await p.setViewportSize({width: w, height: 800}); await p.waitForTimeout(250);
+      await p.setViewportSize({width: w, height: HEIGHT}); await p.waitForTimeout(250);
       const r = await probe(p, theme); const v = [];
       if (theme === 'light' && r.darkN) v.push('T1 dark surfaces: ' + r.dark.join(' | '));
       if (theme === 'light' && r.cv.some(L => L != null && L < 0.5)) v.push('T1 light canvas too dark ' + r.cv.map(x => x?.toFixed(3)).join(','));
@@ -91,7 +93,7 @@ for (const theme of ['light', 'dark']) for (const mode of ['normal', 'pro']) {
       if (SHOTS && ['IMAGE', 'VIDEO', 'EDIT'].includes(mod)) await p.screenshot({path: `${SHOTS}/${PHASE}-${theme}-${mode}-${mod}${view ? '-' + view : ''}-${w}.png`});
     }
     if (PHASE === 'after' && view === 'dual') { // D2: upper usable while lower empty; lower untouched
-      await p.setViewportSize({width: 1366, height: 800}); await p.waitForTimeout(200);
+      await p.setViewportSize({width: 1366, height: HEIGHT}); await p.waitForTimeout(200);
       const upSvg = p.locator('[data-canvas-layer="upper"] [role=application]'), loSvg = p.locator('[data-canvas-layer="lower"] [role=application]');
       const cnt = l => l.locator('xpath=ancestor::*[contains(@class,"rcv")][1]').locator('[data-node-id]').count();
       const lo0 = await cnt(loSvg), up0 = await cnt(upSvg);
