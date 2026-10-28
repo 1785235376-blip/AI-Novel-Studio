@@ -10,7 +10,7 @@
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
 const req = createRequire(import.meta.url);
-const {chromium} = req('playwright-core');
+const {chromium} = req('@playwright/test');
 const {createBackend} = await import(new URL('./mockBackend.mjs', import.meta.url));
 const BASE = process.env.BASE || 'http://127.0.0.1:4752/';
 const PHASE = process.env.PHASE || 'after';
