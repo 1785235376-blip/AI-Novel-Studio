@@ -1626,6 +1626,10 @@ class ProductionExecutionService:
                     def commit():
                         guard(); job_guard()
                         if prior is None: self.workspace.storage_admission.require(1)
+                        # The deadline must be checked after the last blocking
+                        # admission step, immediately before the owner commits.
+                        final_graph_guard = getattr(graph_asset_guard, "commit_guard", None)
+                        if final_graph_guard is not None: final_graph_guard()
                     return self.workspace.assets.create(nid, filename, base64.b64encode(data).decode("ascii"), measured["media_type"], kind,
                         key, branch_id=scope.get("branch_id"), required_features=(FLAG,), owner_actor_id=actor, guard=commit,
                         _initial_studio_result=origin)
@@ -1654,7 +1658,10 @@ class ProductionExecutionService:
                         raise ValueError("COMIC_IMAGE_CANDIDATE_ORIGIN_CHANGED")
                     if origin.get("graph_binding") != context.get("graph_binding") or any(origin.get(k) != context.get(k) for k in ("scope_key", "incarnation", "actor", "request_digest")):
                         raise ValueError("STUDIO_CANDIDATE_OWNER_MISMATCH")
-                    def commit(): guard(); job_guard()
+                    def commit():
+                        guard(); job_guard()
+                        final_graph_guard = getattr(graph_asset_guard, "commit_guard", None)
+                        if final_graph_guard is not None: final_graph_guard()
                     return self.workspace.assets.promote_owned(aid, actor_id=actor, branch_id=scope.get("branch_id"),
                         expected_version=expected_version, provenance=provenance, guard=commit)
         return publish, promote

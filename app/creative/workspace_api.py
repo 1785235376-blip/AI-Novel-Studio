@@ -52,7 +52,7 @@ def is_independent_studio_route(method, normalized_path):
     # Unknown actions/methods never gain collaboration middleware admission.
     graph_patterns = {
         "GET": root + r"/(?:graphs(?:/[^/]+(?:/runs)?)?|graph-runs/[^/]+(?:/media/candidate/[^/]+)?)",
-        "POST": root + r"/(?:graphs(?:/model-match|/[^/]+/(?:preflight|runs))?|graph-runs/[^/]+/(?:execute|approve|reject|cancel|pause|resume|retry-local|model/(?:preview|dispatch|refresh)|media/(?:preview|dispatch|execute|refresh|reconcile|review)))",
+        "POST": root + r"/(?:graphs(?:/model-match|/[^/]+/(?:preflight|runs))?|graph-runs/[^/]+/(?:execute|approve|reject|cancel|pause|resume|retry-local|image-leaf-rerun(?:/preview)?|model/(?:preview|dispatch|refresh)|media/(?:preview|dispatch|execute|refresh|reconcile|review)))",
         "PUT": root + r"/graphs/[^/]+",
     }
     return method in graph_patterns and re.fullmatch(graph_patterns[method], normalized_path) is not None

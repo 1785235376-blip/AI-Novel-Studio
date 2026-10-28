@@ -379,22 +379,40 @@ class CreativeGraphMediaRuntime:
         prepared = archival.prepare_projection(row, current) if archival else None
         def source_guard(document):
             live = self._metadata_authority(document, row, node_id, current)
+            from .graph_media_rerun import check_deadline
+            check_deadline(live)
             self._admission_capacity(document, live, 2)
+            # The rerun proof also depends on the original run's inputs. Load
+            # that original under the same raw source lease; _metadata_authority
+            # has already checked its run/graph proof without entering assets.
+            proof = live.get("rerun_proof")
+            rerun_source = (self.service._owned(nid, scope, actor, self.service.RUNS,
+                proof["source_run_id"], document) if proof is not None else None)
             # Production calls this after taking its existing asset lease while
             # the same raw source lease remains held. Never reopen scope here.
             def asset_guard():
+                check_deadline(live)
                 self.service.asset_inputs.current_under_asset_lease(nid, scope, actor, live, current)
+                if rerun_source is not None:
+                    self.service.asset_inputs.current_under_asset_lease(nid, scope, actor, rerun_source, current)
                 self.timeline_current(live, document, current, assets=True)
                 if archival:
                     archival.current_under_asset_lease(nid, scope, actor, live, current, prepared)
+                check_deadline(live)
+            # Safe even within the asset owner's final commit guard: this only
+            # reads the captured immutable expiry and the clock, never a lock.
+            asset_guard.commit_guard = lambda: check_deadline(live)
             return asset_guard
         def last_mile():
             with self._phase(nid, scope, actor, row["id"], current) as document:
                 live = self._metadata_authority(document, row, node_id, current)
+                from .graph_media_rerun import check_deadline
+                check_deadline(live)
                 self.service.asset_inputs.current(nid, scope, actor, live, current, document)
                 self.timeline_current(live, document, current, assets=True)
                 if archival and prepared is not None:
                     archival.output_authority(live)
+                check_deadline(live)
         return last_mile, source_guard
 
     def _job(self, nid, scope, actor, row, node_id, current):
@@ -582,6 +600,8 @@ class CreativeGraphMediaRuntime:
     def execute_job(self, nid, scope, actor, rid, value, guard):
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard)
         execution = deepcopy(row["media_executions"][node_id])
+        from .graph_media_rerun import check_deadline
+        check_deadline(row)
         self._capacity(row, 4)
         if (execution["send_reserved"] or job["status"] != "QUEUED" or row["status"] != "RUNNING"
                 or row["node_states"][node_id]["status"] != "WORKING"):
@@ -845,6 +865,8 @@ class CreativeGraphMediaRuntime:
 
     def review(self, nid, scope, actor, rid, value, guard):
         body, current, row, node_id, job = self._checked_action(nid, scope, actor, rid, value, guard, review=True)
+        from .graph_media_rerun import check_deadline
+        check_deadline(row)
         execution = deepcopy(row["media_executions"][node_id])
         candidate = row["typed_outputs"].get(node_id, {}).get("candidate")
         self._capacity(row, 3)

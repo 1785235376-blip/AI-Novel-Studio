@@ -388,6 +388,22 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.get_run(nid, scope, actor, rid, guard=guard), request, target=(service.RUNS, rid))
 
+    from .graph_media_rerun import ImageLeafRerunPreview, ImageLeafRerunCreate
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/image-leaf-rerun/preview")
+    def image_leaf_rerun_preview(nid: str, rid: str, request: Request, body: ImageLeafRerunPreview,
+                                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
+            lambda actor, scope, guard: service.executor.preview_image_leaf_rerun(nid, scope, actor, rid, body.model_dump(), guard),
+            request, target=(service.RUNS, rid))
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/image-leaf-rerun", status_code=201)
+    def image_leaf_rerun_create(nid: str, rid: str, request: Request, body: ImageLeafRerunCreate,
+                                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.executor.create_image_leaf_rerun(nid, scope, actor, rid, body.model_dump(), guard),
+            request, target=(service.RUNS, rid))
+
     @router.post("/projects/{nid}/studio/graph-runs/{rid}/retry-local", status_code=201)
     def retry_local(nid: str, rid: str, request: Request, body: GraphFailedLocalRetry,
                     x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

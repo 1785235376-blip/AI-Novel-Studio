@@ -226,6 +226,15 @@ class CreativeGraphExecutor:
                 self.service.media_runtime.validate_snapshot(row)
                 document = state if state is not None else self.service.store.read(nid, scope)
                 self.service.media_runtime.timeline_current(row, document, guard)
+        if row.get('rerun_proof') is not None:
+            from .graph_media_rerun import ImageLeafRerunPreview, plan
+            proof = row['rerun_proof']
+            source = self.service._owned(nid, scope, actor, self.service.RUNS, proof['source_run_id'], state)
+            expected = plan(self, nid, scope, actor, source, graph, ImageLeafRerunPreview(
+                expected_version=proof['source_run_version'], expected_graph_version=proof['source_graph_version'],
+                node_id=proof['source_node_id']), guard, state, deadline=False, check_assets=check_assets)
+            if expected != proof or set(row['selected_closure']) != set(proof['selected_closure']):
+                raise StaleSourceError('CREATIVE_GRAPH_RERUN_PROOF_CHANGED')
         guard()
         return graph
 
@@ -239,7 +248,28 @@ class CreativeGraphExecutor:
             "reviewed_preflight_digest": body.reviewed_preflight_digest,
             "request_id": body.request_id}, current, _retry=(source_id, body))
 
-    def create(self, nid, scope, actor, rid, body, guard, *, _retry=None):
+    def preview_image_leaf_rerun(self, nid, scope, actor, source_id, value, guard):
+        from .graph_media_rerun import ImageLeafRerunPreview, plan
+        body = ImageLeafRerunPreview.model_validate(value)
+        _, current = self.service._context(nid, scope, actor, guard)
+        with self.service.asset_inputs.phase(nid, scope, actor, current) as state:
+            source = self.service._owned(nid, scope, actor, self.service.RUNS, source_id, state)
+            graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, source['graph_id'], state)
+            result = plan(self, nid, scope, actor, source, graph, body, current, state)
+            current()
+            return {**result, 'automatic_dispatch': False, 'media_output_reused': False}
+
+    def create_image_leaf_rerun(self, nid, scope, actor, source_id, value, guard):
+        from .graph_media_rerun import ImageLeafRerunCreate
+        body = ImageLeafRerunCreate.model_validate(value)
+        _, current = self.service._context(nid, scope, actor, guard)
+        source = self.service._owned(nid, scope, actor, self.service.RUNS, source_id)
+        return self.create(nid, scope, actor, source['graph_id'], {
+            'expected_graph_version': body.expected_graph_version,
+            'reviewed_preflight_digest': '0' * 64, 'request_id': body.request_id},
+            current, _media_rerun=(source_id, body))
+
+    def create(self, nid, scope, actor, rid, body, guard, *, _retry=None, _media_rerun=None):
         body = GraphMediaRunCreate.model_validate(body.model_dump() if isinstance(body, GraphRunCreate) else body)
         incarnation, current = self.service._context(nid, scope, actor, guard)
         original = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid)
@@ -258,6 +288,17 @@ class CreativeGraphExecutor:
                 validate_source(self, nid, scope, actor, source, graph, retry_body, current, state)
                 body = GraphRunCreate(**{**body.model_dump(), "target_node_ids": sorted(source["selected_closure"]),
                     "reuse_reviewed_local_dependencies": source.get("reuse_reviewed_local_dependencies", False)})
+            rerun_proof = None
+            if _media_rerun is not None:
+                from .graph_media_rerun import plan
+                source_id, rerun_body = _media_rerun
+                rerun_source = self.service._owned(nid, scope, actor, self.service.RUNS, source_id, state)
+                rerun_proof = plan(self, nid, scope, actor, rerun_source, graph, rerun_body, current, state)
+                if rerun_proof['impact_digest'] != rerun_body.reviewed_impact_digest:
+                    raise StaleSourceError('CREATIVE_GRAPH_RERUN_IMPACT_CHANGED')
+                body = GraphMediaRunCreate(**{**body.model_dump(),
+                    'target_node_ids': rerun_proof['affected_node_ids'],
+                    'reviewed_preflight_digest': rerun_proof['preflight_digest']})
             body = parse_graph_run_create(body, graph["definition"])
             if body.reuse_reviewed_local_dependencies:
                 from .graph_local_reuse import eligible
@@ -274,6 +315,8 @@ class CreativeGraphExecutor:
             if source is not None:
                 from .graph_failed_retry import CONTRACT
                 request_binding.append([CONTRACT, source["id"], source["version"]])
+            if rerun_proof is not None:
+                request_binding.append(rerun_proof)
             request_digest = digest(request_binding)
             rows = state["collections"].setdefault(self.service.RUNS, {})
             found = next((row for row in rows.values() if row.get("created_by") == actor and row.get("request_id") == body.request_id), None)
@@ -318,6 +361,8 @@ class CreativeGraphExecutor:
                     payload["node_states"][key] = {"status": "SKIPPED", "output": None, "error": deepcopy(SKIP_ERROR)}
             if source is not None:
                 payload.update(retry_of=source["id"], attempt=source["attempt"] + 1)
+            if rerun_proof is not None:
+                payload['rerun_proof'] = deepcopy(rerun_proof)
             if body.reuse_reviewed_local_dependencies:
                 payload["reuse_reviewed_local_dependencies"] = True
                 payload["cache"]["mode"] = DEPENDENCY_CACHE_MODE
@@ -528,6 +573,13 @@ class CreativeGraphExecutor:
                 guard()
                 host.complete_agent_task(row["id"], node_id, "FAILED", error="CREATIVE_GRAPH_LOCAL_NODE_FAILED")
                 break
+            # Reconstruct each input from the original graph and prove it equals
+            # the reviewed source before proceeding to the media boundary.
+            if row.get("rerun_proof") is not None:
+                source = self.service._owned(row["novel_id"], row["scope"], actor, self.service.RUNS,
+                    row["rerun_proof"]["source_run_id"], state)
+                if source.get("typed_outputs", {}).get(node_id) != output:
+                    raise StaleSourceError("CREATIVE_GRAPH_RERUN_LOCAL_INPUT_CHANGED")
             guard()
             if host.get_workflow_run(row["id"])["status"] == "FAILED":
                 break
