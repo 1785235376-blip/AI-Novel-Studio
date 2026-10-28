@@ -17,7 +17,7 @@ def wait(name):
  while not (control/name).exists():
   if time.monotonic()>deadline:raise RuntimeError('control timeout '+name)
   time.sleep(.01)
-ExportJobService._submit=lambda self,jid:None
+ExportJobService._submit=lambda self,jid,**kwargs:None
 s=ExportJobService(root,lambda *a: (_ for _ in ()).throw(AssertionError('exporter must never run')))
 try:
  (control/(role+'-ready')).touch();wait(role+'-go')

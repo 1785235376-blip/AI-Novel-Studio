@@ -299,7 +299,7 @@ class ExportJobService:
             self._write(jobs)
             return raw["status"] == "queued"
 
-    def _submit(self, job_id: str, *, recovery=False) -> None:
+    def _submit(self, job_id: str, *, recovery=False, preserve_queued_on_pool_failure=False) -> None:
         claim = try_execution_claim(self.path.parent, job_id)
         if claim is None:
             return
@@ -307,9 +307,20 @@ class ExportJobService:
         try:
             if recovery and not self._prepare_recovery(job_id):
                 return
+            if preserve_queued_on_pool_failure:
+                # The original creator may have finished or cancelled after
+                # the idempotency snapshot, before this claim was acquired.
+                with self._mutation():
+                    current = self._read().get(job_id)
+                    if not isinstance(current, dict) or str(current.get("status") or "").lower() != "queued":
+                        return
             try:
                 future = self._pool.submit(self._run, job_id, claim)
             except RuntimeError as exc:
+                if preserve_queued_on_pool_failure:
+                    # Another creator may still be about to acquire the claim.
+                    # A retry's closed pool has no authority to fail its row.
+                    raise RuntimeError("EXPORT_QUEUE_UNAVAILABLE") from exc
                 # We still own this job: a failed local executor cannot poison
                 # another process's queued/running task.
                 with self._mutation():
@@ -348,37 +359,48 @@ class ExportJobService:
             raise ValueError("unsupported export format")
         fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
         fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
+        existing = None
         with self._mutation():
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
                     if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and item.get("permission_context") == permission_context and self._is_idempotency_fresh(item):
-                        return self._normalise_job(item)
-            attempt = 1
-            if retry_of:
-                source = jobs.get(retry_of)
-                if isinstance(source, dict):
-                    try:
-                        attempt = max(1, int(source.get("attempt", 1) or 1) + 1)
-                    except (TypeError, ValueError):
-                        attempt = 2
-            snapshot = self._capture_snapshot(novel_id, fmt, permission_context=permission_context)
-            resource_manifest = snapshot.get("resource_manifest", {}) if isinstance(snapshot, dict) else {}
-            job = {
-                "id": str(uuid.uuid4()), "novel_id": novel_id, "format": fmt,
-                "status": "queued", "created_at": _now(), "updated_at": _now(),
-                "idempotency_key": idempotency_key, "result": None, "error": None,
-                "progress": 0, "progress_message": "排队中", "retry_of": retry_of,
-                "attempt": attempt, "cancel_requested": False, "recovery_count": 0,
-                "snapshot_id": snapshot.get("snapshot_id") if isinstance(snapshot, dict) else None,
-                "snapshot": snapshot,
-                "resource_manifest": resource_manifest,
-                "missing_resources": resource_manifest.get("missing", []) if isinstance(resource_manifest, dict) else [],
-                "permission_context": permission_context,
-                "artifact": None,
-            }
-            jobs[job["id"]] = job
-            self._write(jobs)
+                        existing = self._normalise_job(item)
+                        break
+            if existing is None:
+                attempt = 1
+                if retry_of:
+                    source = jobs.get(retry_of)
+                    if isinstance(source, dict):
+                        try:
+                            attempt = max(1, int(source.get("attempt", 1) or 1) + 1)
+                        except (TypeError, ValueError):
+                            attempt = 2
+                snapshot = self._capture_snapshot(novel_id, fmt, permission_context=permission_context)
+                resource_manifest = snapshot.get("resource_manifest", {}) if isinstance(snapshot, dict) else {}
+                job = {
+                    "id": str(uuid.uuid4()), "novel_id": novel_id, "format": fmt,
+                    "status": "queued", "created_at": _now(), "updated_at": _now(),
+                    "idempotency_key": idempotency_key, "result": None, "error": None,
+                    "progress": 0, "progress_message": "排队中", "retry_of": retry_of,
+                    "attempt": attempt, "cancel_requested": False, "recovery_count": 0,
+                    "snapshot_id": snapshot.get("snapshot_id") if isinstance(snapshot, dict) else None,
+                    "snapshot": snapshot,
+                    "resource_manifest": resource_manifest,
+                    "missing_resources": resource_manifest.get("missing", []) if isinstance(resource_manifest, dict) else [],
+                    "permission_context": permission_context,
+                    "artifact": None,
+                }
+                jobs[job["id"]] = job
+                self._write(jobs)
+        if existing is not None:
+            # A prior attempt may have persisted the queue row before claim
+            # acquisition failed. A live executor retains its nonblocking claim;
+            # terminal/running rows are never replayed by an idempotent create.
+            if existing["status"] == "queued":
+                self._submit(existing["id"], preserve_queued_on_pool_failure=True)
+                return self.get(existing["id"])
+            return existing
         self._submit(job["id"])
         return self._normalise_job(job)
 
