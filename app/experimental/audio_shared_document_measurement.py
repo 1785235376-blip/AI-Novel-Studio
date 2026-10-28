@@ -135,3 +135,24 @@ def measure_file_scope_document(raw, nid, scope):
                 'atomic_temporary_bytes': len(raw)}
     except (ValueError, TypeError, KeyError, UnicodeError, RecursionError):
         raise ValueError('AUDIO_DOCUMENT_MEASUREMENT_UNAVAILABLE') from None
+
+
+def plan_file_scope_replacement(previous, replacement, nid, scope):
+    """Compute sizes for a replacement; this does not reserve or authorize it.
+
+    ``replacement`` must be the final serialized document after the original
+    owner has advanced its lifecycle metadata. The caller must hold the original scope lock, compare the committed old
+    digest again before replace, and arrange real quota reservation and crash
+    reconciliation through the existing capacity owner. Neither bytes object
+    is an identity or ownership proof. Missing/unsupported old formats fail
+    closed; this helper never performs legacy adoption.
+    """
+    old = measure_file_scope_document(previous, nid, scope)
+    new = measure_file_scope_document(replacement, nid, scope)
+    return {'previous_sha256': hashlib.sha256(previous).hexdigest(),
+            'replacement_sha256': hashlib.sha256(replacement).hexdigest(),
+            'previous_candidate_bytes': old['mix_collection_bytes'],
+            'replacement_candidate_bytes': new['mix_collection_bytes'],
+            'persistent_candidate_delta': new['mix_collection_bytes'] - old['mix_collection_bytes'],
+            'requires_write': previous != replacement,
+            'temporary_reservation_bytes': new['full_document_bytes'] if previous != replacement else 0}
