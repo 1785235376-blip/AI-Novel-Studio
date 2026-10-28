@@ -19,6 +19,16 @@ _non_space = re.compile(br'\S')
 _reserved_windows = re.compile(r'(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])', re.I)
 
 
+@contextmanager
+def isolate_usage_request_context():
+    """Isolate one ASGI request from a server task's inherited budget."""
+    token = _active.set(None)
+    try:
+        yield
+    finally:
+        _active.reset(token)
+
+
 class UsageBudgetError(RuntimeError):
     def __init__(self):
         super().__init__('STUDIO_USAGE_RESOURCE_UNAVAILABLE')
