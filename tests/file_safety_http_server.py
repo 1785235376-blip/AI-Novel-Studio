@@ -69,6 +69,17 @@ from app.main import app as original_app
 from app.creative.asset_usage_budget import UsageReadBudget
 from app import dependencies, api as legacy_api
 
+# Default-off, test-only diagnosis of redacted original exception chains.
+if os.environ.get('FILE_SAFETY_DIAGNOSE_USAGE') == '1':
+    from usage_endpoint_diagnostics import observe_endpoint, install_endpoint_observers
+    from app.creative.asset_usage_budget import current_usage_budget
+    def emit_usage_diagnostic(event):
+        print('USAGE_ENDPOINT_DIAGNOSTIC '+json.dumps(event), file=sys.stderr, flush=True)
+    attached = install_endpoint_observers(original_app,
+        lambda original: observe_endpoint(original, emit_usage_diagnostic, current_usage_budget))
+    assert attached > 0, 'diagnostic must attach to actual asset usage route'
+    print('USAGE_ENDPOINT_INSTALLED '+str(attached), file=sys.stderr, flush=True)
+
 # Storage/queue acceptance uses a deterministic stub executor, never a real
 # export renderer. Keep the original singleton, snapshotter, queue and writers.
 assert dependencies.export_job_service is legacy_api.export_job_service
