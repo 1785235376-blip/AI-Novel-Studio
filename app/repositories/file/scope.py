@@ -123,6 +123,17 @@ class FileScopeRepository:
  def revalidate_binding(self,scope,observation):
   return self.binding_observation(scope)==observation
  @scope_file_mutation
+ def project_binding_observation(self,workspace_id,project_id):
+  """Observe project/workspace lifecycle without inventing a branch scope."""
+  data=self._read()
+  if _SCOPE_LIFECYCLE not in data:raise ValueError(_BINDING_UNSUPPORTED)
+  ids={"workspaces":workspace_id,"project_workspaces":project_id}
+  selected={kind:_rows(data,kind).get(rid) for kind,rid in ids.items()}
+  if (not all(selected.values()) or selected["project_workspaces"]["workspace_id"]!=workspace_id):
+   raise ValueError(_BINDING_UNSUPPORTED)
+  meta=data[_SCOPE_LIFECYCLE]
+  return {"incarnation":meta["incarnation"],"rows":{kind:{"id":rid,"lifecycle":meta["rows"][kind][rid]} for kind,rid in ids.items()}}
+ @scope_file_mutation
  def create(self,kind,item):
   if kind=="branches":item={**item,"revision":int(item.get("revision",0))}
   data=self._read();old=next((x for x in data[kind] if x["id"]==item["id"]),None)
