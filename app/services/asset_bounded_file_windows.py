@@ -202,9 +202,10 @@ def _path_identity(path, guard):
 
 class WindowsAssetReadLease:
     """Thread-confined, single-use lease. No unbounded stream/handle is public."""
-    def __init__(self, api, path, root, size, limit, digest, guard):
+    def __init__(self, api, path, root, size, limit, digest, guard, read_budget=None):
         self._api, self._path, self._root = api, path, root
         self._size, self._limit, self._digest, self._guard = size, limit, digest, guard
+        self._read_budget = read_budget
         self._handle, self._consumed = None, False
 
     def _admit(self):
@@ -247,9 +248,14 @@ class WindowsAssetReadLease:
         self._consumed = True
         self.verify_current()
         parts, total, checksum = [], 0, hashlib.sha256()
-        while total <= self._limit:
+        while total < (self._size if self._read_budget is not None else self._limit + 1):
             self._guard()
-            block = self._api.read(self._handle, min(CHUNK_BYTES, self._limit + 1 - total), self._guard)
+            count = min(CHUNK_BYTES, (self._size if self._read_budget is not None else self._limit + 1) - total)
+            if self._read_budget is not None:
+                count = self._read_budget.bounded_binary_allowance(count)
+            block = self._api.read(self._handle, count, self._guard)
+            if self._read_budget is not None:
+                self._read_budget.charge_bounded_binary(len(block))
             self._guard()
             if not block:
                 break
@@ -273,7 +279,7 @@ class WindowsAssetReadLease:
 
 @contextmanager
 def open_windows_bounded_asset(path, *, trusted_root, expected_size, max_bytes,
-                               expected_sha256, guard):
+                               expected_sha256, guard, read_budget=None):
     """Yield a native lease; caller authority exceptions remain unchanged.
 
     Missing API/volume capabilities fail closed. Only a local ordinary drive
@@ -289,7 +295,7 @@ def open_windows_bounded_asset(path, *, trusted_root, expected_size, max_bytes,
     api = _kernel_api()
     guard()
     path, root = _validated_path(path, trusted_root, guard)
-    lease = WindowsAssetReadLease(api, path, root, expected_size, max_bytes, expected_sha256, guard)
+    lease = WindowsAssetReadLease(api, path, root, expected_size, max_bytes, expected_sha256, guard, read_budget)
     try:
         lease._admit()
         yield lease

@@ -26,6 +26,8 @@ def is_independent_studio_route(method, normalized_path):
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
         return True
+    if method == "GET" and re.fullmatch(root + r"/assets/[^/]+/history", normalized_path):
+        return True
     production = root + r"/production"
     owners = r"(?:image|audio|video|timeline)"
     production_patterns = {
@@ -573,6 +575,53 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                             x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.relationships.remove(nid, scope, actor, aid, rid, expected_version, guard))
+
+    @router.get("/projects/{nid}/studio/assets/{aid}/history")
+    def audio_history_status(nid: str, aid: str, x_session_token: str | None = Header(None),
+                             x_branch_id: str | None = Header(None)):
+        from .audio_history_status import uncaptured_audio_status
+        from .. import api as original_api
+        sessions = original_api.trusted_session_resolver
+        try:
+            session = sessions.binding_observation(x_session_token) if x_session_token else None
+        except KeyError:
+            raise HTTPException(401, {"code": "SESSION_REQUIRED"}) from None
+
+        def session_guard():
+            if session is not None:
+                try:
+                    if not sessions.revalidate_binding(x_session_token, session):
+                        raise KeyError()
+                except KeyError:
+                    raise HTTPException(403, {"code": "AUDIO_HISTORY_AUTHORITY_CHANGED"}) from None
+
+        authority_observation = None
+        def observe(actor, scope, guard):
+            nonlocal authority_observation
+            from .audio_history_authority import file_collaboration_observation
+            if scope.get("mode") == "collaboration":
+                authority_observation = (actor, scope, file_collaboration_observation(
+                    service, nid, scope, actor, x_session_token))
+            def checked():
+                guard()
+                session_guard()
+            result = uncaptured_audio_status(service, nid, scope, actor, aid, checked)
+            if authority_observation is not None:
+                checked()
+                if file_collaboration_observation(service, nid, scope, actor, x_session_token) != authority_observation[2]:
+                    raise HTTPException(403, {"code": "AUDIO_HISTORY_AUTHORITY_CHANGED"})
+            return result
+
+        with service.store.existing_owner_only():
+            session_guard()
+            result = invoke(nid, x_session_token, x_branch_id, "domain.read", observe)
+            session_guard()
+            if authority_observation is not None:
+                from .audio_history_authority import file_collaboration_observation
+                actor, scope, initial = authority_observation
+                if file_collaboration_observation(service, nid, scope, actor, x_session_token) != initial:
+                    raise HTTPException(403, {"code": "AUDIO_HISTORY_AUTHORITY_CHANGED"})
+            return result
 
     from .production_contract_api import create_production_contract_router
     router.include_router(create_production_contract_router(service, invoke))

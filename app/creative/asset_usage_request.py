@@ -11,6 +11,7 @@ from ..repositories.file.mutation_coordinator import (
 )
 
 _route = re.compile(r'/api/(?:v1/)?novels/[^/]+/experimental/production/assets/[^/]+/studio-(graph|timeline|asset)-usages')
+_audio_history_status = re.compile(r'/api/(?:v1/)?projects/[^/]+/studio/assets/[^/]+/history')
 
 
 class AssetUsageRequestBudgetMiddleware:
@@ -25,15 +26,17 @@ class AssetUsageRequestBudgetMiddleware:
             return await self._request(scope, receive, send)
 
     async def _request(self, scope, receive, send):
+        history = (scope.get('type') == 'http' and scope.get('method') == 'GET'
+                   and _audio_history_status.fullmatch(scope.get('path', '')) is not None)
         match = _route.fullmatch(scope.get('path', '')) if scope.get('type') == 'http' else None
         query = scope.get('query_string', b'')
-        if (match is None or scope.get('method') != 'GET'
+        if not history and (match is None or scope.get('method') != 'GET'
                 or (not query and match.group(1) != 'asset')):
             return await self.app(scope, receive, send)
         # Only bounded mode detection precedes original authentication. Original
         # query validation remains after auth. Oversized requests cannot initialize
         # coordination while waiting to reach that validation.
-        strict = len(query) > 2048 or any(key == 'strict_read_only' for key, _ in
+        strict = history or len(query) > 2048 or any(key == 'strict_read_only' for key, _ in
             parse_qsl(query.decode('ascii', errors='replace'), keep_blank_values=True))
         started = False
         async def private_send(message):
@@ -50,7 +53,8 @@ class AssetUsageRequestBudgetMiddleware:
             except (UsageBudgetError, ReadOnlyCoordinationUnavailable) as exc:
                 if started:
                     raise
-                code = ('STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE' if isinstance(exc, ReadOnlyCoordinationUnavailable)
+                code = ('AUDIO_HISTORY_READ_ONLY_UNAVAILABLE' if history else
+                        'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE' if isinstance(exc, ReadOnlyCoordinationUnavailable)
                         else 'STUDIO_' + match.group(1).upper() + '_USAGE_UNAVAILABLE')
                 detail = {'code': code}
                 response = JSONResponse(status_code=409, content={

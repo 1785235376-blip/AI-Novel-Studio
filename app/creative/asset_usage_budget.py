@@ -302,6 +302,31 @@ class UsageReadBudget:
         """Binary integrity readers share the same cumulative request budget."""
         return bytes(self._read_bytes(path, limit, self.MAX_BINARY_BYTES))
 
+    def begin_bounded_binary(self, size):
+        """Admit an original owner's guarded native reader into this budget."""
+        self.check()
+        self.reads += 1
+        if (self.reads > self.MAX_READS or type(size) is not int or size <= 0
+                or size > self.MAX_BINARY_BYTES or size > self.MAX_READ_BYTES - self.read_bytes):
+            raise UsageBudgetError()
+
+    def bounded_binary_allowance(self, requested):
+        self.check()
+        available = self.MAX_READ_BYTES - self.read_bytes
+        if type(requested) is not int or requested <= 0 or available <= 0:
+            raise UsageBudgetError()
+        return min(requested, available)
+
+    def charge_bounded_binary(self, count):
+        # Charge the actual bytes immediately after the native read, before a
+        # guard can cancel or reject the observation.
+        if type(count) is not int or count < 0:
+            raise UsageBudgetError()
+        self.read_bytes += count
+        if self.read_bytes > self.MAX_READ_BYTES:
+            raise UsageBudgetError()
+        self.check()
+
     def read_json_bytes(self, path, limit=None):
         """Admit JSON without changing the original owner's physical snapshot.
 

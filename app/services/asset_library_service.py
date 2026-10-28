@@ -1075,6 +1075,11 @@ class AssetLibraryService:
             raise ValueError("ASSET_BOUNDED_READ_LIMIT_INVALID")
         if type(meta.get("size")) is not int or not 0 < meta["size"] <= max_bytes:
             raise ValueError("ASSET_BOUNDED_READ_LIMIT")
+        from ..creative.asset_usage_budget import current_usage_budget
+        read_budget = current_usage_budget()
+        if read_budget is not None:
+            guard()
+            read_budget.begin_bounded_binary(meta["size"])
         if os.name == "nt":
             from .asset_bounded_file_windows import (
                 WindowsBoundedAssetError, read_windows_bounded_asset,
@@ -1084,10 +1089,11 @@ class AssetLibraryService:
                 raise ValueError("ASSET_BOUNDED_READ_UNSUPPORTED")
             guard()
             try:
+                budget_args = {"read_budget": read_budget} if read_budget is not None else {}
                 return read_windows_bounded_asset(
                     self._bin_path(meta["id"]), trusted_root=self.root,
                     expected_size=meta["size"], max_bytes=max_bytes,
-                    expected_sha256=meta["sha256"], guard=guard,
+                    expected_sha256=meta["sha256"], guard=guard, **budget_args,
                 )
             except WindowsBoundedAssetError as error:
                 guard()
@@ -1117,9 +1123,14 @@ class AssetLibraryService:
             descriptor = None  # ownership transferred; with closes on every path
             with handle:
                 parts, total, checksum = [], 0, hashlib.sha256()
-                while total <= max_bytes:
+                while total < (meta["size"] if read_budget is not None else max_bytes + 1):
                     guard()
-                    block = handle.read(min(65536, max_bytes + 1 - total))
+                    count = min(65536, (meta["size"] if read_budget is not None else max_bytes + 1) - total)
+                    if read_budget is not None:
+                        count = read_budget.bounded_binary_allowance(count)
+                    block = handle.read(count)
+                    if read_budget is not None:
+                        read_budget.charge_bounded_binary(len(block))
                     guard()
                     if not block:
                         break
