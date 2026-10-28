@@ -1,0 +1,219 @@
+{
+  "signature_changes": [
+    {
+      "id": "src/AppModuleNavigationIntent.test.tsx :: App module navigation during delayed original overview retains the original authorized interop feature route model-center",
+      "file": "src/AppModuleNavigationIntent.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"主控\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "38c8a51f41c30ecb182278735c79e5c4a867986f547a319e2da48efff8748ea7",
+      "integrated_signature": "069001444c5df8fc851f22334f250fc844cbe4c384f89f75060b4ffe80d16a29",
+      "category": "A-retained test selector mismatch with C current overflow UI"
+    },
+    {
+      "id": "src/AppModuleNavigationIntent.test.tsx :: App module navigation during delayed original overview retains the original authorized interop feature route workflow",
+      "file": "src/AppModuleNavigationIntent.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"工作流\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "e8bc92d6a91071965d29e3bb790e55ee16b32b3dea1083119d70b464397ae0a7",
+      "integrated_signature": "71e6536d5f4060a5c4a73b40f90799ddf2f82d72b868725f7ec9896242a60cb6",
+      "category": "A-retained test selector mismatch with C current overflow UI"
+    },
+    {
+      "id": "src/creative/IndependentStudioGraphWorkspace.test.tsx :: independent studio graph content integration allows optional Director removal and bounded undo without adding a chapter or starting a job",
+      "file": "src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"移除当前节点\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"移除当前节点\"",
+      "C_signature": "942998fb35725574c8fcbcae8a8db721fd746d263f1a4f7192a74e984439b64c",
+      "integrated_signature": "ca7f7d575581fdf57b3a320161d801f44dc4599543008f350ab08d067fe36e81",
+      "category": "generated node IDs only"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: allows only the original Novel exit after denial while private destinations and project actions stay fenced",
+      "file": "src/creative/IndependentStudioHostExit.regression.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"主控\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "9b61ce7dec5b2731530e01bb12b583be631614a2fd02d9bddc83d41fd98fe1b1",
+      "integrated_signature": "bcf1a328a1a5f08432fd9c295c67ba0171b6c124cf420b0a522e090e7fd5fa76",
+      "category": "A-retained test selector mismatch with C current overflow UI"
+    },
+    {
+      "id": "src/creative/IndependentStudioManualMask.test.tsx :: manual mask in the original Image workspace loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection",
+      "file": "src/creative/IndependentStudioManualMask.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"region\" and name \"资产检查面板\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"region\" and name \"资产检查面板\"",
+      "C_signature": "b9630c6e81aab70b7df35039c38b7afdf40256ba1ee47fea5d3b4129affd9670",
+      "integrated_signature": "23e7d11aca50249dfe0cfd28454227d2ef209968c2a547ccde52235a9e56b56c",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx :: real IndependentStudioWorkspace to original storyboard image binding preserves dirty-navigation cancellation and requires explicit discard before entering",
+      "file": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "C_signature": "843a1bb067ba139d221e1b89190273cfa285f4ffdf93339f7d472c67d105e97b",
+      "integrated_signature": "dc5f1eed2d8861944a205c3089e2ee6666ea009d5f3473345014483e5203aa35",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx :: real IndependentStudioWorkspace to original storyboard image binding real transport UNKNOWN 503 stays blocked after authoritative observation, never retries",
+      "file": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "C_signature": "91c1001b462586f46c4ac60e79e7dd35f2acda2f0d94441b190f37a89213102d",
+      "integrated_signature": "2908d277c411cae650112118877c4772ee108a245dd96c2d6114166645c5f594",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.comic.test.tsx :: Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer",
+      "file": "src/creative/IndependentStudioWorkspace.comic.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"新建空白漫画页\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"新建空白漫画页\"",
+      "C_signature": "14579b5be90870c1fb2c81176478f0829582c9226612e4f802263f79faac38f9",
+      "integrated_signature": "99b1c6c26a904f907814c0d5dca7a496777a1fae54c2f600bcd78f87e4fb9c80",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx :: keeps unsent IMAGE cost through real Broker navigation cancel, then discards only after explicit confirmation",
+      "file": "src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "integrated_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "C_signature": "8f208a6a863ea032b37398f11a42ddce09aa327287f9681db2e2682de4ee6a37",
+      "integrated_signature": "90bacf18fe6c36754e810d1901be0e5e79f3ac4c4fb4f51a4fdcc23c6628ad21",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx :: mounted graph → exact original storyboard editor navigation keeps the originating IMAGE shell, exact target and original explicit version-aware save",
+      "file": "src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "integrated_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "C_signature": "dbf2544ab31c540c2944023c276e08a85e213f6c74eb23f7629967617464c7dc",
+      "integrated_signature": "b4ebabe9b51cbc7c9f16387284ffbf061cee356bc48e18587a8926b6f3c2e402",
+      "category": "async stack frames only"
+    },
+    {
+      "id": "src/creative/StudioImageGraphEditor.providerMigration.test.tsx :: image Graph authoring through original controller and mounted workspace migration: saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation",
+      "file": "src/creative/StudioImageGraphEditor.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "9d8959b32a44ba86210584c4a9b8e086f8763d376b0c22dc1fb3f64ee704387f",
+      "integrated_signature": "1abeaca298b65ecae2730e322293225d5b7a3e6c83830e0ad7cc7aea381701e8",
+      "category": "generated node IDs only"
+    },
+    {
+      "id": "src/creative/StudioProductionGraphEditor.providerMigration.test.tsx :: Production Graph UI keeps original controller and execution authority migration: explicitly binds authored documents, style and upscale parameters without dispatch",
+      "file": "src/creative/StudioProductionGraphEditor.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "17f299a93afab035805e6cec09638475741e2bf2e7b6bc29eaf62f1bea86f2e5",
+      "integrated_signature": "b659f5c01b13f19cf0b146ebccb170654a599da4b3e5bd35c107ad9c711e9a47",
+      "category": "generated node IDs only"
+    },
+    {
+      "id": "src/creative/StudioVideoShotBinding.providerMigration.test.tsx :: Phase 5 independent Video author flow can explicitly omit a new Shot binding migration: allows unchecking the initial true flag without a connected Shot and saves no implicit pin",
+      "file": "src/creative/StudioVideoShotBinding.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "9733c008534b8bd3ef705593838479418dacc441c0189bf059fefd5d40055f64",
+      "integrated_signature": "1b64ad850f167b4b2bea3316adf5c881e5d874ac75fbc5a64868ddd8c8f6cbac",
+      "category": "generated node IDs only"
+    }
+  ],
+  "signature_categories": {
+    "A-retained test selector mismatch with C current overflow UI": 3,
+    "generated node IDs only": 4,
+    "async stack frames only": 6
+  },
+  "resolved_by_file": {
+    "src/creative/IndependentStudioHostExit.regression.test.tsx": 5,
+    "src/creative/IndependentStudioIdentity.regression.test.tsx": 8,
+    "src/creative/IndependentStudioReadFences.test.tsx": 7,
+    "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx": 12,
+    "src/creative/studioComicBootstrap.capture.test.tsx": 1
+  },
+  "purge_source_blobs": {
+    "frontend/src/workspace/state/u1.purge.host.test.tsx": {
+      "C": "b36021eb4691e50678804e3ba1d9e9bc50c5e14d",
+      "integrated": "b36021eb4691e50678804e3ba1d9e9bc50c5e14d"
+    },
+    "frontend/src/workspace/UnifiedWorkspacePreview.tsx": {
+      "C": "f4bd4c6884f2270ddc8dd64179b6d03643c6587f",
+      "integrated": "f4bd4c6884f2270ddc8dd64179b6d03643c6587f"
+    },
+    "frontend/src/workspace/state/projectPurge.ts": {
+      "C": "aae18ce865f26fd50db6e9937834cb29112309a6",
+      "integrated": "aae18ce865f26fd50db6e9937834cb29112309a6"
+    },
+    "frontend/src/workspace/state/identityBootstrap.tsx": {
+      "C": "7710ca0f29c521474f3e318649d6107542f35438",
+      "integrated": "7710ca0f29c521474f3e318649d6107542f35438"
+    },
+    "frontend/src/workspace/panels/novelPreviewPanels.tsx": {
+      "C": "cea4b0fde94f2645a0cedc6a9dd51baea7f6f5a6",
+      "integrated": "cea4b0fde94f2645a0cedc6a9dd51baea7f6f5a6"
+    },
+    "frontend/src/store.ts": {
+      "C": "8b9d17011883c1685205dac125d83b85280fee6a",
+      "integrated": "8b9d17011883c1685205dac125d83b85280fee6a"
+    },
+    "frontend/src/api.ts": {
+      "C": "172868c89b9036a6df523287265c4a570d72aaf7",
+      "integrated": "172868c89b9036a6df523287265c4a570d72aaf7"
+    },
+    "frontend/pnpm-lock.yaml": {
+      "C": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c",
+      "integrated": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c"
+    },
+    "frontend/package.json": {
+      "C": "e99bdb4bb50dc32c23cead4252f8a70e3a337651",
+      "integrated": "e99bdb4bb50dc32c23cead4252f8a70e3a337651"
+    },
+    "frontend/vite.config.ts": {
+      "C": "e843974d9ef1921c59cc41505fa9923b9aa563c3",
+      "integrated": "e843974d9ef1921c59cc41505fa9923b9aa563c3"
+    },
+    "frontend/vitest.setup.ts": {
+      "C": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4",
+      "integrated": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4"
+    }
+  },
+  "purge_conclusion": {
+    "status": "OPEN existing C observation-coalescing window; newly observed failure in integrated full run",
+    "original_focused": {
+      "C": "PASS",
+      "integrated": "FAIL"
+    },
+    "transparent_instrumentation_v2": {
+      "C": "FAIL",
+      "integrated": "PASS"
+    },
+    "failing_C_success_observations": [
+      {
+        "dataUpdatedAt": 1793171848850,
+        "dataUpdateCount": 2
+      },
+      {
+        "dataUpdatedAt": 1793171848851,
+        "dataUpdateCount": 3
+      }
+    ],
+    "failing_C_ProjectPresence_observe": [
+      "n1,n2 -> []",
+      "n1 -> []"
+    ],
+    "cause": "Both successful fetch results reached QueryCache, but the React effect observed only the final render. Distinct millisecond timestamps establish that this observed failure does not require timestamp collision. Only one missing-list confirmation was counted.",
+    "fix_suggestion": "Observe each success at the QueryCache completion boundary using query identity/dataUpdateCount, not only the final rendered dataUpdatedAt. Preserve first sighting, nonempty consecutive evidence, failed/empty response rules, and actor reset. No production fix applied."
+  }
+}

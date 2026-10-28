@@ -1,0 +1,315 @@
+{
+  "normalization": "Strip ANSI SGR and replace only the two checkout roots; preserve line numbers, DOM, values and error text. ID is relative frontend file plus fullName, with occurrence ordinal for duplicate fullNames.",
+  "counts": {
+    "C_failed": 329,
+    "integrated_failed": 297,
+    "common_failed": 296,
+    "new_failed": 1,
+    "no_longer_failed": 33,
+    "common_failed_changed_signature": 13,
+    "common_failed_same_signature": 283
+  },
+  "new_failures": [
+    {
+      "id": "src/workspace/state/u1.purge.host.test.tsx :: host purges own keys of a project that left the list; other users and remaining projects are kept",
+      "file": "src/workspace/state/u1.purge.host.test.tsx",
+      "fullName": "host purges own keys of a project that left the list; other users and remaining projects are kept",
+      "status": "failed",
+      "error_headline": "AssertionError: expected '{\"version\":1,\"viewports\":{},\"worksets…' to be null",
+      "error_signature_sha256": "a6156f664891eb8b8e849fc1e8d7c2e2424221b7eb738606d8308dd3554e74fb",
+      "normalized_error": "AssertionError: expected '{\"version\":1,\"viewports\":{},\"worksets…' to be null\n\nIgnored nodes: comments, script, style\n<html>\n  <head />\n  <body>\n    <div>\n      <div\n        class=\"uw-layout\"\n        data-source=\"fallback-corrupt\"\n        data-testid=\"dock-layout\"\n        style=\"--uw-toolbar-h: 0px;\"\n      >\n        <a\n          class=\"uw-skip\"\n          data-testid=\"uw-skip-main\"\n          href=\"#uw-main\"\n        >\n          跳到主区域\n        </a>\n        <div\n          aria-label=\"布局\"\n          class=\"uw-toolbar\"\n          role=\"toolbar\"\n        >\n          <span\n            data-testid=\"uw-command-host\"\n            style=\"display: inline-flex; align-items: center; gap: 6px;\"\n          >\n            <div\n              class=\"wb-command\"\n            >\n              <button\n                aria-expanded=\"false\"\n                aria-haspopup=\"dialog\"\n                class=\"ui-button ui-button--ghost  wb-command__trigger\"\n              >\n                <svg\n                  aria-hidden=\"true\"\n                  class=\"lucide lucide-search\"\n                  fill=\"none\"\n                  height=\"16\"\n                  stroke=\"currentColor\"\n                  stroke-linecap=\"round\"\n                  stroke-linejoin=\"round\"\n                  stroke-width=\"2\"\n                  viewBox=\"0 0 24 24\"\n                  width=\"16\"\n                  xmlns=\"http://www.w3.org/2000/svg\"\n                >\n                  <circle\n                    cx=\"11\"\n                    cy=\"11\"\n                    r=\"8\"\n                  />\n                  <path\n                    d=\"m21 21-4.3-4.3\"\n                  />\n                </svg>\n                搜索功能\n              </button>\n            </div>\n            <small>\n              Ctrl／⌘+K\n            </small>\n            <button\n              class=\"uw-btn uw-btn--primary\"\n              data-action-id=\"canvas.openExecution\"\n              data-testid=\"uw-open-execution\"\n              title=\"打开执行画布（Ctrl／⌘+Alt+E）\"\n              type=\"button\"\n            >\n              执行画布\n            </button>\n            <button\n              class=\"uw-btn\"\n              data-action-id=\"view.worksets.open\"\n              data-testid=\"uw-open-views\"\n              title=\"保存或切换面板布局（Ctrl／⌘+Alt+V）\"\n              type=\"button\"\n            >\n              视图\n            </button>\n            <div\n              aria-label=\"当前位置\"\n              class=\"uw-ctxbar\"\n              data-preset=\"creative\"\n              data-testid=\"uw-ctxbar\"\n              role=\"region\"\n              style=\"display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 8px; min-width: 0;\"\n            >\n              <strong\n                data-testid=\"uw-ctx-step\"\n                style=\"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch;\"\n              >\n                在创作画布选择节点开始\n              </strong>\n              <small>\n                创作（默认）\n              </small>\n              <button\n                class=\"uw-btn\"\n                data-action-id=\"nav.returnToOrigin\"\n                disabled=\"\"\n                title=\"从任务跳转后才会记录原位置\"\n                type=\"button\"\n              >\n                返回原位置\n              </button>\n              <button\n                aria-pressed=\"false\"\n                class=\"uw-btn\"\n                data-action-id=\"nav.compare\"\n                title=\"左右对照创作与执行画布（Ctrl／⌘+Alt+D）\"\n                type=\"button\"\n              >\n                对照\n              </button>\n              <details\n                data-testid=\"uw-ctx-details\"\n                style=\"flex-basis: 100%;\"\n              >\n                <summary>\n                  技术细节\n                </summary>\n                <ul\n                  style=\"margin: 0px; padding-left: 18px;\"\n                />\n              </details>\n            </div>\n            <small\n              data-identity=\"real\"\n              data-testid=\"uw-identity\"\n            >\n              视图与布局会按当前账号和项目保存在本机浏览器（不跨设备同步）。\n            </small>\n          </span>\n          <label>\n            布局 \n            <select\n              aria-label=\"分屏方式\"\n              class=\"uw-select\"\n              data-action-id=\"layout.switchSplit\"\n            >\n              <option\n                value=\"single\"\n              >\n                单栏\n              </option>\n              <option\n                value=\"split-h\"\n              >\n                左右分屏\n              </option>\n              <option\n                value=\"split-v\"\n              >\n                上下分屏\n              </option>\n            </select>\n          </label>\n          <label>\n            重新打开 \n            <select\n              aria-label=\"重新打开面板\"\n              class=\"uw-select\"\n              data-action-id=\"layout.reopenPanel\"\n              di...\n    at <checkout>/frontend/src/workspace/state/u1.purge.host.test.tsx:40:71\n    at runWithExpensiveErrorDiagnosticsDisabled (<checkout>/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12)\n    at checkCallback (<checkout>/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77)\n    at Timeout.checkRealTimersCallback (<checkout>/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16)\n    at listOnTimeout (node:internal/timers:594:17)\n    at processTimers (node:internal/timers:529:7)"
+    }
+  ],
+  "no_longer_failed": [
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: does not treat an unrelated storage401 as settlement of a concurrent actual import",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: keeps a real import in flight blocked after Host loss, then requires unknown-outcome consent with its original ID",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: keeps dirty protection after child cleanup and rechecks other-owner busy at confirmation",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: keeps the pre-retirement Comic busy fence when child unmount reports false without a settlement receipt",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: retains an already unknown import ID when a later Host loss opens the safe exit",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects keeps a current authoritative overview denial 403 effective",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects keeps only unsaved author text read-only while hiding private graph directory metadata",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioIdentity.regression.test.tsx :: independent Studio captured identity cannot revive before React effects still adopts an overview when only non-authority editor state changes",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels describes presets as saved preferences without implying an active layout change",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels ignores delayed recovery after the author explicitly selects a different asset and starts a draft",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels labels review-only authority accurately while asset files remain readonly",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels locks mutation inputs during explicit refresh and preserves the next draft after the read finishes",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels shows safe LOW_SPACE_OR_QUOTA storage state without filesystem paths or cleanup controls",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels shows safe READY storage state without filesystem paths or cleanup controls",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioReadFences.test.tsx :: independent asset read fences and truthful capability labels shows safe UNAVAILABLE storage state without filesystem paths or cleanup controls",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted asset browser to original image draft requires an explicit 图片 operation choice and two metadata reads without dispatch",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted asset browser to original image draft requires an explicit 视频 operation choice and two metadata reads without dispatch",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted original asset browser to timeline handoff keeps dirty-navigation cancel for 图片模块",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted original asset browser to timeline handoff keeps dirty-navigation cancel for 时间线模块",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted original asset browser to timeline handoff keeps dirty-navigation cancel for 视频模块",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: mounted original asset browser to timeline handoff routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation does not open a changed original owner read {\"deleted_at\":\"deleted\"}",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation does not open a changed original owner read {\"novel_id\":\"other-project\"}",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation does not open a changed original owner read {\"sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation does not open a changed original owner read {\"version\":3}",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation re-reads exact original asset after explicit dirty discard and performs no writes",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx :: relationship inspection original asset navigation retires inspection when the original selection goes A to B to A in one batch",
+      "integrated_status": "passed"
+    },
+    {
+      "id": "src/creative/studioComicBootstrap.capture.test.tsx :: actual mounted bootstrap/catalog/page responses pass through IndependentStudioWorkspace to StudioComicPanel",
+      "integrated_status": "passed"
+    }
+  ],
+  "changed_failure_signatures": [
+    {
+      "id": "src/AppModuleNavigationIntent.test.tsx :: App module navigation during delayed original overview retains the original authorized interop feature route model-center",
+      "file": "src/AppModuleNavigationIntent.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"主控\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "38c8a51f41c30ecb182278735c79e5c4a867986f547a319e2da48efff8748ea7",
+      "integrated_signature": "069001444c5df8fc851f22334f250fc844cbe4c384f89f75060b4ffe80d16a29"
+    },
+    {
+      "id": "src/AppModuleNavigationIntent.test.tsx :: App module navigation during delayed original overview retains the original authorized interop feature route workflow",
+      "file": "src/AppModuleNavigationIntent.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"工作流\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "e8bc92d6a91071965d29e3bb790e55ee16b32b3dea1083119d70b464397ae0a7",
+      "integrated_signature": "71e6536d5f4060a5c4a73b40f90799ddf2f82d72b868725f7ec9896242a60cb6"
+    },
+    {
+      "id": "src/creative/IndependentStudioGraphWorkspace.test.tsx :: independent studio graph content integration allows optional Director removal and bounded undo without adding a chapter or starting a job",
+      "file": "src/creative/IndependentStudioGraphWorkspace.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"移除当前节点\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"移除当前节点\"",
+      "C_signature": "942998fb35725574c8fcbcae8a8db721fd746d263f1a4f7192a74e984439b64c",
+      "integrated_signature": "ca7f7d575581fdf57b3a320161d801f44dc4599543008f350ab08d067fe36e81"
+    },
+    {
+      "id": "src/creative/IndependentStudioHostExit.regression.test.tsx :: allows only the original Novel exit after denial while private destinations and project actions stay fenced",
+      "file": "src/creative/IndependentStudioHostExit.regression.test.tsx",
+      "same_headline": false,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"tab\" and name \"主控\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"打开设置（AI 主控与插件）\"",
+      "C_signature": "9b61ce7dec5b2731530e01bb12b583be631614a2fd02d9bddc83d41fd98fe1b1",
+      "integrated_signature": "bcf1a328a1a5f08432fd9c295c67ba0171b6c124cf420b0a522e090e7fd5fa76"
+    },
+    {
+      "id": "src/creative/IndependentStudioManualMask.test.tsx :: manual mask in the original Image workspace loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection",
+      "file": "src/creative/IndependentStudioManualMask.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"region\" and name \"资产检查面板\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"region\" and name \"资产检查面板\"",
+      "C_signature": "b9630c6e81aab70b7df35039c38b7afdf40256ba1ee47fea5d3b4129affd9670",
+      "integrated_signature": "23e7d11aca50249dfe0cfd28454227d2ef209968c2a547ccde52235a9e56b56c"
+    },
+    {
+      "id": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx :: real IndependentStudioWorkspace to original storyboard image binding preserves dirty-navigation cancellation and requires explicit discard before entering",
+      "file": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "C_signature": "843a1bb067ba139d221e1b89190273cfa285f4ffdf93339f7d472c67d105e97b",
+      "integrated_signature": "dc5f1eed2d8861944a205c3089e2ee6666ea009d5f3473345014483e5203aa35"
+    },
+    {
+      "id": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx :: real IndependentStudioWorkspace to original storyboard image binding real transport UNKNOWN 503 stays blocked after authoritative observation, never retries",
+      "file": "src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"选择素材 handoff.png\"",
+      "C_signature": "91c1001b462586f46c4ac60e79e7dd35f2acda2f0d94441b190f37a89213102d",
+      "integrated_signature": "2908d277c411cae650112118877c4772ee108a245dd96c2d6114166645c5f594"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.comic.test.tsx :: Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer",
+      "file": "src/creative/IndependentStudioWorkspace.comic.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"button\" and name \"新建空白漫画页\"",
+      "integrated_headline": "Error: Unable to find role=\"button\" and name \"新建空白漫画页\"",
+      "C_signature": "14579b5be90870c1fb2c81176478f0829582c9226612e4f802263f79faac38f9",
+      "integrated_signature": "99b1c6c26a904f907814c0d5dca7a496777a1fae54c2f600bcd78f87e4fb9c80"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx :: keeps unsent IMAGE cost through real Broker navigation cancel, then discards only after explicit confirmation",
+      "file": "src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "integrated_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "C_signature": "8f208a6a863ea032b37398f11a42ddce09aa327287f9681db2e2682de4ee6a37",
+      "integrated_signature": "90bacf18fe6c36754e810d1901be0e5e79f3ac4c4fb4f51a4fdcc23c6628ad21"
+    },
+    {
+      "id": "src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx :: mounted graph → exact original storyboard editor navigation keeps the originating IMAGE shell, exact target and original explicit version-aware save",
+      "file": "src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx",
+      "same_headline": true,
+      "C_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "integrated_headline": "Error: Unable to find role=\"option\" and name `/Saved original graph/`",
+      "C_signature": "dbf2544ab31c540c2944023c276e08a85e213f6c74eb23f7629967617464c7dc",
+      "integrated_signature": "b4ebabe9b51cbc7c9f16387284ffbf061cee356bc48e18587a8926b6f3c2e402"
+    },
+    {
+      "id": "src/creative/StudioImageGraphEditor.providerMigration.test.tsx :: image Graph authoring through original controller and mounted workspace migration: saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation",
+      "file": "src/creative/StudioImageGraphEditor.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "9d8959b32a44ba86210584c4a9b8e086f8763d376b0c22dc1fb3f64ee704387f",
+      "integrated_signature": "1abeaca298b65ecae2730e322293225d5b7a3e6c83830e0ad7cc7aea381701e8"
+    },
+    {
+      "id": "src/creative/StudioProductionGraphEditor.providerMigration.test.tsx :: Production Graph UI keeps original controller and execution authority migration: explicitly binds authored documents, style and upscale parameters without dispatch",
+      "file": "src/creative/StudioProductionGraphEditor.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "17f299a93afab035805e6cec09638475741e2bf2e7b6bc29eaf62f1bea86f2e5",
+      "integrated_signature": "b659f5c01b13f19cf0b146ebccb170654a599da4b3e5bd35c107ad9c711e9a47"
+    },
+    {
+      "id": "src/creative/StudioVideoShotBinding.providerMigration.test.tsx :: Phase 5 independent Video author flow can explicitly omit a new Shot binding migration: allows unchecking the initial true flag without a connected Shot and saves no implicit pin",
+      "file": "src/creative/StudioVideoShotBinding.providerMigration.test.tsx",
+      "same_headline": true,
+      "C_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "integrated_headline": "TestingLibraryElementError: Unable to find an accessible element with the role \"button\" and name \"读取节点服务配置\"",
+      "C_signature": "9733c008534b8bd3ef705593838479418dacc441c0189bf059fefd5d40055f64",
+      "integrated_signature": "1b64ad850f167b4b2bea3316adf5c881e5d874ac75fbc5a64868ddd8c8f6cbac"
+    }
+  ],
+  "new_test_ids": [
+    "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx :: ImageRebuild canvas-to-queue wiring closes the old drawer on novel change and discards its late provider and private Job responses",
+    "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx :: ImageRebuild canvas-to-queue wiring uses the explicitly selected node prompt in the real queue component and displays only the returned fixture Job ID"
+  ],
+  "missing_test_ids": [],
+  "new_suites": [
+    "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx"
+  ],
+  "missing_suites": [],
+  "C_collection_errors": [
+    {
+      "file": "src/ui/LocalAiBrowserJourneyContracts.test.tsx",
+      "status": "failed",
+      "assertions": 0,
+      "message": "ENOENT: no such file or directory, open '<checkout>/frontend/tests/e2e/v2-local-ai-files-live.spec.ts'",
+      "status_counts": {}
+    }
+  ],
+  "integrated_collection_errors": [
+    {
+      "file": "src/ui/LocalAiBrowserJourneyContracts.test.tsx",
+      "status": "failed",
+      "assertions": 0,
+      "message": "ENOENT: no such file or directory, open '<checkout>/frontend/tests/e2e/v2-local-ai-files-live.spec.ts'",
+      "status_counts": {}
+    }
+  ],
+  "new_suite_or_failure_source_blobs": {
+    "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx": {
+      "A": "ce885722600d5fbf6b799111594053f6099704bc",
+      "C": null,
+      "integrated": "ce885722600d5fbf6b799111594053f6099704bc"
+    },
+    "src/workspace/state/u1.purge.host.test.tsx": {
+      "A": null,
+      "C": "b36021eb4691e50678804e3ba1d9e9bc50c5e14d",
+      "integrated": "b36021eb4691e50678804e3ba1d9e9bc50c5e14d"
+    }
+  }
+}

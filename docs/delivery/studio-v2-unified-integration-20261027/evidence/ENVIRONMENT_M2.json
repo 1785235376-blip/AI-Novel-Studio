@@ -1,0 +1,9 @@
+{
+  "archive": "ENVIRONMENT_M2.zip",
+  "bytes": 10340,
+  "sha256": "05ef32ac6d371e1d07744968dcd8b9615260d612d1c56d3e75022f40face6d78",
+  "files": 16,
+  "raw_bytes": 30618,
+  "verified_every_payload": true,
+  "omissions": "Dependency links, node_modules, Git, Vite and Python caches excluded; original test sources/config/logs/results retained. FAIL, SKIPPED and development observations preserve original status."
+}
