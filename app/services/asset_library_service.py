@@ -59,7 +59,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review", "_comic_page_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review", "_comic_page_origin", "_audio_history_head", "_audio_history_restore_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
