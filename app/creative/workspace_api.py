@@ -577,7 +577,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                       lambda actor, scope, guard: service.relationships.remove(nid, scope, actor, aid, rid, expected_version, guard))
 
     @router.get("/projects/{nid}/studio/assets/{aid}/history")
-    def audio_history_status(nid: str, aid: str, x_session_token: str | None = Header(None),
+    def audio_history_status(nid: str, aid: str, request: Request, x_session_token: str | None = Header(None),
                              x_branch_id: str | None = Header(None)):
         from .audio_history_status import uncaptured_audio_status
         from .. import api as original_api
@@ -599,6 +599,18 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         def observe(actor, scope, guard):
             nonlocal authority_observation
             from .audio_history_authority import file_collaboration_observation
+            # Query validation follows original project authorization and never
+            # provisions a cursor key or accepts a continuation as an empty page.
+            guard()
+            session_guard()
+            if len(request.scope.get('query_string', b'')) > 2048:
+                raise HTTPException(422, {"code": "AUDIO_HISTORY_QUERY_INVALID"})
+            limits = request.query_params.getlist('limit')
+            if (len(limits) > 1 or any(re.fullmatch(r'[0-9]{1,2}', value) is None
+                                       or not 1 <= int(value) <= 50 for value in limits)):
+                raise HTTPException(422, {"code": "AUDIO_HISTORY_QUERY_INVALID"})
+            if request.query_params.getlist('cursor'):
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_CURSOR_UNAVAILABLE"})
             if scope.get("mode") == "collaboration":
                 authority_observation = (actor, scope, file_collaboration_observation(
                     service, nid, scope, actor, x_session_token))
