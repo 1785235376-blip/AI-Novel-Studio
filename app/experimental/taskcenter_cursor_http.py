@@ -184,8 +184,33 @@ class TaskCenterCursorHTTPAdapter:
             self._unavailable(selection)
 
     def _read_aggregate(self, ctx, selection, require_flag, query, failed_only, reauthorize):
-        return self.service.tasks(ctx, require_flag, query, failed_only,
-                                  reauthorize, authorities=selection.authorities)
+        # Legacy aggregation intentionally hides denied sources. A local
+        # single-source cursor must distinguish a successful empty read from
+        # an actual reader's 403/404, even when both have the same projection.
+        # This receipt is request-local and does not alter legacy/offset calls
+        # or the separately guarded mixed/collaboration contracts.
+        if (ctx.scope.get("mode") != "local"
+                or selection.authorities not in (("semantic_import",), ("exports",))):
+            return self.service.tasks(ctx, require_flag, query, failed_only,
+                                      reauthorize, authorities=selection.authorities)
+        self._gate(ctx, selection)
+        expected = [reader for reader in self.service.task_readers
+                    if reader.name in selection.authorities]
+        receipts = []
+        def observed(reader, completed):
+            receipts.append((reader.name, reader, completed))
+        result = self.service.tasks(ctx, require_flag, query, failed_only,
+                                    reauthorize, authorities=selection.authorities,
+                                    _read_observer=observed)
+        current = [reader for reader in self.service.task_readers
+                   if reader.name in selection.authorities]
+        if (len(expected) != 1 or len(current) != 1 or len(receipts) != 1
+                or expected[0] is not self.reader or current[0] is not expected[0]
+                or receipts[0][0] != selection.authorities[0]
+                or receipts[0][1] is not expected[0] or receipts[0][2] is not True):
+            self._unavailable(selection)
+        self._gate(ctx, selection)
+        return result
 
     def tasks(self, ctx, selection, page, require_flag, query, failed_only,
               reauthorize):
@@ -240,7 +265,8 @@ class TaskCenterCursorHTTPAdapter:
         reauthorize()
         self._gate(ctx, selection)
         try:
-            position = self.engine.page(binding=binding, query=query_digest,
+            issuing_engine = self.engine
+            position = issuing_engine.page(binding=binding, query=query_digest,
                 projection=projection, observed_total=len(result["items"]),
                 limit=limit, token=selection.cursor, supported=True)
         except TaskCenterCursorInvalid:
@@ -257,6 +283,16 @@ class TaskCenterCursorHTTPAdapter:
         if final != after:
             self._unavailable(selection)
         self._gate(ctx, selection)
+        # Final observations above may be slow. They cannot extend the fixed
+        # cursor deadline, nor return a position from a replaced/evicted engine.
+        if self.engine is not issuing_engine:
+            raise HTTPException(409, RESTART_ERROR)
+        try:
+            issuing_engine.validate_return(position)
+        except TaskCenterCursorRestart:
+            raise HTTPException(409, RESTART_ERROR) from None
+        except TaskCenterCursorUnsupported:
+            self._unavailable(selection)
         return add_query_metadata({**result,
             "items": result["items"][position.offset:position.offset + limit],
             "page_mode": "cursor", "limit": limit, "has_more": position.has_more,
