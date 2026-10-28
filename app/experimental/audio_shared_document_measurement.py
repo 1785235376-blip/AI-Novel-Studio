@@ -42,6 +42,10 @@ def _shape(row, item_id, nid, scope, snapshot=False):
     _fields(row, ROW_FIELDS if snapshot else ROW_FIELDS | {'history'})
     if not REQUIRED_FIELDS <= set(row) or row['id'] != item_id or row['novel_id'] != nid or row['scope'] != scope:
         raise ValueError('invalid candidate identity')
+    if (type(row['version']) is not int or row['version'] < 1
+            or type(row['plan_version']) is not int or row['plan_version'] < 1
+            or row['status'] not in {'PENDING_REVIEW', 'APPROVING', 'APPROVED', 'REJECTED'}):
+        raise ValueError('invalid candidate state')
     for key, value in row.items():
         if key not in {'scope', 'sources', 'media', 'source_asset_ids', 'required_features', 'timeline', 'history'} and not _scalar(value):
             raise ValueError('unknown candidate value')
@@ -105,6 +109,8 @@ def measure_file_scope_document(raw, nid, scope):
     try:
         document = json.loads(raw.decode('utf-8'), object_pairs_hook=_unique_object,
                               parse_constant=lambda _: (_ for _ in ()).throw(ValueError('non-finite')))
+        if not isinstance(document, dict) or type(document.get('schema_version')) is not int:
+            raise ValueError('invalid document schema version')
         ExperimentalStore.validate(document, nid, scope)
         if canonical(document).encode('utf-8') != raw:
             raise ValueError('not canonical')

@@ -136,3 +136,22 @@ def test_duplicate_key_noncanonical_and_wrong_scope_rejected(rig):
     assert duplicate != raw
     with pytest.raises(ValueError): measure_file_scope_document(duplicate, rig.nid, rig.scope)
     with pytest.raises(ValueError): measure_file_scope_document(raw, rig.nid, {'mode':'local','novel_id':'other'})
+
+
+def test_boolean_schema_version_is_unknown(rig):
+    store, _ = initialized(rig)
+    doc = store.read(rig.nid, rig.scope)
+    doc['schema_version'] = True
+    with pytest.raises(ValueError, match='MEASUREMENT_UNAVAILABLE'):
+        measure_file_scope_document(canonical(doc).encode(), rig.nid, rig.scope)
+
+
+@pytest.mark.parametrize('field,value', [('version', True), ('plan_version', True), ('status', 'SYNTHETIC_UNKNOWN')])
+def test_invalid_candidate_state_is_unknown(rig, field, value):
+    store, _ = initialized(rig)
+    doc = store.read(rig.nid, rig.scope)
+    row = owner_candidate(rig)
+    row[field] = value
+    doc['collections']['audio_v2_mix_proposals'][row['id']] = row
+    with pytest.raises(ValueError, match='MEASUREMENT_UNAVAILABLE'):
+        measure_file_scope_document(canonical(doc).encode(), rig.nid, rig.scope)
