@@ -18,7 +18,7 @@ const SHOTS = process.env.SHOTS; if (SHOTS) fs.mkdirSync(SHOTS, {recursive: true
 const AXE = process.env.AXE ? fs.readFileSync(process.env.AXE, 'utf8') : null;
 const WS = (process.env.WS || '1366,1024').split(',').map(Number);
 const HEIGHT = Number(process.env.HEIGHT || '800');
-const b = await chromium.launch({executablePath: process.env.CHROME || '/usr/bin/google-chrome'});
+const b = await chromium.launch({executablePath: process.env.CHROME || '/usr/bin/google-chrome', args: ['--disable-gpu']});
 const ch = P => [{id: 'ch-001', novel_id: P, number: 1, title: '第一章', content: '<p>雾</p>', document: {type: 'doc', content: [{type: 'paragraph', content: [{type: 'text', text: '雾从港口漫上来。'}]}]}, version: 3, word_count: 8, status: 'draft'}];
 const plays = [{id: 'sp1', shot_status: 'DRAFT', shots: [{id: 'x1', shot_size: '近景', description: '雾港码头'}, {id: 'x2', shot_size: '远景', description: '灯塔'}, {id: 'x3', shot_size: '特写', description: '煤油灯'}]}];
 async function session(theme) {
