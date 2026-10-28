@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="15.612" timestamp="2026-10-28T13:14:41.431818+09:00" hostname="638fbfa7e623"><testcase classname="tests.test_export_artifact_recovery_generator" name="test_original_generator_snapshot_artifact_survives_owner_restart[dead-recovery-txt-rendered]" time="12.486"><failure message="AssertionError: assert b'LATE_LIVE_M...MUST_NOT_LEAK' == b'\xe7\xac\xa...e\xe3\x80\x82'&#10;  &#10;  At index 0 diff: b'L' != b'\xe7'&#10;  Use -v to get more diff">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/text-artifact-publicbase-negative/.runtime/negative/test_original_generator_snapsh0')
+fmt = 'txt', transition = 'dead-recovery', stage = 'rendered'
+
+    @pytest.mark.parametrize('stage',['rendered','persisted'])
+    @pytest.mark.parametrize('fmt',['txt','markdown','json'])
+    @pytest.mark.parametrize('transition',['finish','dead-recovery'])
+    def test_original_generator_snapshot_artifact_survives_owner_restart(tmp_path,fmt,transition,stage):
+     if transition=='dead-recovery' and os.name=='nt':pytest.skip('actual POSIX SIGKILL only')
+     root=tmp_path/'data';control=tmp_path/'controls';control.mkdir()
+     bundle=create_repository_bundle(config=SimpleNamespace(storage_backend='file'),data_root=root)
+     novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters)
+     nid=novels.create({'id':'synthetic-render-book','title':'合成原始书名'})['id']
+     chapter=chapters.create(nid,{'title':'第一章','content':'原始正文 Ω\n\n第二段：合成证据。'})
+     children=[];source=Path(__file__).resolve().parents[1]
+     def launch(role):
+      child=subprocess.Popen([sys.executable,'-c',WORKER,str(root),str(control),nid,fmt,role,stage],cwd=source,
+       env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+      children.append(child);return child
+     try:
+      a=launch('a');wait(control/'a-gated');wait(control/'job.json')
+      row=json.loads((control/'job.json').read_text());jid=row['id'];snapshot=row['snapshot']
+      expected=ExportJobService._result_bytes(novels.export(nid,fmt,snapshot=snapshot))
+      assert (control/'a-rendered').read_bytes()==expected
+      assert '原始正文 Ω' in expected.decode('utf-8')
+      if fmt=='txt':assert expected=='第一章\n\n原始正文 Ω\n第二段：合成证据。'.encode('utf-8')
+      artifacts=list((root/'export_artifacts').glob('*.artifact'))
+      assert len(artifacts)==(1 if stage=='persisted' else 0)
+      persisted_before={p:(p.read_bytes(),p.stat().st_mtime_ns) for p in artifacts}
+      chapters.save(chapter['id'],{'content':'LATE_LIVE_MANUSCRIPT_MUST_NOT_LEAK'})
+      novels.update(nid,{'title':'LATE_LIVE_TITLE_MUST_NOT_LEAK'})
+      assert b'LATE_LIVE_MANUSCRIPT' in ExportJobService._result_bytes(novels.export(nid,fmt))
+      b=launch('b');wait(control/'b-constructed');(control/'b-release').touch();finish(b)
+      assert a.poll() is None
+      assert not (control/'b-rendered').exists(),'live owner duplicated'
+      assert {p:(p.read_bytes(),p.stat().st_mtime_ns) for p in (root/'export_artifacts').glob('*.artifact')}==persisted_before
+      if transition=='dead-recovery':
+       a.kill();a.communicate(timeout=10);assert a.returncode&lt;0
+       c=launch('c');wait(control/'c-gated')
+&gt;      assert (control/'c-rendered').read_bytes()==expected
+E      AssertionError: assert b'LATE_LIVE_M...MUST_NOT_LEAK' == b'\xe7\xac\xa...e\xe3\x80\x82'
+E        
+E        At index 0 diff: b'L' != b'\xe7'
+E        Use -v to get more diff
+
+tests/test_export_artifact_recovery_generator.py:104: AssertionError</failure></testcase><testcase classname="tests.test_export_artifact_recovery_generator" name="test_original_generator_snapshot_artifact_survives_owner_restart[dead-recovery-txt-persisted]" time="2.485"><failure message="AssertionError: assert b'LATE_LIVE_M...MUST_NOT_LEAK' == b'\xe7\xac\xa...e\xe3\x80\x82'&#10;  &#10;  At index 0 diff: b'L' != b'\xe7'&#10;  Use -v to get more diff">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/text-artifact-publicbase-negative/.runtime/negative/test_original_generator_snapsh1')
+fmt = 'txt', transition = 'dead-recovery', stage = 'persisted'
+
+    @pytest.mark.parametrize('stage',['rendered','persisted'])
+    @pytest.mark.parametrize('fmt',['txt','markdown','json'])
+    @pytest.mark.parametrize('transition',['finish','dead-recovery'])
+    def test_original_generator_snapshot_artifact_survives_owner_restart(tmp_path,fmt,transition,stage):
+     if transition=='dead-recovery' and os.name=='nt':pytest.skip('actual POSIX SIGKILL only')
+     root=tmp_path/'data';control=tmp_path/'controls';control.mkdir()
+     bundle=create_repository_bundle(config=SimpleNamespace(storage_backend='file'),data_root=root)
+     novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters)
+     nid=novels.create({'id':'synthetic-render-book','title':'合成原始书名'})['id']
+     chapter=chapters.create(nid,{'title':'第一章','content':'原始正文 Ω\n\n第二段：合成证据。'})
+     children=[];source=Path(__file__).resolve().parents[1]
+     def launch(role):
+      child=subprocess.Popen([sys.executable,'-c',WORKER,str(root),str(control),nid,fmt,role,stage],cwd=source,
+       env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+      children.append(child);return child
+     try:
+      a=launch('a');wait(control/'a-gated');wait(control/'job.json')
+      row=json.loads((control/'job.json').read_text());jid=row['id'];snapshot=row['snapshot']
+      expected=ExportJobService._result_bytes(novels.export(nid,fmt,snapshot=snapshot))
+      assert (control/'a-rendered').read_bytes()==expected
+      assert '原始正文 Ω' in expected.decode('utf-8')
+      if fmt=='txt':assert expected=='第一章\n\n原始正文 Ω\n第二段：合成证据。'.encode('utf-8')
+      artifacts=list((root/'export_artifacts').glob('*.artifact'))
+      assert len(artifacts)==(1 if stage=='persisted' else 0)
+      persisted_before={p:(p.read_bytes(),p.stat().st_mtime_ns) for p in artifacts}
+      chapters.save(chapter['id'],{'content':'LATE_LIVE_MANUSCRIPT_MUST_NOT_LEAK'})
+      novels.update(nid,{'title':'LATE_LIVE_TITLE_MUST_NOT_LEAK'})
+      assert b'LATE_LIVE_MANUSCRIPT' in ExportJobService._result_bytes(novels.export(nid,fmt))
+      b=launch('b');wait(control/'b-constructed');(control/'b-release').touch();finish(b)
+      assert a.poll() is None
+      assert not (control/'b-rendered').exists(),'live owner duplicated'
+      assert {p:(p.read_bytes(),p.stat().st_mtime_ns) for p in (root/'export_artifacts').glob('*.artifact')}==persisted_before
+      if transition=='dead-recovery':
+       a.kill();a.communicate(timeout=10);assert a.returncode&lt;0
+       c=launch('c');wait(control/'c-gated')
+&gt;      assert (control/'c-rendered').read_bytes()==expected
+E      AssertionError: assert b'LATE_LIVE_M...MUST_NOT_LEAK' == b'\xe7\xac\xa...e\xe3\x80\x82'
+E        
+E        At index 0 diff: b'L' != b'\xe7'
+E        Use -v to get more diff
+
+tests/test_export_artifact_recovery_generator.py:104: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,15 @@
+{
+  "base": "efd083c2b25a63a2aad3c0fc5415314d9dbc7ca3",
+  "base_tree": "78cdf349da72058b32b66eee7ad0f9746d520db2",
+  "freeze": "7b28a83b99c2b53af269f0ec7798a91fe21a6126",
+  "freeze_tree": "0e6de0625c280d921c2af5845591c00d2585d193",
+  "app_tree_base": "44f0a0fe8780611d1440687f799f5d13cb40714c",
+  "app_tree_freeze": "44f0a0fe8780611d1440687f799f5d13cb40714c",
+  "production_diff": "",
+  "test_delta": "tests/test_export_artifact_recovery_generator.py",
+  "test_sha256": "237505eff5fd4907209737383ca05ca1e360854c6a3607d9b673bf920701d7fd",
+  "parent": "efd083c2b25a63a2aad3c0fc5415314d9dbc7ca3",
+  "test_reimplemented_after_environment_reset": true,
+  "old_07f_logs_reused": false,
+  "unpublished_helpers_imported": false
+}

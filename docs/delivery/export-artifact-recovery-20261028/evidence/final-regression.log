@@ -1,0 +1,30 @@
+{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 0, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 0, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 0, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 0, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 0, "sha256": "6c75a0a7e09c9110ab20eb68c005ce5d6a6518727bf94e21838cc2b60bb46d95", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 0, "sha256": "5f1c83c31697b348b1d55bf2d2ab6aa5783090b84f6384bf7d06db34954498f6", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 1, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 1, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 1, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 1, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 1, "sha256": "1ca350905d0459e41ee827d57d256bc2f90242c331ff3e3322f54d69bc687257", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 1, "sha256": "5cc18d66fd862f2873f4c0b909f0edc86ca2953661ffcaeffddb360c98a9cf4a", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+......................................................................................................................{"after_b_content": null, "before_recovery": 0, "during_recovery": 0, "final_content": "a", "live_duplicate": false}
+.............
+=============================== warnings summary ===============================
+tests/test_export_artifact_recovery_generator.py::test_original_generator_snapshot_artifact_survives_owner_restart[finish-txt-rendered]
+  /workspace/scratch/20a0022d2b33/text-artifact-publicbase-final/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_artifact_recovery_generator.py::test_original_generator_snapshot_artifact_survives_owner_restart[finish-txt-rendered]
+  /workspace/scratch/20a0022d2b33/text-artifact-publicbase-final/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_export_jobs.py::test_export_download_route_returns_attachment
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/text-artifact-publicbase-evidence/final-regression.xml -
+142 passed, 3 warnings in 115.67s (0:01:55)

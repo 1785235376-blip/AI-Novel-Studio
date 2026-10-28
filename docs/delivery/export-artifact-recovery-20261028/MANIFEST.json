@@ -1,0 +1,23 @@
+{
+  "DELIVERY.md": "b68efa584e46e2d4c58135c51fb5b75fc030f87f8305113e0513d9a349a22996",
+  "RESULTS.json": "ccf9f56534ceae5efda56b33af84b06ff80629c501cbb63b8ce35ca74c2b7d68",
+  "WORK_HANDOFF.md": "05f6c0c03e6761f8fde4f4351bd14c3cd15c0421db634fab7ad2ebc866c8e39c",
+  "evidence/INDEPENDENT_REVIEW.md": "5f65490bbad8e0436d1c9ca89a1edee82e71477874746ae9930ec31b5ae42949",
+  "evidence/SOURCE_PROVENANCE.json": "25afe796703fa89de19f46114fb8fb4221b5bba41d868e1291c50a7684e54bd2",
+  "evidence/final-artifact-exit.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "evidence/final-artifact-receipt.json": "1054f0e5a6e02b7c237b215b3e2fa6ba59160fc8e2d7b5c37a79bc56acc41dad",
+  "evidence/final-artifact.log": "a2f9bf116ca03c0d0237059bbd1ba14b4d5806d9cc4a04b6edc041202ee04940",
+  "evidence/final-artifact.xml": "64815815cb47f4bf4f861e340a87282fe6611065b40c70910a2fd8f4c4088713",
+  "evidence/final-regression-exit.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "evidence/final-regression-receipt.json": "9e015acae90651a413786ae3bf129764d9eb67f09d7f596b4be622d061172142",
+  "evidence/final-regression.log": "d490108b8a890418c57d0b3e74877e99a1e7a51848049ca4e8a66b15a05ee158",
+  "evidence/final-regression.xml": "a3152752d5284bdfd55d93cfaa7ed39603491a1e9318a4985eda3e3b597ea5f2",
+  "evidence/negative-exit.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+  "evidence/negative-only.patch": "0dcb9d80a57f49be9d02faac7dfa5986ccfa621caf3550c29441f3c593923e5d",
+  "evidence/negative.log": "5ac1bc0a492890ea7d249e3703bd68e80c0eed4eb9c3f7f6909dd16c0293df31",
+  "evidence/negative.xml": "98827daf72375072c8acc8d75d304e21fe976c75614df9dd4729d108a08b429f",
+  "evidence/probe-exit.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "evidence/probe.log": "5df4caf9f50641c83a46308ee296767604798a080d3d065200825d6ef4ef9cfb",
+  "evidence/run_frozen.py": "2be53fc8affb33957098bf146eaec08803ac11b4305d575ee79940143ca67714",
+  "evidence/run_groups.sh": "f78277d2bb82ff1a2ccb1907e5a1a582008787aa6419c04d0f9d9f12fe93ca85"
+}

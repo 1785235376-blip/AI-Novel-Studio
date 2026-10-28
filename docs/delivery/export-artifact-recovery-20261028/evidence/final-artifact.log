@@ -1,0 +1,25 @@
+{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 0, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 0, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 0, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 0, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 0, "sha256": "8344cfa4f21fa8b773bda7fae764fbfa755bb645a555cee564539f6b21a40e23", "snapshot_preserved": true, "stage": "rendered", "transition": "finish"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 0, "sha256": "0b1f9f0f33cba343df1183364b9a83ed50df9394e5c2f2baab0affe2e9a89a48", "snapshot_preserved": true, "stage": "persisted", "transition": "finish"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 1, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 54, "format": "txt", "recovery_count": 1, "sha256": "e9329e572b1076406a18653e274ee47a5e6d9cbd0bd5bb547480f654f4751e96", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 1, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 59, "format": "markdown", "recovery_count": 1, "sha256": "4866db4a19c259da80514fbf11c57e7107d50085a4abf3e64f9435dc19c5290c", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 1, "sha256": "bb9761eb5d7e88f8b65886a1cd7c65fce2ae3733aa307faad0e4e2cfcb97bee6", "snapshot_preserved": true, "stage": "rendered", "transition": "dead-recovery"}
+.{"artifact_present": true, "bytes": 1465, "format": "json", "recovery_count": 1, "sha256": "a97e5fa9550b2c87e943a156f69cac2fed735c71822cfd9b811f724273c99e7b", "snapshot_preserved": true, "stage": "persisted", "transition": "dead-recovery"}
+.
+=============================== warnings summary ===============================
+tests/test_export_artifact_recovery_generator.py::test_original_generator_snapshot_artifact_survives_owner_restart[finish-txt-rendered]
+  /workspace/scratch/20a0022d2b33/text-artifact-publicbase-final/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_artifact_recovery_generator.py::test_original_generator_snapshot_artifact_survives_owner_restart[finish-txt-rendered]
+  /workspace/scratch/20a0022d2b33/text-artifact-publicbase-final/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/text-artifact-publicbase-evidence/final-artifact.xml -
+12 passed, 2 warnings in 41.46s

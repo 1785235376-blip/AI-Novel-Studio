@@ -1,0 +1,35 @@
+{
+  "status": "PARTIAL",
+  "edition": "recovered-independent-public-export-owner-base",
+  "public_base": "efd083c2b25a63a2aad3c0fc5415314d9dbc7ca3",
+  "public_base_tree": "78cdf349da72058b32b66eee7ad0f9746d520db2",
+  "tested_head": "7b28a83b99c2b53af269f0ec7798a91fe21a6126",
+  "tested_tree": "0e6de0625c280d921c2af5845591c00d2585d193",
+  "unchanged_app_tree": "44f0a0fe8780611d1440687f799f5d13cb40714c",
+  "groups_not_additive": {
+    "final-artifact": {
+      "tests": "12",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "41.456"
+    },
+    "final-regression": {
+      "tests": "142",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "115.668"
+    }
+  },
+  "negative_control": {
+    "failed": 2,
+    "deselected": 10,
+    "expected_exit": 1,
+    "mutation": "discard persisted snapshot in isolated checkout only",
+    "failure": "recovered renderer bytes contain later live manuscript instead of frozen source"
+  },
+  "publication": "AUTHORIZED_TESTS_DOCS_SYNTHETIC_EVIDENCE_ONLY_NOT_YET_RUN",
+  "excluded_unpublished_parent": "bd85784c836f05d3c17767c6dfde8eaccf50a49b",
+  "old_lost_delivery_not_reused": "07f29a663faab06c6d0a2a6242e4e8a66d04de73"
+}

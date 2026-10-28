@@ -1,0 +1,13 @@
+diff --git a/app/services/export_job_service.py b/app/services/export_job_service.py
+index 6456589f..29e87336 100644
+--- a/app/services/export_job_service.py
++++ b/app/services/export_job_service.py
+@@ -646,7 +646,7 @@ class ExportJobService:
+         )
+         kwargs = {}
+         if "snapshot" in parameters or accepts_kwargs:
+-            kwargs["snapshot"] = job.get("snapshot")
++            kwargs["snapshot"] = None  # NEGATIVE CONTROL ONLY: discard durable source
+         if "progress_callback" in parameters or accepts_kwargs:
+             kwargs["progress_callback"] = progress_callback
+         elif "progress" in parameters:
