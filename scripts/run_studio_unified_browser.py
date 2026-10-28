@@ -171,7 +171,10 @@ def main():
         (out / 'source-after.json').write_text(json.dumps(after, indent=2), encoding='utf-8')
         receipt.update(source_unchanged=before == after, final_status=git('status', '--porcelain'),
                        provider_calls=len(calls), ended_utc=datetime.now(timezone.utc).isoformat())
-        receipt['passed'] = len(receipt['phases']) == 3 and all(p['exit_code'] == 0 for p in receipt['phases']) and before == after and len(calls) == 1
+        receipt['passed'] = (len(receipt['phases']) == 3 and all(p['exit_code'] == 0 for p in receipt['phases'])
+                             and before == after and len(calls) == 1 and 'error' not in receipt
+                             and receipt['final_status'] == dirty
+                             and (args.allow_dirty or not receipt['final_status']))
         (out / 'receipt.json').write_text(json.dumps(receipt, indent=2), encoding='utf-8')
     return 0 if receipt['passed'] else 1
 

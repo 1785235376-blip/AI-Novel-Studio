@@ -248,6 +248,10 @@ class CreativeCanvasViews:
                 change_row(row,actor,body.expected_version,lambda item:item.update(
                     definition=definition,definition_digest=digest(definition)))
                 self.graph._capacity(state)
+            # Original owner writes may reenter this phase on the same thread.
+            # Recheck the captured Asset pin after all Canvas mutations, while
+            # the existing lease still excludes other-thread/process writers.
+            current_asset(self,nid,scope,actor,proof,current)
             current()
         return self.get(nid,scope,actor,rid,current)
 
