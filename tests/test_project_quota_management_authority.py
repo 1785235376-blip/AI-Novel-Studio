@@ -192,3 +192,75 @@ def test_lock_order_competes_with_asset_guard_subprocess():
     assert result.returncode == 0, result.stdout + result.stderr
     for marker in ('manager-authority-entered', 'asset-guard-completed', 'manager-completed'):
         assert marker in result.stdout
+
+
+@pytest.mark.skipif(os.environ.get('QUOTA_TRANSACTION_LOCK_CHILD') != '1', reason='subprocess-only lock probe')
+def test_lock_order_competes_with_creative_transaction_child(shared_project, monkeypatch):
+    from app import api
+    from app.repositories.file import mutation_coordinator
+    rig = shared_project
+    add_grant(rig)
+    rig.scopes.create_storyline(Storyline('story', 'ws', rig.nid, 'Story'))
+    rig.scopes.create_branch(Branch('branch', 'ws', rig.nid, 'story', 'Branch'))
+    scope = {'mode': 'collaboration', 'novel_id': rig.nid, 'workspace_id': 'ws',
+             'storyline_id': 'story', 'branch_id': 'branch'}
+    ready, proceed, asset_entered, scope_entered, completed = Event(), Event(), Event(), Event(), Event()
+    original_lease = api._workbench_authority_lease
+    original_mutation = mutation_coordinator.workspace_mutation
+    manager_thread = []
+    @contextmanager
+    def observed_lease(*args):
+        ready.set(); assert proceed.wait(5)
+        with original_lease(*args): yield
+    @contextmanager
+    def observed_mutation(root, name):
+        with original_mutation(root, name):
+            if manager_thread and __import__('threading').get_ident() == manager_thread[0]:
+                if name == 'asset-library': asset_entered.set()
+                if name == 'collaboration-scope':
+                    print('manager-scope-held', flush=True)
+                    scope_entered.set()
+            yield
+    monkeypatch.setattr(api, '_workbench_authority_lease', observed_lease)
+    monkeypatch.setattr(mutation_coordinator, 'workspace_mutation', observed_mutation)
+    selected = project_management_lease
+    if os.environ.get('QUOTA_LOCK_ORDER_OLD') == '1':
+        import types
+        old_path = Path(__file__).resolve().parent / 'fixtures' / 'quota_authority_scope_before_project.py.txt'
+        old = types.ModuleType('app.creative._quota_old_lock_control')
+        old.__package__ = 'app.creative'
+        exec(compile(old_path.read_bytes(), str(old_path), 'exec'), old.__dict__)
+        selected = old.project_management_lease
+    def manager():
+        manager_thread.append(__import__('threading').get_ident())
+        with selected(rig.workspace, rig.nid, 'token'):
+            print('manager-returned', flush=True)
+        completed.set()
+    worker = Thread(target=manager, daemon=True); worker.start()
+    assert ready.wait(5)
+    # Existing adaptation.py enters a CreativeProjectStore transaction and
+    # invokes its original HTTP authorization guard while the project is held.
+    with rig.workspace.store.transaction(rig.nid, scope):
+        proceed.set(); assert asset_entered.wait(5)
+        if os.environ.get('QUOTA_LOCK_ORDER_OLD') == '1': assert scope_entered.wait(5)
+        print('transaction-guard-started', flush=True)
+        api._workbench_authorize(rig.nid, 'token', 'branch', 'domain.write')
+        print('transaction-guard-returned', flush=True)
+    assert completed.wait(5)
+
+
+def test_creative_transaction_lock_order_with_reverted_control():
+    env = dict(os.environ, QUOTA_TRANSACTION_LOCK_CHILD='1', QUOTA_LOCK_ORDER_OLD='1')
+    with pytest.raises(subprocess.TimeoutExpired) as error:
+        subprocess.run([sys.executable, '-m', 'pytest', '-q', '-s',
+            str(Path(__file__).resolve()) + '::test_lock_order_competes_with_creative_transaction_child'],
+            env=env, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=12)
+    output = error.value.stdout.decode('utf-8', errors='replace') if isinstance(error.value.stdout, bytes) else error.value.stdout
+    assert 'manager-scope-held' in output and 'transaction-guard-started' in output
+    assert 'transaction-guard-returned' not in output
+    env['QUOTA_LOCK_ORDER_OLD'] = '0'
+    result = subprocess.run([sys.executable, '-m', 'pytest', '-q', '-s',
+        str(Path(__file__).resolve()) + '::test_lock_order_competes_with_creative_transaction_child'],
+        env=env, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=20)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert 'transaction-guard-returned' in result.stdout and 'manager-returned' in result.stdout

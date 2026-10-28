@@ -87,13 +87,14 @@ def project_management_lease(workspace, nid, token):
     except (KeyError, ValueError, TypeError):
         raise HTTPException(409, {'code': 'PROJECT_QUOTA_AUTHORITY_UNSUPPORTED'}) from None
 
-    # Match the established File authorization-before-project order, while
-    # retaining asset-before-project and scope-before-project. Holding scope
-    # after asset also avoids the asset -> scope order used by asset guards.
+    # Match existing File retirement and Creative guards: authorization ->
+    # asset -> project -> collaboration-scope. In particular, taking the scope
+    # lock before the project owner deadlocks with Creative transactions whose
+    # original authority guard reads the collaboration scope under that owner.
     with api._workbench_authority_lease(nid, token, actor, {'workspace_id': ws}):
         with workspace.assets._lock, workspace_mutation(workspace.assets.root, 'asset-library'):
-            with workspace_mutation(root, 'collaboration-scope'):
-                with workspace.store.owner_lease(nid) as current:
+            with workspace.store.owner_lease(nid) as current:
+                with workspace_mutation(root, 'collaboration-scope'):
                     try:
                         unchanged = observe() == before and current == expected
                     except (HTTPException, KeyError, ValueError, TypeError, PermissionError):
