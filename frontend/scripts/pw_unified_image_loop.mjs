@@ -78,12 +78,27 @@ async function assertSaved() {
     async function get(url){const r=await fetch(url,{headers:{'X-Session-Token':token}});if(!r.ok)throw new Error(`${r.status} ${url}`);return r.json();}
     const canvas=await get(`${base}/canvas-views/${id}`);
     const origin=canvas.definition.image_node_origin;
-    return {canvas,job:await get(`${base}/production/jobs/image/${job}`),asset:await get(`${base}/assets/${origin.asset.asset_id}`),alias:await get(`/api/v1/projects/${nid}/studio/canvas-views/${id}`)};
+    const aliasBase=`/api/v1/projects/${nid}/studio`;
+    return {canvas,job:await get(`${base}/production/jobs/image/${job}`),asset:await get(`${base}/assets/${origin.asset.asset_id}`),
+      history:await get(`${base}/canvas-views/${id}/history`), overview:await get(base),
+      alias:await get(`${aliasBase}/canvas-views/${id}`),aliasJob:await get(`${aliasBase}/production/jobs/image/${job}`),
+      aliasAsset:await get(`${aliasBase}/assets/${origin.asset.asset_id}`),aliasHistory:await get(`${aliasBase}/canvas-views/${id}/history`)};
   },{nid:NOVEL,id:state.target.id,job:state.job.id,token:TOKEN});
   assert.deepEqual(records.canvas,state.saved);
   assert.deepEqual(records.alias,state.saved);
   assert.deepEqual(records.job,state.job);
+  assert.deepEqual(records.aliasJob,records.job);
+  assert.deepEqual(records.aliasAsset,records.asset);
+  assert.deepEqual(records.aliasHistory,records.history);
   const origin=records.canvas.definition.image_node_origin;
+  assert.equal(records.canvas.version,state.target.version+1);
+  assert.equal(origin.target.canvas_id,state.target.id);
+  assert.equal(origin.target.canvas_version,state.target.version);
+  assert.equal(origin.target.canvas_digest,state.target.definition_digest);
+  assert.equal(origin.target.project_id,NOVEL);
+  assert.deepEqual(origin.target.scope,state.target.scope);
+  assert.equal(origin.target.incarnation,state.overview.project.incarnation);
+  assert.equal(records.overview.project.incarnation,state.overview.project.incarnation);
   assert.equal(origin.job_id,state.job.id);
   assert.equal(origin.job_version,state.job.version);
   assert.equal(origin.job_request_digest,state.job.request_digest);
@@ -95,6 +110,10 @@ async function assertSaved() {
   assert.deepEqual(records.canvas.definition.cards,[{id:origin.target.node_id,position:origin.target.position,asset:origin.asset}]);
   const visible=await page.getByLabel('服务端节点资产关联').innerText();
   assert(visible.includes(origin.asset.asset_id)&&visible.includes(state.job.id));
+  if (state.records) {
+    assert.deepEqual(records.history,state.records.history,'History must survive reopen/restart without another adoption');
+    assert.deepEqual(records.asset,state.records.asset,'Exact Asset metadata must survive reopen/restart');
+  }
   state.records=records;
   step('positive.exactPersistedPins',{status:'PASS'});
 }
@@ -175,12 +194,15 @@ try {
   const openFormal = page.getByRole('button', {name: '打开正式生成与服务端保存'});
   await openFormal.waitFor({state: 'visible', timeout: 20_000});
   const execBefore = report.execute_posts;
-  await barrier(
+  const overviewResponse=await barrier(
     page,
     'studio.overview',
     (res) => res.request().method() === 'GET' && /\/projects\/[^/]+\/studio\b/.test(res.url()) && !/canvas-views/.test(res.url()),
     () => openFormal.click(),
   );
+  const currentOverview=await overviewResponse.json();
+  if (state.overview) assert.equal(currentOverview.project.incarnation,state.overview.project.incarnation);
+  else state.overview=currentOverview;
 
   if (PHASE === 'flow') {
   const saveBtn = page.getByRole('button', {name: '为此节点保存正式空白位置'});
