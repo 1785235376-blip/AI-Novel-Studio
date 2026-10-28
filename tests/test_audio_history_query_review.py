@@ -44,4 +44,3 @@ def test_invalid_or_ambiguous_limit_is_rejected(audio_history,params):
     assert response.status_code==422,response.text
     assert response.json()['detail']['code']=='AUDIO_HISTORY_QUERY_INVALID'
     assert snapshot(e.rig.root)==before
-
