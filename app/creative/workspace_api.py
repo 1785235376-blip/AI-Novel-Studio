@@ -606,8 +606,12 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             if len(request.scope.get('query_string', b'')) > 2048:
                 raise HTTPException(422, {"code": "AUDIO_HISTORY_QUERY_INVALID"})
             limits = request.query_params.getlist('limit')
-            if (len(limits) > 1 or any(re.fullmatch(r'[0-9]{1,2}', value) is None
-                                       or not 1 <= int(value) <= 50 for value in limits)):
+            try:
+                from pydantic import TypeAdapter
+                parsed_limits = [TypeAdapter(int).validate_python(value) for value in limits]
+            except ValueError:
+                raise HTTPException(422, {"code": "AUDIO_HISTORY_QUERY_INVALID"}) from None
+            if len(parsed_limits) > 1 or any(not 1 <= value <= 50 for value in parsed_limits):
                 raise HTTPException(422, {"code": "AUDIO_HISTORY_QUERY_INVALID"})
             if request.query_params.getlist('cursor'):
                 raise HTTPException(409, {"code": "AUDIO_HISTORY_CURSOR_UNAVAILABLE"})

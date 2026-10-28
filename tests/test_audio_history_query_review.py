@@ -27,7 +27,7 @@ def test_invalid_paging_does_not_preempt_collaboration_authorization(rig):
     assert denied.status_code==403,denied.text
 
 @pytest.mark.parametrize('alias',['','/v1'])
-@pytest.mark.parametrize('limit',['1','20','50'])
+@pytest.mark.parametrize('limit',['1','20','50','001','+1','1.0',' 1'])
 def test_valid_limit_retains_uncaptured_status(audio_history,alias,limit):
     e=audio_history
     before=snapshot(e.rig.root)
@@ -44,3 +44,4 @@ def test_invalid_or_ambiguous_limit_is_rejected(audio_history,params):
     assert response.status_code==422,response.text
     assert response.json()['detail']['code']=='AUDIO_HISTORY_QUERY_INVALID'
     assert snapshot(e.rig.root)==before
+
