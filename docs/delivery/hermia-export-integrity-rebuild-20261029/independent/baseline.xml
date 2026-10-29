@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="16" time="17.997" timestamp="2026-10-30T07:57:40.225955+09:00" hostname="93b0b1d08cec"><testcase classname="tests.test_independent_export_rebuild" name="test_receipt_on_missing_file[inline]" time="9.160"><failure message="Failed: DID NOT RAISE &lt;class 'app.services.export_job_service.ExportJobResultInvalid'&gt;">tests/test_independent_export_rebuild.py:37: in test_receipt_on_missing_file
+    with pytest.raises(ExportJobResultInvalid): svc.download(row['id'])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'app.services.export_job_service.ExportJobResultInvalid'&gt;</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_receipt_on_missing_file[size]" time="0.018"><failure message="Failed: DID NOT RAISE &lt;class 'app.services.export_job_service.ExportJobResultInvalid'&gt;">tests/test_independent_export_rebuild.py:37: in test_receipt_on_missing_file
+    with pytest.raises(ExportJobResultInvalid): svc.download(row['id'])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'app.services.export_job_service.ExportJobResultInvalid'&gt;</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_compatibility_read_no_write[valid]" time="0.021" /><testcase classname="tests.test_independent_export_rebuild" name="test_compatibility_read_no_write[legacy]" time="0.016" /><testcase classname="tests.test_independent_export_rebuild" name="test_http_rejects_corrupt_fallback[/api]" time="0.605"><failure message="assert 200 == 500&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests/test_independent_export_rebuild.py:60: in test_http_rejects_corrupt_fallback
+    assert response.status_code==500
+E   assert 200 == 500
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_http_rejects_corrupt_fallback[/api/v1]" time="1.214"><failure message="assert 200 == 500&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests/test_independent_export_rebuild.py:60: in test_http_rejects_corrupt_fallback
+    assert response.status_code==500
+E   assert 200 == 500
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_predecode_admission[True]" time="0.001" /><testcase classname="tests.test_independent_export_rebuild" name="test_predecode_admission[False]" time="0.003"><failure message="assert [1] == []&#10;  &#10;  Left contains one more item: 1&#10;  Use -v to get more diff">tests/test_independent_export_rebuild.py:73: in test_predecode_admission
+    assert calls==[]
+E   assert [1] == []
+E     
+E     Left contains one more item: 1
+E     Use -v to get more diff</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_legacy_valid_boundary[]" time="0.001" /><testcase classname="tests.test_independent_export_rebuild" name="test_legacy_valid_boundary[a]" time="0.001" /><testcase classname="tests.test_independent_export_rebuild" name="test_legacy_valid_boundary[abc]" time="0.002" /><testcase classname="tests.test_independent_export_rebuild" name="test_legacy_valid_boundary[abcd]" time="0.002" /><testcase classname="tests.test_independent_export_rebuild" name="test_special_file_and_open_window[fifo]" time="3.070"><failure message="AssertionError: special-file open exceeded watchdog&#10;assert not True&#10; +  where True = is_alive()&#10; +    where is_alive = &lt;ForkProcess name='ForkProcess-1' pid=23 parent=11 started&gt;.is_alive">tests/test_independent_export_rebuild.py:115: in test_special_file_and_open_window
+    assert not proc.is_alive(),'special-file open exceeded watchdog'
+E   AssertionError: special-file open exceeded watchdog
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = &lt;ForkProcess name='ForkProcess-1' pid=23 parent=11 started&gt;.is_alive</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_special_file_and_open_window[directory]" time="0.069"><failure message="AssertionError: assert 'IsADirectoryError' == 'invalid'&#10;  &#10;  - invalid&#10;  + IsADirectoryError">tests/test_independent_export_rebuild.py:117: in test_special_file_and_open_window
+    assert out.get(timeout=1)=='invalid'
+E   AssertionError: assert 'IsADirectoryError' == 'invalid'
+E     
+E     - invalid
+E     + IsADirectoryError</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_special_file_and_open_window[swapfifo]" time="3.047"><failure message="AssertionError: special-file open exceeded watchdog&#10;assert not True&#10; +  where True = is_alive()&#10; +    where is_alive = &lt;ForkProcess name='ForkProcess-3' pid=28 parent=11 started&gt;.is_alive">tests/test_independent_export_rebuild.py:115: in test_special_file_and_open_window
+    assert not proc.is_alive(),'special-file open exceeded watchdog'
+E   AssertionError: special-file open exceeded watchdog
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = &lt;ForkProcess name='ForkProcess-3' pid=28 parent=11 started&gt;.is_alive</failure></testcase><testcase classname="tests.test_independent_export_rebuild" name="test_special_file_and_open_window[swapdirectory]" time="0.059"><failure message="AssertionError: assert 'IsADirectoryError' == 'invalid'&#10;  &#10;  - invalid&#10;  + IsADirectoryError">tests/test_independent_export_rebuild.py:117: in test_special_file_and_open_window
+    assert out.get(timeout=1)=='invalid'
+E   AssertionError: assert 'IsADirectoryError' == 'invalid'
+E     
+E     - invalid
+E     + IsADirectoryError</failure></testcase></testsuite></testsuites>
