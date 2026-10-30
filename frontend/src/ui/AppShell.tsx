@@ -377,7 +377,10 @@ export function ContextBar({
   projectNoun = "小说",
   writing,
   showCollapsedCta = false,
+  compact = false,
 }: {
+  /** [HERMIA-UX-20261030 M1] 普通模式：只显示作品，不露创作空间 / 故事线 / 分支。 */
+  compact?: boolean;
   scope: ScopeLabels;
   projectNoun?: ProjectNoun;
   /** Optional novel writing breadcrumb — omitted keeps legacy markup byte-stable. */
@@ -457,6 +460,15 @@ export function ContextBar({
       </nav>
     );
   }
+  if (compact) {
+    const raw = scope.project?.trim() || "";
+    const project = !raw ? t("context.unselected") : /^已选.*（未命名）$/.test(raw) || raw === t("scope.unnamedProject") ? t("context.untitledWork") : raw;
+    return (
+      <nav className="context-bar context-bar--compact" aria-label={t("context.scopeAria")}>
+        <span data-scope-id={scope.ids?.project || undefined}>{t("context.projectLabel", { noun: nounLabel(projectNoun) })}{project}</span>
+      </nav>
+    );
+  }
   return (
     <nav className="context-bar" aria-label={t("context.scopeAria")}>
       <span data-scope-id={scope.ids?.workspace || undefined}>{t("context.workspace")}{scope.workspace || fallback}</span>
@@ -468,6 +480,12 @@ export function ContextBar({
       <span data-scope-id={scope.ids?.branch || undefined}>{t("context.branch")}{scope.branch || fallback}</span>
     </nav>
   );
+}
+
+/** opaque ids such as `u-a`, `u-m5`, uuids — never names a person would type */
+export function looksLikeRawId(name: string): boolean {
+  const s = name.trim();
+  return !s || /^[a-z]{1,4}[-_][a-z0-9]{1,}$/i.test(s) || /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(s) || /^(usr|user|actor)[-_]?\d+$/i.test(s);
 }
 
 export function AppShell({
@@ -754,7 +772,9 @@ export function AppShell({
   const shellStyle = {
     "--layout-inspector-width": `${inspectorWidth}px`,
   } as CSSProperties;
-  const actorInitial = (actor.trim()[0] || "作").toUpperCase();
+  // [HERMIA-UX-20261030 M4] 后端只给 actor_id 时不把原始 id 当名字（读屏也不念）
+  const friendlyActor = looksLikeRawId(actor) ? t("actor.local") : actor;
+  const actorInitial = (friendlyActor.trim()[0] || "作").toUpperCase();
   return (
     <div
       className={`app-shell${visibleInspector ? "" : " is-inspector-collapsed"}`}
@@ -823,14 +843,15 @@ export function AppShell({
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}
           </span>
-          <span>{actor}</span>
+          <span>{friendlyActor}</span>
         </span>
       </header>
-      <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} showCollapsedCta={!visibleInspector && module === "NOVEL"} />
+      <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} showCollapsedCta={!visibleInspector && module === "NOVEL"} compact={shellMode !== "pro" && !writingContext} />
       <main className="workspace-body">
         <h1 className="sr-only" data-module-h1="true">{moduleTitleText || "PoemSeed Studio"}</h1>{/* [HERMIA-FE-20261025 DUI P1-7] */}
         {banner ? <div className="workspace-banner">{banner}</div> : null}
         <aside
+          aria-label={t("shell.sidebarAria")}
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}
         >
           {sidebar}
@@ -851,6 +872,7 @@ export function AppShell({
         </IconButton>
         <aside
           id="workspace-inspector"
+          aria-label={t("inspector.title")}
           className="workspace-inspector"
           aria-hidden={!visibleInspector}
           {...(!visibleInspector ? { inert: "" } : {}) /* [HERMIA-FE-20261025 VERA-F70 P2] axe aria-hidden-focus */}
