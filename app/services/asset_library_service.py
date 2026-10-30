@@ -1042,17 +1042,24 @@ class AssetLibraryService:
 
     def physical_asset_observation(self, asset_id: str, *, branch_id: str | None = None,
                                    actor_id: str | None = None):
-        """Observe one authorized, incarnation-bound asset's canonical files.
+        """Observe lengths of one incarnation-bound asset's canonical files.
 
         This is a partial diagnostic, never a quota total or write admission.
         Temporary names and orphan bytes do not establish ownership; their
-        absence is not inferred. The original caller must hold project_scope.
+        absence is not inferred. Length is not allocated storage: compression,
+        sparse files, and filesystem allocation are not measured. The caller
+        must hold the original subject authorization lease and establish both
+        existing-only coordination and project owner before entering scope;
+        project_scope alone does not authorize the subject or ensure no writes.
         """
         from ..creative.asset_usage_budget import usage_read_budget
+        from ..repositories.file.mutation_coordinator import strict_coordination_active
 
         binding = getattr(self._scope, "binding", None)
         if binding is None or binding.get("branch_id") != branch_id:
             raise ValueError("ASSET_PROJECT_BINDING_REQUIRED")
+        if not strict_coordination_active():
+            raise ValueError("ASSET_OBSERVATION_EXISTING_ONLY_REQUIRED")
 
         def fingerprint(path):
             info = path.lstat()
@@ -1075,10 +1082,11 @@ class AssetLibraryService:
                 raise AssetIntegrityError("asset physical observation unavailable")
             return {
                 "status": "PARTIAL",
-                "scope": "AUTHORIZED_ASSET_CANONICAL_FILES_ONLY",
-                "content_bytes": before_content[2],
-                "metadata_bytes": before_meta[2],
-                "verified_physical_bytes": before_content[2] + before_meta[2],
+                "scope": "INCARNATION_BOUND_ASSET_CANONICAL_FILES_ONLY",
+                "content_file_length_bytes": before_content[2],
+                "metadata_file_length_bytes": before_meta[2],
+                "verified_file_length_bytes": before_content[2] + before_meta[2],
+                "allocated_storage_bytes": "UNKNOWN",
                 "logical_content_bytes": row["size"],
                 "unaccounted": "TEMPORARIES_RESIDUALS_OTHER_OBJECTS_AND_SHARED_STORAGE",
                 "quota_admission": "NOT_AVAILABLE",

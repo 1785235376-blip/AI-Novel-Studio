@@ -6,13 +6,15 @@ import pytest
 from test_audio_history_status_readonly import snapshot
 from test_studio_asset_query import rig
 from test_studio_workspace_identity_history_contract import audio_history
+from app.repositories.file.mutation_coordinator import existing_coordination_only
 
 pytestmark = pytest.mark.file_backend_only
 
 
 def observe(e, asset_id=None):
-    with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
-        return e.rig.assets.physical_asset_observation(asset_id or e.asset['id'])
+    with existing_coordination_only(), e.rig.workspace.store.existing_owner_only():
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            return e.rig.assets.physical_asset_observation(asset_id or e.asset['id'])
 
 
 def test_canonical_actual_bytes_and_unattributed_temporary_are_distinct(audio_history):
@@ -24,9 +26,10 @@ def test_canonical_actual_bytes_and_unattributed_temporary_are_distinct(audio_hi
     before = snapshot(e.rig.root)
     result = observe(e)
     meta_size = e.rig.assets._meta_path(e.asset['id']).stat().st_size
-    assert result == {'status': 'PARTIAL', 'scope': 'AUTHORIZED_ASSET_CANONICAL_FILES_ONLY',
-        'content_bytes': len(e.content), 'metadata_bytes': meta_size,
-        'verified_physical_bytes': len(e.content) + meta_size,
+    assert result == {'status': 'PARTIAL', 'scope': 'INCARNATION_BOUND_ASSET_CANONICAL_FILES_ONLY',
+        'content_file_length_bytes': len(e.content), 'metadata_file_length_bytes': meta_size,
+        'verified_file_length_bytes': len(e.content) + meta_size,
+        'allocated_storage_bytes': 'UNKNOWN',
         'logical_content_bytes': len(e.content),
         'unaccounted': 'TEMPORARIES_RESIDUALS_OTHER_OBJECTS_AND_SHARED_STORAGE',
         'quota_admission': 'NOT_AVAILABLE'}
@@ -43,7 +46,7 @@ def test_equal_content_in_distinct_assets_counts_both_physical_files(audio_histo
     first_obs, second_obs = observe(e), observe(e, second['id'])
     assert e.asset['sha256'] == second['sha256']
     assert e.rig.assets._bin_path(e.asset['id']).stat().st_ino != e.rig.assets._bin_path(second['id']).stat().st_ino
-    assert first_obs['content_bytes'] + second_obs['content_bytes'] == 2 * len(e.content)
+    assert first_obs['content_file_length_bytes'] + second_obs['content_file_length_bytes'] == 2 * len(e.content)
     assert first_obs['quota_admission'] == second_obs['quota_admission'] == 'NOT_AVAILABLE'
 
 
@@ -67,9 +70,11 @@ def test_private_asset_and_other_incarnation_are_not_observable(audio_history):
     with pytest.raises(FileNotFoundError):
         observe(e, private['id'])
     other = e.rig.project()
-    with e.rig.workspace._asset_scope(other, {'mode': 'local', 'novel_id': other}):
-        with pytest.raises(FileNotFoundError):
-            e.rig.assets.physical_asset_observation(e.asset['id'])
+    e.rig.workspace.store.incarnation(other)
+    with existing_coordination_only(), e.rig.workspace.store.existing_owner_only():
+        with e.rig.workspace._asset_scope(other, {'mode': 'local', 'novel_id': other}):
+            with pytest.raises(FileNotFoundError):
+                e.rig.assets.physical_asset_observation(e.asset['id'])
 
 
 def test_call_requires_existing_scope(audio_history):
