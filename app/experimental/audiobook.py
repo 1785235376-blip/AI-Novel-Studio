@@ -200,6 +200,16 @@ class AudiobookV2Service(DomainService):
                 "mixer": "NOT_CONFIGURED" if self.mixer is None else self.mixer.adapter_id,
                 "timestamps": "MEASURED_SEGMENT_ONLY", "phoneme_alignment": "NOT_CONFIGURED", "lip_sync": "NOT_CONFIGURED"}
 
+    def create(self, nid, scope, actor, collection, payload):
+        if collection in {self.PROFILES, self.MAPPINGS, self.PLANS, self.MIXES}:
+            self._require_candidate_write_capacity()
+        return super().create(nid, scope, actor, collection, payload)
+
+    def mutate(self, nid, scope, actor, collection, rid, expected_version, callback):
+        if collection in {self.PROFILES, self.MAPPINGS, self.PLANS, self.MIXES}:
+            self._require_candidate_write_capacity()
+        return super().mutate(nid, scope, actor, collection, rid, expected_version, callback)
+
     def _characters(self, nid, scope):
         rows = self.novels.data_set(nid, "characters")
         if scope.get("mode") == "collaboration":
@@ -234,10 +244,12 @@ class AudiobookV2Service(DomainService):
         return chapter
 
     def create_profile(self, nid, scope, actor, body):
+        self._require_candidate_write_capacity()
         return self.create(nid, scope, actor, self.PROFILES, {**VoiceProfileIn.model_validate(body).model_dump(),
             "status": "ACTIVE", "verification": "NOT_RUN", "voice_quality": "NOT_RUN"})
 
     def map_voice(self, nid, scope, actor, body):
+        self._require_candidate_write_capacity()
         data = VoiceMappingIn.model_validate(body).model_dump()
         self._character(nid, scope, data["character_id"])
         profile = self.get(nid, scope, self.PROFILES, data["profile_id"])
@@ -275,6 +287,7 @@ class AudiobookV2Service(DomainService):
             "timing_status": "UNMEASURED", "audio_asset_id": None}
 
     def create_plan(self, nid, scope, actor, body):
+        self._require_candidate_write_capacity()
         data = AudiobookPlanIn.model_validate(body).model_dump()
         chapter = self._source(nid, scope, data["chapter_id"])
         text = chapter.get("content", "")
@@ -370,6 +383,7 @@ class AudiobookV2Service(DomainService):
             raise ValueError("AUDIO_PLAN_REOPEN_REQUIRED")
 
     def update_segment(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         data = SegmentUpdateIn.model_validate(body)
         def change(row):
             self._editable(row)
@@ -422,6 +436,7 @@ class AudiobookV2Service(DomainService):
         plan["timing_status"] = "MEASURED" if measured == len(plan["segments"]) else "PARTIAL" if measured else "UNMEASURED"
 
     def bind_audio(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         data = SegmentAudioIn.model_validate(body)
         asset, content = self._audio_asset(nid, scope, data.asset_id)
         measured = inspect_media(content, "audio")
@@ -444,6 +459,7 @@ class AudiobookV2Service(DomainService):
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
     def add_track(self, nid, scope, actor, rid, body):
+        self._require_candidate_write_capacity()
         data = AudioTrackIn.model_validate(body).model_dump()
         expected = data.pop("expected_version")
         data.update(id=str(uuid4()), status="PLANNED")
@@ -460,6 +476,7 @@ class AudiobookV2Service(DomainService):
         return self.mutate(nid, scope, actor, self.PLANS, rid, expected, change)
 
     def remove_track(self, nid, scope, actor, rid, tid, expected_version):
+        self._require_candidate_write_capacity()
         def change(row):
             self._editable(row)
             if tid not in {t["id"] for t in row["tracks"]}:
@@ -485,6 +502,7 @@ class AudiobookV2Service(DomainService):
                     "start_ms": s["start_ms"], "end_ms": s["end_ms"]} for s in plan["segments"]]}
 
     def review(self, nid, scope, actor, item_id, action, expected_version):
+        self._require_candidate_write_capacity()
         collection = self.PLANS
         try:
             self.get(nid, scope, collection, item_id)

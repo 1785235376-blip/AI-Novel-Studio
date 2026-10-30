@@ -151,6 +151,8 @@ class DirectedAudiobookService(AudiobookV2Service):
         return self.as_actor(actor, super().mutate, nid, scope, actor, collection, rid, expected_version, guarded)
 
     def create(self, nid, scope, actor, collection, payload):
+        if collection in {self.PROFILES, self.MAPPINGS, self.PLANS, self.MIXES}:
+            self._require_candidate_write_capacity()
         if collection == self.MIXES:
             plan = self.get(nid, scope, self.PLANS, payload["plan_id"])
             if plan.get("voice_direction"):
@@ -179,6 +181,7 @@ class DirectedAudiobookService(AudiobookV2Service):
                         "reference_voice": "UNAVAILABLE_SEPARATE_CONSENT_REQUIRED", "quality": "NOT_RUN", "alignment": "NOT_CONFIGURED"}}
 
     def edit_direction(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         require_flag(VOICE_FLAG)
         data = DirectionEditIn.model_validate(body)
         self.owned_plan(nid, scope, actor, rid)
@@ -207,12 +210,14 @@ class DirectedAudiobookService(AudiobookV2Service):
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
     def update_segment(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         row = self.get(nid, scope, self.PLANS, rid)
         if row.get("voice_direction"):
             raise ValueError("VOICE_USE_DIRECTION_EDITOR")
         return super().update_segment(nid, scope, actor, rid, sid, body)
 
     def lock(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         require_flag(VOICE_FLAG); data = LockIn.model_validate(body)
         self.owned_plan(nid, scope, actor, rid)
         def change(row):
@@ -225,6 +230,7 @@ class DirectedAudiobookService(AudiobookV2Service):
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
     def reorder(self, nid, scope, actor, rid, body):
+        self._require_candidate_write_capacity()
         require_flag(VOICE_FLAG); data = ReorderIn.model_validate(body)
         self.owned_plan(nid, scope, actor, rid)
         def change(row):
@@ -238,12 +244,14 @@ class DirectedAudiobookService(AudiobookV2Service):
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
     def bind_audio(self, nid, scope, actor, rid, sid, body):
+        self._require_candidate_write_capacity()
         row = self.get(nid, scope, self.PLANS, rid)
         if next((s.get("locked") for s in row["segments"] if s["id"] == sid), False):
             raise ValueError("VOICE_SEGMENT_LOCKED")
         return super().bind_audio(nid, scope, actor, rid, sid, body)
 
     def review(self, nid, scope, actor, item_id, action, expected_version):
+        self._require_candidate_write_capacity()
         row = self.get(nid, scope, self.PLANS, item_id) if any(p["id"] == item_id for p in self.list(nid, scope, self.PLANS)) else None
         if row and row.get("voice_direction") and action == "approve":
             if any(not s.get("direction", {}).get("text_reviewed") or not s.get("direction", {}).get("voice_authorized") for s in row["segments"]):
