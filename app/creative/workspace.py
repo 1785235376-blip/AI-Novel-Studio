@@ -343,7 +343,14 @@ class IndependentWorkspaceService:
         with self._asset_scope(nid, scope):
             return self._view(nid, scope, self._row(nid, scope, aid, deleted=include_deleted))
 
+    @staticmethod
+    def _require_manual_import_capacity():
+        # The manual path has no project-wide byte reservation or restart
+        # reconciliation yet. Keep direct service callers closed as well.
+        raise ValueError("PROJECT_CAPACITY_WRITE_UNAVAILABLE")
+
     def import_asset(self, nid, scope, actor, value, guard=lambda: None):
+        self._require_manual_import_capacity()
         body = ManualAssetImport.model_validate(value)
         try:
             data = base64.b64decode(body.content_base64, validate=True)

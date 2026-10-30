@@ -394,8 +394,10 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     @router.post("/projects/{nid}/studio/assets", status_code=201)
     def upload(nid: str, body: ManualAssetImport,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard))
+        # Check the original authority before disclosing the closed entry, but
+        # do not initialize a project marker just to reject the write.
+        access(nid, x_session_token, x_branch_id, "domain.write")
+        raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
 
     from .video_reference import ReferencePreview, ReferenceSave
     video_reference_router = APIRouter(route_class=VideoReferenceRoute)
