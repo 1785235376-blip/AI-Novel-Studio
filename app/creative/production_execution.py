@@ -751,6 +751,20 @@ class ProductionExecutionService:
         recipe["recipe_digest"] = digest(recipe)
         return recipe
 
+    JOB_COST_CONTRACT = {
+        "contract": "studio-job-cost/1",
+        "state": "UNKNOWN",
+        "currency": None,
+        "estimated_microusd": None,
+        "actual_microusd": None,
+        "accounted_microusd": None,
+        "trusted": False,
+        "linkage": "NONE",
+        "reason": "PROVIDER_USAGE_PRICE_TASK_LINKAGE_NOT_INTEGRATED",
+        "fabricated": False,
+        "decision_required": True,
+    }
+
     @staticmethod
     def view(row, owner):
         context = row.get("context", {})
@@ -786,7 +800,7 @@ class ProductionExecutionService:
                 copy.deepcopy(row.get("measured")) if owner == "audio" and context.get("operation_id") == "m8.audio.trim"
                 and context.get("graph_binding") is None else None,
             "approved_asset_version": row.get("approved_asset_version", row.get("output_asset_version") if row.get("status") == "APPROVED" else None),
-            "request_id": row.get("context", {}).get("request_id"), "product_acceptance": "LOCAL_REQUIRED",
+            "request_id": row.get("context", {}).get("request_id"), "cost": copy.deepcopy(ProductionExecutionService.JOB_COST_CONTRACT), "product_acceptance": "LOCAL_REQUIRED",
             "automatic_replay": False, "remote_compute_may_continue": owner != "timeline" and row.get("cancellation_mode") == "LOCAL_RESULT_DISCARD"}
 
     def create(self, nid, scope, actor, value, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):

@@ -74,6 +74,8 @@
 | motion frame 安全 | 10 passed | `round11-motion-security.log` |
 | 音频恢复权限/重建/并发反例 | 3 passed | `round14-restore-races.log` |
 | 音频历史恢复协作权限（撤 session/停成员/无写授权） | 3 passed | `round15-collab-authority.log` |
+| Studio 任务成本显式 UNKNOWN 合同（4 owner + wire/query 回归） | 6 passed；相关回归 57 passed/1 xfailed | `round16-cost-regression.log` |
+| 47 个 	est_studio_* 宽回归 | 520 passed / 10 failed / 139 skipped / 1 xfailed / 125 errors；失败+错误节点集合与基线 A（419 passed/125 skipped）**完全相同** → 零新失败 | `round16-studio-broad.log`、`round16-studio-broad-baseline.log` |
 | **宽回归（103 个相关测试文件）** | **1431 passed / 9 failed / 57 skipped / 1 error**；9 failed+1 error 在基线 A 独立 probe worktree 全部同样失败（2 旧资产上传期望、2 关闭音频门期望、2 mock provider 期望、3 Windows 符号链接环境、1 fixture 环境错误）→ **本分支该组零新失败** | `round10-broad-regression.log` |
 | 生命周期/重建/恢复定向组 | 223 passed / 1 failed / 6 skipped；唯一失败在基线 A 同样失败（U16 合成子进程夹具） | `round12-lifecycle-recovery.log` |
 | issue 相关（#16 fixture 合同、#17 pdf/screenplay、#18 provider/credential） | 137 passed / 2 skipped / 1 pre-existing screenplay failure | `round10-issue-tests.log` |
@@ -102,7 +104,7 @@
 ### 8.1 实施到当前边界但未闭环
 1. **容量完整闭环**：账本/预留/提交/对账/调额/admission（单写路径 flag 保护）已实现；但音频/模型产物、共享文档、导出等其余写入口未逐项接入；启动自动对账强制门未做；“资产正文+metadata 主写入”仍由各自关闭门/admission 负责；跨 owner 临时峰值、审批/撤权竞争、真实崩溃窗口未验收。真实 PG 未测。
 2. **音频历史**：捕获/读取/显式迁移/显式恢复（新版本、评审不继承）已实现并测试；未做持久恢复审计（当前仅 asset metadata marker）、历史写入之外的容量细节、真实 PG 崩溃窗口、旧实现全量兼容迁移入口的独立审阅。
-3. **Studio 成本与音频 canvas_return**：成本仍没有可信 provider 用量/价格/任务关联合同（宁可 UNKNOWN，不伪造）；音频 canvas_return 采用目标/权限/审核语义仍未扩展，需要产品决定。
+3. **Studio 成本与音频 canvas_return**：生产任务公共投影已新增 `studio-job-cost/1` 显式 UNKNOWN（IMAGE/AUDIO/VIDEO/TIMELINE 一致；不伪造 0/估算/已结算；见 `STUDIO_TASK_COST_CONTRACT_20261031.md`）；但真实 provider 用量/价格/任务→账本关联合同仍未实现，需 provider adapter 上报结构化 usage/价格与重试/重复/缺失语义。音频 canvas_return 采用目标/权限/审核语义仍未扩展，需要产品决定。
 4. **TaskCenter/资源护栏**：有界分页/回执/预算已有基线（本报告不重复计为未实现）；F37 的 37 次拒绝与 strict-warm 首屏 409 根因仍 **UNKNOWN**——不得写成 37 个独立缺陷，也不得以探索性通过关闭。
 5. **IMAGE/VIDEO/Graph/音频/Timeline**：合成 IMAGE 链与部分 Timeline/音频证据存在；VIDEO 真实执行、多节点 Graph 上游产物/digest/失败传播/UNKNOWN 恢复、完整多轨/渲染导出链仍是 **NOT_RUN/未验收**；不得用 Mock/局部证据替代。
 6. **回归/恢复/安全复核**：宽回归与生命周期组零新失败；issue #14 例外项、motion frame（已确认后端不 fetch、DNS rebinding 守卫通过；provider 侧外部边界 NOT_RUN）、D-17/D-20（PR #49 V2 线专属文件不在当前候选，不可复现、不关闭）、issue #16/#18 真实执行等仍需外部条件。
@@ -127,6 +129,8 @@
 ## 10. 结论
 
 本轮完成：86 head/PR/工作区只读核验与基线选择；sibling 及其他独立后端线逐文件对账与安全整合；Export/PG 迁移/VTT-OTIO/Canvas、容量账本与 admission/历史写入计费、音频历史捕获-读取-迁移-恢复及权限反例、运行时能力合同、行业打包验证等 23 个可审查提交；宽回归 1431 passed 且覆盖组零新失败；issue #14/#16/#17/#18 与 D-17/D-20/motion frame 均按当前候选重新取证并如实标注 NOT_RUN/BLOCKED/UNKNOWN。**全产品验收、真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面与历史产品线合并不在本轮结论内。**
+
+
 
 
 
