@@ -146,3 +146,25 @@ def test_real_first_empty_transaction_does_not_create_scope_document(rig, monkey
         assert plan['requires_write'] is False
         assert plan['temporary_reservation_bytes'] == 0
     assert not called and not path.exists()
+
+
+def test_real_unbound_first_write_does_not_satisfy_project_proof(rig, monkeypatch):
+    import app.experimental.store as store_module
+    owner = rig.workspace.store.store
+    path = owner.path(rig.nid, rig.scope)
+    marker = rig.root / 'novels' / rig.nid / 'creative_project_v2.json'
+    assert not marker.exists() and owner._initial_project_identity(rig.nid, rig.scope) is None
+    captured = []
+    original_atomic_write = store_module.atomic_write
+
+    def observe(target, text):
+        if Path(target) == path:
+            assert LIFECYCLE not in store_module.json.loads(text)
+            captured.append(plan_file_scope_first_creation(None, text.encode('utf-8'), rig.nid, rig.scope))
+        return original_atomic_write(target, text)
+
+    monkeypatch.setattr(store_module, 'atomic_write', observe)
+    with owner.transaction(rig.nid, rig.scope) as doc:
+        doc['collections'] = doc_with_candidate(rig.nid, rig.scope)['collections']
+    assert len(captured) == 1 and captured[0]['first_creation_proof'] == 'REQUIRED'
+    assert not marker.exists()
