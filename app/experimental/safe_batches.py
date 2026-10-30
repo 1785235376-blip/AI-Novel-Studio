@@ -502,8 +502,11 @@ class SafeBatchesService(DomainService):
     def confirm(self, ctx, rid, body, reauthorize=lambda: None):
         value = ConfirmIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)
         if row['status'] != 'PREFLIGHT' or value.snapshot_digest != row['snapshot_digest']: raise ValueError('BATCH_CONFIRMATION_CHANGED')
+        self._require_voice_only_confirmation_capacity(row)
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             current = state['collections'][self.BATCHES][rid]
+            check_version(current, value.expected_version)
+            self._require_voice_only_confirmation_capacity(current)
             change_row(current, ctx.actor, value.expected_version, lambda r: (r.setdefault('approvals', []).append({'actor': ctx.actor, 'snapshot_digest': r['snapshot_digest'], 'budget_microusd': 0, 'approved_version': r['version'], 'at': now()}), r.update(confirmed=True, status='READY' if any(i['status'] == 'PENDING' for i in r['items']) else 'COMPLETED')))
             self._assert(ctx, current, reauthorize)
             return self._public(current)
@@ -522,6 +525,12 @@ class SafeBatchesService(DomainService):
             # claim or a broker reservation before enforcing that same gate.
             from .audiobook import AudiobookV2Service
             AudiobookV2Service._require_candidate_write_capacity()
+
+    @classmethod
+    def _require_voice_only_confirmation_capacity(cls, row):
+        steps = row['snapshot']['steps']
+        if steps and all(step['input']['kind'] == 'VOICE_REDO' for step in steps):
+            cls._require_stage_write_capacity(row, 0)
 
     def dispatch(self, ctx, rid, body, reauthorize=lambda: None):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)

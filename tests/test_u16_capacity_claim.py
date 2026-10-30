@@ -36,7 +36,7 @@ def test_voice_stage_must_refuse_before_any_batch_claim(rig, monkeypatch):
     assert snapshot(rig.root) == before
 
 
-def instrumented_batch(rig, monkeypatch, kinds, states, batch_status='READY', actor='synthetic-actor'):
+def instrumented_batch(rig, monkeypatch, kinds, states, batch_status='READY', actor='synthetic-actor', confirmed=True):
     """File owner with stubbed source/authority checks; not an auth proof."""
     class NoBroker:
         LEDGER = 'synthetic_ledger'
@@ -52,7 +52,7 @@ def instrumented_batch(rig, monkeypatch, kinds, states, batch_status='READY', ac
                         'expected_broker_version': 1}} for kind in kinds]
     items = [{'index': i, 'status': status, 'attempts': 0, 'receipts': [], 'claim': None}
              for i, status in enumerate(states)]
-    batch = new_row(rig.nid, rig.scope, actor, {'status': batch_status, 'confirmed': True,
+    batch = new_row(rig.nid, rig.scope, actor, {'status': batch_status, 'confirmed': confirmed,
         'snapshot_digest': 'b' * 64, 'snapshot': {'steps': steps}, 'items': items})
     with rig.workspace.store.store.transaction(rig.nid, rig.scope) as doc:
         doc['collections']['safe_batches_v2'] = {batch['id']: batch}
@@ -274,3 +274,51 @@ def test_original_nonvoice_export_preflight_still_persists(rig, monkeypatch):
     assert result['status'] == 'PREFLIGHT' and result['items'][0]['kind'] == 'EXPORT'
     saved = service.get(rig.nid, rig.scope, service.BATCHES, result['id'])
     assert saved['snapshot']['steps'][0]['input']['kind'] == 'EXPORT'
+
+
+def test_voice_only_confirmation_refuses_before_file_update(rig, monkeypatch):
+    service, batch, ctx = instrumented_batch(rig, monkeypatch, ['VOICE_REDO'], ['PENDING'],
+                                               'PREFLIGHT', confirmed=False)
+    before = snapshot(rig.root)
+    body = {'expected_version': batch['version'], 'snapshot_digest': batch['snapshot_digest'],
+            'budget_microusd': 0, 'confirmed': True}
+    with pytest.raises(ValueError, match='AUDIO_CAPACITY_WRITE_UNAVAILABLE'):
+        service.confirm(ctx, batch['id'], body)
+    assert snapshot(rig.root) == before
+
+
+def test_mixed_batch_confirmation_preserves_original_image_path(rig, monkeypatch):
+    service, batch, ctx = instrumented_batch(rig, monkeypatch, ['STUDIO_IMAGE', 'VOICE_REDO'],
+                                               ['PENDING', 'PENDING'], 'PREFLIGHT', confirmed=False)
+    body = {'expected_version': batch['version'], 'snapshot_digest': batch['snapshot_digest'],
+            'budget_microusd': 0, 'confirmed': True}
+    result = service.confirm(ctx, batch['id'], body)
+    assert result['status'] == 'READY' and result['confirmed'] is True
+    assert result['items'][0]['status'] == 'PENDING' and result['items'][1]['status'] == 'PENDING'
+
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_voice_only_confirmation_http_reauth_and_no_file_update(rig, monkeypatch, alias):
+    from app.actor_context import SessionContext
+    from app.experimental import api as experimental_api
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'narrative_production_v2,reader_preflight_v2,safe_batches_v2,audiobook_v2,voice_direction_v2')
+    rig.sessions.register('synthetic-host', SessionContext('synthetic-session', 'client', 'local-author', 'synthetic'))
+    service, batch, ctx = instrumented_batch(rig, monkeypatch, ['VOICE_REDO'], ['PENDING'],
+                                               'PREFLIGHT', actor='local-author', confirmed=False)
+    mounted = experimental_api.safe_batches_service
+    monkeypatch.setattr(mounted, 'store', service.store)
+    monkeypatch.setattr(mounted, 'novels', rig.novels)
+    monkeypatch.setattr(mounted, '_owned', service._owned)
+    monkeypatch.setattr(mounted, '_assert', service._assert)
+    monkeypatch.setattr(mounted, '_public', lambda row: deepcopy(row))
+    prefix = f"/api{'/v1' if alias else ''}"
+    path = prefix + f'/novels/{rig.nid}/experimental/safe-batches/{batch["id"]}/confirm'
+    body = {'expected_version': batch['version'], 'snapshot_digest': batch['snapshot_digest'],
+            'budget_microusd': 0, 'confirmed': True}
+    before = snapshot(rig.root)
+    denied = rig.client.post(path, json=body)
+    assert denied.status_code == 401, denied.text
+    response = rig.client.post(path, headers={'X-Session-Token': 'synthetic-host'}, json=body)
+    assert response.status_code == 422, response.text
+    assert response.json()['detail']['message'] == 'AUDIO_CAPACITY_WRITE_UNAVAILABLE'
+    assert snapshot(rig.root) == before
