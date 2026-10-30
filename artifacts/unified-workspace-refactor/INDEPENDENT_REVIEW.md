@@ -1796,3 +1796,39 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | ImageQueuePanel.execute.independent | flaky（超时），不是回归 |
 
 所有临时 worktree（old/pre/mut/be）已删除。
+
+## [VERA-FE] 独立复核 work/hermia-nsfw-entry-20261030 @299a738c（tree 9d7f2e51，起点 fe4f5541）— 2026-10-30
+
+**结论：MUST-FIX**（1 个 P1：NSFW 徽标开启后顶栏溢出，设置入口不可达）。其余 B1/B2/A 的核心行为均通过。证据：/workspace/hr/vera-compare/nsfw-299a738c/
+
+### 门禁（vitest 全量 ×3，forks，maxWorkers 3；adj = raw − ISI + 8，基线 raw 298 / adj 297）
+- run1 raw 293 / ISI 8 / adj 293；run2 raw 296 / ISI 10 / adj 294（多出 1 条 u1.purge.host，已知 flaky）；run3 raw 295 / ISI 10 / adj 293。
+- 规则 (a)(b) 均 ≤297 → **PASS**。LocalAiBrowserJourneyContracts ENOENT 为基线失败。
+- 注：17:10 左右 box 重启，/tmp 与共享 node_modules 丢失；我重装了 node22，并在 vera-nsfw 内用相同 package-lock 执行 npm ci 后，重跑了 run2/run3。
+
+### 逐项
+- **B1 ConfirmDialog / DualStack 浏览器验证（dd.json）**：打开时焦点在“确认”，Tab 在两个按钮间循环，Esc 和确认后焦点都回到 [data-feed-upper]，axe 0，非 GET 请求 0 → 修复了 dualcanvas 的 P2。PASS
+- **B2 M2/M8 变异**：M2（feedToUpper 复用下层节点 id）→ 2/4 红；M8（basic 模式也挂载 DualStack）→ 2/4 红；干净代码 4/4 绿。VIDEO 树 `aria-pressed` 选中样式已覆盖（imageRebuild.css:19）。PASS
+- **A NSFW 存储**：
+  - 会话模式：LS、SS、IDB、cookie 的写入均为 0，网络非 GET 0；reload 后徽标消失。
+  - 持久模式（u-a）：只写 `poemseed.nsfwmode.v1::u-a::…` 一个 key，值为 {"v":1,"on":true}，没有其他写入。
+  - 文案如实说明“后端未接入：不会改变生成、模型或导出”。前端不发送 content_policy（后端 app/creative/content_policy.py 存在但未被调用）。PASS
+- **A NSFW 对话框**：初始焦点在“取消”；勾选确认前，“确认”按钮禁用；Tab 和 Shift+Tab 不会跳出对话框；Esc 可以关闭；axe 0。
+- **M4 浏览器反例**（m4-*.json）：HEAD 上 G 通过，C1/C2/C3 都被拒绝。
+  - 只去掉 pin 检查（client:157 + assertSavedImageNode 中的 pin 行）后，C3 → ACCEPTED，证明 pin 层真实生效。
+  - 再去掉 card≡origin 检查（M4c），C1 仍然被拒绝：有其他层兜底，属于纵深防御。
+  - 再去掉 reference_states 检查（M4d），C2 → ACCEPTED，证明该层生效。
+  - 所有用例都满足 pending 在 release 之前。变异 diff 见 m4-mutant.diff。PASS
+- **B3 EditNleShell token**：dark 主题 axe 0。light 主题对比度不足：toolbar 按钮 2.17，clip li / code 1.25。基线 fe4f5541 结果相同，即未修复；但 EditNleShell 已退役（EDIT 实际渲染 EditRebuild）。截图：v-nle-dark.png、v-nle-light.png。
+- **B4（en，仅观察）**：EDIT 中仍有“剪辑 · 多轨时间线、播放、入点、出点、吸附开、入、出、轨 3”共 8 处中文残留（基线约 37 处）。
+
+### 问题
+- **P1** 开启 NSFW 后，徽标把顶栏挤出边界（v.json，对照 base.json 中 8 种组合均为 0 溢出）。
+  - 1366 普通 en：1371/1366，“Open settings”按钮被截断。
+  - 1024 pro en：1070/1024，“EN”被截断，设置按钮位于 1042–1070，鼠标不可达。
+  - 1366 zh：全局搜索被压到 130/95。
+  - 建议：徽标在窄宽度下收为图标或省略文字，或让顶栏可换行，保证设置按钮可达。
+- **P2** NSFW 对话框经 Esc 或确认关闭后，焦点落在 BODY（触发它的菜单项已卸载）。建议回到 [data-settings-trigger]。
+- **P3** B3 的 light 主题对比度未修复（死代码，可延后）；B4 残留中文为观察项。
+
+未提交、未推送、未改业务代码。
