@@ -22,7 +22,7 @@
   border: var(--border-default);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 80%, #1a1a22), var(--color-bg-surface));
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 80%, var(--stg-mon-tint)), var(--color-bg-surface));
   color: var(--color-text-primary);
 }
 .edit-nle-shell__monitor-label {
@@ -186,7 +186,7 @@
 }
 .edit-nle-shell__monitor--source {
   background:
-    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 70%, #12141c), var(--color-bg-surface));
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 70%, var(--stg-mon-tint-src)), var(--color-bg-surface));
   opacity: 0.95;
 }
 .edit-nle-shell__monitor--source .edit-nle-shell__monitor-label::after {
@@ -277,8 +277,8 @@
 }
 .edit-nle-shell__hero .nle-track__clips > li,
 .edit-nle-shell__hero .nle-track__clips code {
-  background: color-mix(in srgb, #c9d8f5 55%, var(--stg-tools));
-  border-color: #8eaee6;
+  background: color-mix(in srgb, var(--stg-clip) 55%, var(--stg-tools));
+  border-color: var(--stg-clip-line);
   color: var(--stg-mon);
 }
 .edit-nle-rail {
@@ -333,7 +333,7 @@
   top: var(--space-2);
 }
 .edit-nle-shell__toolbar button[aria-pressed="true"] {
-  outline: 1px solid color-mix(in srgb, #8eaee6 70%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--stg-clip-line) 70%, transparent);
 }
 
 /* [HERMIA-FE-20261022 W-UX-09] Honest demo-readonly banner + writable-path discovery */
