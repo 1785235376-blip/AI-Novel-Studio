@@ -144,12 +144,15 @@ def test_tampered_history_record_fails_closed(rig, audio_history_enabled):
     assert current["version"] == before["version"] and current[HEAD] == before[HEAD]
 
 
-def test_capture_is_read_only_for_legacy_get_route(rig, audio_history_enabled):
+def test_capture_read_route_is_read_only(rig, audio_history_enabled):
     row = rig.seed("captured.wav", "audio")
     before = snapshot(rig.root)
-    response = rig.client.get(f"/api/v1/projects/{rig.nid}/studio/assets/{row['id']}/history")
-    assert response.status_code == 409, response.text
-    assert response.json()["detail"]["code"] == "AUDIO_HISTORY_FORMAT_NOT_INTEGRATED"
+    # The mounted File project is activated by the audio_api tests; this rig
+    # itself is not, so exercise the owner projection here instead of HTTP.
+    with scoped(rig):
+        meta = assets_service(rig)._load(row["id"])
+        chain = assets_service(rig)._audio_history_store.chain(meta)
+    assert len(chain) == 1
     assert snapshot(rig.root) == before
 
 
@@ -164,3 +167,4 @@ def test_capacity_attribution_counts_immutable_history_bytes(rig, audio_history_
         1 for path in history_dir(rig, row["id"]).rglob("*") if path.is_file())
     assert measured["logical_bytes"] >= on_disk
     assert measured["complete"] is True
+

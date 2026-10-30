@@ -37,3 +37,21 @@
 4. 历史 blob/记录写入尚未接入项目容量预留与提交协议；当前 flag 默认关闭，不能宣称容量闭环。
 5. 真实 PostgreSQL、浏览器、真实模型与 Windows 打包桌面未运行。
 
+
+## 4. 批次 3 第二部分：历史读取 API 与显式迁移入口（2026-10-31 续）
+
+`ENABLE_AUDIO_ASSET_HISTORY` 开启时：
+
+| 入口 | 行为 |
+| --- | --- |
+| `GET /api[/v1]/projects/{nid}/studio/assets/{aid}/history` | 已捕获资产返回 `coverage=CAPTURED`、`head`、`current_version`、按新→旧排列的不可变版本项（source-free `version_view`：version_id/asset_version/history_sequence/sha256/size/metadata 子集）与 `next_cursor=null`；未捕获旧资产返回 `UNCAPTURED` 空列表，**不写历史/不迁移**；沿用原查询合同：`limit` 1..50、非法 422、`cursor` 409 `AUDIO_HISTORY_CURSOR_UNAVAILABLE`；链长度超过 `limit` 时拒绝部分分页（同 409 cursor code，fail-closed） |
+| `GET .../history/{version_id}` | 详情仅允许当前链内版本（链完整性校验后），不在链内 → 409 `AUDIO_HISTORY_VERSION_NOT_IN_CHAIN` |
+| `GET .../history/{version_id}/download` | 返回历史内容字节（摘要/大小由记录与 blob 校验），带 `X-Asset-SHA256`/`X-Asset-Version`/`X-History-Version-Id` 响应头；媒体类型来自记录投影 |
+| `POST .../history/migrate` | **显式迁移**：原写权限 + `commit_invoke` 授权租约 + expected_version CAS；校验当前正文摘要后把当前修订捕获为基线记录并写入 `_audio_history_head`；重复迁移 409 `AUDIO_HISTORY_ALREADY_CAPTURED`；flag 关闭 409 `AUDIO_HISTORY_UNAVAILABLE`；不增量伪造旧版本 |
+| flag 关闭 | 保持原有只读状态：旧资产 `UNCAPTURED`，带 head 的资产仍 409 `AUDIO_HISTORY_FORMAT_NOT_INTEGRATED`；历史详情/下载/迁移 409 `AUDIO_HISTORY_UNAVAILABLE` |
+
+读取路径均不迁移、不初始化历史目录；读取预算与记录完整性由 store 执行，返回前重新 `guard()`。三条新路径已加入 `is_independent_studio_route` 精确 GET/POST 允许清单（version_id 限 64 位小写 hex）。
+
+验证：`tests/test_audio_asset_history_api.py` 8 项（两别名列表/顺序、limit/cursor/非法查询、详情/下载/未知版本、旧资产读取不迁移、显式迁移成功/重复/flag-off/stale CAS、allowlist）；音频历史全组（8 个既有 audio-history 套件 + 捕获 + 读取 + 容量归属 + 资产查询）**124 passed / 1 skipped**。
+
+仍未完成：显式恢复（生成可追溯新当前版本）及其授权/CAS/幂等/并发/崩溃窗口、历史写入容量预留、取消/失败残留计费、真实 PostgreSQL/浏览器/模型验证。

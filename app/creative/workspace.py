@@ -907,6 +907,124 @@ class IndependentWorkspaceService:
                 "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
                 "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
 
+    def _audio_history_error(self, exc):
+        from fastapi import HTTPException
+        code = str(exc) or "AUDIO_HISTORY_INVALID"
+        raise HTTPException(409, {"code": code}) from None
+
+    def _audio_history_captured_row(self, nid, scope, actor, aid):
+        from ..services.audio_asset_history_store import HEAD
+        row = self._row(nid, scope, aid, actor_id=actor)
+        if row.get("kind") != "audio":
+            raise FileNotFoundError(aid)
+        return row, row.get(HEAD) if HEAD in row else None
+
+    def audio_history(self, nid, scope, actor, aid, guard, *, limit=50):
+        """Read the captured immutable chain; never migrates a legacy asset."""
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_history_status import uncaptured_audio_status
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            return uncaptured_audio_status(self, nid, scope, actor, aid, guard)
+        captured = False
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is not None:
+                captured = True
+                guard()
+                store = self.assets._audio_history_store
+                try:
+                    chain = store.chain(row, guard=guard)
+                except ValueError as exc:
+                    self._audio_history_error(exc)
+                if len(chain) > limit:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_CURSOR_UNAVAILABLE"})
+                items = [version_view(record) for record in chain]
+                guard()
+        if not captured:
+            # The legacy status helper owns its own asset-scope context.
+            return uncaptured_audio_status(self, nid, scope, actor, aid, guard)
+        return {"asset_id": aid, "current_version": row["version"], "head": head,
+                "coverage": "CAPTURED", "items": items, "next_cursor": None}
+
+    def audio_history_version(self, nid, scope, actor, aid, version_id, guard):
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is None:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+            store = self.assets._audio_history_store
+            try:
+                chain = store.chain(row, guard=guard)
+                if version_id not in {record["version_id"] for record in chain}:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+                record = store.record(aid, version_id, guard=guard)
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return version_view(record)
+
+    def audio_history_content(self, nid, scope, actor, aid, version_id, guard):
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is None:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+            store = self.assets._audio_history_store
+            try:
+                chain = store.chain(row, guard=guard)
+                if version_id not in {record["version_id"] for record in chain}:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+                record = store.record(aid, version_id, guard=guard)
+                data = store.content(record, maximum=self.assets.MAX_BYTES, guard=guard)
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return version_view(record), data
+
+    def capture_audio_history(self, nid, scope, actor, aid, expected_version, guard):
+        """Explicit migration: capture the current revision as the baseline."""
+        from fastapi import HTTPException
+        from ..config import settings
+        from ..storage import atomic_write
+        from ..services.audio_asset_history_store import HEAD
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row = self._row(nid, scope, aid, actor_id=actor)
+            if row.get("kind") != "audio":
+                raise FileNotFoundError(aid)
+            if HEAD in row:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_ALREADY_CAPTURED"})
+            if row.get("version") != expected_version:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_CONFLICT"})
+            guard()
+            data = self.assets._verified_content(row, guard=guard)
+            store = self.assets._audio_history_store
+            try:
+                baseline = store.prepare(row, data)
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            saved = {**row, HEAD: baseline}
+            atomic_write(self.assets._meta_path(aid), json.dumps(saved, ensure_ascii=False, indent=2))
+            guard()
+            return {"contract": "audio-asset-history/capture/1", "asset_id": aid,
+                    "version_id": baseline, "asset_version": row["version"],
+                    "current_version": row["version"], "head": baseline,
+                    "coverage": "CAPTURED", "migrated": True}
     def capacity_diagnostics(self, nid, scope):
         """Read-only capacity observation: measurement + ledger state only.
 
@@ -942,6 +1060,9 @@ class IndependentWorkspaceService:
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
+
+
 
 
 
