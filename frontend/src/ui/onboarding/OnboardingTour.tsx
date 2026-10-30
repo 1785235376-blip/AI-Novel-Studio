@@ -59,7 +59,10 @@ export function useOnboarding({shellMode, auto = autoAllowed()}: {shellMode: 'ba
   }, [auto, seen, open]);
   const close = useCallback(() => {
     markOnboardingSeen(identity); setOpen(false);
-    const back = fromSettings.current ? document.querySelector<HTMLElement>('[data-settings-trigger]') : document.querySelector<HTMLElement>('[data-module-tab][aria-selected="true"]') || document.querySelector<HTMLElement>('[data-settings-trigger]');
+    // [HERMIA-FE-20261030 VERA-P3] 无模块切换器/设置按钮时兜底到主区（tabindex=-1），不让焦点掉到 BODY
+    const q = (s: string) => document.querySelector<HTMLElement>(s);
+    const main = q('main, [role="main"]'); if (main && !main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+    const back = (fromSettings.current ? q('[data-settings-trigger]') : q('[data-module-tab][aria-selected="true"]') || q('[data-settings-trigger]')) || main;
     fromSettings.current = false;
     setTimeout(() => back?.focus(), 0);
   }, [identity]);

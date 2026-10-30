@@ -576,6 +576,14 @@ export const en: Record<MessageKey, string> = {
   'rough.63': 'Docs / other',
   'rough.64': 'No shots yet',
   'rough.65': 'Current view',
+  'rough.66': 'Make a video in three steps', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.67': '① List the shots', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.68': '② Arrange references on the canvas', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.69': '③ Read the director notes', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.70': 'Select an image first to overlay references', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.71': 'Image generation', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.72': 'Reference overlay: on', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.73': 'Reference overlay: off', // [HERMIA-FE-20261030 VERA-P3]
   // [HERMIA-FE-20261030 NSFW]
   'nsfw.menu.label': 'Adult content (NSFW) mode',
   'nsfw.menu.on': 'On',

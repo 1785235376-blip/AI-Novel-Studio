@@ -490,7 +490,8 @@ export function ContextBar({
 /** opaque ids such as `u-a`, `u-m5`, uuids — never names a person would type */
 export function looksLikeRawId(name: string): boolean {
   const s = name.trim();
-  return !s || /^[a-z]{1,4}[-_][a-z0-9]{1,}$/i.test(s) || /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(s) || /^(usr|user|actor)[-_]?\d+$/i.test(s);
+  // [HERMIA-FE-20261030 VERA-P3] 只认单字母前缀（u-a）或含数字的短前缀（u-m5/ab-12）；Ann-Marie、li_wei 等真实名字保留
+  return !s || /^[a-z][-_][a-z0-9]+$/i.test(s) || /^[a-z]{1,4}[-_](?=[a-z]*\d)[a-z0-9]+$/i.test(s) || /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(s) || /^(usr|user|actor)[-_]?\d+$/i.test(s);
 }
 
 export function AppShell({

@@ -569,6 +569,14 @@ export const zhCN = {
   'rough.63': '文档 / 其他',
   'rough.64': '还没有镜头',
   'rough.65': '当前视图',
+  'rough.66': '三步做视频', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.67': '① 列出镜头', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.68': '② 在画布上摆参考', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.69': '③ 看导演建议', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.70': '先选一张图片，才能叠看参考', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.71': '图片生成', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.72': '参考叠看 开', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.73': '参考叠看 关', // [HERMIA-FE-20261030 VERA-P3]
   // [HERMIA-FE-20261030 NSFW]
   'nsfw.menu.label': '成人内容（NSFW）模式',
   'nsfw.menu.on': '已开启',
