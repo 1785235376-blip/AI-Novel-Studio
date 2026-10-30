@@ -30,6 +30,7 @@ class ReviewBinding:
     review: Callable | None = None
     feature: str | None = None
     batch_actions: frozenset[str] = frozenset()
+    write_preflight: Callable | None = None
 
 
 def digest(value):
@@ -124,6 +125,8 @@ class UnifiedReviewInbox:
 
     def review(self, context, domain, item_id, action, expected_version):
         binding = self._binding(domain)
+        if binding.write_preflight:
+            binding.write_preflight(context)
         item = self.get(context, domain, item_id)
         check_version(item, expected_version)
         if not binding.review or action not in item['allowed_actions']:
@@ -136,6 +139,12 @@ class UnifiedReviewInbox:
         identities = [(i.domain, i.id) for i in items]
         if len(set(identities)) != len(identities):
             raise ValueError('duplicate review item in batch')
+        # A homogeneous domain can reject before any projection read. Mixed
+        # batches retain the existing per-item validation order and semantics.
+        if len({item.domain for item in items}) == 1:
+            binding = self._binding(items[0].domain)
+            if binding.write_preflight:
+                binding.write_preflight(context)
         # Validate all explicit targets before any mutation.
         for request in items:
             binding = self._binding(request.domain)

@@ -114,3 +114,54 @@ def test_first_inbox_audio_only_batch_does_not_create_scope_lock(env, alias):
     response = env.client.post(path, json=payload)
     assert response.status_code in (404, 422), response.text
     assert snapshot(env.root) == before
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_inbox_authorization_and_audio_flag_precede_closed_gate(env, monkeypatch, alias):
+    _, headers = shared_scope(env)
+    prefix = f"/api{'/v1' if alias else ''}"
+    path = prefix + f'/novels/{env.nid}/experimental/review-inbox/audiobook/missing/approve'
+    before = snapshot(env.root)
+    denied = env.client.post(path, headers={**headers, 'X-Session-Token': 'token-no-grants'},
+                             json={'expected_version': 1})
+    assert denied.status_code == 403, denied.text
+    assert snapshot(env.root) == before
+    grant_scope = AuthorizationScope(ScopeKind.PROJECT, 'query-workspace', env.nid)
+    env.grants.assign_permission(PermissionAssignment('test-inbox-review', 'reader', 'domain.review',
+        ModalityDomain.NOVEL, grant_scope, 'synthetic'))
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'narrative_production_v2,asset_lineage_v2,unified_review_inbox')
+    before = snapshot(env.root)
+    disabled = env.client.post(path, headers=headers, json={'expected_version': 1})
+    assert disabled.status_code == 404, disabled.text
+    assert 'AUDIO_CAPACITY_WRITE_UNAVAILABLE' not in disabled.text
+    assert snapshot(env.root) == before
+
+
+def test_other_inbox_domain_retains_original_review_and_batch():
+    from app.experimental.inbox import UnifiedReviewInbox, ReviewBinding, ReviewContext
+    from types import SimpleNamespace
+    seen = []
+    inbox = UnifiedReviewInbox()
+    row = {'id': 'one', 'version': 1, 'allowed_actions': ['reject']}
+    inbox.register(ReviewBinding('other', lambda context: [row],
+        lambda context, rid, action, version: seen.append((rid, action, version)) or {'ok': True},
+        batch_actions=frozenset({'reject'})))
+    ctx = ReviewContext('synthetic', {'mode': 'local', 'novel_id': 'synthetic'}, 'actor')
+    assert inbox.review(ctx, 'other', 'one', 'reject', 1) == {'ok': True}
+    item = SimpleNamespace(domain='other', id='one', action='reject', expected_version=1)
+    assert inbox.batch(ctx, [item], lambda: None)['status'] == 'COMPLETED'
+    assert seen == [('one', 'reject', 1), ('one', 'reject', 1)]
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_inbox_review_also_requires_original_audio_read_permission(env, alias):
+    _, headers = shared_scope(env)
+    grant_scope = AuthorizationScope(ScopeKind.PROJECT, 'query-workspace', env.nid)
+    env.grants.assign_permission(PermissionAssignment('review-only', 'no-grants', 'domain.review',
+        ModalityDomain.NOVEL, grant_scope, 'synthetic'))
+    before = snapshot(env.root)
+    prefix = f"/api{'/v1' if alias else ''}"
+    path = prefix + f'/novels/{env.nid}/experimental/review-inbox/audiobook/missing/approve'
+    response = env.client.post(path, headers={**headers, 'X-Session-Token': 'token-no-grants'},
+                               json={'expected_version': 1})
+    assert response.status_code == 403, response.text
+    assert 'AUDIO_CAPACITY_WRITE_UNAVAILABLE' not in response.text
+    assert snapshot(env.root) == before

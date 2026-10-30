@@ -117,8 +117,20 @@ def review_audiobook_inbox(ctx, rid, action, version):
     return result
 
 
+def preflight_audiobook_inbox_write(ctx):
+    # Preserve both the inbox review authorization and the original audiobook
+    # projection's read authorization before reporting the closed write gate.
+    from fastapi import HTTPException
+    require_flag('unified_review_inbox')
+    require_flag('audiobook_v2')
+    if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.read') != (ctx.actor, ctx.scope):
+        raise HTTPException(403, {'code': 'REVIEW_AUTHORITY_CHANGED'})
+    review_guard(ctx, 'audiobook_v2')()
+    audiobook_service._require_candidate_write_capacity()
+
+
 inbox_service.register(ReviewBinding('audiobook', read_audiobook_inbox,
-    review_audiobook_inbox, 'audiobook_v2', frozenset()))
+    review_audiobook_inbox, 'audiobook_v2', frozenset(), preflight_audiobook_inbox_write))
 from .subtitle_host_config import configured_subtitle_adapters, configured_whisper_subtitle_resolver, processing_host_required
 subtitle_timeline_service = SubtitleTimelineService(store, legacy_api.novel_service,
     legacy_api.chapter_service, audiobook_service, legacy_api.asset_library_service,
