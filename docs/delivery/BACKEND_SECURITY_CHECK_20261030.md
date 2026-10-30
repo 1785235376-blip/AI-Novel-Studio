@@ -250,3 +250,16 @@ files created: none
 | `6e797d40` | Local Interop 安全边界独立测试（163 行） | 无 |
 
 - 第三轮**没有生产代码改动**；只补覆盖与核查证据。仍未 push/Release/部署，未触碰禁止项。
+
+## 13. 第四轮续做（2026-10-30）：Local Interop 会话/撤权/handoff 全链路回归
+
+- **新增** `tests/test_local_interop_session_boundary.py`（5 passed）：用仓库自带的冻结协议对端 `SyntheticDesktopPeer`（MOCK_ONLY，不开 socket、不读业务存储）注入 Host transport，让**真实 `LocalInteropHost`** 完成：
+  1. connect → HELLO → capability negotiation → session 建立，会话绑定 owner/scope；
+  2. handoff 必须 `explicit_click=True`（否则 403 `PERMISSION_DENIED`），成功时返回既有 Studio 路由；
+  3. 按单项同意撤销 `deep_link`：映射 capability 被移除，撤销同意优先于 capability 检查返回 403；后续会话 capability 门也拒绝；
+  4. provider 授权指纹变化（授予/成员变更等价）→ 当前会话被撤销（403 + 移出 sessions、进入 closed_sessions）；
+  5. provider 显式拒绝授权 → 当前会话被撤销；
+  6. 同一 owner 重连只替换该 owner 的旧会话（旧会话 401 `SESSION_REVOKED`）；
+  7. 运行中关闭功能开关 → owner 会话被撤销且后续请求 403。
+- **未覆盖**：真实桌面 peer、打包 Named Pipe 传输、SSE 事件流/standing metadata 事件投递、tutor/verifier 往返、真实浏览器——仍 `NOT_RUN`，本测试不声称 interop 全链路安全。
+- **提交**：`a3231035`；无生产代码改动。
