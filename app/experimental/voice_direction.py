@@ -323,6 +323,7 @@ class DirectedAudiobookService(AudiobookV2Service):
         return digest({k: segment.get(k) for k in ("id", "text", "source_text_digest", "kind", "character_id", "profile_id", "profile_version", "attribution_status", "direction", "direction_revision")})
 
     def queue_selected(self, nid, scope, actor, rid, body, executor, reauthorize, idempotency_key=None):
+        self._require_candidate_write_capacity()
         require_flag(VOICE_FLAG); data = QueueSegmentsIn.model_validate(body)
         plan = self.owned_plan(nid, scope, actor, rid); check_version(plan, data.expected_version)
         if plan["status"] != "APPROVED" or not plan.get("voice_direction"):
@@ -363,6 +364,7 @@ class DirectedAudiobookService(AudiobookV2Service):
 
     def execute_local_job(self, nid, scope, actor, jid, executor, resolver, guard, before_send=None):
         """One shared B03 execution authority for standalone and U16 callers."""
+        self._require_candidate_write_capacity()
         from ..services.audiobook_service import AudiobookError
         job = executor.find(executor.store.load(nid), jid)
         provider_identity = None

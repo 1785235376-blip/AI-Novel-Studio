@@ -73,7 +73,9 @@ def create_voice_direction_router(service, authorize, require_flag, executor_fac
 
     @router.post("/plans/{rid}/queue", status_code=202)
     def queue(nid: str, rid: str, body: QueueSegmentsIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None), idempotency_key: str | None = Header(None)):
-        return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g: service.queue_selected(nid,s,a,rid,body,executor_factory(s,a),g,idempotency_key))
+        # Original access runs in invoke before the gate. No executor or
+        # project owner is initialized for this currently unsupported write.
+        return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g: service._require_candidate_write_capacity())
 
     @router.get("/jobs")
     def jobs(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -92,6 +94,7 @@ def create_voice_direction_router(service, authorize, require_flag, executor_fac
     @router.post("/jobs/{jid}/execute")
     def execute(nid: str, jid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def run(a,s,g):
+            service._require_candidate_write_capacity()
             result = service.execute_local_job(nid,s,a,jid,executor_factory(s,a),resolver,g)
             return {k:v for k,v in result.items() if k not in {"source_text", "pronunciation_dictionary", "direction_binding", "execution_token"}}
         return invoke(nid,x_session_token,x_branch_id,"domain.write",run)
