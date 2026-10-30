@@ -1,7 +1,6 @@
 """Independent File-scope observation checks, not quota or history acceptance."""
 import copy
 from contextlib import contextmanager
-import hashlib
 import json
 from pathlib import Path
 
@@ -11,7 +10,6 @@ from app.experimental.audio_scope_snapshot import (
     AudioScopeObservationUnavailable,
     inspect_existing_audio_scope,
 )
-from app.experimental.audio_shared_document_measurement import measure_file_scope_document
 from app.experimental.store import ExperimentalStore, LIFECYCLE, canonical
 from app.storage import atomic_write
 from test_audio_history_status_readonly import snapshot
@@ -41,18 +39,10 @@ def initialize(rig, count=1):
 def test_observation_is_read_only_and_never_claims_audio_ownership(rig, count):
     project, store, identity = initialize(rig, count)
     before = snapshot(rig.root)
-    raw = store.path(rig.nid, rig.scope).read_bytes()
-    doc = json.loads(raw)
     guards = []
     result = inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: guards.append(True))
-    expected = measure_file_scope_document(raw, rig.nid, rig.scope)
-    assert result == {'scope_key': store.key(rig.nid, rig.scope),
-        'project_incarnation': identity,
-        'document_incarnation': doc[LIFECYCLE]['document_incarnation'],
-        'document_sha256': hashlib.sha256(raw).hexdigest(),
-        'document_bytes': len(raw),
-        'observed_audio_field_bytes': expected['mix_collection_bytes'],
-        'audio_row_binding': 'UNVERIFIED', 'project_charge_known': False}
+    assert result == {'scope_snapshot': 'UNKNOWN', 'audio_row_binding': 'UNVERIFIED',
+                      'project_charge_known': False, 'new_write_admission': 'CLOSED'}
     assert len(guards) == 2
     assert 'content_base64' not in json.dumps(result)
     assert snapshot(rig.root) == before
@@ -84,7 +74,7 @@ def test_old_scope_without_lifecycle_is_not_invented(rig):
     assert snapshot(rig.root) == before
 
 
-@pytest.mark.parametrize('mode', ['missing_document', 'invalid_document', 'invalid_audio', 'missing_marker'])
+@pytest.mark.parametrize('mode', ['missing_document', 'invalid_document', 'missing_marker'])
 def test_missing_or_corrupt_committed_inputs_are_not_repaired(rig, mode):
     project, store, _ = initialize(rig)
     path = store.path(rig.nid, rig.scope)
@@ -94,14 +84,23 @@ def test_missing_or_corrupt_committed_inputs_are_not_repaired(rig, mode):
         (rig.root / 'novels' / rig.nid / 'creative_project_v2.json').unlink()
     elif mode == 'invalid_document':
         path.write_bytes(b'{not-a-valid-json')
-    else:
-        document = json.loads(path.read_bytes())
-        first = next(iter(document['collections'][MIX].values()))
-        first['content_sha256'] = '0' * 64
-        path.write_text(canonical(document), encoding='utf-8')
     before = snapshot(rig.root)
     with pytest.raises(AudioScopeObservationUnavailable):
         inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert snapshot(rig.root) == before
+
+
+def test_invalid_unbound_audio_does_not_change_unknown_result(rig):
+    project, store, _ = initialize(rig)
+    path = store.path(rig.nid, rig.scope)
+    document = json.loads(path.read_bytes())
+    first = next(iter(document['collections'][MIX].values()))
+    first['content_sha256'] = '0' * 64
+    path.write_text(canonical(document), encoding='utf-8')
+    before = snapshot(rig.root)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None) == {
+        'scope_snapshot': 'UNKNOWN', 'audio_row_binding': 'UNVERIFIED',
+        'project_charge_known': False, 'new_write_admission': 'CLOSED'}
     assert snapshot(rig.root) == before
 
 

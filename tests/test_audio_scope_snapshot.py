@@ -1,6 +1,5 @@
 """Original-owner File snapshot observations; these do not establish quota."""
 import copy
-import hashlib
 
 import pytest
 
@@ -26,11 +25,8 @@ def test_existing_file_observation_is_not_a_project_charge(rig):
     calls = []
     result = inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: calls.append('guard'))
     assert calls == ['guard', 'guard']
-    assert result['document_sha256'] == hashlib.sha256(previous).hexdigest()
-    assert result['document_bytes'] == len(previous)
-    assert 0 < result['observed_audio_field_bytes'] < len(previous)
-    assert result['audio_row_binding'] == 'UNVERIFIED'
-    assert result['project_charge_known'] is False
+    assert result == {'scope_snapshot': 'UNKNOWN', 'audio_row_binding': 'UNVERIFIED',
+                      'project_charge_known': False, 'new_write_admission': 'CLOSED'}
     assert path.read_bytes() == previous
 
 

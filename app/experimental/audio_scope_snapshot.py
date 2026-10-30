@@ -7,14 +7,12 @@ must supply its original authorization lease; a guard alone is not a lease.
 """
 from __future__ import annotations
 
-import hashlib
-
 from ..creative.asset_usage_budget import UsageBudgetError, current_usage_budget, usage_read_budget
 from ..creative.project_store import CreativeProjectStore
 from ..repositories.file.mutation_coordinator import (
     ReadOnlyCoordinationUnavailable, existing_coordination_only, workspace_mutation,
 )
-from .audio_shared_document_measurement import MAX_DOCUMENT_BYTES, MAX_MIX_BYTES, measure_file_scope_document
+from .audio_shared_document_measurement import MAX_DOCUMENT_BYTES, MAX_MIX_BYTES
 from .store import ExperimentalStore, LIFECYCLE_MODES
 
 
@@ -30,8 +28,10 @@ def inspect_existing_audio_scope(project_store, nid, scope, guard):
 
     ``guard`` is an original-owner reauthorization check. An eventual caller
     must retain an appropriate original authority/session lease across this
-    operation; this function does not itself provide authorization. The digest
-    is a snapshot, not a lease or proof that bytes remain current afterward.
+    operation; this function does not itself provide authorization. An owner
+    lease does not authorize inspection of other incarnations' audio rows.
+    Consequently the result contains no content-dependent observation and
+    cannot be used for billing, compare-and-swap or write admission.
     No client paths, write callbacks, migration or quota admission are accepted.
     """
     if (type(project_store) is not CreativeProjectStore or not callable(guard)
@@ -66,21 +66,16 @@ def inspect_existing_audio_scope(project_store, nid, scope, guard):
                     marker = document[lifecycle]
                     if marker['project_identity'] != incarnation:
                         raise AudioScopeObservationUnavailable()
-                    measured = measure_file_scope_document(raw, nid, scope)
                     # Compare the original owner's physical bytes twice under
                     # the same scope and project leases. No caller callback is
                     # executed while the project lease is held.
                     fresh, _ = store._file_snapshot(nid, scope)
                     if fresh is None or fresh != raw:
                         raise AudioScopeObservationUnavailable()
-                    result = {'scope_key': key,
-                              'project_incarnation': incarnation,
-                              'document_incarnation': marker['document_incarnation'],
-                              'document_sha256': hashlib.sha256(raw).hexdigest(),
-                              'document_bytes': measured['full_document_bytes'],
-                              'observed_audio_field_bytes': measured['mix_collection_bytes'],
+                    result = {'scope_snapshot': 'UNKNOWN',
                               'audio_row_binding': 'UNVERIFIED',
-                              'project_charge_known': False}
+                              'project_charge_known': False,
+                              'new_write_admission': 'CLOSED'}
         except (FileNotFoundError, ReadOnlyCoordinationUnavailable, UsageBudgetError,
                 ValueError, KeyError, UnicodeError):
             raise AudioScopeObservationUnavailable() from None
