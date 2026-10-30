@@ -11,6 +11,7 @@ import {NSFW_KEY_PREFIX, __resetNsfwSession, enableNsfwMode, nsfwStorageKey, rea
 (globalThis as {IS_REACT_ACT_ENVIRONMENT?: boolean}).IS_REACT_ACT_ENVIRONMENT = true;
 const scope = {workspaceId: 'ws1', projectId: 'p1', storylineId: 'sl1', branchId: 'br1'};
 const real = () => resolveWorkspaceIdentity({actorId: 'u1', collabScope: scope, projectId: 'p1'});
+const realKey = () => { const id = real(); if (id.kind !== 'real') throw new Error('expected real identity'); return nsfwStorageKey(id); };
 const props = {onModuleChange: vi.fn(), scope: {workspace: 'w', project: 'p', storyline: 's', branch: 'b'}, actor: '作者', sidebar: 'n', main: 'm', inspector: 'i', status: 's', module: 'NOVEL' as const};
 let host: HTMLDivElement, root: Root;
 const q = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s);
@@ -72,7 +73,7 @@ describe('NSFW mode', () => {
     signIn(); mount(); openMenu();
     expect(q('[data-nsfw-persist]')?.getAttribute('data-nsfw-persist')).toBe('saved');
     click(q('[data-nsfw-toggle]')); click(q('[data-nsfw-ack]')); click(q('[data-nsfw-confirm]'));
-    expect(JSON.parse(localStorage.getItem(nsfwStorageKey(real()))!)).toEqual({v: 1, on: true});
+    expect(JSON.parse(localStorage.getItem(realKey())!)).toEqual({v: 1, on: true});
     __resetNsfwSession(); // simulate reload
     expect(readNsfwMode(real())).toBe(true);
     expect(readNsfwMode(resolveWorkspaceIdentity({actorId: 'u2', collabScope: scope, projectId: 'p1'}))).toBe(false);
@@ -97,7 +98,7 @@ describe('NSFW mode', () => {
 
   it('never auto-enables: corrupt / foreign stored values read as off', () => {
     for (const raw of ['{bad', 'true', '{"v":2,"on":true}', '{"v":1,"on":"yes"}', '{"v":1}']) {
-      localStorage.setItem(nsfwStorageKey(real() as Extract<ReturnType<typeof real>, {kind: 'real'}>), raw);
+      localStorage.setItem(realKey(), raw);
       __resetNsfwSession();
       expect(readNsfwMode(real())).toBe(false);
     }
