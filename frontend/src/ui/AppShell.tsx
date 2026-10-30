@@ -28,6 +28,7 @@ import {
   requestFailedTaskFocus,
   type TaskSummary,
 } from "./taskSummary";
+import { NsfwBadge, NsfwConfirm, NsfwMenuItem, useNsfwController, type NsfwController } from "./nsfw/NsfwMode";
 
 export type { StudioModule };
 export type ProjectNoun = "小说" | "项目";
@@ -217,10 +218,12 @@ export function ShellSettingsMenu({
   value,
   onChange,
   shellMode = "basic",
+  nsfw,
 }: {
   value: StudioModule;
   onChange: (value: StudioModule) => void;
   shellMode?: "basic" | "pro";
+  nsfw?: NsfwController;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -294,6 +297,7 @@ export function ShellSettingsMenu({
               {shellMode === "pro" ? <small>{id}</small> : null /* [HERMIA-FE-20261025 DUI P0-a] 普通模式不显示内部代号 */}
             </button>
           ))}
+          {nsfw ? <NsfwMenuItem c={nsfw} onDone={() => setOpen(false)} /> : null /* [HERMIA-FE-20261030 NSFW] 两种模式都可见 */}
         </div>
       )}
     </div>
@@ -505,6 +509,7 @@ export function AppShell({
   onShellModeChange?: (mode: 'basic' | 'pro') => void;
   writingContext?: WritingContextLabels;
 }) {
+  const nsfw = useNsfwController(); // [HERMIA-FE-20261030 NSFW]
   const t = useT();
   const searchAction = useRef(onGlobalSearch);
   searchAction.current = onGlobalSearch;
@@ -807,11 +812,13 @@ export function AppShell({
         {/* [HERMIA-FE-20261022 REBUILD] 导出/资料/任务 — prototype header tools */}
         <RebuildHeaderTools module={module} activeTaskCount={taskTotal.running + taskTotal.queued} pro={shellMode === "pro"} /* [HERMIA-FE-20261025 DUI P1-6] */ />
         {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
+        <NsfwBadge c={nsfw} />
         <ThemeToggle />
         {/* [HERMIA-FE-20261025 I18N P0] 「中 / EN」紧随浅色/深色右侧 */}
         <LanguageToggle />
         {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
-        <ShellSettingsMenu value={module} onChange={onModuleChange} shellMode={shellMode} />
+        <ShellSettingsMenu value={module} onChange={onModuleChange} shellMode={shellMode} nsfw={nsfw} />
+        <NsfwConfirm c={nsfw} />
         <span className="current-actor">
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}
