@@ -789,7 +789,10 @@ class IndependentWorkspaceService:
         with self._asset_scope(nid, scope):
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=True)
             active = [row for row in rows if not row.get("deleted_at")]
-            admission = self.storage_admission.view(self.MAX_PROJECT_BYTES - sum(row["size"] for row in rows))
+            # These rows are a visibility-scoped legacy projection, not an
+            # accounting of physical project storage, reservations or orphans.
+            # Do not claim that new imports can be admitted on this basis.
+            admission = self.storage_admission.view(None)
             return {"assets": {"count": len(active), "bytes": sum(row["size"] for row in active)},
                     "trash": {"count": len(rows) - len(active), "bytes": sum(row["size"] for row in rows if row.get("deleted_at"))},
                     "limits": {"asset_bytes": self.assets.MAX_BYTES, "project_asset_bytes": self.MAX_PROJECT_BYTES,
