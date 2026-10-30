@@ -93,4 +93,5 @@
 - **恢复 vs metadata 编辑竞争**：同一 `expected_version` 下并发执行显式恢复与 metadata 编辑 → 恰好一个成功、另一个 409 `AUDIO_HISTORY_VERSION_CONFLICT`；历史链只追加 1 个版本（[4,3,2,1]），恢复标记仅在恢复成功时存在。
 - **flag 关闭后预览**：预览接口返回 409 `AUDIO_HISTORY_UNAVAILABLE` 且磁盘无写。
 
-本地模式边界说明：恢复写入口依赖原项目权限 + `commit_invoke` 的 commit authority/incarnation 复核，不依赖 local-mode 的 session token 作为授权来源；历史只读路由的 session 撤销语义仍由原 route 的 session guard 处理。协作模式下的会话撤销/成员撤权反例属于真实权限 owner 路径，本轮未新增协作专用用例，故不宣称其已覆盖。
+本地模式边界说明：恢复写入口依赖原项目权限 + `commit_invoke` 的 commit authority/incarnation 复核，不依赖 local-mode 的 session token 作为授权来源；历史只读路由的 session 撤销语义仍由原 route 的 session guard 处理。\n\n协作模式补充（`tests/test_audio_history_collaboration_authority.py`，3 项通过）：在真实 collaboration scope/activation 下，预览后撤销 session 或停用成员，恢复与历史读取均 401/403 且不追加版本；仅有读权限（无 domain.write）的成员预览可读、确认恢复 401/403 且无写入。均通过既有原权限 owner fail closed，无需新增授权 owner。
+
