@@ -251,6 +251,10 @@ class DirectedAudiobookService(AudiobookV2Service):
         return super().review(nid, scope, actor, item_id, action, expected_version)
 
     def mix(self, nid, scope, actor, rid, expected_version, check_authority=None):
+        # This is the actual mounted subclass. Its plan lookup uses the File
+        # scope coordinator, which can otherwise create a lock before the base
+        # class reaches the capacity gate. Route authorization already ran.
+        self._require_candidate_write_capacity()
         if self.get(nid, scope, self.PLANS, rid).get("voice_direction"):
             require_flag(VOICE_FLAG)
             plan = self.owned_plan(nid, scope, actor, rid)
