@@ -37,6 +37,8 @@
 
 共享查询索引的名称分类只处理调用者已提供的名称，不读取目录或证明对象存在。曾实现的共享目录枚举切片经独立合成反例显示会向单项目主体暴露共享目录状态，已撤回；它此前没有 HTTP 或其他生产调用点。实际未知索引对象的安全归属诊断仍未接线，不能因纯名称分类而称孤儿诊断完成。
 
+原资产 owner 内增加的单资产观测仅返回通过完整性检查的正文和 metadata 文件长度；调用者须持原主体授权租约、已有协调设施与原项目 scope。压缩、稀疏或底层文件系统的实际分配量未测，返回 `allocated_storage_bytes=UNKNOWN`；临时、残留和共享对象也未计入。该结果明确禁止作为项目总量、配额或写准入依据。
+
 ## 项目归属与共享文档决定项
 
 `ExperimentalStore.key(nid, scope)` 和顶层验证绑定一个公开 `nid` 与 scope；目前没有证据证明同一合法文件同时具有两个不同顶层 `nid`，不能先假定事实。另一方面 `CreativeProjectStore` 明确保留同一 scope 中旧 incarnation 的 Creative 行，且通用 scope 文档可含音频以外 collection；TaskCenter lifecycle 只覆盖其指定 collection，不能为音频行背书。
