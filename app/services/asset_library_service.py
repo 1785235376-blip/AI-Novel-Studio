@@ -1000,6 +1000,18 @@ class AssetLibraryService:
                 items.append(meta)
         return sorted(items, key=lambda item: (item.get("created_at", ""), item["id"]))
 
+    @staticmethod
+    def _classify_shared_index_capacity_name(name):
+        """Internal name-only diagnostic; never enumerates the shared index.
+
+        No caller may use this classification to infer a file exists, belongs
+        to a project, can be deleted, or is exempt from capacity accounting.
+        A future route must establish the original authority lease and a safe
+        non-disclosing physical observation separately.
+        """
+        from .asset_query_index import FileAssetQueryIndex
+        return FileAssetQueryIndex._classify_unverified_capacity_name(name)
+
     def project_usage(self, novel_id: str, *, branch_id: str | None = None):
         """Server-only aggregate quota accounting, never private asset discovery.
 

@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import sqlite3
 import stat
 import time
@@ -171,6 +172,28 @@ class FileAssetQueryIndex:
         self.path = self.directory / "index.sqlite3"
         self._verified_identity = None
         self._verified_revision = None
+
+    @staticmethod
+    def _classify_unverified_capacity_name(name):
+        """Explain a supplied basename without observing storage or ownership.
+
+        This classifies a *name*, never a file. Even known names may contain
+        unrelated data and remain unverified; no result permits quota exemption,
+        cleanup, adoption or write admission. Callers must not treat this helper
+        as permission to enumerate the shared index or expose project data.
+        """
+        category = 'UNKNOWN_ENTRY'
+        if isinstance(name, str) and len(name) <= 128 and '/' not in name and '\\' not in name:
+            if name == 'index.sqlite3':
+                category = 'PRIMARY_INDEX_NAME_UNVERIFIED'
+            elif name in {'cursor.key', 'cursor.identity'}:
+                category = 'CURSOR_METADATA_NAME_UNVERIFIED'
+            elif (name in {'index.sqlite3-journal', 'index.sqlite3-wal', 'index.sqlite3-shm'}
+                  or re.fullmatch(r'building-[a-f0-9]{32}\.sqlite3(?:-journal|-wal|-shm)?', name)):
+                category = 'STAGING_OR_JOURNAL_NAME_UNVERIFIED'
+        return {'classification': category, 'ownership': 'UNKNOWN',
+                'project_charge_known': False, 'capacity_exempt': False,
+                'write_admission_proven': False}
 
     def _deadline(self):
         return time.monotonic() + self.MAX_OPERATION_SECONDS
