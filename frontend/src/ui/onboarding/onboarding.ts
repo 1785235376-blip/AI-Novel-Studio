@@ -1,12 +1,13 @@
 /**
  * [HERMIA-UX-20261030 ONBOARD] 首次引导 —— 是否「已看过」的记录。
- * - 有真实身份（账号 + 完整项目范围）⇒ 按账号记在本机 localStorage（同一个人换项目不再重复弹）。
+ * - 有真实账号（resolveWorkspaceUser 认可的 actor）⇒ 按账号记在本机 localStorage（引导讲的是界面，不随项目变，换项目不再重复弹）。
  * - 否则「仅本次会话」：只放内存，零存储写入。
  * - 损坏 / 未知版本的值当作「没看过」，但不改写它（与 NSFW 规则一致）。
  * 只是界面偏好：不写后端、不发请求、不调模型。
  */
 import {useSyncExternalStore} from 'react';
-import type {WorkspaceIdentity} from '../../workspace/contracts';
+/** 真实账号 id；null = 没有可信账号 ⇒ 仅本次会话。 */
+export type OnboardingUser = string | null;
 
 type St = {getItem(k: string): string | null; setItem(k: string, v: string): void};
 export const ONBOARDING_KEY_PREFIX = 'poemseed.onboarding.v1';
@@ -17,14 +18,14 @@ let openRequests = 0;
 const emit = () => { version++; listeners.forEach(l => l()); };
 const storage = (): St | null => { try { return globalThis.localStorage ?? null; } catch { return null; } };
 
-export function onboardingStorageKey(id: Extract<WorkspaceIdentity, {kind: 'real'}>) {
-  return `${ONBOARDING_KEY_PREFIX}::${encodeURIComponent(id.scope.userId)}`;
+export function onboardingStorageKey(user: string) {
+  return `${ONBOARDING_KEY_PREFIX}::${encodeURIComponent(user)}`;
 }
-const sessionKey = (id: WorkspaceIdentity) => (id.kind === 'real' ? onboardingStorageKey(id) : id.key);
+const sessionKey = (user: OnboardingUser) => (user ? onboardingStorageKey(user) : 'session');
 
-export function readOnboardingSeen(id: WorkspaceIdentity, st: St | null = storage()): boolean {
+export function readOnboardingSeen(id: OnboardingUser, st: St | null = storage()): boolean {
   if (session.has(sessionKey(id))) return true;
-  if (id.kind !== 'real' || !st) return false;
+  if (!id || !st) return false;
   try {
     const raw = st.getItem(onboardingStorageKey(id));
     if (raw == null) return false;
@@ -34,15 +35,15 @@ export function readOnboardingSeen(id: WorkspaceIdentity, st: St | null = storag
 }
 
 export type OnboardingWrite = 'saved' | 'session' | 'write-failed';
-export function markOnboardingSeen(id: WorkspaceIdentity, st: St | null = storage()): OnboardingWrite {
+export function markOnboardingSeen(id: OnboardingUser, st: St | null = storage()): OnboardingWrite {
   session.add(sessionKey(id)); emit();
-  if (id.kind !== 'real' || !st) return 'session';
+  if (!id || !st) return 'session';
   try { st.setItem(onboardingStorageKey(id), JSON.stringify({v: 1, seen: true})); return 'saved'; } catch { return 'write-failed'; }
 }
 
 /** 设置菜单「重新查看引导」：只是请求再开一次，不清除「已看过」。 */
 export function requestOnboarding() { openRequests++; emit(); }
-export function useOnboardingStore(id: WorkspaceIdentity): {seen: boolean; requests: number} {
+export function useOnboardingStore(id: OnboardingUser): {seen: boolean; requests: number} {
   useSyncExternalStore(cb => { listeners.add(cb); return () => listeners.delete(cb); }, () => version, () => version);
   return {seen: readOnboardingSeen(id), requests: openRequests};
 }

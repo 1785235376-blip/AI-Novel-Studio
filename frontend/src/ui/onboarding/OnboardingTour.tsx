@@ -6,8 +6,9 @@
  * - 卡片 role=dialog + aria-modal，焦点进卡片、Tab 圈在卡片内，结束后焦点回到合理位置（从设置打开 → 设置按钮）。
  */
 import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
 import {useStudio} from '../../store';
-import {resolveWorkspaceIdentity} from '../../workspace/state/scopeLease';
+import {resolveWorkspaceUser} from '../../workspace/state/scopeLease';
 import {useT} from '../../i18n';
 import type {MessageKey} from '../../i18n/zh-CN';
 import {START_GATE_CLOSED_EVENT, markOnboardingSeen, useOnboardingStore} from './onboarding';
@@ -38,8 +39,8 @@ const autoAllowed = () => {
 const startGateOpen = () => !!document.querySelector('.module-start-gate');
 
 export function useOnboarding({shellMode, auto = autoAllowed()}: {shellMode: 'basic' | 'pro'; auto?: boolean}) {
-  const actorId = useStudio(s => s.actor?.id), collab = useStudio(s => s.scope), novelId = useStudio(s => s.novelId);
-  const identity = useMemo(() => resolveWorkspaceIdentity({actorId, collabScope: collab, projectId: novelId || null}), [actorId, collab, novelId]);
+  const actorId = useStudio(s => s.actor?.id);
+  const identity = resolveWorkspaceUser(actorId);
   const {seen, requests} = useOnboardingStore(identity);
   const [open, setOpen] = useState(false);
   const fromSettings = useRef(false);
@@ -50,7 +51,8 @@ export function useOnboarding({shellMode, auto = autoAllowed()}: {shellMode: 'ba
   useEffect(() => { // 首次自动出现：等起步卡关掉、界面稳定后
     if (!auto || seen || open) return;
     let t: ReturnType<typeof setTimeout> | undefined;
-    const tryOpen = () => { if (!startGateOpen()) t = setTimeout(() => { if (!startGateOpen()) setOpen(true); }, 400); };
+    // 关闭事件先于起步卡卸载触发，所以到点再检查一次起步卡是否还在
+    const tryOpen = () => { if (t) clearTimeout(t); t = setTimeout(() => { if (!startGateOpen()) setOpen(true); }, 400); };
     tryOpen();
     window.addEventListener(START_GATE_CLOSED_EVENT, tryOpen);
     return () => { window.removeEventListener(START_GATE_CLOSED_EVENT, tryOpen); if (t) clearTimeout(t); };
@@ -61,7 +63,7 @@ export function useOnboarding({shellMode, auto = autoAllowed()}: {shellMode: 'ba
     fromSettings.current = false;
     setTimeout(() => back?.focus(), 0);
   }, [identity]);
-  return {open, close, shellMode, session: identity.kind !== 'real'};
+  return {open, close, shellMode, session: !identity};
 }
 
 type Rect = {top: number; left: number; width: number; height: number};
@@ -120,7 +122,8 @@ export function OnboardingTour({c}: {c: ReturnType<typeof useOnboarding>}) {
     pos = {top, left: Math.min(Math.max(12, leftWanted), vw - w - 12)};
   }
   const titleId = 'onboarding-title', bodyId = 'onboarding-body';
-  return (
+  // 挂到 body：不继承外壳里 nowrap / transform / 层叠上下文
+  return createPortal(
     <div className="onboarding" data-onboarding="true" data-step={step.id}>
       {rect ? <div className="onboarding__spot" aria-hidden="true" style={{top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2}} /> : <div className="onboarding__dim" aria-hidden="true" />}
       <div ref={card} className="onboarding__card" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={bodyId} style={{top: pos.top, left: pos.left, width: w}}>
@@ -135,6 +138,7 @@ export function OnboardingTour({c}: {c: ReturnType<typeof useOnboarding>}) {
           <button ref={next} type="button" className="onboarding__next" data-onboarding-next onClick={() => (last ? c.close() : setI(i + 1))}>{last ? t('tour.done') : t('tour.next')}</button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

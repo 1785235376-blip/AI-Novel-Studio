@@ -6,7 +6,6 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AppShell} from '../AppShell';
 import {OnboardingTour, TOUR_STEPS, useOnboarding} from './OnboardingTour';
 import {__resetOnboarding, markOnboardingSeen, onboardingStorageKey, readOnboardingSeen} from './onboarding';
-import {resolveWorkspaceIdentity} from '../../workspace/state/scopeLease';
 import {zhCN} from '../../i18n/zh-CN';
 import {en} from '../../i18n/en';
 
@@ -38,13 +37,14 @@ describe('onboarding tour', () => {
     act(() => root.render(<Harness />)); flush();
     key('Escape');
     expect(card()).toBeNull();
-    expect(readOnboardingSeen(resolveWorkspaceIdentity({actorId: null, collabScope: null, projectId: null}))).toBe(true);
+    expect(readOnboardingSeen(null)).toBe(true);
   });
   it('waits for the start gate and opens after it closes', () => {
     const gate = document.createElement('div'); gate.className = 'module-start-gate'; document.body.append(gate);
     act(() => root.render(<Harness />)); flush();
     expect(card()).toBeNull();
-    gate.remove(); act(() => { window.dispatchEvent(new Event('studio:start-gate-closed')); }); flush();
+    // real order: the close event fires before React unmounts the gate
+    act(() => { window.dispatchEvent(new Event('studio:start-gate-closed')); }); gate.remove(); flush();
     expect(card()).not.toBeNull();
   });
   it('next/prev/done walk the steps; basic has no pro step, pro has 6', () => {
@@ -65,17 +65,15 @@ describe('onboarding tour', () => {
     for (let i = 0; i < 4; i++) act(() => (document.querySelector('[data-onboarding-next]') as HTMLButtonElement).click());
     expect(card()?.textContent).toContain('仅本次会话');
   });
-  it('real identity persists per user in localStorage; session identity writes nothing', () => {
-    const scope = {workspaceId: 'w', projectId: 'p1', storylineId: 's', branchId: 'b'};
-    const id = resolveWorkspaceIdentity({actorId: 'u1', collabScope: scope, projectId: 'p1'});
-    if (id.kind !== 'real') throw new Error('expected real identity');
+  it('real account persists per user in localStorage; session identity writes nothing', () => {
+    const id = 'u1';
     expect(markOnboardingSeen(id)).toBe('saved');
     expect(localStorage.getItem(onboardingStorageKey(id))).toBe('{"v":1,"seen":true}');
     __resetOnboarding();
     expect(readOnboardingSeen(id)).toBe(true);
-    expect(readOnboardingSeen(resolveWorkspaceIdentity({actorId: 'u2', collabScope: scope, projectId: 'p1'}))).toBe(false);
+    expect(readOnboardingSeen('u2')).toBe(false);
     localStorage.clear();
-    expect(markOnboardingSeen(resolveWorkspaceIdentity({actorId: null, collabScope: null, projectId: null}))).toBe('session');
+    expect(markOnboardingSeen(null)).toBe('session');
     expect(localStorage.length).toBe(0);
   });
   it('focus is trapped in the card and Settings →「重新查看引导」reopens, focus returns to settings', () => {
