@@ -139,14 +139,21 @@ def test_closed_candidate_review_on_uninitialized_scope_does_not_create_lock(rig
 
 
 @pytest.mark.parametrize('alias', [False, True])
-def test_plan_review_still_uses_original_authorization_and_write_path(closed, alias):
+@pytest.mark.parametrize('action', ['approve', 'reject', 'reopen'])
+def test_plan_review_requires_authority_and_capacity_and_preserves_state(closed, alias, action):
     rig, scope, headers, _, _ = closed
+    if action == 'reopen':
+        with rig.workspace.store.store.transaction(rig.nid, scope) as doc:
+            doc['collections']['audio_v2_plans']['synthetic-plan']['status'] = 'REJECTED'
     prefix = f"/api{'/v1' if alias else ''}"
-    path = prefix + f'/novels/{rig.nid}/experimental/audiobook/plans/synthetic-plan/reject'
+    path = prefix + f'/novels/{rig.nid}/experimental/audiobook/plans/synthetic-plan/{action}'
+    before = snapshot(rig.root)
     denied = rig.client.post(path, headers={**headers, 'X-Session-Token': 'token-no-grants'},
                              json={'expected_version': 1})
     assert denied.status_code == 403, denied.text
     allowed = rig.client.post(path, headers=headers, json={'expected_version': 1})
-    assert allowed.status_code == 200, allowed.text
-    assert allowed.json()['status'] == 'REJECTED'
-    assert rig.workspace.store.store.read(rig.nid, scope)['collections']['audio_v2_plans']['synthetic-plan']['status'] == 'REJECTED'
+    assert allowed.status_code == 422, allowed.text
+    assert allowed.json()['detail']['message'] == 'AUDIO_CAPACITY_WRITE_UNAVAILABLE'
+    assert snapshot(rig.root) == before
+    expected = 'REJECTED' if action == 'reopen' else 'PENDING_REVIEW'
+    assert rig.workspace.store.store.read(rig.nid, scope)['collections']['audio_v2_plans']['synthetic-plan']['status'] == expected
