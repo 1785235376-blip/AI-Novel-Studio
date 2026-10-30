@@ -59,6 +59,12 @@ class _StandardInfo(ctypes.Structure):
                 ("directory", ctypes.c_ubyte)]
 
 
+class _CompressionInfo(ctypes.Structure):
+    _fields_ = [("stored_bytes", ctypes.c_int64), ("format", wintypes.WORD),
+                ("unit_shift", ctypes.c_ubyte), ("chunk_shift", ctypes.c_ubyte),
+                ("cluster_shift", ctypes.c_ubyte), ("reserved", ctypes.c_ubyte * 3)]
+
+
 class _AttributeTagInfo(ctypes.Structure):
     _fields_ = [("attributes", wintypes.DWORD), ("tag", wintypes.DWORD)]
 
@@ -140,6 +146,17 @@ class _Kernel:
             _fail(INVALID, guard)
         return buffer.raw[:received.value]
 
+    def stored_bytes(self, handle, guard):
+        # FileCompressionInfo reports the default stream's compressed/sparse
+        # stored size through the verified handle, not all alternate streams.
+        standard = self._query(handle, 1, _StandardInfo, guard)
+        if standard.links != 1 or standard.delete_pending or standard.directory:
+            _fail(INVALID, guard)
+        value = self._query(handle, 8, _CompressionInfo, guard).stored_bytes
+        if value < 0:
+            _fail(INVALID, guard)
+        return value
+
 
 def _kernel_api():
     if os.name != "nt":
@@ -206,7 +223,7 @@ class WindowsAssetReadLease:
         self._api, self._path, self._root = api, path, root
         self._size, self._limit, self._digest, self._guard = size, limit, digest, guard
         self._read_budget = read_budget
-        self._handle, self._consumed = None, False
+        self._handle, self._consumed, self._verified = None, False, False
 
     def _admit(self):
         self._guard()
@@ -269,7 +286,20 @@ class WindowsAssetReadLease:
             _fail(INVALID, self._guard)
         data = b"".join(parts)
         self._guard()
+        self._verified = True
         return data
+
+    def stored_bytes(self):
+        """Observe this verified handle's default stream, not total usage."""
+        if not self._verified:
+            _fail(INVALID, self._guard)
+        self.verify_current()
+        first = self._api.stored_bytes(self._handle, self._guard)
+        second = self._api.stored_bytes(self._handle, self._guard)
+        self.verify_current()
+        if first != second:
+            _fail(INVALID, self._guard)
+        return first
 
     def _close(self, *, suppress=False):
         handle, self._handle = self._handle, None

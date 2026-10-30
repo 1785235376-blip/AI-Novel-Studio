@@ -29,6 +29,8 @@ def test_canonical_actual_bytes_and_unattributed_temporary_are_distinct(audio_hi
     assert result == {'status': 'PARTIAL', 'scope': 'INCARNATION_BOUND_ASSET_CANONICAL_FILES_ONLY',
         'content_file_length_bytes': len(e.content), 'metadata_file_length_bytes': meta_size,
         'verified_file_length_bytes': len(e.content) + meta_size,
+        'content_default_stream_stored_bytes': result['content_default_stream_stored_bytes'],
+        'content_other_streams': 'UNKNOWN', 'metadata_stored_bytes': 'UNKNOWN',
         'allocated_storage_bytes': 'UNKNOWN',
         'logical_content_bytes': len(e.content),
         'unaccounted': 'TEMPORARIES_RESIDUALS_OTHER_OBJECTS_AND_SHARED_STORAGE',

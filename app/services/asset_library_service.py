@@ -1046,13 +1046,15 @@ class AssetLibraryService:
 
         This is a partial diagnostic, never a quota total or write admission.
         Temporary names and orphan bytes do not establish ownership; their
-        absence is not inferred. Length is not allocated storage: compression,
-        sparse files, and filesystem allocation are not measured. The caller
+        absence is not inferred. On supported Windows volumes a separately
+        verified content handle also reports stored default-stream bytes;
+        alternate streams, metadata, project totals and other files remain
+        UNKNOWN. The caller
         must hold the original subject authorization lease and establish both
         existing-only coordination and project owner before entering scope;
         project_scope alone does not authorize the subject or ensure no writes.
         """
-        from ..creative.asset_usage_budget import usage_read_budget
+        from ..creative.asset_usage_budget import current_usage_budget, usage_read_budget
         from ..repositories.file.mutation_coordinator import strict_coordination_active
 
         binding = getattr(self._scope, "binding", None)
@@ -1078,6 +1080,27 @@ class AssetLibraryService:
                 raise AssetIntegrityError("asset physical observation unavailable")
             before_content = fingerprint(content_path)
             self._verified_content(row, max_bytes=self.MAX_BYTES)
+            stored_content = 'UNKNOWN'
+            if os.name == 'nt':
+                from .asset_bounded_file_windows import WindowsBoundedAssetError, open_windows_bounded_asset
+                budget = current_usage_budget()
+                if budget is not None:
+                    budget.begin_bounded_binary(row['size'])
+                query_budget = current_query_budget()
+                if query_budget is not None:
+                    query_budget.charge(content_path, content=True)
+                try:
+                    with open_windows_bounded_asset(content_path, trusted_root=self.root,
+                            expected_size=row['size'], max_bytes=self.MAX_BYTES,
+                            expected_sha256=row['sha256'], guard=lambda: None, read_budget=budget) as lease:
+                        lease.read_all()
+                        try:
+                            stored_content = lease.stored_bytes()
+                        except WindowsBoundedAssetError as error:
+                            if error.code != 'ASSET_BOUNDED_READ_UNSUPPORTED':
+                                raise
+                except WindowsBoundedAssetError:
+                    raise AssetIntegrityError('asset physical observation unavailable') from None
             if fingerprint(meta_path) != before_meta or fingerprint(content_path) != before_content:
                 raise AssetIntegrityError("asset physical observation unavailable")
             return {
@@ -1086,6 +1109,9 @@ class AssetLibraryService:
                 "content_file_length_bytes": before_content[2],
                 "metadata_file_length_bytes": before_meta[2],
                 "verified_file_length_bytes": before_content[2] + before_meta[2],
+                "content_default_stream_stored_bytes": stored_content,
+                "content_other_streams": "UNKNOWN",
+                "metadata_stored_bytes": "UNKNOWN",
                 "allocated_storage_bytes": "UNKNOWN",
                 "logical_content_bytes": row["size"],
                 "unaccounted": "TEMPORARIES_RESIDUALS_OTHER_OBJECTS_AND_SHARED_STORAGE",
