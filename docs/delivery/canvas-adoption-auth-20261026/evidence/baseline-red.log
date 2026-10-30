@@ -1,0 +1,48 @@
+F
+=================================== FAILURES ===================================
+________ test_first_empty_canvas_adoption_replay_reopens_over_tcp[/api] ________
+
+canvas_studio = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7fb26c6a2270>, nid='query-ee79e22f482b4acd...lse, 'product_acceptance': 'LOCAL_REQUIRED'}, graph=<app.creative.graph.CreativeGraphService object at 0x7fb26a256810>)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_first_empty_canvas_adoption_replay_reopens_over_tcp(canvas_studio, prefix):
+        e = canvas_studio
+        e.base = prefix + f'/projects/{e.nid}/studio'
+        with tcp_client() as client:
+            e.client = client
+            target, row, body = approved_canvas(e)
+            url = e.base+'/canvas-views/'+target['id']
+>           result = check(client.post(url+'/image-node-result', headers=e.headers, json=body))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_canvas_adoption_auth.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [403 Forbidden]>, status = 200
+
+    def check(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"},"code":"CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN","message":"CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN","details":{"code":"CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"},"request_id":"0e663749-c2e9-4e42-9ae8-c7fe025e12c2"}
+E       assert 403 == 200
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_studio_backend_integration_v2.py:101: AssertionError
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/shared/hermia-canvas-adoption-auth-20261026/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/shared/hermia-canvas-adoption-auth-20261026/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_canvas_adoption_auth.py::test_first_empty_canvas_adoption_replay_reopens_over_tcp[/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 55.90s

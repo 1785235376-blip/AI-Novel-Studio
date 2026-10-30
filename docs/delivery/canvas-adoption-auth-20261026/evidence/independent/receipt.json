@@ -1,0 +1,34 @@
+{
+  "commit": "25b93c6fb22e1889ef179f9ee5317920e7543719",
+  "tree": "eb4a93f8f2531b3f1b4772b57ef9b8fa3869b6aa",
+  "app_tree": "cc826b709a03056d49553aad176980655f37f2f0",
+  "git_status_after": "",
+  "production_delta": " app/creative/canvas_view_api.py | 6 +++++-\n 1 file changed, 5 insertions(+), 1 deletion(-)\n",
+  "result": {
+    "passed": 38,
+    "process_exit": 0,
+    "seconds": 196.09,
+    "junit": "final2-junit.xml",
+    "log": "final2.log"
+  },
+  "sha256": {
+    "app/creative/canvas_view_api.py": "b9f9e435085be6562f375271a42aa128e90060c9613671312eaeac1618b80372",
+    "tests/test_canvas_adoption_auth.py": "23cdbbc5e839b812d240822566de42f3dbaec7ed95d76e20018f42e4104701e8",
+    "tests/test_canvas_adoption_auth_independent.py": "a3dc0241e2d9ef518f53f51b06da43d16bb6d4c54f6b9f9dcbb859a7baf0db8a"
+  },
+  "evidence_sha256": {
+    "final2-junit.xml": "a38191626ae94aef280646b4d67ccbfdcacd2d11439bd209ff5cc6aec9ef7858",
+    "final.log": "5b254d79ae705ce0e71d32cbed387a693c3b767d0d33d25b8c8469e458d6dbba",
+    "final-junit.xml": "bf3f6170dcff8de7b09c28fb8754641404a1902f3fc3693fb520e99407390380",
+    "final2.log": "9a3bebe0037b213cb333ff560a0d3cd7956da56d994d2e6fed412c162c388a52",
+    "REVIEW.md": "cde9896cd25179f3483b60609a6409759030c1f188616cbe471eaedf57d66215",
+    "baseline-denials-2.log": "e3b7b972a236fbc6ad3153d70389e4a2016affe5e3dfa5a4d0c6a10a71bc3cf9",
+    "baseline-denials.log": "486f67d1bc1d8574f85eb073fb6299bf73109a77388577a5d19c2acfa4a20198"
+  },
+  "limitations": [
+    "No real model, browser, Windows, PG or hosted CI run.",
+    "Late authority hooks prove mounted-route guard composition after admission, not approved-model collaboration execution or cross-process atomicity.",
+    "No loaded-module receipt was instrumented in this independent process; repository was immutable and working directory explicitly selected.",
+    "Local default HOME collection error, middleware-header test correction and rejected invalid scope fixture are disclosed in REVIEW.md."
+  ]
+}

@@ -1,0 +1,2883 @@
+........................................................................ [ 16%]
+........................................................................ [ 32%]
+............................EEEEEsssssEsEsEEEsssEEEEEsssssEEEEssssEEEEEE [ 48%]
+EEEEEEEEEEEEEsssssssssssssssssssEsEEEEEEEEEEEEEEEsssssssssssssssEEEEssss [ 64%]
+EEEEssssEsEEEsssEEEEssssEsEsEEssEsEEEsssEsEEEEEEEEEEEEEEEEEEEEEEEEEEssss [ 80%]
+ssssssssssssssssssssssEEEEEsssssEEssEsEsEEEEssssEEEsssEs................ [ 96%]
+................                                                         [100%]
+==================================== ERRORS ====================================
+___ ERROR at setup of test_actual_gain_and_linear_fade_pcm_windows[file--60] ___
+
+request = <SubRequest 'rig' for <Function test_actual_gain_and_linear_fade_pcm_windows[file--60]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_gain_and_linear_fa0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d547a0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_actual_gain_and_linear_fade_pcm_windows[file--6.020599913279624] _
+
+request = <SubRequest 'rig' for <Function test_actual_gain_and_linear_fade_pcm_windows[file--6.020599913279624]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_gain_and_linear_fa1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d73920>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+___ ERROR at setup of test_actual_gain_and_linear_fade_pcm_windows[file--6] ____
+
+request = <SubRequest 'rig' for <Function test_actual_gain_and_linear_fade_pcm_windows[file--6]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_gain_and_linear_fa2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d72b70>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+____ ERROR at setup of test_actual_gain_and_linear_fade_pcm_windows[file-6] ____
+
+request = <SubRequest 'rig' for <Function test_actual_gain_and_linear_fade_pcm_windows[file-6]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_gain_and_linear_fa3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d70680>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+___ ERROR at setup of test_actual_gain_and_linear_fade_pcm_windows[file-12] ____
+
+request = <SubRequest 'rig' for <Function test_actual_gain_and_linear_fade_pcm_windows[file-12]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_gain_and_linear_fa4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292eaa5d0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_omitted_and_explicit_zero_keep_original_pcm_and_distinct_intent[file] _
+
+request = <SubRequest 'rig' for <Function test_omitted_and_explicit_zero_keep_original_pcm_and_distinct_intent[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_omitted_and_explicit_zero0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ed6450>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_review_exact_return_and_reopen_never_automatically_dispatch[file] _
+
+request = <SubRequest 'rig' for <Function test_review_exact_return_and_reopen_never_automatically_dispatch[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_review_exact_return_and_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2925243b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-gain_db--5] _
+
+request = <SubRequest 'rig' for <Function test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-gain_db--5]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_changed_envelope_invalida0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d6f050>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_in_ms-201] _
+
+request = <SubRequest 'rig' for <Function test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_in_ms-201]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_changed_envelope_invalida1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d6e360>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_out_ms-301] _
+
+request = <SubRequest 'rig' for <Function test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_out_ms-301]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_changed_envelope_invalida2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ebf860>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_envelope_scope_pin_target_changes_block_original_dispatch[file-canvas-version] _
+
+request = <SubRequest 'rig' for <Function test_envelope_scope_pin_target_changes_block_original_dispatch[file-canvas-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_envelope_scope_pin_target0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d99130>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_envelope_scope_pin_target_changes_block_original_dispatch[file-card-deleted] _
+
+request = <SubRequest 'rig' for <Function test_envelope_scope_pin_target_changes_block_original_dispatch[file-card-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_envelope_scope_pin_target1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f3c710>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_envelope_scope_pin_target_changes_block_original_dispatch[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_envelope_scope_pin_target_changes_block_original_dispatch[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_envelope_scope_pin_target2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d98830>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_envelope_scope_pin_target_changes_block_original_dispatch[file-scope] _
+
+request = <SubRequest 'rig' for <Function test_envelope_scope_pin_target_changes_block_original_dispatch[file-scope]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_envelope_scope_pin_target3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f1aa50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_envelope_scope_pin_target_changes_block_original_dispatch[file-incarnation] _
+
+request = <SubRequest 'rig' for <Function test_envelope_scope_pin_target_changes_block_original_dispatch[file-incarnation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_envelope_scope_pin_target4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292d9bd40>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_actual_output_proof_and_envelope_binding_are_required[file-missing-proof] _
+
+request = <SubRequest 'rig' for <Function test_actual_output_proof_and_envelope_binding_are_required[file-missing-proof]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_output_proof_and_e0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f2b350>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_actual_output_proof_and_envelope_binding_are_required[file-false-proof] _
+
+request = <SubRequest 'rig' for <Function test_actual_output_proof_and_envelope_binding_are_required[file-false-proof]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_output_proof_and_e1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f29ee0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_actual_output_proof_and_envelope_binding_are_required[file-recipe] _
+
+request = <SubRequest 'rig' for <Function test_actual_output_proof_and_envelope_binding_are_required[file-recipe]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_output_proof_and_e2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f292b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_actual_output_proof_and_envelope_binding_are_required[file-envelope] _
+
+request = <SubRequest 'rig' for <Function test_actual_output_proof_and_envelope_binding_are_required[file-envelope]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_actual_output_proof_and_e3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3b30>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters0] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters0]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff0f20>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters1] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters1]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff2b40>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters2] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters2]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff2a80>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters3] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters3]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3ec0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters4] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters4]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fbb380>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters5] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters5]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fbbdd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters6] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters6]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb87a0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters7] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters7]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fba3c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters8] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters8]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fba450>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters9] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters9]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb9190>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters10] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters10]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3020>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters11] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters11]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff21e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters12] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters12]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff2810>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters13] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters13]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_13')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff0cb0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters14] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters14]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_14')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f29520>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters15] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters15]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_15')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f2bad0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters16] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters16]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_16')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb0ec0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters17] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters17]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_17')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb1eb0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_canvas_envelope_contract_stays_closed[file-parameters18] _
+
+request = <SubRequest 'rig' for <Function test_canvas_envelope_contract_stays_closed[file-parameters18]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_canvas_envelope_contract_18')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb17f0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_real_wav_original_job_review_exact_return_restore_and_reopen[file] _
+
+request = <SubRequest 'rig' for <Function test_real_wav_original_job_review_exact_return_restore_and_reopen[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_real_wav_original_job_rev0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb2ae0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT.../test_studio_canvas_audio_return.py::test_real_wav_original_job_review_exact_return_restore_and_reopen[file] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-null] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-null]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb1730>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-null] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-kind] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-kind]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2a3b31760>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-kind] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-project] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-project]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f2b4d0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...s/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-project] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-scope] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-scope]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3860>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...sts/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-scope] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-incarnation] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-incarnation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff1ac0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...st_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-incarnation] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-card] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-card]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb8830>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-card] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-version] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fbbd10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...s/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-version] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-digest] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-digest]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f96b70>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ts/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-digest] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-pin] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f97110>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-pin] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-cloud] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-cloud]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f966c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...sts/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-cloud] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-provider] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-provider]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f97b90>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT.../test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-provider] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-prompt] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-prompt]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fbae70>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ts/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-prompt] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-operation] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-operation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3470>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-operation] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-format] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-format]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return13')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff29f0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ts/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-format] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_bad_or_stale_audio_return_preview_never_creates_job[file-sample-rate] _
+
+request = <SubRequest 'rig' for <Function test_bad_or_stale_audio_return_preview_never_creates_job[file-sample-rate]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_bad_or_stale_audio_return14')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f2b680>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...st_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-sample-rate] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_queued_target_change_blocks_native_dispatch[file-version] _
+
+request = <SubRequest 'rig' for <Function test_queued_target_change_blocks_native_dispatch[file-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_target_change_bloc0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f858e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...': 'tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-version] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_queued_target_change_blocks_native_dispatch[file-deleted-card] _
+
+request = <SubRequest 'rig' for <Function test_queued_target_change_blocks_native_dispatch[file-deleted-card]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_target_change_bloc1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292fb1190>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-deleted-card] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_queued_target_change_blocks_native_dispatch[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_queued_target_change_blocks_native_dispatch[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_target_change_bloc2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f87320>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...'tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-source-pin] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_queued_target_change_blocks_native_dispatch[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_queued_target_change_blocks_native_dispatch[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_target_change_bloc3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f85970>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ts/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-source-deleted] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_stale_target_review_is_blocked_and_private_candidate_retained[file-version] _
+
+request = <SubRequest 'rig' for <Function test_stale_target_review_is_blocked_and_private_candidate_retained[file-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_stale_target_review_is_bl0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5ff20>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...dio_canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-version] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_stale_target_review_is_blocked_and_private_candidate_retained[file-deleted-card] _
+
+request = <SubRequest 'rig' for <Function test_stale_target_review_is_blocked_and_private_candidate_retained[file-deleted-card]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_stale_target_review_is_bl1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f84950>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...anvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-deleted-card] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_stale_target_review_is_bl2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f865d0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT..._canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-pin] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_stale_target_review_is_bl3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f86c30>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...vas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-deleted] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_late_native_result_cannot_publish_after_card_version_changed[file] _
+
+request = <SubRequest 'rig' for <Function test_late_native_result_cannot_publish_after_card_version_changed[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_late_native_result_cannot0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff12e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT.../test_studio_canvas_audio_return.py::test_late_native_result_cannot_publish_after_card_version_changed[file] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_return_cas_refuses_changes_and_keeps_approved_result[file-version] _
+
+request = <SubRequest 'rig' for <Function test_return_cas_refuses_changes_and_keeps_approved_result[file-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_return_cas_refuses_change0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f86960>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT.../test_studio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-version] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_return_cas_refuses_changes_and_keeps_approved_result[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_return_cas_refuses_changes_and_keeps_approved_result[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_return_cas_refuses_change1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff3320>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...st_studio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-source-pin] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_return_cas_refuses_changes_and_keeps_approved_result[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_return_cas_refuses_changes_and_keeps_approved_result[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_return_cas_refuses_change2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f965d0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...tudio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-source-deleted] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_audio_owner_checks_original_command_context_and_recipe[file-command] _
+
+request = <SubRequest 'rig' for <Function test_audio_owner_checks_original_command_context_and_recipe[file-command]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_audio_owner_checks_origin0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5e420>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...est_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-command] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_audio_owner_checks_original_command_context_and_recipe[file-scope] _
+
+request = <SubRequest 'rig' for <Function test_audio_owner_checks_original_command_context_and_recipe[file-scope]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_audio_owner_checks_origin1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5e150>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT.../test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-scope] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_audio_owner_checks_original_command_context_and_recipe[file-incarnation] _
+
+request = <SubRequest 'rig' for <Function test_audio_owner_checks_original_command_context_and_recipe[file-incarnation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_audio_owner_checks_origin2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5f0e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-incarnation] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_audio_owner_checks_original_command_context_and_recipe[file-recipe] _
+
+request = <SubRequest 'rig' for <Function test_audio_owner_checks_original_command_context_and_recipe[file-recipe]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_audio_owner_checks_origin3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293142bd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-recipe] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_____ ERROR at setup of test_unknown_original_job_cannot_be_replayed[file] _____
+
+request = <SubRequest 'rig' for <Function test_unknown_original_job_cannot_be_replayed[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_unknown_original_job_cann0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293141b50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...CURRENT_TEST': 'tests/test_studio_canvas_audio_return.py::test_unknown_original_job_cannot_be_replayed[file] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_legacy_unbound_trim_keeps_original_wav_contract[file] _
+
+request = <SubRequest 'rig' for <Function test_legacy_unbound_trim_keeps_original_wav_contract[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_legacy_unbound_trim_keeps0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293140b60>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...TEST': 'tests/test_studio_canvas_audio_return.py::test_legacy_unbound_trim_keeps_original_wav_contract[file] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-other-project] _
+
+request = <SubRequest 'rig' for <Function test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-other-project]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_original_audio_job_is_not0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5e6c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT..._audio_return.py::test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-other-project] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-recreated-project] _
+
+request = <SubRequest 'rig' for <Function test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-recreated-project]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_original_audio_job_is_not1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5d370>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...io_return.py::test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-recreated-project] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_original_canvas_binding_requires_actual_pcm_proof[file] _
+
+request = <SubRequest 'rig' for <Function test_original_canvas_binding_requires_actual_pcm_proof[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_original_canvas_binding_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f29d30>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_studio_canvas_audio_return.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = environ({'HOME': '/tmp/canvas-auth-frozen-home', 'MOCK_PROVIDER': 'true', 'STORAGE_BACKEND': 'file', 'CREDENTIAL_VAULT...ST': 'tests/test_studio_canvas_audio_return.py::test_original_canvas_binding_requires_actual_pcm_proof[file] (setup)'})
+key = 'PROJECT_ROOT'
+
+>   ???
+E   KeyError: 'PROJECT_ROOT'
+
+<frozen os>:714: KeyError
+_ ERROR at setup of test_public_canvas_video_audio_native_selection_and_manual_return[file-omitted-silent] _
+
+request = <SubRequest 'rig' for <Function test_public_canvas_video_audio_native_selection_and_manual_return[file-omitted-silent]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_public_canvas_video_audio0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff1d30>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_public_canvas_video_audio_native_selection_and_manual_return[file-explicit-silent] _
+
+request = <SubRequest 'rig' for <Function test_public_canvas_video_audio_native_selection_and_manual_return[file-explicit-silent]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_public_canvas_video_audio1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f85370>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_public_canvas_video_audio_native_selection_and_manual_return[file-first-source-audio] _
+
+request = <SubRequest 'rig' for <Function test_public_canvas_video_audio_native_selection_and_manual_return[file-first-source-audio]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_public_canvas_video_audio2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f87140>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_real_saved_video_bridge_preview_queue_reopen_execute_review_return_and_restore[file] _
+
+request = <SubRequest 'rig' for <Function test_real_saved_video_bridge_preview_queue_reopen_execute_review_return_and_restore[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_real_saved_video_bridge_p0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293141ac0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-contract] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-contract]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2931406b0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-operation] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-operation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293143440>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-provider] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-provider]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312c6e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-model] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-model]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312fc50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-prompt] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-prompt]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312fad0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-cloud] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-cloud]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293143a10>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-license] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-license]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293142d80>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-negative-start] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-negative-start]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f86bd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-equal-range] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-equal-range]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff2810>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-reverse-range] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-reverse-range]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5c6e0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-in-grid] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-in-grid]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5d580>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-out-grid] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-out-grid]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312dc40>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-bool] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-bool]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312f110>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-duration-limit] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-duration-limit]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev13')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312c890>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-source-duration] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-source-duration]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev14')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f9190>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-parameter] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-parameter]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev15')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f9d00>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev16')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f94f0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-origin-pin] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-origin-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev17')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312e2a0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-scope] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-scope]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev18')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312d310>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-incarnation] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-incarnation]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev19')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5d3d0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-version] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev20')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292ff1cd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-digest] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-digest]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev21')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f87920>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-card] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-card]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev22')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa293143e30>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-version] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev23')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f8770>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-digest] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-digest]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev24')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f94c0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-field] _
+
+request = <SubRequest 'rig' for <Function test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-field]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_invalid_video_bridge_prev25')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f9550>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_queued_video_bridge_target_change_prevents_render[file-canvas-version] _
+
+request = <SubRequest 'rig' for <Function test_queued_video_bridge_target_change_prevents_render[file-canvas-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_video_bridge_targe0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2a3bd4950>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_queued_video_bridge_target_change_prevents_render[file-card-deleted] _
+
+request = <SubRequest 'rig' for <Function test_queued_video_bridge_target_change_prevents_render[file-card-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_video_bridge_targe1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930e0350>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_queued_video_bridge_target_change_prevents_render[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_queued_video_bridge_target_change_prevents_render[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_video_bridge_targe2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930e1850>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_queued_video_bridge_target_change_prevents_render[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_queued_video_bridge_target_change_prevents_render[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_video_bridge_targe3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930fb320>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_queued_video_bridge_target_change_prevents_render[file-timeline-version] _
+
+request = <SubRequest 'rig' for <Function test_queued_video_bridge_target_change_prevents_render[file-timeline-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_queued_video_bridge_targe4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f9220>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-other-project] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-other-project]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_cannot_execu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f5cdd0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-recreated-project] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-recreated-project]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_cannot_execu1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa292f84590>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_changed_request_and_preview_cannot_reuse_original_queue[file] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_changed_request_and_preview_cannot_reuse_original_queue[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_changed_requ0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312fbc0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_original_owner_unknown_receipt_is_never_replayed[file] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_original_owner_unknown_receipt_is_never_replayed[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_original_own0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312cf20>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_review_conflict_retains_private_candidate[file-canvas-version] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_review_conflict_retains_private_candidate[file-canvas-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_review_confl0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930deb40>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_review_conflict_retains_private_candidate[file-card-deleted] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_review_conflict_retains_private_candidate[file-card-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_review_confl1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930df320>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_review_conflict_retains_private_candidate[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_review_conflict_retains_private_candidate[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_review_confl2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930ddb50>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_review_conflict_retains_private_candidate[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_review_conflict_retains_private_candidate[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_review_confl3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa29312e750>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_return_cas_conflict_keeps_formal_asset[file-canvas-version] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_return_cas_conflict_keeps_formal_asset[file-canvas-version]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_return_cas_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f99a0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-pin] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-pin]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_return_cas_c1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2a3b2b470>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-deleted] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-deleted]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_return_cas_c2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2930f9550>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+_ ERROR at setup of test_video_bridge_late_native_result_does_not_publish_after_target_change[file] _
+
+request = <SubRequest 'rig' for <Function test_video_bridge_late_native_result_does_not_publish_after_target_change[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-4/test_video_bridge_late_native_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa2a3bd4bf0>
+
+    @pytest.fixture(params=[
+        pytest.param("file", marks=pytest.mark.file_backend_only),
+        pytest.param("postgres", marks=pytest.mark.postgres_backend_only),
+    ])
+    def rig(request, tmp_path, monkeypatch):
+        from app.config import Settings
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+>       assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'PROJECT_ROOT'
+
+tests/test_studio_canvas_audio_return.py:92: KeyError
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/shared/hermia-canvas-adoption-auth-verify/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/shared/hermia-canvas-adoption-auth-verify/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/canvas-adoption-auth-evidence/original-regression.xml -
+=========================== short test summary info ============================
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_gain_and_linear_fade_pcm_windows[file--60]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_gain_and_linear_fade_pcm_windows[file--6.020599913279624]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_gain_and_linear_fade_pcm_windows[file--6]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_gain_and_linear_fade_pcm_windows[file-6]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_gain_and_linear_fade_pcm_windows[file-12]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_omitted_and_explicit_zero_keep_original_pcm_and_distinct_intent[file]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_review_exact_return_and_reopen_never_automatically_dispatch[file]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-gain_db--5]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_in_ms-201]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_changed_envelope_invalidates_reviewed_preview_without_dispatch[file-fade_out_ms-301]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_envelope_scope_pin_target_changes_block_original_dispatch[file-canvas-version]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_envelope_scope_pin_target_changes_block_original_dispatch[file-card-deleted]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_envelope_scope_pin_target_changes_block_original_dispatch[file-source-pin]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_envelope_scope_pin_target_changes_block_original_dispatch[file-scope]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_envelope_scope_pin_target_changes_block_original_dispatch[file-incarnation]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_output_proof_and_envelope_binding_are_required[file-missing-proof]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_output_proof_and_envelope_binding_are_required[file-false-proof]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_output_proof_and_envelope_binding_are_required[file-recipe]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_actual_output_proof_and_envelope_binding_are_required[file-envelope]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters0]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters1]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters2]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters3]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters4]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters5]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters6]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters7]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters8]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters9]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters10]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters11]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters12]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters13]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters14]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters15]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters16]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters17]
+ERROR tests/test_studio_canvas_audio_envelope.py::test_canvas_envelope_contract_stays_closed[file-parameters18]
+ERROR tests/test_studio_canvas_audio_return.py::test_real_wav_original_job_review_exact_return_restore_and_reopen[file]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-null]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-kind]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-project]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-scope]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-incarnation]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-card]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-version]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-digest]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-pin]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-cloud]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-provider]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-prompt]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-operation]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-format]
+ERROR tests/test_studio_canvas_audio_return.py::test_bad_or_stale_audio_return_preview_never_creates_job[file-sample-rate]
+ERROR tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-version]
+ERROR tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-deleted-card]
+ERROR tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-source-pin]
+ERROR tests/test_studio_canvas_audio_return.py::test_queued_target_change_blocks_native_dispatch[file-source-deleted]
+ERROR tests/test_studio_canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-version]
+ERROR tests/test_studio_canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-deleted-card]
+ERROR tests/test_studio_canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-pin]
+ERROR tests/test_studio_canvas_audio_return.py::test_stale_target_review_is_blocked_and_private_candidate_retained[file-source-deleted]
+ERROR tests/test_studio_canvas_audio_return.py::test_late_native_result_cannot_publish_after_card_version_changed[file]
+ERROR tests/test_studio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-version]
+ERROR tests/test_studio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-source-pin]
+ERROR tests/test_studio_canvas_audio_return.py::test_return_cas_refuses_changes_and_keeps_approved_result[file-source-deleted]
+ERROR tests/test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-command]
+ERROR tests/test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-scope]
+ERROR tests/test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-incarnation]
+ERROR tests/test_studio_canvas_audio_return.py::test_audio_owner_checks_original_command_context_and_recipe[file-recipe]
+ERROR tests/test_studio_canvas_audio_return.py::test_unknown_original_job_cannot_be_replayed[file]
+ERROR tests/test_studio_canvas_audio_return.py::test_legacy_unbound_trim_keeps_original_wav_contract[file]
+ERROR tests/test_studio_canvas_audio_return.py::test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-other-project]
+ERROR tests/test_studio_canvas_audio_return.py::test_original_audio_job_is_not_rebound_to_another_scope_or_incarnation[file-recreated-project]
+ERROR tests/test_studio_canvas_audio_return.py::test_original_canvas_binding_requires_actual_pcm_proof[file]
+ERROR tests/test_studio_canvas_video_audio.py::test_public_canvas_video_audio_native_selection_and_manual_return[file-omitted-silent]
+ERROR tests/test_studio_canvas_video_audio.py::test_public_canvas_video_audio_native_selection_and_manual_return[file-explicit-silent]
+ERROR tests/test_studio_canvas_video_audio.py::test_public_canvas_video_audio_native_selection_and_manual_return[file-first-source-audio]
+ERROR tests/test_studio_canvas_video_bridge.py::test_real_saved_video_bridge_preview_queue_reopen_execute_review_return_and_restore[file]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-contract]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-operation]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-provider]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-model]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-prompt]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-cloud]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-license]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-negative-start]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-equal-range]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-reverse-range]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-in-grid]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-out-grid]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-bool]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-duration-limit]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-source-duration]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-parameter]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-source-pin]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-origin-pin]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-scope]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-incarnation]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-canvas-digest]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-card]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-timeline-digest]
+ERROR tests/test_studio_canvas_video_bridge.py::test_invalid_video_bridge_preview_never_renders_or_queues[file-extra-field]
+ERROR tests/test_studio_canvas_video_bridge.py::test_queued_video_bridge_target_change_prevents_render[file-canvas-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_queued_video_bridge_target_change_prevents_render[file-card-deleted]
+ERROR tests/test_studio_canvas_video_bridge.py::test_queued_video_bridge_target_change_prevents_render[file-source-pin]
+ERROR tests/test_studio_canvas_video_bridge.py::test_queued_video_bridge_target_change_prevents_render[file-source-deleted]
+ERROR tests/test_studio_canvas_video_bridge.py::test_queued_video_bridge_target_change_prevents_render[file-timeline-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-other-project]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_cannot_execute_under_other_scope_or_incarnation[file-recreated-project]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_changed_request_and_preview_cannot_reuse_original_queue[file]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_original_owner_unknown_receipt_is_never_replayed[file]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_review_conflict_retains_private_candidate[file-canvas-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_review_conflict_retains_private_candidate[file-card-deleted]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_review_conflict_retains_private_candidate[file-source-pin]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_review_conflict_retains_private_candidate[file-source-deleted]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_return_cas_conflict_keeps_formal_asset[file-canvas-version]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-pin]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_return_cas_conflict_keeps_formal_asset[file-source-deleted]
+ERROR tests/test_studio_canvas_video_bridge.py::test_video_bridge_late_native_result_does_not_publish_after_target_change[file]
+204 passed, 122 skipped, 3 warnings, 122 errors in 359.88s (0:05:59)
