@@ -25,6 +25,10 @@ MAX_PAYLOAD_BYTES = 1024
 CURSOR_TTL_SECONDS = 900
 KEY_NAME = "cursor.key"
 IDENTITY_NAME = "cursor.identity"
+# The Windows backend stores only the DPAPI-sealed key under a distinct name so
+# a plaintext POSIX-style key is never mistaken for a sealed one.
+WINDOWS_KEY_NAME = "cursor.key.dpapi"
+MAX_WINDOWS_BLOB_BYTES = 4096
 _IDENTITY_PREFIX = b"asset-query-cursor-key/1\n"
 _DOMAIN = b"PoemSeedStudio.AssetQueryCursor.v1\x00"
 _SHA = re.compile(r"[a-f0-9]{64}\Z")
@@ -221,13 +225,133 @@ def _create_private_file(directory_fd, name, value):
     os.fsync(directory_fd)
 
 
-def signing_key_primitives_available() -> bool:
-    """Report required interpreter primitives, not filesystem or key health."""
+def posix_signing_primitives_available() -> bool:
+    """Report the POSIX directory-relative no-follow primitives."""
     return (os.open in os.supports_dir_fd and os.stat in os.supports_dir_fd
             and hasattr(os, "O_NOFOLLOW") and hasattr(os, "O_DIRECTORY"))
 
 
-def load_signing_key(directory: Path) -> bytes:
+def windows_dpapi_available() -> bool:
+    """Report the current-user DPAPI backend used when POSIX primitives are absent."""
+    try:
+        from ..windows_dpapi import available
+    except ImportError:  # pragma: no cover - packaging boundary
+        return False
+    return available()
+
+
+def signing_key_primitives_available() -> bool:
+    """Report a usable safe signing-key backend, not filesystem or key health."""
+    return posix_signing_primitives_available() or windows_dpapi_available()
+
+
+def _windows_regular(entry) -> bool:
+    return stat.S_ISREG(entry.st_mode) and not (
+        getattr(entry, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400))
+
+
+def _windows_identity(entry):
+    return entry.st_dev, entry.st_ino, entry.st_size, entry.st_mtime_ns
+
+
+def _windows_read(path: Path, maximum: int):
+    """Read one private ordinary file and prove its identity did not change."""
+    try:
+        before = path.lstat()
+    except FileNotFoundError:
+        return None
+    if (not _windows_regular(before) or before.st_nlink != 1
+            or not 1 <= before.st_size <= maximum):
+        raise AssetQueryCursorUnavailable()
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0)
+    descriptor = None
+    try:
+        descriptor = os.open(path, flags)
+        opened = os.fstat(descriptor)
+        if _windows_identity(opened) != _windows_identity(before):
+            raise AssetQueryCursorUnavailable()
+        value = os.read(descriptor, maximum + 1)
+        after = path.lstat()
+        if (len(value) != before.st_size
+                or _windows_identity(after) != _windows_identity(before)):
+            raise AssetQueryCursorUnavailable()
+        return value
+    except OSError:
+        raise AssetQueryCursorUnavailable() from None
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
+def _windows_create(path: Path, value: bytes) -> None:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
+    try:
+        descriptor = os.open(path, flags, 0o600)
+    except FileExistsError:
+        # An unexpected concurrent creator must never be truncated; the caller
+        # validates the completed file before accepting it.
+        return
+    except OSError:
+        raise AssetQueryCursorUnavailable() from None
+    try:
+        os.write(descriptor, value)
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _load_windows_signing_key(directory: Path) -> bytes:
+    """Current-user DPAPI signing key for hosts without POSIX path primitives.
+
+    Confidentiality comes from DPAPI scoped to the current Windows user, not from
+    POSIX file modes. The key is only ever stored sealed; the independent identity
+    marker carries the key digest so a missing, replaced, mismatched or
+    interrupted key is refused instead of silently rotated. Entries must be
+    ordinary single-link files whose identity is unchanged across the read. This
+    primitive is not end-to-end acceptance: the runtime capability contract still
+    reports the cursor as NOT_VERIFIED until desktop acceptance runs.
+    """
+    from ..windows_dpapi import DpapiUnavailable, protect, unprotect
+
+    directory = Path(directory)
+    try:
+        directory.mkdir(mode=0o700, exist_ok=True)
+        before = directory.lstat()
+        if (not stat.S_ISDIR(before.st_mode) or stat.S_ISLNK(before.st_mode)
+                or getattr(before, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)):
+            raise AssetQueryCursorUnavailable()
+        key_path, marker_path = directory / WINDOWS_KEY_NAME, directory / IDENTITY_NAME
+        marker_size = len(_IDENTITY_PREFIX) + 65
+        marker = _windows_read(marker_path, marker_size)
+        sealed = _windows_read(key_path, MAX_WINDOWS_BLOB_BYTES)
+        if sealed is None:
+            if marker is not None:
+                raise AssetQueryCursorUnavailable()
+            raw = secrets.token_bytes(32)
+            _windows_create(key_path, protect(raw))
+            sealed = _windows_read(key_path, MAX_WINDOWS_BLOB_BYTES)
+            if sealed is None:
+                raise AssetQueryCursorUnavailable()
+        raw = unprotect(sealed)
+        if type(raw) is not bytes or len(raw) != 32:
+            raise AssetQueryCursorUnavailable()
+        expected_marker = _IDENTITY_PREFIX + hashlib.sha256(raw).hexdigest().encode("ascii") + b"\n"
+        if marker is None:
+            _windows_create(marker_path, expected_marker)
+            marker = _windows_read(marker_path, marker_size)
+        if marker is None or not hmac.compare_digest(marker, expected_marker):
+            raise AssetQueryCursorUnavailable()
+        after_directory = directory.lstat()
+        if (not stat.S_ISDIR(after_directory.st_mode)
+                or getattr(after_directory, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+                or (after_directory.st_dev, after_directory.st_ino) != (before.st_dev, before.st_ino)):
+            raise AssetQueryCursorUnavailable()
+        return raw
+    except (OSError, ValueError, TypeError, DpapiUnavailable):
+        raise AssetQueryCursorUnavailable() from None
+
+
+def _load_posix_signing_key(directory: Path) -> bytes:
     """Load/create the independent persistent cursor key under an owner lease.
 
     The caller holds the existing cross-process asset lease. Directory-relative
@@ -279,3 +403,19 @@ def load_signing_key(directory: Path) -> bytes:
     finally:
         if descriptor is not None:
             os.close(descriptor)
+
+
+def load_signing_key(directory: Path) -> bytes:
+    """Load/create the persistent cursor signing key through a safe backend.
+
+    POSIX hosts use the directory-relative no-follow contract. Windows hosts,
+    which lack ``dir_fd``/``O_NOFOLLOW``/``O_DIRECTORY``, use the current-user
+    DPAPI-sealed key with the same independent identity marker. Hosts with
+    neither backend fail explicitly (``ASSET_QUERY_CURSOR_UNAVAILABLE``) and
+    never fall back to an unchecked plaintext key path.
+    """
+    if not signing_key_primitives_available():
+        raise AssetQueryCursorUnavailable()
+    if posix_signing_primitives_available():
+        return _load_posix_signing_key(directory)
+    return _load_windows_signing_key(directory)

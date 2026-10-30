@@ -262,7 +262,11 @@ def test_symlink_directory_key_and_broad_permissions_are_refused(tmp_path):
 
 
 def test_unsupported_key_primitives_fail_explicitly(tmp_path, monkeypatch):
-    monkeypatch.setattr(os, "supports_dir_fd", set())
+    from app.creative import asset_query_cursor as cursor
+    # Force both safe backends unavailable: the loader must refuse rather than
+    # fall back to an unchecked plaintext key path.
+    monkeypatch.setattr(cursor, "posix_signing_primitives_available", lambda: False)
+    monkeypatch.setattr(cursor, "windows_dpapi_available", lambda: False)
     with pytest.raises(AssetQueryCursorUnavailable):
         load_signing_key(tmp_path / "cursor-state")
     assert not (tmp_path / "cursor-state").exists()

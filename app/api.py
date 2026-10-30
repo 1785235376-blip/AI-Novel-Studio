@@ -1248,6 +1248,34 @@ def delete_novel(nid:str,x_session_token:str|None=Header(None,alias="X-Session-T
         return guard(lambda: lifecycle.delete_project(scope.workspace_id, nid, actor,
                      reauthorize=reauthorize_deletion))
     guard(novel_service.delete,nid)
+@router.get("/projects/deletions")
+def project_deletions(after:int=Query(default=0,ge=0),limit:int=Query(default=100,ge=1,le=200),
+                      x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    """Bounded purge signal for projects deleted while a client was closed.
+
+    Auxiliary UI data only: it never authorizes access to a deleted project and
+    never restores content. Shared/packaged modes expose only the caller's
+    workspace; local mode exposes the local single-user tombstones.
+    """
+    from .project_tombstones import TombstoneUnavailable,journal_root,read_page
+    if _shared_runtime_authority_enabled():
+        actor=_shared_actor(x_session_token)
+        workspace_id=actor.get("workspace_id") if isinstance(actor,dict) else getattr(actor,"workspace_id",None)
+        if not workspace_id:
+            raise HTTPException(403,{"code":"PROJECT_DELETIONS_SCOPE_UNAVAILABLE"})
+    else:
+        workspace_id=None
+    try:
+        items,next_cursor,has_more=read_page(journal_root(novel_service.novels),
+                                             workspace_id=workspace_id,after=after,limit=limit)
+    except TombstoneUnavailable:
+        raise HTTPException(503,{"code":"PROJECT_DELETIONS_UNAVAILABLE"}) from None
+    except ValueError:
+        raise HTTPException(422,{"code":"PROJECT_DELETIONS_QUERY_INVALID"}) from None
+    return {"contract":"project-deletions/1",
+            "items":[{"project_id":row["project_id"],"deleted_at":row["deleted_at"],
+                      "incarnation":row["incarnation"]} for row in items],
+            "next_cursor":next_cursor,"has_more":has_more}
 @router.get("/novels/{nid}/chapters",dependencies=[Depends(_shared_project_read)])
 def chapters(nid:str): return guard(chapter_service.list,nid)
 @router.get("/novels/{nid}/chapters/archived",dependencies=[Depends(_shared_project_read)])

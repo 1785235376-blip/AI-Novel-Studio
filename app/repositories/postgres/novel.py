@@ -48,6 +48,7 @@ class PostgresNovelRepository:
             "status": extra.get("status", "Writing"),
             "created_at": iso(model.created_at),
             "updated_at": iso(model.updated_at),
+            **({"project_incarnation": extra["project_incarnation"]} if "project_incarnation" in extra else {}),
             **({"long_term_summary": extra["long_term_summary"]} if "long_term_summary" in extra else {}),
             **({"writing_goal": extra["writing_goal"]} if "writing_goal" in extra else {}),
             **({"world_summary": extra["world_summary"],"world_summary_privacy_level":extra.get("world_summary_privacy_level","LOCAL_ONLY")} if "world_summary" in extra else {}),
@@ -80,7 +81,8 @@ class PostgresNovelRepository:
             raise FileExistsError(novel_slug)
         now = datetime.now(timezone.utc)
         model = NovelModel(slug=novel_slug, title=payload["title"], metadata_json={
-            "genre": payload.get("genre", ""), "status": "Writing", "style_profile": {}
+            "genre": payload.get("genre", ""), "status": "Writing", "style_profile": {},
+            "project_incarnation": str(uuid.uuid4())
         }, created_at=now, updated_at=now)
         session.add(model); session.flush()
         session.add(StoryStateModel(novel_id=model.id, chapter_number=0, state={"volume": 1, "chapter": 0, "active_characters": []}))

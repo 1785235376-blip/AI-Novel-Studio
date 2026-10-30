@@ -44,7 +44,26 @@ class NovelService:
         if target_words<0 or target_chapters<0: raise ValueError("writing goals must be non-negative")
         self.update(nid,{"writing_goal":{"target_words":target_words,"target_chapters":target_chapters,"deadline":str(payload.get("deadline") or "")}})
         return self.writing_goal(nid)
-    def delete(self,nid):return self.novels.delete(nid)
+    def delete(self,nid):
+        """Delete the project, then record a bounded purge tombstone.
+
+        The deletion is authoritative; a tombstone failure is recorded as a
+        warning and never rolls the retirement back. The journal only helps a
+        client that was closed while the project disappeared purge stale local
+        view state; it is not authority or content.
+        """
+        try:
+            meta=self.get(nid) or {}
+        except (FileNotFoundError, KeyError, TypeError, AttributeError):
+            meta={}
+        result=self.novels.delete(nid)
+        try:
+            from ..project_tombstones import journal_root,record
+            record(journal_root(self.novels),nid,workspace_id=None,incarnation=meta.get("project_incarnation"))
+        except Exception:
+            import logging
+            logging.getLogger(__name__).warning("Project deletion tombstone not recorded: %s",nid,exc_info=True)
+        return result
     def compare_and_swap_record(self,nid,kind,record_id,payload,expected_digest):return self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest)
     def story_record(self,nid,kind,record_id):
         return self._story_record_view(nid,kind,record_id,self.novels.story_record(nid,kind,record_id))

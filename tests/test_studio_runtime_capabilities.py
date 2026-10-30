@@ -1,9 +1,9 @@
 """Machine-readable runtime boundaries over the original guarded API."""
 import hashlib
-import os
 
 import pytest
 
+from app.creative import asset_query_cursor
 from test_studio_asset_query import rig, shared_scope
 
 
@@ -26,8 +26,8 @@ def test_runtime_capabilities_are_read_only_and_do_not_change_existing_catalog(r
     assert value['contract'] == 'studio-runtime-capabilities/1'
     assert value['project_id'] == rig.nid
     assert value['audio_asset_history'] == {'version_history_read': 'UNAVAILABLE', 'version_restore': 'UNAVAILABLE'}
-    primitive = (os.open in os.supports_dir_fd and os.stat in os.supports_dir_fd
-                 and hasattr(os, 'O_NOFOLLOW') and hasattr(os, 'O_DIRECTORY'))
+    primitive = (asset_query_cursor.posix_signing_primitives_available()
+                 or asset_query_cursor.windows_dpapi_available())
     assert value['asset_query_cursor']['key_primitives'] == ('PRESENT' if primitive else 'UNAVAILABLE')
     assert value['asset_query_cursor']['end_to_end'] == ('NOT_VERIFIED' if primitive else 'UNSUPPORTED')
     assert value['model_inference_acceptance'] == 'NOT_EVALUATED'

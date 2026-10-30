@@ -457,3 +457,9 @@ files created: none
 - 未修改：`main`、原工作树、既有 API 合同字段/权限 owner/关闭门/凭据存储；未 push 新提交、未创建 Release、未部署（本轮本地提交，是否推送由后续决定）。
 - 回退：生产改动可整体 `git revert <本轮提交>`；新增测试可独立保留。
 
+## 27. 后续能力补齐（指针，2026-10-30）
+
+- Windows 资产游标签名密钥（第 7 节第 3 条 OPEN、第 26.8 节第 3 条）已由后续分支 `work/capability-completion-20261030` 补齐：current-user DPAPI sealed key + 独立身份 marker + fail-closed 读取；Windows 原 38 项 503 的游标套件现 49 passed。状态从“OPEN（无实现）”改为“**实现完成，真实桌面端到端验收 NOT_VERIFIED**”，等待用户下一步真实前后端验证指令；不再属于已知拒绝层。
+- 同分支另补齐项目实例字段（`project_incarnation`）与项目删除墓碑读接口（冷启动清理信号），详见 `docs/delivery/BACKEND_CAPABILITY_COMPLETION_20261030.md`。
+- 容量闭环、音频单资产历史恢复、成本上报、音频 canvas_return、Windows ACL/junction、PUBLISHING 独立审阅状态未变（该文件第 1 节已逐项说明未实现原因与边界）。
+

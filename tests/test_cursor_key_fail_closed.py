@@ -1,34 +1,31 @@
 """Fail-closed contract for the asset-query cursor signing key.
 
-The Windows runtime this project supports lacks ``dir_fd``, ``O_NOFOLLOW`` and
-``O_DIRECTORY`` primitives. Production must refuse the cursor feature (HTTP 503
-``ASSET_QUERY_CURSOR_UNAVAILABLE``) instead of falling back to an unchecked path
-open. These tests lock that fail-closed behavior only; they do not claim a
-Windows signing-key backend, and they are not an acceptance of the still-OPEN
-"Windows cursor signing key" work item.
+There are exactly two safe backends: the POSIX directory-relative no-follow
+primitives, or the Windows current-user DPAPI-sealed key with an independent
+identity marker. When neither backend is available production must refuse the
+cursor feature (HTTP 503 ``ASSET_QUERY_CURSOR_UNAVAILABLE``) instead of falling
+back to an unchecked plaintext path. These tests lock the refusal and reporting
+contract; they do not claim the desktop end-to-end cursor acceptance, which is
+still ``NOT_VERIFIED``.
 """
 from __future__ import annotations
-
-import os
-import sys
 
 import pytest
 
 from app.creative import asset_query_cursor as cursor
 
 
-def _expected_primitives_available() -> bool:
-    return (os.open in os.supports_dir_fd and os.stat in os.supports_dir_fd
-            and hasattr(os, "O_NOFOLLOW") and hasattr(os, "O_DIRECTORY"))
+def _any_backend_available() -> bool:
+    return cursor.posix_signing_primitives_available() or cursor.windows_dpapi_available()
 
 
-def test_primitive_report_matches_interpreter_facts():
-    # The refusal is driven by interpreter capabilities, not by a platform list
-    # that could silently claim a safe primitive it does not have.
-    assert cursor.signing_key_primitives_available() is _expected_primitives_available()
+def test_primitive_report_matches_backend_facts():
+    # Reporting is driven by interpreter/platform backend capabilities, not by a
+    # platform list that could silently claim a safe primitive it does not have.
+    assert cursor.signing_key_primitives_available() is _any_backend_available()
 
 
-def test_missing_safe_primitives_refuse_instead_of_falling_back(monkeypatch, tmp_path):
+def test_missing_safe_backends_refuse_instead_of_falling_back(monkeypatch, tmp_path):
     monkeypatch.setattr(cursor, "signing_key_primitives_available", lambda: False)
     directory = tmp_path / "cursor-store"
     with pytest.raises(cursor.AssetQueryCursorUnavailable):
@@ -37,9 +34,9 @@ def test_missing_safe_primitives_refuse_instead_of_falling_back(monkeypatch, tmp
     assert not directory.exists()
 
 
-@pytest.mark.skipif(_expected_primitives_available(),
-                    reason="safe POSIX primitives are present; the refusal path is not reached")
-def test_platform_without_primitives_refuses_and_creates_nothing(tmp_path):
+@pytest.mark.skipif(_any_backend_available(),
+                    reason="a safe signing-key backend is present; the refusal path is not reached")
+def test_platform_without_backends_refuses_and_creates_nothing(tmp_path):
     directory = tmp_path / "cursor-store"
     with pytest.raises(cursor.AssetQueryCursorUnavailable):
         cursor.load_signing_key(directory)

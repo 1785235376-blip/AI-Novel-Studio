@@ -30,7 +30,7 @@ class FileRepository:
                 # A concurrent delete may finish after directory enumeration.
                 if not root.is_dir():continue
                 meta=read_json(root/"novel.json",{}); chapters=self.list_chapters(root.name)
-                out.append({"id":root.name,"title":meta.get("title",root.name),"genre":meta.get("genre",""),"status":meta.get("status","Writing"),"chapter_count":len(chapters),"word_count":sum(x["word_count"] for x in chapters),"updated_at":meta.get("updated_at")})
+                out.append({"id":root.name,"title":meta.get("title",root.name),"genre":meta.get("genre",""),"status":meta.get("status","Writing"),"chapter_count":len(chapters),"word_count":sum(x["word_count"] for x in chapters),"updated_at":meta.get("updated_at"),"created_at":meta.get("created_at"),"project_incarnation":meta.get("project_incarnation")})
         return out
     @committed_change("PROJECT")
     def create_novel(self,payload):
@@ -38,7 +38,7 @@ class FileRepository:
         with project_operation(self.data, nid, require_exists=False):
             if root.exists(): raise FileExistsError(nid)
             for d in ("chapters","summaries","pending_canon","characters","locations","timeline","style","world","foreshadowing"):(root/d).mkdir(parents=True,exist_ok=True)
-            meta={"id":nid,"title":payload["title"],"genre":payload.get("genre",""),"status":"Writing","created_at":now(),"updated_at":now()}; atomic_write(root/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2))
+            meta={"id":nid,"title":payload["title"],"genre":payload.get("genre",""),"status":"Writing","project_incarnation":str(uuid.uuid4()),"created_at":now(),"updated_at":now()}; atomic_write(root/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2))
             for path,value in ((root/"characters/characters.json",[]),(root/"locations/locations.json",[]),(root/"timeline/events.json",[]),(root/"foreshadowing.json",[]),(root/"relationships.json",[]),(root/"volumes.json",[]),(root/"scenes.json",[]),(root/"story_routes.json",[]),(root/"outline.json",{}),(root/"secrets.json",[]),(root/"canon.json",[]),(root/"summaries/index.json",[]),(root/"story_state.json",{"volume":1,"chapter":0,"active_characters":[]})): atomic_write(path,json.dumps(value,ensure_ascii=False,indent=2))
             chapter_identity.write_ledger(root, chapter_identity.empty_ledger())
             return meta

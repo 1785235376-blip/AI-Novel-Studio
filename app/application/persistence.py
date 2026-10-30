@@ -306,10 +306,25 @@ class AtomicPathMutationPort:
             raise KeyError(project_id)
         scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, project_id)
         event = self._event(actor, "PROJECT_DELETED", "Project", project_id, scope)
-        return self.novels.delete(project_id, scopes=self.scopes,
-                                  authorization=self.authorization, audit_event=event,
-                                  reauthorize=reauthorize,
-                                  **({"audit_append": self.audit.append} if not self.postgres else {}))
+        try:
+            meta = self.novels.get(project_id) or {}
+        except (FileNotFoundError, KeyError, TypeError, AttributeError):
+            meta = {}
+        result = self.novels.delete(project_id, scopes=self.scopes,
+                                    authorization=self.authorization, audit_event=event,
+                                    reauthorize=reauthorize,
+                                    **({"audit_append": self.audit.append} if not self.postgres else {}))
+        # Completed deletion is authoritative. The tombstone is the bounded
+        # client-purge signal and a failure here never reverses retirement.
+        try:
+            from ..project_tombstones import journal_root, record
+            record(journal_root(self.novels), project_id, workspace_id=workspace_id,
+                   incarnation=meta.get("project_incarnation"))
+        except Exception:
+            import logging
+            logging.getLogger(__name__).warning(
+                "Project deletion tombstone not recorded: %s", project_id, exc_info=True)
+        return result
 
     def _create_scope_item(self, kind, item, actor, scope, *, reauthorize=lambda: None):
         action="STORYLINE_CREATED" if kind=="storylines" else "BRANCH_CREATED";target=action.split("_")[0].title();event=self._event(actor,action,target,item["id"],scope)
