@@ -995,6 +995,88 @@ class IndependentWorkspaceService:
             guard()
             return version_view(record), data
 
+    def _audio_history_restore_context(self, nid, scope, actor, aid):
+        """Current-authority captured-history context shared by preview/confirm."""
+        from fastapi import HTTPException
+        from ..config import settings
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+        if head is None:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+        return row, head
+
+    def _audio_history_restore_target(self, row, head, aid, version_id, guard):
+        from fastapi import HTTPException
+        store = self.assets._audio_history_store
+        try:
+            chain = store.chain(row, guard=guard)
+            if version_id not in {record["version_id"] for record in chain}:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+            target = store.record(aid, version_id, guard=guard)
+            current = store.record(aid, head, guard=guard)
+        except HTTPException:
+            raise
+        except ValueError as exc:
+            self._audio_history_error(exc)
+        if target["sha256"] != row.get("sha256") or target["size"] != row.get("size"):
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_RESTORE_CONTENT_CHANGED"})
+        return target, current
+
+    def audio_history_restore_preview(self, nid, scope, actor, aid, version_id, guard):
+        import hashlib
+        import json
+        from fastapi import HTTPException
+        from .audio_asset_history_models import version_view
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_restore_context(nid, scope, actor, aid)
+            target, current = self._audio_history_restore_target(row, head, aid, version_id, guard)
+            plan = self.assets.audio_history_restore_plan(row, target)
+            canonical = json.dumps(plan, ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":"), allow_nan=False).encode("utf-8")
+            digest = hashlib.sha256(canonical).hexdigest()
+            differences = []
+            for field in plan["restored_fields"]:
+                if field == "parameters":
+                    differences.append({"field": "parameters", "parameters_changed": True})
+                else:
+                    differences.append({"field": field, "current": row.get(field),
+                                        "target": target["metadata"].get(field)})
+            guard()
+            return {"contract": "studio-audio-history-restore-preview/1", "asset_id": aid,
+                    "incarnation": plan["incarnation"], "current_version": row["version"],
+                    "current": version_view(current), "target": version_view(target),
+                    "restored_fields": list(plan["restored_fields"]),
+                    "differences": differences, "expected_new_version": row["version"] + 1,
+                    "restore_digest": digest, "review_inherited": False,
+                    "restore_available": True}
+
+    def audio_history_restore(self, nid, scope, actor, aid, version_id, expected_version,
+                              expected_restore_digest, guard):
+        from fastapi import HTTPException
+        from ..services.v1_capability_service import CapabilityVersionConflict
+        with self._asset_scope(nid, scope):
+            self._audio_history_restore_context(nid, scope, actor, aid)
+            try:
+                result = self.assets.restore_audio_history(
+                    aid, branch_id=scope.get("branch_id"), target_version_id=version_id,
+                    expected_version=expected_version,
+                    expected_plan_digest=expected_restore_digest, actor_id=actor, guard=guard)
+            except CapabilityVersionConflict as exc:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_CONFLICT",
+                                          "current": exc.current}) from None
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return {"contract": "audio-asset-history-restore/1", "asset_id": aid,
+                    "target_version_id": version_id, "new_current_version": result["version"],
+                    "current_version": result["version"], "head": result["head"],
+                    "restored_fields": list(result["plan"]["restored_fields"]),
+                    "review_inherited": False,
+                    "restore_origin": result["meta"]["_audio_history_restore_origin"]}
+
     def capture_audio_history(self, nid, scope, actor, aid, expected_version, guard):
         """Explicit migration: capture the current revision as the baseline."""
         from fastapi import HTTPException
@@ -1060,6 +1142,7 @@ class IndependentWorkspaceService:
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
 
 
 

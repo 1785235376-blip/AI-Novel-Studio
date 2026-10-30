@@ -55,3 +55,17 @@
 验证：`tests/test_audio_asset_history_api.py` 8 项（两别名列表/顺序、limit/cursor/非法查询、详情/下载/未知版本、旧资产读取不迁移、显式迁移成功/重复/flag-off/stale CAS、allowlist）；音频历史全组（8 个既有 audio-history 套件 + 捕获 + 读取 + 容量归属 + 资产查询）**124 passed / 1 skipped**。
 
 仍未完成：显式恢复（生成可追溯新当前版本）及其授权/CAS/幂等/并发/崩溃窗口、历史写入容量预留、取消/失败残留计费、真实 PostgreSQL/浏览器/模型验证。
+
+## 5. 批次 3 第三部分：显式恢复生成可追溯新当前版本（2026-10-31 续）
+
+`ENABLE_AUDIO_ASSET_HISTORY` 开启时新增：
+
+- `POST .../assets/{aid}/history/{version_id}/restore/preview`（读权限）：返回 `studio-audio-history-restore-preview/1` —— 当前/目标版本投影、`restored_fields`、差异、`expected_new_version`、绑定 `restore_digest`（对 canonical plan 做 sha256：asset_id/incarnation/current_version/target version_id/target metadata_digest/restored_fields/review_inherited=false）。只读，不写盘、不迁移。
+- `POST .../assets/{aid}/history/{version_id}/restore`（`commit_invoke` 写权限租约）：确认须携带 `expected_version` + `expected_restore_digest`；在 owner 锁内重新校验当前版本、目标仍在链内、目标与当前 sha256/size 一致、plan digest 未变，然后以当前 metadata 为基底应用 `restored_fields`，**版本 +1** 生成新当前版本，并由原 `_write_meta` 历史捕获路径追加新记录（parent=旧 head），写入 `_audio_history_restore_origin` 记录目标 version_id/digest/restored_fields/`review_inherited=false`/操作者/时间。旧链保持不变。
+- 恢复字段范围（本批产品边界）：仅可逆展示/创作字段 `filename / parameters / character_id / scene_id`；`parameters` 中的特权键 `asset_lineage_v2`、`asset_relationships_v2` 被移除，不通过恢复绕过版本化谱系/关系写入。审批、评审、来源、source_asset_ids、内部标记、HEAD 状态**不从目标继承**；目标上的旧审核只作追溯。
+- 失败/竞争语义：重复/丢失响应后的再次确认因版本已变为 409 `AUDIO_HISTORY_VERSION_CONFLICT`；plan digest 不符 409 `AUDIO_HISTORY_RESTORE_PLAN_CHANGED`；目标不在链内 409；未捕获资产 409 `AUDIO_HISTORY_UNCAPTURED`；flag 关闭 409 `AUDIO_HISTORY_UNAVAILABLE`。并发两个确认只有一个成功（另一个 409，链只 +1）。当前 metadata 提交前注入失败：metadata 不变、链不变，重试成功（已准备的不可达记录只计入容量，不暴露为历史）。
+
+验证：`tests/test_audio_asset_history_restore.py` 7 项（preview 不写盘、确认生成新版本且保留旧链、非继承审核、stale/digest 反例、并发、flag/未捕获/未知目标、提交前崩溃恢复、allowlist）；音频历史+容量归属+资产查询+容量管理全组 **142 passed / 1 skipped**（日志 `batch3c-regression.log`）。
+
+仍未完成：历史存量的容量预留/失败残留计费、恢复操作审计持久化（当前仅写入 asset metadata marker）、跨 owner/真实 PG 崩溃窗口、浏览器与真实模型验证。
+

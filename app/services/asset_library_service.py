@@ -1146,6 +1146,104 @@ class AssetLibraryService:
             raise FileNotFoundError(asset_id)
         return meta
 
+    AUDIO_HISTORY_RESTORE_FIELDS = ("filename", "parameters", "character_id", "scene_id")
+    AUDIO_HISTORY_PARAMETER_EXCLUSIONS = ("asset_lineage_v2", "asset_relationships_v2")
+
+    @classmethod
+    def audio_history_restore_plan(cls, meta: dict, target_record: dict) -> dict:
+        """Deterministic plan binding the restore target to the current revision.
+
+        Only reversible display/authoring fields are restored. Review, approval,
+        provenance, source linkage, internal markers and HEAD/history state are
+        never inherited from the target record.
+        """
+        metadata = target_record.get("metadata")
+        if not isinstance(metadata, dict):
+            raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+        restored_fields = []
+        for field in cls.AUDIO_HISTORY_RESTORE_FIELDS:
+            if field not in metadata:
+                continue
+            target_value = metadata[field]
+            if field == "parameters":
+                if not isinstance(target_value, dict):
+                    raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+                current_value = meta.get("parameters")
+                current_value = current_value if isinstance(current_value, dict) else {}
+                if {k: v for k, v in target_value.items() if k not in cls.AUDIO_HISTORY_PARAMETER_EXCLUSIONS} != {
+                        k: v for k, v in current_value.items() if k not in cls.AUDIO_HISTORY_PARAMETER_EXCLUSIONS}:
+                    restored_fields.append(field)
+            elif meta.get(field) != target_value:
+                restored_fields.append(field)
+        plan = {"contract": "audio-history-restore-plan/1",
+                "asset_id": meta["id"],
+                "incarnation": meta.get("_project_binding", {}).get("incarnation"),
+                "current_version": meta.get("version"),
+                "target_version_id": target_record.get("version_id"),
+                "target_metadata_digest": target_record.get("metadata_digest"),
+                "restored_fields": restored_fields,
+                "review_inherited": False}
+        return plan
+
+    def restore_audio_history(self, asset_id: str, *, branch_id: str | None = None, target_version_id: str, expected_version: int,
+                              expected_plan_digest: str, actor_id: str, guard=None):
+        """Explicit restore: append a new traceable current revision from history."""
+        import hashlib
+        import json
+        from .audio_asset_history_store import HEAD
+        from .v1_capability_service import CapabilityVersionConflict
+        guard = guard or (lambda: None)
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if meta.get("kind") != "audio":
+                raise FileNotFoundError(asset_id)
+            if HEAD not in meta:
+                raise ValueError("AUDIO_HISTORY_UNCAPTURED")
+            if meta.get("version") != expected_version:
+                raise CapabilityVersionConflict(self.public(meta))
+            store = self._audio_history_store
+            chain = store.chain(meta, guard=guard)
+            if target_version_id not in {record["version_id"] for record in chain}:
+                raise ValueError("AUDIO_HISTORY_VERSION_NOT_IN_CHAIN")
+            target = store.record(asset_id, target_version_id, guard=guard)
+            if target["sha256"] != meta.get("sha256") or target["size"] != meta.get("size"):
+                raise ValueError("AUDIO_HISTORY_RESTORE_CONTENT_CHANGED")
+            plan = self.audio_history_restore_plan(meta, target)
+            canonical = json.dumps(plan, ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":"), allow_nan=False).encode("utf-8")
+            if hashlib.sha256(canonical).hexdigest() != expected_plan_digest:
+                raise ValueError("AUDIO_HISTORY_RESTORE_PLAN_CHANGED")
+            target_metadata = target["metadata"]
+            new_meta = copy.deepcopy(meta)
+            for field in self.AUDIO_HISTORY_RESTORE_FIELDS:
+                if field not in target_metadata:
+                    continue
+                if field == "parameters":
+                    value = copy.deepcopy(target_metadata[field])
+                    if not isinstance(value, dict):
+                        raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+                    for name in self.AUDIO_HISTORY_PARAMETER_EXCLUSIONS:
+                        value.pop(name, None)
+                else:
+                    value = copy.deepcopy(target_metadata[field])
+                new_meta[field] = value
+            new_meta["version"] = int(meta["version"]) + 1
+            new_meta["updated_at"] = now()
+            new_meta["_audio_history_restore_origin"] = {
+                "contract": "audio-history-restore/1",
+                "target_version_id": target_version_id,
+                "target_metadata_digest": target["metadata_digest"],
+                "restored_fields": list(plan["restored_fields"]),
+                "review_inherited": False,
+                "restored_by": str(actor_id or "")[:240],
+                "restored_at": now()}
+            guard()
+            self._write_meta(new_meta, guard=guard)
+            return {"meta": new_meta, "plan": plan,
+                    "head": (self._load(asset_id).get(HEAD)),
+                    "target_version_id": target_version_id,
+                    "version": new_meta["version"]}
+
     def _verified_content(self, meta: dict, *, max_bytes=None, guard=lambda: None) -> bytes:
         budget = current_query_budget()
         if budget is not None:
@@ -1476,4 +1574,7 @@ class AssetLibraryService:
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
                 self._write_meta(meta, guard=guard)
             return meta
+
+
+
 

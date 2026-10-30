@@ -12,7 +12,7 @@ from ..config import settings
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
-from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
+from .workspace_models import (AssetRelationshipIn, AssetVersion, AudioHistoryRestoreConfirm, AudioHistoryRestorePreview, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
                                ProjectCapacityLimitUpdate, StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
 
 
@@ -21,7 +21,7 @@ def is_independent_studio_route(method, normalized_path):
     root = r"/api/projects/[^/]+/studio"
     patterns = {
         "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|assets/[^/]+/history/migrate|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|assets/[^/]+/history/[a-f0-9]{64}/restore(?:/preview)?|assets/[^/]+/history/migrate|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
         "PUT": root + r"/(?:capacity/limit|preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -746,6 +746,23 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             "X-Asset-SHA256": view["sha256"], "X-Asset-Version": str(view["asset_version"]),
             "X-History-Version-Id": version_id})
 
+    @router.post("/projects/{nid}/studio/assets/{aid}/history/{version_id}/restore/preview")
+    def audio_history_restore_preview(nid: str, aid: str, version_id: str, body: AudioHistoryRestorePreview,
+                                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.audio_history_restore_preview(
+                          nid, scope, actor, aid, version_id, guard))
+
+    @router.post("/projects/{nid}/studio/assets/{aid}/history/{version_id}/restore")
+    def audio_history_restore(nid: str, aid: str, version_id: str, body: AudioHistoryRestoreConfirm,
+                              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Explicit restore appends a new traceable current revision; the target's
+        # review/approval/provenance are not inherited.
+        return commit_invoke(nid, x_session_token, x_branch_id, "domain.write",
+                             lambda actor, scope, guard: service.audio_history_restore(
+                                 nid, scope, actor, aid, version_id, body.expected_version,
+                                 body.expected_restore_digest, guard))
+
     @router.post("/projects/{nid}/studio/assets/{aid}/history/migrate")
     def audio_history_migrate(nid: str, aid: str, body: AssetVersion,
                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -815,6 +832,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
     return router
+
 
 
 
