@@ -99,3 +99,7 @@
 验证（Windows · File 合成）：新增 8 项测试（flag off 关闭、正向往返与只计落盘、幂等、超额、未知残留阻塞/恢复、损坏账本、并发紧张额度、关闭时不写账本）全部通过；连同既有手工上传关闭/legacy/modelref/容量/U16 套件组合 **104 passed**。
 
 边界：仅 `studio/assets` 手工导入接入了 flag 保护的 admission；模型引用、音频/共享文档、导出、图片/视频产物等写入口仍未接线（仍关闭）。flag 默认 false，未改变任何现有生产行为；真实 PostgreSQL/浏览器/真实模型未运行。
+
+## 补充：孤儿音频历史目录的归属（2026-10-31 续）
+
+对账扫描 asset 元数据之外，还会对 `assets/.audio-history/<asset_id>` 中**未被当前项目元数据匹配**的目录做有界归属探测：只读取 `records/` 下第一个小体积不可变记录（≤256 KiB，拒绝 reparse/非普通文件/超限/不可解析），若其 `metadata.novel_id` 或 `_project_binding.novel_id` 等于本项目，则整目录按 `unattributed_files/unattributed_bytes` 聚合计数（不暴露路径/资产 id），reconcile/admission 的 UNKNOWN 判定会阻塞新增写入；其他项目目录不归属，无不可变记录（只有 blob）或内容歧义的目录不被任何项目认领，避免跨项目误报。对应测试 3 项，容量组回归 70 passed。

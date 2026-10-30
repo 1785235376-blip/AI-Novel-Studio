@@ -128,3 +128,50 @@ def test_capacity_diagnostics_combines_project_root_and_asset_attribution(audio_
     assert result["admission"] == "UNAVAILABLE"
     assert snapshot(e.rig.root) == before
 
+
+def orphan_history(root, project_id: str, asset_id: str, *, record: bool = True):
+    history = Path(root) / ".audio-history" / asset_id
+    (history / "records").mkdir(parents=True)
+    (history / "blobs").mkdir()
+    if record:
+        payload = {"metadata": {"novel_id": project_id, "id": asset_id}}
+        (history / "records" / ("a" * 64 + ".bin")).write_text(json.dumps(payload), encoding="utf-8")
+    (history / "blobs" / ("b" * 64 + ".bin")).write_bytes(b"blob-residue")
+    return history
+
+
+def test_orphan_history_dir_with_same_project_record_is_unattributed_residue(tmp_path):
+    root = tmp_path / "assets"
+    meta, binary = asset_pair(root, "project-a", "asset-1", b"x" * 4)
+    orphan_history(root, "project-a", "orphan-same")
+    result = measure_assets(root, "project-a")
+    # Only the committed asset is attributed; orphaned immutable history objects
+    # are aggregate residue, not project bytes.
+    assert result["logical_bytes"] == meta.stat().st_size + binary.stat().st_size
+    assert result["counters"]["unattributed_files"] == 2
+    assert result["counters"]["unattributed_bytes"] > 0
+    assert result["complete"] is True
+    assert "orphan-same" not in json.dumps(result)
+    from app.project_capacity_admission import unproven_objects
+    assert unproven_objects({"unknown_count": 0}, result) == 2
+
+
+def test_orphan_history_dir_for_other_project_is_not_attributed(tmp_path):
+    root = tmp_path / "assets"
+    asset_pair(root, "project-a", "asset-1", b"x")
+    foreign = orphan_history(root, "project-b", "foreign-orphan")
+    result = measure_assets(root, "project-a")
+    assert result["counters"]["unattributed_files"] == 0
+    assert foreign.is_dir()  # read-only measurement leaves it in place
+    assert result["complete"] is True
+
+
+def test_orphan_history_dir_without_records_is_not_claimed(tmp_path):
+    root = tmp_path / "assets"
+    asset_pair(root, "project-a", "asset-1", b"x")
+    orphan_history(root, "project-a", "blob-only", record=False)
+    result = measure_assets(root, "project-a")
+    # No immutable record, so no project can be safely inferred; do not claim
+    # and do not block another project on ambiguous bytes.
+    assert result["counters"]["unattributed_files"] == 0
+    assert result["complete"] is True

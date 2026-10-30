@@ -28,6 +28,8 @@ MAX_METADATA_BYTES = 1024 * 1024
 MAX_DURATION_SECONDS = 30.0
 _FILE_ATTRIBUTE_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
 MAX_HISTORY_FILES = 5000
+MAX_ORPHAN_HISTORY_DIRS = 512
+MAX_ORPHAN_RECORD_BYTES = 256 * 1024
 
 
 class CapacityAttributionError(ValueError):
@@ -73,6 +75,54 @@ def _measure_history_tree(history_root: Path, physical: set[tuple[int, int]]):
             total += int(info.st_size)
             objects += 1
     return total, objects
+
+
+def _history_dir_owner(history_dir: Path) -> str | None:
+    """Best-effort bounded owner probe for an otherwise unowned history dir.
+
+    Records are immutable canonical JSON objects whose ``metadata`` row carries
+    the owning ``novel_id``/``_project_binding``. Only the first small regular
+    record is read; anything reparse-pointed, oversized or unparseable is left
+    unclaimed rather than attributed to this project.
+    """
+    records = history_dir / "records"
+    try:
+        entries = sorted(records.iterdir(), key=lambda item: item.name)
+    except (FileNotFoundError, NotADirectoryError):
+        return None
+    except OSError:
+        return None
+    for item in entries:
+        if not item.name.endswith(".bin"):
+            continue
+        try:
+            info = item.lstat()
+        except OSError:
+            return None
+        if _is_reparse(info) or not stat.S_ISREG(info.st_mode) or info.st_size > MAX_ORPHAN_RECORD_BYTES:
+            return None
+        try:
+            with item.open("rb") as stream:
+                raw = stream.read(MAX_ORPHAN_RECORD_BYTES + 1)
+        except OSError:
+            return None
+        if len(raw) > MAX_ORPHAN_RECORD_BYTES:
+            return None
+        try:
+            record = json.loads(raw.decode("utf-8"))
+        except (UnicodeError, ValueError):
+            return None
+        metadata = record.get("metadata") if isinstance(record, dict) else None
+        if not isinstance(metadata, dict):
+            return None
+        project = metadata.get("novel_id")
+        if isinstance(project, str) and project:
+            return project
+        binding = metadata.get("_project_binding")
+        if isinstance(binding, dict) and isinstance(binding.get("novel_id"), str):
+            return binding["novel_id"]
+        return None
+    return None
 
 
 def measure_assets(assets_root: Path | str, project_id: str, *,
@@ -131,6 +181,7 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
         return result
 
     candidates = [entry for entry in all_entries if entry.name.endswith(".json")]
+    matched_asset_ids: set[str] = set()
     for entry in all_entries:
         if entry.name.endswith(".json"):
             continue
@@ -191,6 +242,7 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
         if not isinstance(asset_id, str) or not asset_id or "/" in asset_id or "\\" in asset_id:
             unknown(str(metadata_path), "METADATA_INVALID")
             continue
+        matched_asset_ids.add(asset_id)
         content_path = root / f"{asset_id}.bin"
         try:
             content_info = content_path.lstat()
@@ -240,6 +292,39 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
                     result["objects"] += history_objects
                     result["counters"]["history_bytes"] += history_bytes
                     result["counters"]["history_objects"] += history_objects
+    history_base = root / ".audio-history"
+    try:
+        history_entries = sorted(history_base.iterdir(), key=lambda item: item.name)
+    except FileNotFoundError:
+        history_entries = []
+    except OSError:
+        unknown(str(history_base), "HISTORY_ROOT_UNREADABLE")
+        history_entries = []
+    scanned_dirs = 0
+    for child in history_entries:
+        if scanned_dirs >= MAX_ORPHAN_HISTORY_DIRS or time.monotonic() > deadline:
+            unknown(str(history_base), "HISTORY_ORPHAN_LIMIT")
+            break
+        scanned_dirs += 1
+        if child.name in matched_asset_ids:
+            continue
+        try:
+            info = child.lstat()
+        except OSError:
+            result["counters"]["unreadable_entries"] += 1
+            continue
+        if _is_reparse(info) or not stat.S_ISDIR(info.st_mode):
+            result["counters"]["unreadable_entries"] += 1
+            continue
+        if _history_dir_owner(child) != project_id:
+            continue
+        try:
+            orphan_bytes, orphan_objects = _measure_history_tree(child, physical)
+        except CapacityAttributionError as exc:
+            unknown(str(child), str(exc))
+            continue
+        result["counters"]["unattributed_files"] += orphan_objects
+        result["counters"]["unattributed_bytes"] += orphan_bytes
     result["unknown_count"] = len(result["unknown"])
     result["complete"] = not result["unknown"] and not result["unknown_truncated"]
     return result

@@ -69,6 +69,7 @@ a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 se
 | 批次 1 组合（export/VTT/OTIO/canvas/PG-selection/harness/回归） | 457 passed / 27 skipped | `batch1-final-combined.log` |
 | 容量原语+诊断+归属+管理 | 44 passed | `batch2c-*`、`batch2-*` |
 | 容量 + U16 + storage + asset-query + authority | 145 passed / 2 skipped | `batch2c-combined.log` |
+| 容量归属（含孤儿历史目录）+ 原语/诊断/管理/admission 回归 | 9 passed（归属，含 3 项孤儿目录）；容量组 70 passed | `round22-orphan-history-attribution.log`、`round22-orphan-attribution-regression.log` |
 | 双-flag 音频历史容量计费（含显式迁移/恢复） | 11 passed（迁移计费/未对账拒绝/失败残留/恢复计费）；音频历史+容量回归 102 passed | `round13-history-capacity.log`、`round20-history-migration-capacity.log`、`round21-history-restore-capacity.log` |
 | 音频历史全组（捕获/读取/迁移/恢复/旧只读套件） | 142 → 151 passed / 1 skipped（随批次增长） | `batch3c-regression.log`、`round13-regression.log` |
 | 运行时能力合同 | 14 passed；能力/storage/query 组合 102 passed | `batch4-runtime-capabilities.log`、`batch4-capability-regression.log` |
@@ -109,7 +110,7 @@ a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 se
 ## 8. 未完成、阻塞与产品决策点（不掩盖）
 
 ### 8.1 实施到当前边界但未闭环
-1. **容量完整闭环**：账本/预留/提交/对账/调额/admission（单写路径 flag 保护）已实现；但音频/模型产物、共享文档、导出等其余写入口未逐项接入；启动自动对账强制门未做；“资产正文+metadata 主写入”仍由各自关闭门/admission 负责；跨 owner 临时峰值、审批/撤权竞争、真实崩溃窗口未验收。真实 PG 未测。
+1. **容量完整闭环**：账本/预留/提交/对账/调额/admission（单写路径 flag 保护）已实现；同项目孤儿音频历史目录（记录可证明归属）在显式对账中按 UNKNOWN 残渣阻塞写入；但音频/模型产物、共享文档、导出等其余写入口未逐项接入；启动自动对账强制门未做；“资产正文+metadata 主写入”仍由各自关闭门/admission 负责；跨 owner 临时峰值、审批/撤权竞争、真实崩溃窗口未验收。真实 PG 未测。
 2. **音频历史**：捕获/读取/显式迁移/显式恢复（新版本、评审不继承）已实现并测试；双-flag 下历史写入（含显式迁移与显式恢复）容量预留/实际增量结算/失败残留计费已覆盖；未做持久恢复审计（当前仅 asset metadata marker）、历史写入之外的容量细节、真实 PG 崩溃窗口、旧实现全量兼容迁移入口的独立审阅。
 3. **Studio 成本与音频 canvas_return**：生产任务公共投影已新增 `studio-job-cost/1` 显式 UNKNOWN（IMAGE/AUDIO/VIDEO/TIMELINE 一致；不伪造 0/估算/已结算；见 `STUDIO_TASK_COST_CONTRACT_20261031.md`）；但真实 provider 用量/价格/任务→账本关联合同仍未实现，需 provider adapter 上报结构化 usage/价格与重试/重复/缺失语义。音频 canvas_return 采用目标/权限/审核语义仍未扩展，需要产品决定。
 4. **TaskCenter/资源护栏**：有界分页/回执/预算已有基线（本报告不重复计为未实现）；F37 的 37 次拒绝与 strict-warm 首屏 409 根因仍 **UNKNOWN**——不得写成 37 个独立缺陷，也不得以探索性通过关闭。
