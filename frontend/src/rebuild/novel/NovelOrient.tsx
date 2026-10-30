@@ -25,6 +25,13 @@ export function NovelOrient({what, can, effect, storageKey = KEY}: {what: string
   );
 }
 
+/** [HERMIA-UX-20261030 H1] 已打开作品但还没取名时不能说「还没有打开作品」。 */
+export function orientWhat(title: string | undefined, novelId: string, chapterLabel?: string): string {
+  if (!novelId) return '还没有打开作品';
+  const book = `《${title?.trim() || '未命名小说'}》`;
+  return chapterLabel ? `${book} · ${chapterLabel}` : book;
+}
+
 export type ModTab = {id: string; label: string; onClick: () => void; selected?: boolean; disabled?: boolean};
 export function NovelModTabs({tabs, badge}: {tabs: ModTab[]; badge?: string}) {
   const t = useT(), tz = useTz();

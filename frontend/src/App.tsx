@@ -48,6 +48,7 @@ import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
 import { t as i18nT, tz, useLocale, formatNumber } from "./i18n"; // [HERMIA-FE-20261025 I18N P1] string-only: status bar / desk labels
 import { selectedScopeLabels } from "./ui/scopeLabels";
+import { orientWhat } from "./rebuild/novel/NovelOrient"; // [HERMIA-UX-20261030 H1]
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { EMPTY_EDITOR_SELECTION, shouldRestoreNovelWriteOnEnter } from "./ui/moduleSwitchIsolation";
 import { ModuleStartGate, markModuleStartGateDismissed, shouldOpenModuleStartGate } from "./ui/ModuleStartGate"; // [HERMIA-FE-20261022] H-UX-START-01
@@ -2145,7 +2146,7 @@ function LegacyApp() {
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
           banner={studioModule === 'NOVEL' ? <NovelOrient
-            what={novels.data?.find(n => n.id === s.novelId)?.title ? `《${novels.data?.find(n => n.id === s.novelId)?.title}》${chapter.data ? ` · 第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : ''}` : '还没有打开作品'}
+            what={orientWhat(novels.data?.find(n => n.id === s.novelId)?.title, s.novelId, chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : undefined)}
             can="写作台改章 · AI 生成先成候选、你采用后才进正文 · 设定需审核才进正典"
             effect={`${novelSaveLocation.replace('保存位置：', '自动保存到')}；采用候选不会覆盖已批准设定`}
           /> : undefined}
