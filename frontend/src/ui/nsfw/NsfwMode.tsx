@@ -72,7 +72,7 @@ export function NsfwBadge({c}: {c: NsfwController}) {
   return (
     <span className="nsfw-badge" data-nsfw-badge role="status" title={t('nsfw.badge.title')}>
       <span className="nsfw-badge__dot" aria-hidden="true" />
-      <span>{t('nsfw.badge')}</span>
+      <span className="nsfw-badge__label">{t('nsfw.badge')}</span>
       {c.session ? <span className="nsfw-badge__session">· {t('nsfw.badge.session')}</span> : null}
       <button type="button" className="nsfw-badge__off" aria-label={t('nsfw.badge.off')} data-nsfw-off onClick={c.turnOff}>{t('nsfw.badge.offShort')}</button>
     </span>

@@ -14,3 +14,8 @@
 /* [NSFW-THEME] 顶栏溢出修复：状态标出现时（1366 宽实测 sw 1437 > cw 1366），让搜索框可收缩、徽标本身不收缩，整栏不再横向溢出。 */
 .global-header:has(.nsfw-badge) .global-search{flex:0 1 auto;min-width:96px}
 .global-header .nsfw-badge{flex:none}
+/* P1: compact badge below 1440px — label/session visually hidden (still in accessible name), dot + off button stay */
+@media (max-width:1439px){
+  .global-header .nsfw-badge{gap:2px;padding:0 2px 0 8px}
+  .global-header .nsfw-badge__label,.global-header .nsfw-badge__session{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0}
+}
