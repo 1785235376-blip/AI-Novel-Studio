@@ -1040,6 +1040,50 @@ class AssetLibraryService:
                     size += row["size"]
             return {"count": count, "bytes": size}
 
+    def physical_asset_observation(self, asset_id: str, *, branch_id: str | None = None,
+                                   actor_id: str | None = None):
+        """Observe one authorized, incarnation-bound asset's canonical files.
+
+        This is a partial diagnostic, never a quota total or write admission.
+        Temporary names and orphan bytes do not establish ownership; their
+        absence is not inferred. The original caller must hold project_scope.
+        """
+        from ..creative.asset_usage_budget import usage_read_budget
+
+        binding = getattr(self._scope, "binding", None)
+        if binding is None or binding.get("branch_id") != branch_id:
+            raise ValueError("ASSET_PROJECT_BINDING_REQUIRED")
+
+        def fingerprint(path):
+            info = path.lstat()
+            if (not stat.S_ISREG(info.st_mode) or info.st_ino <= 0 or info.st_nlink != 1
+                    or getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)):
+                raise AssetIntegrityError("asset physical observation unavailable")
+            return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+        with usage_read_budget():
+            # get() enforces the existing private/feature and exact scope
+            # contract before any asset-specific file sizes are returned.
+            row = self.get(asset_id, branch_id=branch_id, include_deleted=True, actor_id=actor_id)
+            meta_path, content_path = self._meta_path(asset_id), self._bin_path(asset_id)
+            before_meta = fingerprint(meta_path)
+            if self.get(asset_id, branch_id=branch_id, include_deleted=True, actor_id=actor_id) != row:
+                raise AssetIntegrityError("asset physical observation unavailable")
+            before_content = fingerprint(content_path)
+            self._verified_content(row, max_bytes=self.MAX_BYTES)
+            if fingerprint(meta_path) != before_meta or fingerprint(content_path) != before_content:
+                raise AssetIntegrityError("asset physical observation unavailable")
+            return {
+                "status": "PARTIAL",
+                "scope": "AUTHORIZED_ASSET_CANONICAL_FILES_ONLY",
+                "content_bytes": before_content[2],
+                "metadata_bytes": before_meta[2],
+                "verified_physical_bytes": before_content[2] + before_meta[2],
+                "logical_content_bytes": row["size"],
+                "unaccounted": "TEMPORARIES_RESIDUALS_OTHER_OBJECTS_AND_SHARED_STORAGE",
+                "quota_admission": "NOT_AVAILABLE",
+            }
+
     def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
         if branch_id is not None:
             self._identifier(branch_id, "branch_id")
