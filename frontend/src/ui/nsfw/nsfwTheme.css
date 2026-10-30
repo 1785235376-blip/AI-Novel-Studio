@@ -78,6 +78,8 @@
 
 [data-theme="light"][data-nsfw="on"] {
   color-scheme: light;
+  /* [HERMIA-FE-20261030 P3-2] 浅色酒红底上 #166534 只有 4.42:1；加深成功色到 #14532d（约 5.6:1），色相不变 */
+  --color-status-success: #14532d;
   --color-bg-app: #f8f0f3;
   --color-bg-surface: #fffafc;
   --color-bg-subtle: #f3e6eb;
