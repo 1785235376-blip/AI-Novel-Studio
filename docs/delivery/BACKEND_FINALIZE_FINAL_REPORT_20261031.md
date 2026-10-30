@@ -9,14 +9,14 @@
 | 项 | 值 |
 | --- | --- |
 | 工作分支 | `work/backend-finalize-20261031` |
-| 本地 head / tree | `a28a6d5c0ddd3bbc436691b49aeace63bc0b8e9e` / `3a868a519cfb193a4a75dd22dbe5186d7a39ad96` |
+| 本地 head / tree | `e302da48d7086927fa44db80079205f0198a5af6` / `76f41cc0959fc5df29bf13c88d22426d2a2e34d4` |
 | 远端回读 | `refs/heads/work/backend-finalize-20261031` = 同一 SHA（`git ls-remote`） |
-| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、254 files、23 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
+| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、257 files、26 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
 | 基线 | PR #51 head `317da4cc3c9b68d4f9e09e6222b4e110bad4e94b`（tree `677156be5750dc93ca5b3fc8bdae73dfd414472e`） |
-| 相对基线 diff | 254 files changed, +31043 / −199 |
+| 相对基线 diff | 257 files changed, +31419 / −200 |
 | 其他分支 | `work/capability-completion-20261030`=`317da4cc`（未改动）；`main`=`7b35e4cb`（未改动、未合并） |
 | #51 关联 | 已在 #51 下评论指向 #52（前置链） |
-> 说明：本报告内容回读于 head 28a6d5c0ddd3bbc436691b49aeace63bc0b8e9e（tree 3a868a519cfb193a4a75dd22dbe5186d7a39ad96）；其后提交仅为本报告刷新（无产品/测试代码变化）。远端最终 head 以 PR #52 实时回读为准。
+> 说明：本报告内容回读于 head `e302da48d7086927fa44db80079205f0198a5af6`（tree `76f41cc0959fc5df29bf13c88d22426d2a2e34d4`）；其后提交仅为本报告刷新（无产品/测试代码变化）。远端最终 head 以 PR #52 实时回读为准。
 
 未执行：合并 main、强推、删除分支、创建 Release/部署；以上均保持禁止。
 
@@ -56,7 +56,9 @@
 | 3 | `c40742d0` `e1af152d` `ee351673` | 音频历史：捕获层（审查复用旧 store，显式迁移适配）；读取/详情/下载 + 显式迁移 API；显式恢复生成可追溯新当前版本（评审不继承） |
 | 4 | `1fc03a83` `a70c5dde` | 运行时机器可读能力合同扩展；行业导出打包验证 + issue #14/#16/#17/#18 重验 |
 | 5 | `d090edc1` `debf9c2f` `19a85490` | 39 个非祖先 head 精确差异与处置；motion frame 远程引用/审批信任边界证据；生命周期/重建/恢复定向复核与 PR #49 D-17/D-20 适用性调查 |
-| 补充 | a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 session 撤销/成员停用/只读授权反例 |
+| 补充 | 
+| 成本/验证 | `e302da48` | Studio 任务成本显式 UNKNOWN 合同；47 个 test_studio_* 宽回归零新失败 |
+a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 session 撤销/成员停用/只读授权反例 |
 
 全部提交均通过普通工作分支推送并更新同一个 Draft PR #52（未合并、未发布、未删分支）。
 
@@ -75,7 +77,8 @@
 | 音频恢复权限/重建/并发反例 | 3 passed | `round14-restore-races.log` |
 | 音频历史恢复协作权限（撤 session/停成员/无写授权） | 3 passed | `round15-collab-authority.log` |
 | Studio 任务成本显式 UNKNOWN 合同（4 owner + wire/query 回归） | 6 passed；相关回归 57 passed/1 xfailed | `round16-cost-regression.log` |
-| 47 个 	est_studio_* 宽回归 | 520 passed / 10 failed / 139 skipped / 1 xfailed / 125 errors；失败+错误节点集合与基线 A（419 passed/125 skipped）**完全相同** → 零新失败 | `round16-studio-broad.log`、`round16-studio-broad-baseline.log` |
+| 47 个 test_studio_* 宽回归 | 520 passed / 10 failed / 139 skipped / 1 xfailed / 125 errors；失败+错误节点集合与基线 A（419 passed/125 skipped）**完全相同** → 零新失败 | `round16-studio-broad.log`、`round16-studio-broad-baseline.log` |
+| TaskCenter 回执/期限/竞态/存储定向组（17 个套件） | 480 passed / 23 skipped | `round17-taskcenter.log` |
 | **宽回归（103 个相关测试文件）** | **1431 passed / 9 failed / 57 skipped / 1 error**；9 failed+1 error 在基线 A 独立 probe worktree 全部同样失败（2 旧资产上传期望、2 关闭音频门期望、2 mock provider 期望、3 Windows 符号链接环境、1 fixture 环境错误）→ **本分支该组零新失败** | `round10-broad-regression.log` |
 | 生命周期/重建/恢复定向组 | 223 passed / 1 failed / 6 skipped；唯一失败在基线 A 同样失败（U16 合成子进程夹具） | `round12-lifecycle-recovery.log` |
 | issue 相关（#16 fixture 合同、#17 pdf/screenplay、#18 provider/credential） | 137 passed / 2 skipped / 1 pre-existing screenplay failure | `round10-issue-tests.log` |
