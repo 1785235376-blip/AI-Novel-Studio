@@ -77,6 +77,7 @@ S 相对共同祖先 B(#50) 有 2 个提交（`2e52c747` 导出完整性重建�
 | OTIO 严格合同组（含 isolated otio 0.18.1） | **63 passed / 14 skipped** | skip 为 PG-only；无 otio 时该组为 collection error（已安装隔离依赖后通过） |
 | PG/迁移/选择/harness/回归组 | **157 passed / 20 skipped** | 含 migration completeness、显式 PG 选择、backend mode harness、file-safety observer、taskcenter rebuilt、TaskCenter 游标独立、production query、audio history 只读状态 |
 | S 修改的既有测试文件 | **29 passed / 9 skipped** | chapter concurrency、context、lore、v056 atomic、packaged PG migrations、G-05 系列、generation snapshot |
+| 批次 1 最终组合选择（25 个文件组一次运行） | **457 passed / 27 skipped / 0 failed**（111s） | Validation/backend-finalize-20261031/batch1-final-combined.log；skip 为 PG-only 与符号链接环境门 |
 | 总计 | 不将重叠用例相加；按组分别记录 | 未运行真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面 |
 
 **预存/环境失败（如实保留，未改断言、未加 skip 掩盖）**：
@@ -102,3 +103,4 @@ S 相对共同祖先 B(#50) 有 2 个提交（`2e52c747` 导出完整性重建�
 - S 的 141 个证据文档与 30 个 canvas 证据文档按其记录的历史源码 SHA 保留，不升级为本集成提交的测试结果。
 - 回退：`git revert 4cafa761 859f0b75 2e7bdc27 9817d091`（倒序）可分别回退各批；本分支未改 main、未删分支、未强推、未创建 Release。
 - 分支与 PR：`work/backend-finalize-20261031`，Draft PR 见最终交付记录；批次 2 起继续按上述第 6 节顺序推进。
+
