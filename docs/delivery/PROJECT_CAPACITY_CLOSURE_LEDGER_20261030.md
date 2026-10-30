@@ -33,7 +33,9 @@
 
 ### 本轮安全切片与尚未关闭的路径
 
-音频 profile、mapping、plan（包括审批、拒绝和重开）、候选 mix 和候选审批等明确的音频服务写入口已保守关闭，旧内容读取保留；旧 `POST /novels/{nid}/assets` 和 Studio `POST /projects/{nid}/studio/assets` 在原授权之后拒绝所有媒体类型的手工上传，旧列表和下载保留。这些关闭不能视为预留、对账或审批完成。模型导入、模型/语音/图片产物、voice queue、直接资产 owner 写入及同一 scope 中其他域写入须分别检查和接入；现有关闭门不能代表所有绕过路径均已关闭。
+音频 profile、mapping、plan（包括审批、拒绝和重开）、候选 mix 和候选审批等明确的音频服务写入口已保守关闭，旧内容读取保留；旧 `POST /novels/{nid}/assets` 和 Studio `POST /projects/{nid}/studio/assets` 在原授权之后拒绝所有媒体类型的手工上传，旧列表和下载保留。这些关闭不能视为预留、对账或审批完成。模型导入、模型/语音/图片产物、voice 批量调度、直接资产 owner 写入及同一 scope 中其他域写入须分别检查和接入；现有关闭门不能代表所有绕过路径均已关闭。
+
+明确的 B03 voice queue 与 execute 在原功能开关和授权后、构造执行器及落盘前关闭，已有任务查询保留；U16 批次在到达 voice 前可能已写入 RUNNING claim，此路径未证明写前关闭或可恢复，仍是缺口。
 
 明确的候选 mix、mixes review 和统一收件箱的单项及纯 audiobook 批次已前移关闭门，避免未初始化 scope 时为拒绝而创建协调锁。混合域批次保留原验证顺序，未初始化时零副作用尚未证明；这些关闭门没有提供容量准入或完整竞争保证。
 
