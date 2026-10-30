@@ -197,6 +197,13 @@ def resolve_provider(provider_id: str, capability: str, vault, transport) -> tup
     for config in candidates:
         if capability not in config["capabilities"]:
             continue
+        try:
+            from .net_safety import validate_provider_endpoint
+            validate_provider_endpoint(config["endpoint"])
+        except ValueError:
+            # A hand-edited or environment-supplied config cannot turn a
+            # link-local/metadata transport into a provider.
+            continue
         secret = vault.resolve(config["provider_id"]) if config["requires_credential"] else None
         if config["requires_credential"] and not secret:
             continue

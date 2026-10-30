@@ -2438,9 +2438,11 @@ class VideoProviderConfigIn(BaseModel):
     def validate_endpoint(cls,value):
         value=value.strip()
         if value:
-            from urllib.parse import urlsplit
-            parsed=urlsplit(value)
-            if parsed.scheme not in {'http','https'} or not parsed.hostname or parsed.username or parsed.password or parsed.fragment: raise ValueError('endpoint must use http or https without embedded credentials')
+            from .net_safety import validate_provider_endpoint
+            try:
+                validate_provider_endpoint(value)
+            except ValueError:
+                raise ValueError('endpoint must use http or https without embedded credentials or restricted network addresses') from None
         return value.rstrip('/')
     @field_validator('model_id')
     @classmethod

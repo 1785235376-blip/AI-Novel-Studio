@@ -2,7 +2,6 @@ import json
 import os
 import re
 from pathlib import Path
-from urllib.parse import urlsplit
 
 from .storage import atomic_write
 
@@ -25,9 +24,11 @@ def save(provider_id: str, *, endpoint: str, default_model: str, display_name: s
          enabled: bool, requires_credential: bool, capabilities: list[str]) -> dict:
     if not re.fullmatch(r"[a-z0-9_-]{1,64}", provider_id):
         raise ValueError("invalid audio provider id")
-    parsed=urlsplit(endpoint)
-    if parsed.scheme not in {"http","https"} or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
-        raise ValueError("invalid audio provider endpoint")
+    from .net_safety import validate_provider_endpoint
+    try:
+        validate_provider_endpoint(endpoint)
+    except ValueError:
+        raise ValueError("invalid audio provider endpoint") from None
     normalized = list(dict.fromkeys(str(item).upper() for item in capabilities))
     if not normalized or any(item not in ALLOWED_CAPABILITIES for item in normalized):
         raise ValueError("invalid audio provider capabilities")

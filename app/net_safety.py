@@ -1,10 +1,52 @@
 from __future__ import annotations
 import ipaddress
+import re
 import socket
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 class OutboundURLRejected(ValueError): pass
+
+
+class ProviderEndpointRejected(ValueError):
+    """A caller-supplied provider endpoint names a transport target that a
+    local-first service must never dial on a caller's behalf."""
+
+
+_PROVIDER_LEGACY_NUMERIC_HOST = re.compile(r"(?:[0-9]+|0[xX][0-9A-Fa-f]+)(?:\.[0-9]+|0[xX][0-9A-Fa-f]+)*\Z")
+
+
+def validate_provider_endpoint(url: str) -> str:
+    """Offline-safe admission for an operator-supplied provider endpoint.
+
+    The packaged, single-user product intentionally talks to operator-configured
+    local (loopback/private) and public providers, so those ranges stay accepted.
+    Link-local (cloud metadata), multicast, unspecified and reserved transports
+    are never a legitimate provider and are refused. This check uses literal host
+    parsing only: it never performs DNS, so saving a configuration keeps the
+    existing offline behaviour. A hostname that later resolves to a restricted
+    address is outside this bounded check and is recorded as NOT_VERIFIED.
+    """
+    parsed = urlsplit(str(url).strip())
+    if (parsed.scheme.lower() not in {"http", "https"} or not parsed.hostname
+            or parsed.username or parsed.password or parsed.fragment):
+        raise ProviderEndpointRejected("invalid provider endpoint")
+    host = parsed.hostname.strip()
+    # A fully-qualified trailing dot is the same host to a resolver.
+    normalized = host.rstrip(".")
+    try:
+        address = ipaddress.ip_address(normalized)
+    except ValueError:
+        # Legacy numeric spellings (decimal/hex/partial IPv4) are resolved by the
+        # operating system and could silently denote a restricted address.
+        if _PROVIDER_LEGACY_NUMERIC_HOST.fullmatch(normalized):
+            raise ProviderEndpointRejected("provider endpoint address is not allowed") from None
+        return str(url).strip()
+    effective = getattr(address, "ipv4_mapped", None) or address
+    if (effective.is_link_local or effective.is_multicast or effective.is_unspecified
+            or (effective.is_reserved and not effective.is_loopback)):
+        raise ProviderEndpointRejected("provider endpoint address is not allowed")
+    return str(url).strip()
 
 def _allowed_loopback_hosts() -> set[str]:
     from .config import settings

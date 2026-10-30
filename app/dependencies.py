@@ -68,6 +68,11 @@ for _provider, _cfg in _saved_asset_configs.items():
         _models[_provider] = _cfg.get("default_model", "")
 for _provider,_endpoint in _endpoints.items():
     if not _endpoint: continue
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(_endpoint)
+    except ValueError:
+        continue
     _cfg=_saved_asset_configs.get(_provider) or IMAGE_PROVIDER_CATALOG.get(_provider,{})
     if _cfg.get('local') and _provider not in _saved_asset_configs: continue
     if _cfg.get('enabled') is False: continue
@@ -90,6 +95,12 @@ def refresh_asset_provider(provider_id: str) -> bool:
     cfg = saved.get(provider_id) if isinstance(saved.get(provider_id), dict) else {}
     catalog=IMAGE_PROVIDER_CATALOG.get(provider_id,{})
     effective={**catalog,**cfg};endpoint=effective.get("endpoint","");style=effective.get("api_style","openai")
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(endpoint) if endpoint else None
+    except ValueError:
+        asset_provider_registry.unregister(provider_id)
+        return False
     if not cfg and effective.get("local"): asset_provider_registry.unregister(provider_id);return False
     legacy_vault_provider="openai" if provider_id=="custom" and cfg and "requires_credential" not in cfg else provider_id
     if effective.get("enabled") is False or not endpoint or (effective.get("requires_credential",True) and not credential_vault.has(legacy_vault_provider)):
@@ -118,6 +129,11 @@ screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,a
 local_ai_discovery.route_bridge.video_registry=screenplay_service.video_providers
 def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True, *, video_to_video: bool = False) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
+        return False
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(endpoint)
+    except ValueError:
         return False
     try:
         import httpx
