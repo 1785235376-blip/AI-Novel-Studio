@@ -284,3 +284,12 @@ files created: none
 - **安全相邻独立套件回归**（15 个既有独立/反例套件，含上传关闭门、资产使用/查询授权、U16 stop 来源隐私、范围残留模型上传、图片叶重跑 HTTP、音频历史 collab、存储观测、生成 worker 授权、Studio 独立集成）：**164 passed / 0 failed**（122.48s）。
 - **未覆盖**：真实 peer ACK/真实命名管道断开、浏览器 SSE 断开、跨 owner（合成 provider 只有单一 actor）会话取消 —— `NOT_RUN`。
 - **提交**：`f1c6b8f4`；无生产代码改动。
+
+## 16. 第七轮续做（2026-10-30）：原有资产消费者跨项目/跨分支隔离矩阵
+
+- **新增** `tests/test_legacy_asset_consumer_isolation.py`（3 passed，复用既有真实 mounted 路由 + File rig + 真实会话/成员/授权）：
+  1. **跨项目**：无该项目授权的会话访问对方项目的 `/api/novels/{nid}/assets`、`/api/assets/{id}`、`/download`、`DELETE`、`/image-jobs`、`/exports`、`/novel/export` 均 403，响应不出现对方资产名，且对方资产未被删除；协作模式下已禁用的 legacy 媒体路由保持 fail-closed（403/501）；对象存在性通过 owner-scope `_load` 核对；
+  2. **同项目跨分支**：别的分支的资产在列表中被隐藏；按资产 id 读取/下载/删除均 404（不泄露存在性），且未被删除；
+  3. **分支授权不是项目级媒体权限**：只有 BRANCH scope `domain.read` 的会话访问项目级 legacy 资产/图片任务返回 403；不显式选分支的导出列表按项目级判定 403；显式 `branch_id` 的导出列表保留既有“分支级导出”合同并返回 200（这是既有设计，不是放宽）。
+- **未覆盖**：真实 PostgreSQL、浏览器、真实媒体/模型；导出作业创建与下载的来源绑定（本轮只验证列表/项目级授权入口）——`NOT_RUN`。
+- **提交**：`d80aa67a`；无生产代码改动。
