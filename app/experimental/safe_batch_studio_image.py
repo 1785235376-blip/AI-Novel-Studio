@@ -93,7 +93,8 @@ class BatchStudioImageAuthority:
             return callback(guard)
         try:
             if commit:
-                return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation, commit=True)
+                return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation,
+                                   commit=True, expected_authority=(ctx.actor, ctx.scope))
             return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation)
         except HTTPException as exc:
             # Preserve the original batch owner's per-record stale projection;

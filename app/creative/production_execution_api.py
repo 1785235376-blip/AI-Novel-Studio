@@ -145,8 +145,8 @@ class TimelineWaveformRoute(PrivateProductionRoute):
         return checked
 
 
-def create_production_invoker(invoke, *, require_host_session, model_host_authority):
-    def call(request, nid, token, branch, permission, callback, *, model=False, commit=False):
+def create_production_invoker(invoke, *, require_host_session, model_host_authority, authority_precheck=None):
+    def call(request, nid, token, branch, permission, callback, *, model=False, commit=False, expected_authority=None):
         def operation(actor, scope, guard):
             if require_host_session is None or model_host_authority is None:
                 raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
@@ -183,7 +183,26 @@ def create_production_invoker(invoke, *, require_host_session, model_host_author
                     return execute()
             return execute()
         if commit:
-            return invoke(nid, token, branch, permission, operation, commit=True, require_commit_authority=True)
+            # Validate the original scope and host before observing a missing
+            # project marker. This precheck cannot itself authorize a write;
+            # operation repeats the full checks under the commit leases.
+            if authority_precheck is None or require_host_session is None or model_host_authority is None:
+                raise HTTPException(503, {'code': 'CREATIVE_COMMIT_AUTHORITY_UNAVAILABLE'})
+            actor, scope = authority_precheck(nid, token, branch, permission)
+            if (actor, scope) != expected_authority:
+                raise HTTPException(403, {'code': 'CREATIVE_AUTHORITY_CHANGED'})
+            authority = model_host_authority(request, token)
+            if not authority.principal:
+                raise HTTPException(403, {'code': 'CREATIVE_MODEL_HOST_BINDING_REQUIRED'})
+            host_lease = getattr(authority, 'lease', None)
+            if not callable(host_lease):
+                raise HTTPException(503, {'code': 'LOCAL_AI_HOST_COMMIT_LEASE_UNSUPPORTED'})
+            with host_lease():
+                require_host_session(token); authority.guard()
+                if authority_precheck(nid, token, branch, permission) != (actor, scope):
+                    raise HTTPException(403, {'code': 'CREATIVE_AUTHORITY_CHANGED'})
+                return invoke(nid, token, branch, permission, operation, commit=True,
+                              require_commit_authority=True, require_existing_owner=True)
         return invoke(nid, token, branch, permission, operation)
 
     return call

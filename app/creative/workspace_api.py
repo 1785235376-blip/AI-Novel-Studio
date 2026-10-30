@@ -198,7 +198,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_INVALID"})
         return actor, scope
 
-    def invoke(nid, token, branch, permission, callback, *, commit=False, existing_owner=False, require_commit_authority=False):
+    def invoke(nid, token, branch, permission, callback, *, commit=False, existing_owner=False, require_commit_authority=False, require_existing_owner=False):
         def operation():
             actor, scope = access(nid, token, branch, permission)
             def current_incarnation():
@@ -228,6 +228,11 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                     raise
                 guard()
                 return result
+        if require_existing_owner:
+            # A stop of an existing image batch cannot manufacture the project
+            # identity that its historical source would then appear to bind.
+            with service.store.existing_owner_only():
+                return api_call(operation)
         return api_call(operation)
 
     def commit_invoke(nid, token, branch, permission, callback):
@@ -252,7 +257,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         return invoke(nid, token, branch, permission, target, commit=permission == 'domain.write')
 
     from .production_execution_api import create_production_invoker
-    mask_call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+    mask_call = create_production_invoker(invoke, require_host_session=require_host_session,
+        model_host_authority=model_host_authority, authority_precheck=access)
 
     def reject_closed_audio_batch(request, nid, token, branch, expected_actor, expected_scope, outer_guard):
         """Reuse the host checks solely to reject a mixed closed preflight.
