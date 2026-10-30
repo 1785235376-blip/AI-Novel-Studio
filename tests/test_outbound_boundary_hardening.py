@@ -291,3 +291,43 @@ def test_fetch_media_bytes_rejects_compressed_and_serve_identity_body(media_serv
         _MediaHandler.response_headers = {}
     assert media_files.fetch_media_bytes(media_server + "/ok", 1024, timeout=5,
                                          configured_provider_endpoint=media_server) == b"synthetic"
+
+
+def test_image_job_reference_url_is_fenced_before_job_creation(monkeypatch):
+    """The mounted image-job route must reject restricted reference URLs before
+    it creates a durable job or reaches any provider adapter."""
+    from types import SimpleNamespace
+
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from app import api, dependencies
+
+    created_jobs = []
+
+    class NovelOwner:
+        def get(self, nid):
+            return {"id": nid}
+
+    class JobOwner:
+        def create(self, *args, **kwargs):
+            created_jobs.append((args, kwargs))
+            raise AssertionError("restricted reference URL must be refused before job creation")
+
+    monkeypatch.setattr(api, "settings", SimpleNamespace(enable_collaboration_runtime=False))
+    monkeypatch.setattr(dependencies, "repositories", SimpleNamespace(novels=NovelOwner()))
+    monkeypatch.setattr(api.image_job_service, "create", JobOwner().create, raising=False)
+    application = FastAPI()
+    application.include_router(api.router, prefix="/api")
+    client = TestClient(application)
+    for reference in ("http://169.254.169.254/latest", "http://127.0.0.1:1/x",
+                      "http://[fe80::1]/x"):
+        response = client.post("/api/novels/synthetic-project/image-jobs", json={
+            "provider_id": "automatic1111", "model_id": "m", "prompt": "synthetic",
+            "images": [reference],
+        })
+        assert response.status_code == 400, response.text
+        assert response.json()["detail"]["code"] == "IMAGE_JOB_INVALID"
+        # The refusal must not echo the restricted target back to the caller.
+        assert "169.254" not in response.text and "127.0.0.1" not in response.text
+    assert created_jobs == []
