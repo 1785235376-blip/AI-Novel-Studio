@@ -11,3 +11,6 @@
 .nsfw-badge__off{border:0;background:transparent;color:var(--color-text-secondary);font-size:12px;padding:2px 6px;border-radius:10px;cursor:pointer}
 .nsfw-badge__off:hover{background:color-mix(in srgb,var(--color-status-warning) 18%,transparent);color:var(--color-text-primary)}
 .nsfw-badge__off:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:1px}
+/* [NSFW-THEME] 顶栏溢出修复：状态标出现时（1366 宽实测 sw 1437 > cw 1366），让搜索框可收缩、徽标本身不收缩，整栏不再横向溢出。 */
+.global-header:has(.nsfw-badge) .global-search{flex:0 1 auto;min-width:96px}
+.global-header .nsfw-badge{flex:none}
