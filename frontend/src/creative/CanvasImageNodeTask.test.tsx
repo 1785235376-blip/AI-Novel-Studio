@@ -82,3 +82,19 @@ describe('formal one-node software contract',()=>{
   record.definition.cards[0].asset!.digest='f'.repeat(64);expect(()=>checkedCanvasDefinition(record.definition)).toThrow();
  });
 });
+
+// [HERMIA-FE-20261030 B5] M4 纵深防御定位：client imageNodeResult 与 assertSavedImageNode 的 pin 校验都被去掉时，
+// assertSavedImageNode 里「卡片资产 ≡ origin 资产」与 reference_states=CURRENT_METADATA 两条结构校验仍然拒绝被篡改的保存回执。
+describe('M4 defense-in-depth layer (pin checks absent)',()=>{
+ it('card asset ≠ origin asset is rejected even without a pin',async()=>{
+  const e=fixture();render(<CanvasImageNodeTask {...e.props}/>);const binding=await prepare(e),job=approved(binding);const row=saved(e,binding,job);
+  expect(()=>assertSavedImageNode(row,binding,job)).not.toThrow();
+  const tampered=structuredClone(row);tampered.definition.cards[0].asset={...tampered.definition.cards[0].asset,asset_id:'asset-evil'};
+  expect(()=>assertSavedImageNode(tampered,binding,job)).toThrow();
+ });
+ it('reference_states not CURRENT_METADATA is rejected even without a pin',async()=>{
+  const e=fixture();render(<CanvasImageNodeTask {...e.props}/>);const binding=await prepare(e),job=approved(binding);const row=saved(e,binding,job);
+  const stale={...row,reference_states:[{...row.reference_states[0],state:'STALE'}]} as CanvasViewRecord;
+  expect(()=>assertSavedImageNode(stale,binding,job)).toThrow();
+ });
+});
