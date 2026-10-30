@@ -6,6 +6,7 @@ Center's separate historical authorization contract or issue any credential.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from contextlib import contextmanager, ExitStack
 import hashlib
 import ipaddress
 import json
@@ -21,6 +22,7 @@ from ..packaging.local_session_bootstrap import BootstrapDenied
 class DiscoveryAuthority:
     principal: str
     guard: Callable[[], None]
+    lease: Callable | None = None
 
 
 def resolve_discovery_authority(request: Request, token: str | None, *,
@@ -91,5 +93,23 @@ def resolve_discovery_authority(request: Request, token: str | None, *,
         if values != captured:
             raise HTTPException(401, {"code": "LOCAL_AI_HOST_SESSION_CHANGED"})
 
+    @contextmanager
+    def local_commit_lease():
+        # The resolver's binding lease is process-local. Packaged bootstrap
+        # owns an additional issued-token lifetime and needs its own proof.
+        if captured[0] != 'LOCAL_HOST':
+            raise HTTPException(503, {'code': 'LOCAL_AI_HOST_COMMIT_LEASE_UNSUPPORTED'})
+        registry = resolver_getter()
+        if id(registry) != captured[1] or not callable(getattr(registry, 'binding_lease', None)):
+            raise HTTPException(503, {'code': 'LOCAL_AI_HOST_COMMIT_LEASE_UNSUPPORTED'})
+        with ExitStack() as cleanup:
+            try:
+                actor = cleanup.enter_context(registry.binding_lease(token))
+            except (KeyError, ValueError):
+                raise HTTPException(401, {'code': 'INVALID_SESSION'}) from None
+            current()
+            yield actor
+            current()
+
     current()
-    return DiscoveryAuthority(principal, current)
+    return DiscoveryAuthority(principal, current, local_commit_lease)

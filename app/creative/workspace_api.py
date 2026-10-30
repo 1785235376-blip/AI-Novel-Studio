@@ -198,7 +198,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_INVALID"})
         return actor, scope
 
-    def invoke(nid, token, branch, permission, callback, *, commit=False, existing_owner=False):
+    def invoke(nid, token, branch, permission, callback, *, commit=False, existing_owner=False, require_commit_authority=False):
         def operation():
             actor, scope = access(nid, token, branch, permission)
             def current_incarnation():
@@ -213,6 +213,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                 if (access(nid, token, branch, permission) != (actor, scope)
                         or current_incarnation() != incarnation):
                     raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_CHANGED"})
+            if require_commit_authority and authority_lease is None:
+                raise HTTPException(503, {'code': 'CREATIVE_COMMIT_AUTHORITY_UNAVAILABLE'})
             lease = authority_lease(nid, token, actor, scope) if commit and authority_lease else nullcontext()
             with lease:
                 guard()

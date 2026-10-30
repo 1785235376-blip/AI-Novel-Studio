@@ -83,7 +83,7 @@ class BatchStudioImageAuthority:
     def __init__(self, batches, production, invoke):
         self.batches, self.production, self.invoke = batches, production, invoke
 
-    def call(self, ctx, permission, callback):
+    def call(self, ctx, permission, callback, *, commit=False):
         request = _request.get()
         if request is None:
             raise ValueError('BATCH_STUDIO_HOST_INVOKER_REQUIRED')
@@ -92,6 +92,8 @@ class BatchStudioImageAuthority:
                 raise ValueError('BATCH_STUDIO_AUTHORITY_CHANGED')
             return callback(guard)
         try:
+            if commit:
+                return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation, commit=True)
             return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation)
         except HTTPException as exc:
             # Preserve the original batch owner's per-record stale projection;

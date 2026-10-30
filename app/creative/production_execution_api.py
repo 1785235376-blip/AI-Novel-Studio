@@ -146,7 +146,7 @@ class TimelineWaveformRoute(PrivateProductionRoute):
 
 
 def create_production_invoker(invoke, *, require_host_session, model_host_authority):
-    def call(request, nid, token, branch, permission, callback, *, model=False):
+    def call(request, nid, token, branch, permission, callback, *, model=False, commit=False):
         def operation(actor, scope, guard):
             if require_host_session is None or model_host_authority is None:
                 raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
@@ -157,23 +157,33 @@ def create_production_invoker(invoke, *, require_host_session, model_host_author
                 if model:
                     from .ai_execution import require_execution
                     require_execution()
-            current()
-            try: result = callback(actor, scope, current)
-            except AudiobookError as exc:
+            def execute():
                 current()
-                raise HTTPException(exc.status, {"code": exc.code}) from None
-            except AudioStateVersionConflict as exc:
+                try: result = callback(actor, scope, current)
+                except AudiobookError as exc:
+                    current()
+                    raise HTTPException(exc.status, {"code": exc.code}) from None
+                except AudioStateVersionConflict as exc:
+                    current()
+                    raise HTTPException(409, {"code": exc.code}) from None
+                except CapabilityVersionConflict as exc:
+                    current()
+                    # Never echo private owner tokens, prompts, URLs or context from
+                    # a lower-level job owner's raw CAS exception.
+                    raise HTTPException(409, {"code": "STUDIO_PRODUCTION_VERSION_CONFLICT", "current_version": exc.current.get("version")}) from None
+                except Exception:
+                    current(); raise
                 current()
-                raise HTTPException(409, {"code": exc.code}) from None
-            except CapabilityVersionConflict as exc:
-                current()
-                # Never echo private owner tokens, prompts, URLs or context from
-                # a lower-level job owner's raw CAS exception.
-                raise HTTPException(409, {"code": "STUDIO_PRODUCTION_VERSION_CONFLICT", "current_version": exc.current.get("version")}) from None
-            except Exception:
-                current(); raise
-            current()
-            return result
+                return result
+            if commit:
+                host_lease = getattr(authority, 'lease', None)
+                if not callable(host_lease):
+                    raise HTTPException(503, {'code': 'LOCAL_AI_HOST_COMMIT_LEASE_UNSUPPORTED'})
+                with host_lease():
+                    return execute()
+            return execute()
+        if commit:
+            return invoke(nid, token, branch, permission, operation, commit=True, require_commit_authority=True)
         return invoke(nid, token, branch, permission, operation)
 
     return call

@@ -1,14 +1,14 @@
 """Feature-fenced, actor-owned batch previews and explicit per-stage commands."""
 from fastapi import APIRouter, Header, HTTPException, Response
-from .common import api_call as domain_call
+from .common import api_call as domain_call, check_version
 from .safe_batches import FEATURE, BatchIn, VersionIn, ConfirmIn, ReviewIn, VoiceReviewIn, ImageReviewIn
 from .safe_batch_studio_image import StudioImageRequestRoute
 from .ux import ReadContext
 
 
-def api_call(fn, *args):
+def api_call(fn, *args, **kwargs):
     try:
-        return domain_call(fn, *args)
+        return domain_call(fn, *args, **kwargs)
     except HTTPException as exc:
         # Scope-store CAS snapshots contain private frozen sources and binary
         # artifacts. Never echo the internal row through a conflict response.
@@ -27,11 +27,15 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
             if authorize(nid, token, branch, permission) != (actor, scope): raise HTTPException(409, {'code': 'BATCH_AUTHORITY_CHANGED'})
         return ReadContext(nid, scope, actor, token, branch), check
 
-    def batch_call(ctx, check, permission, fn, *args, rid=None, studio=False):
+    def batch_call(ctx, check, permission, fn, *args, rid=None, studio=False, commit=False, expected_version=None):
         if rid is not None:
             row = api_call(service.get, ctx.novel_id, ctx.scope, service.BATCHES, rid)
             if row['created_by'] != ctx.actor: raise HTTPException(404, {'code': 'EXPERIMENTAL_NOT_FOUND'})
             studio = any(s['input']['kind'] == 'STUDIO_IMAGE' for s in row['snapshot']['steps'])
+            if not studio and expected_version is not None:
+                # The selected host authority must describe the same batch
+                # version that the downstream writer will commit.
+                api_call(check_version, row, expected_version)
         if not studio:
             return api_call(fn, ctx, *args, check)
         if service.studio_image is None:
@@ -40,6 +44,8 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
             def guard(): check(); host_guard()
             guard()
             return api_call(fn, ctx, *args, guard)
+        if commit:
+            return api_call(service.studio_image.call, ctx, permission, operation, commit=True)
         return api_call(service.studio_image.call, ctx, permission, operation)
 
     @router.get('/studio-image/catalog')
@@ -72,7 +78,9 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return batch_call(ctx, check, 'domain.write', service.dispatch, rid, body, rid=rid)
     @router.post('/{rid}/stop')
     def stop(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return batch_call(ctx, check, 'domain.write', service.stop, rid, body, rid=rid)
+        ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write')
+        return batch_call(ctx, check, 'domain.write', service.stop, rid, body, rid=rid,
+                          commit=True, expected_version=body.expected_version)
     @router.post('/{rid}/retry-failed')
     def retry(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return batch_call(ctx, check, 'domain.write', service.retry_failed, rid, body, rid=rid)

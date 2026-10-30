@@ -6,7 +6,7 @@ be retried. Each request runs at most one stage, so stopping is unambiguous.
 """
 from __future__ import annotations
 import base64
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from copy import deepcopy
 import threading
 from typing import Literal
@@ -654,13 +654,36 @@ class SafeBatchesService(DomainService):
     def stop(self, ctx, rid, body, reauthorize=lambda: None):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version)
         if row['status'] in {'COMPLETED', 'CANCELLED'}: raise ValueError('BATCH_ALREADY_TERMINAL')
-        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
-            current = state['collections'][self.BATCHES][rid]
-            def stop(r):
-                r.update(status='CANCELLED', confirmed=False)
-                for item in r['items']:
-                    if item['status'] in {'PENDING', 'RUNNING'}: item.update(status='CANCELLED', claim=None)
-            change_row(current, ctx.actor, value.expected_version, stop); reauthorize(); return self._public(current)
+        # Studio-image batches have an original project incarnation in each
+        # frozen image configuration. The mounted host caller holds its
+        # original authority lease before entering this scope transaction.
+        # Acquire project *after* scope, keep it until the scope commit, and do
+        # not acquire asset locks here (the source lookup completed above).
+        with ExitStack() as project_lease:
+            with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+                current = state['collections'][self.BATCHES][rid]
+                check_version(current, value.expected_version)
+                steps = current['snapshot']['steps']
+                image_steps = [step for step in steps if step['input']['kind'] == 'STUDIO_IMAGE']
+                if image_steps:
+                    if self.store.backend != 'file':
+                        raise ValueError('BATCH_STUDIO_IMAGE_STOP_OWNER_LEASE_UNSUPPORTED')
+                    if digest(current['snapshot']) != current['snapshot_digest']:
+                        raise StaleSourceError('BATCH_INPUT_CONFIGURATION_OR_BUDGET_CHANGED')
+                    identities = {step.get('configuration', {}).get('incarnation') for step in image_steps}
+                    if len(identities) != 1 or not isinstance(next(iter(identities)), str):
+                        raise StaleSourceError('BATCH_STUDIO_IMAGE_OWNER_CHANGED')
+                    from ..creative.project_store import CreativeProjectStore
+                    owner = CreativeProjectStore(self.store)
+                    project_lease.enter_context(owner.existing_owner_only())
+                    identity = project_lease.enter_context(owner.owner_lease(ctx.novel_id))
+                    if identity not in identities:
+                        raise StaleSourceError('BATCH_STUDIO_IMAGE_OWNER_CHANGED')
+                def stop(r):
+                    r.update(status='CANCELLED', confirmed=False)
+                    for item in r['items']:
+                        if item['status'] in {'PENDING', 'RUNNING'}: item.update(status='CANCELLED', claim=None)
+                change_row(current, ctx.actor, value.expected_version, stop); reauthorize(); return self._public(current)
 
     def retry_failed(self, ctx, rid, body, reauthorize=lambda: None):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)
