@@ -39,6 +39,7 @@ from .audio_production_store import audio_production_store
 from .audio_provider_config import load as load_audio_provider_config, save as save_audio_provider_config, delete as delete_audio_provider_config
 from .provider_support import is_canonical_provider_id, provider_support_registry
 from .storage import atomic_write
+from .csv_safety import csv_safe_cell
 from .services.export_job_service import (
     ExportJobService,
     ExportJobNotCancellable,
@@ -881,7 +882,8 @@ def harness_access_audit_csv(limit: int = Query(default=100, ge=1, le=100), nove
     output = StringIO(); writer = csv.DictWriter(output, fieldnames=["at", "novel_id", "chapter", "agent_id", "scopes", "outcome"])
     writer.writeheader()
     for item in harness_access_audit(limit, novel_id, agent_id, outcome, x_session_token)["items"]:
-        writer.writerow({**item, "scopes": ";".join(item.get("scopes", []))})
+        row = {**item, "scopes": ";".join(item.get("scopes", []))}
+        writer.writerow({field: csv_safe_cell(row.get(field, "")) for field in writer.fieldnames})
     return Response(content=output.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=harness-access-audit.csv"})
 @router.delete("/harness/access-audit")
 def clear_harness_access_audit(confirm: bool = Query(default=False)):
@@ -1016,7 +1018,7 @@ def export_agent_job_audit(novel_id:str,branch_id:str,created_after:str|None=Non
     result=agent_job_audit(novel_id,branch_id,created_after,created_before,1,100,x_session_token)
     out=io.StringIO(); writer=csv.writer(out); writer.writerow(["id","actor_id","action","target_type","target_id","timestamp","result_count","filters"])
     for event in result["items"]:
-        metadata=event.get("metadata") or {}; writer.writerow([event.get("id",""),event.get("actor_id",""),event.get("action",""),event.get("target_type",""),event.get("target_id",""),event.get("timestamp",""),metadata.get("result_count",0),json.dumps(metadata.get("filters") or {},ensure_ascii=False,sort_keys=True)])
+        metadata=event.get("metadata") or {}; writer.writerow([csv_safe_cell(value) for value in [event.get("id",""),event.get("actor_id",""),event.get("action",""),event.get("target_type",""),event.get("target_id",""),event.get("timestamp",""),metadata.get("result_count",0),json.dumps(metadata.get("filters") or {},ensure_ascii=False,sort_keys=True)]])
     return Response(content=out.getvalue(),media_type="text/csv",headers={"Content-Disposition":"attachment; filename=agent-job-audit.csv"})
 @router.get("/agent-jobs/{job_id}")
 def get_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):

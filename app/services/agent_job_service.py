@@ -11,6 +11,7 @@ from dataclasses import asdict
 from pydantic import BaseModel,Field
 
 from ..agent_catalog import resolve_agent
+from ..csv_safety import csv_safe_cell
 from ..model_runtime import Modality,ModelRuntimeError,TextGenerationParameters,TextGenerationRequest,TextModelNodeInput
 
 
@@ -68,7 +69,7 @@ class AgentJobService:
 
     def export_csv(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None, visibility=None):
         payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id,visibility)
-        out=io.StringIO(); writer=csv.DictWriter(out,fieldnames=["id","agent_id","agent_name","novel_id","status","execution_mode","provider","model","created_at","updated_at","error_code","retry_of"],extrasaction="ignore"); writer.writeheader(); writer.writerows(payload["items"])
+        out=io.StringIO(); writer=csv.DictWriter(out,fieldnames=["id","agent_id","agent_name","novel_id","status","execution_mode","provider","model","created_at","updated_at","error_code","retry_of"],extrasaction="ignore"); writer.writeheader(); writer.writerows([{key:csv_safe_cell(value) for key,value in row.items()} for row in payload["items"]])
         return out.getvalue()
 
     def export_summary(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None, visibility=None):

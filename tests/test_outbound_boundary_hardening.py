@@ -19,6 +19,7 @@ import json
 import socket
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -64,6 +65,40 @@ def test_provider_endpoint_rejects_restricted_transports(endpoint):
 
 @pytest.mark.parametrize("endpoint", ALLOWED_PROVIDER_ENDPOINTS)
 def test_provider_endpoint_keeps_local_and_public_services(endpoint):
+    assert validate_provider_endpoint(endpoint) == endpoint
+
+
+# ``socket.getaddrinfo`` applies the idna codec before resolution, so these
+# lookalike spellings reach the same link-local metadata address as the ASCII
+# literal. Admission must mirror the resolver instead of only inspecting the
+# literal characters supplied by the caller.
+IDNA_RESTRICTED_PROVIDER_ENDPOINTS = (
+    "http://１69.254.169.254/v1",
+    "http://１６９.２５４.１６９.２５４/v1",
+    "http://１６９.２５４.１６９.２５４/v1",
+    "http://169\uff0e254\uff0e169\uff0e254/v1",
+)
+
+
+def test_provider_endpoint_rejects_lookalike_trailing_separator():
+    # IDNA maps the fullwidth full stop, so the normalized host still names the
+    # restricted literal even though this spelling is not resolvable verbatim.
+    with pytest.raises(ProviderEndpointRejected):
+        validate_provider_endpoint("http://169.254.169.254\uff0e/v1")
+
+
+@pytest.mark.parametrize("endpoint", IDNA_RESTRICTED_PROVIDER_ENDPOINTS)
+def test_provider_endpoint_rejects_idna_normalized_restricted_address(endpoint):
+    host = urlsplit(endpoint).hostname
+    resolved = {item[4][0] for item in socket.getaddrinfo(host, 80, type=socket.SOCK_STREAM)}
+    # The operating-system resolver really maps the lookalike host to metadata.
+    assert resolved == {"169.254.169.254"}
+    with pytest.raises(ProviderEndpointRejected):
+        validate_provider_endpoint(endpoint)
+
+
+def test_provider_endpoint_keeps_public_idn_host():
+    endpoint = "https://例子.测试/v1"
     assert validate_provider_endpoint(endpoint) == endpoint
 
 
@@ -123,6 +158,25 @@ def test_asset_provider_http_route_refuses_metadata_endpoint(tmp_path, monkeypat
     client = TestClient(application)
     response = client.put("/api/asset-providers/custom", json={
         "endpoint": "http://169.254.169.254/v1", "default_model": "m", "api_style": "openai",
+        "local": False, "enabled": True, "requires_credential": False, "display_name": "probe",
+    })
+    assert response.status_code == 400
+    assert response.json()["detail"]["code"] == "INVALID_PROVIDER_CONFIG"
+    assert not (tmp_path / "asset-providers.json").exists()
+
+
+def test_asset_provider_http_route_refuses_idna_metadata_endpoint(tmp_path, monkeypatch):
+    """The HTTP contract rejects a resolver-equivalent lookalike endpoint too."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from app import api
+
+    monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(tmp_path / "asset-providers.json"))
+    application = FastAPI()
+    application.include_router(api.router, prefix="/api")
+    client = TestClient(application)
+    response = client.put("/api/asset-providers/custom", json={
+        "endpoint": "http://１69.254.169.254/v1", "default_model": "m", "api_style": "openai",
         "local": False, "enabled": True, "requires_credential": False, "display_name": "probe",
     })
     assert response.status_code == 400

@@ -153,8 +153,8 @@ def _cleanup_media_directory(temporary, identity):
 
 
 @contextmanager
-def _media_inspection_directory():
-    temporary = tempfile.TemporaryDirectory(prefix="novel-media-")
+def _media_inspection_directory(prefix: str = "novel-media-"):
+    temporary = tempfile.TemporaryDirectory(prefix=prefix)
     identity = None
     try:
         created = Path(temporary.name).lstat()
@@ -311,14 +311,20 @@ def inspect_image(data: bytes) -> dict:
     else: raise MediaValidationError('unsupported or invalid raster image')
     probe, decoder = shutil.which('ffprobe'), shutil.which('ffmpeg')
     if not probe or not decoder: raise MediaValidationError('MEDIA_VALIDATOR_NOT_CONFIGURED')
-    with tempfile.TemporaryDirectory(prefix='novel-image-') as directory:
-        path=Path(directory)/('image.'+extension);path.write_bytes(data)
-        try:
-            result=subprocess.run([probe,'-v','error','-protocol_whitelist','file,pipe','-show_streams','-of','json',str(path)],capture_output=True,timeout=10,check=True)
-            streams=json.loads(result.stdout).get('streams',[])
-            stream=next((row for row in streams if row.get('codec_type')=='video'),{})
-            width,height=int(stream.get('width',0)),int(stream.get('height',0))
-            if not width or not height or width*height>64*1024*1024:raise MediaValidationError('image dimensions exceed limit')
-            subprocess.run([decoder,'-nostdin','-v','error','-xerror','-threads','1','-protocol_whitelist','file,pipe','-i',str(path),'-frames:v','1','-f','null','-'],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,timeout=15,check=True)
-        except (subprocess.SubprocessError,ValueError,OSError) as exc:raise MediaValidationError('image decoding failed') from exc
+    # Share the media inspection directory contract: the temporary tree has a
+    # recorded identity, is only released by the bounded retry helper, and a
+    # cleanup failure is reported as the same bounded media error.
+    try:
+        with _media_inspection_directory(prefix='novel-image-') as directory:
+            path=Path(directory)/('image.'+extension);path.write_bytes(data)
+            try:
+                result=subprocess.run([probe,'-v','error','-protocol_whitelist','file,pipe','-show_streams','-of','json',str(path)],capture_output=True,timeout=10,check=True)
+                streams=json.loads(result.stdout).get('streams',[])
+                stream=next((row for row in streams if row.get('codec_type')=='video'),{})
+                width,height=int(stream.get('width',0)),int(stream.get('height',0))
+                if not width or not height or width*height>64*1024*1024:raise MediaValidationError('image dimensions exceed limit')
+                subprocess.run([decoder,'-nostdin','-v','error','-xerror','-threads','1','-protocol_whitelist','file,pipe','-i',str(path),'-frames:v','1','-f','null','-'],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,timeout=15,check=True)
+            except (subprocess.SubprocessError,ValueError,OSError) as exc:raise MediaValidationError('image decoding failed') from exc
+    except OSError as exc:
+        raise MediaValidationError('image temporary directory cleanup failed') from None
     return {'extension':extension,'media_type':mime,'width':width,'height':height,'validation':'DECODED'}

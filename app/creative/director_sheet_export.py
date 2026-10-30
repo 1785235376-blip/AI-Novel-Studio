@@ -3,6 +3,7 @@ import csv
 import hashlib
 import io
 import json
+from ..csv_safety import neutralize_formula
 from .models import CreativeProductionDocumentIn
 
 MAX_BYTES = 2_000_000
@@ -19,12 +20,7 @@ def cell(value):
     if any(ord(c)<32 and c not in '\t\r\n' or 0xD800<=ord(c)<=0xDFFF for c in text):
         raise ValueError('CREATIVE_DIRECTOR_SHEET_TEXT_INVALID')
     # CSV quoting alone does not prevent spreadsheet formula evaluation.
-    index = 0
-    while index < len(text) and (text[index].isspace() or text[index] in '\ufeff\u200b\u200c\u200d\u2060'):
-        index += 1
-    if text and (text[0] in '\t\r\n' or text[index:].startswith(('=','+','-','@','＝','＋','－','＠'))):
-        text = "'" + text
-    return text
+    return neutralize_formula(text)
 
 
 def render(row,digest,format):

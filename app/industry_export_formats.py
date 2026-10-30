@@ -28,6 +28,8 @@ from typing import Any, Callable, Iterable, Mapping
 from xml.etree import ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
+from .csv_safety import csv_safe_cell
+
 
 INDUSTRY_SCHEMA_VERSION = 1
 RESOURCE_POLICIES = frozenset({"allow_missing", "require_all"})
@@ -986,7 +988,7 @@ def shot_list_to_csv(
         raise IndustryExportResourceError("镜头表引用了缺失资源", details={"missing": resources["missing"], "missing_count": resources["missing_count"]})
     output = io.StringIO(newline="")
     writer = csv.writer(output, dialect="excel", lineterminator="\r\n")
-    writer.writerows(shot_list_rows(normalized, title=title, novel_id=novel_id))
+    writer.writerows([[csv_safe_cell(cell) for cell in row] for row in shot_list_rows(normalized, title=title, novel_id=novel_id)])
     # UTF-8 BOM is intentional: Excel on a clean Windows machine recognises
     # Chinese column names without a manual encoding choice.
     return ("\ufeff" + output.getvalue()).encode("utf-8")

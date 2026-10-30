@@ -16,6 +16,26 @@ class ProviderEndpointRejected(ValueError):
 _PROVIDER_LEGACY_NUMERIC_HOST = re.compile(r"(?:[0-9]+|0[xX][0-9A-Fa-f]+)(?:\.[0-9]+|0[xX][0-9A-Fa-f]+)*\Z")
 
 
+def _resolver_host(host: str) -> str:
+    """Return the ASCII host the operating-system resolver would dial.
+
+    ``socket.getaddrinfo`` applies the ``idna`` codec to a non-ASCII host before
+    resolution, so Unicode digit and fullwidth-dot hostnames resolve to the same
+    numeric address as their ASCII spelling (for example ``１69.254.169.254``).
+    Literal admission must mirror that normalization, otherwise a restricted
+    link-local/metadata target can be hidden behind a lookalike hostname.
+    """
+    if host.isascii():
+        return host
+    try:
+        encoded = host.encode("idna").decode("ascii")
+    except (UnicodeError, ValueError):
+        raise ProviderEndpointRejected("provider endpoint host is not resolvable") from None
+    if not encoded or not encoded.isascii():
+        raise ProviderEndpointRejected("provider endpoint host is not resolvable")
+    return encoded
+
+
 def validate_provider_endpoint(url: str) -> str:
     """Offline-safe admission for an operator-supplied provider endpoint.
 
@@ -32,8 +52,9 @@ def validate_provider_endpoint(url: str) -> str:
             or parsed.username or parsed.password or parsed.fragment):
         raise ProviderEndpointRejected("invalid provider endpoint")
     host = parsed.hostname.strip()
-    # A fully-qualified trailing dot is the same host to a resolver.
-    normalized = host.rstrip(".")
+    # Match the resolver: IDNA-normalize non-ASCII hosts, then treat a fully
+    # qualified trailing dot as the same host.
+    normalized = _resolver_host(host).rstrip(".")
     try:
         address = ipaddress.ip_address(normalized)
     except ValueError:

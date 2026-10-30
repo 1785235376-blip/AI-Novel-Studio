@@ -374,3 +374,86 @@ files created: none
   两项均记录为建议，不与"已修复"混淆。
 - **全量套件长跑**：仍在进行（当前处于已知慢文件 `test_file_backend_safety_http.py`，该文件单独运行 333s；不是死锁）。全量结果与失败分类仍未产生，**不宣称通过/失败**。
 - 本轮无生产代码/仓库测试改动。
+
+## 26. 第十七轮续做（2026-10-30）：IDNA 准入绕过修复、CSV 公式中和、二进制导入边界与两项加固建议落地
+
+本轮固定起点仍为 `2951a167`（本地分支 HEAD 为上一轮文档提交 `e2206547`，其 tree 未被改写）。所有结论仍只覆盖本机 Windows + File 合成环境；真实 PostgreSQL、真实媒体/模型、浏览器与打包 Host 未运行。
+
+### 26.1 已修复（本轮新发现，外部请求边界）：provider endpoint 受限地址准入可被 Unicode/IDNA 主机绕过
+
+- **触发条件**：持有有效 session 的调用方 `PUT /api/asset-providers/{id}`、`PUT /api/audio/providers/{id}`、`PUT /api/video-providers/{id}/config`，把 endpoint 配成 Unicode 数字/全角点的 lookalike 主机（如 `http://１69.254.169.254/v1`、`http://169．254．169．254/v1`）。
+- **事实**：`socket.getaddrinfo` 在解析前会对非 ASCII 主机应用 `idna` codec，因此这些主机实际解析为 `169.254.169.254`；上一轮修复 `7874bae7` 只检查字面 host（ASCII IP 与旧式数字写法），lookalike 主机直接通过。修复前探针在固定源码上四类 lookalike 全部 `ACCEPTED`，且本机解析结果均为 `169.254.169.254`（证据：`Validation/security-bounded-20261030/logs/round17-f1-idna-bypass.json`）。
+- **影响**：这是对 4.1 修复目标的直接回退——受限 link-local/云元数据地址可以经配置被服务端真实拨号。支持信任模型与 4.3 相同（packaged 单用户 / 本机 dev session），不上升为远程可利用漏洞。
+- **修复**：`app/net_safety.py::validate_provider_endpoint` 在字面检查前先按操作系统解析器相同的规则归一化 host：非 ASCII 主机先 `idna` 编码为 ASCII/punycode，再统一去掉 FQDN 尾点，然后才做 IP 字面、旧式数字与受限网段判定；无法 IDNA 归一化的主机直接拒绝。loopback/私网/公网与合法 IDN 公网主机保持原合同（`https://例子.测试/v1` 仍接受）。
+- **修复后结果**：`tests/test_outbound_boundary_hardening.py` 从 45 项扩到 52 项全通过（新增 4 个 lookalike 拒绝 + 解析对照、尾分隔符、公网 IDN 放行、HTTP 路由 400）。证据：`logs/round17-adjacent-a.log`。
+
+### 26.2 已修复（本轮新发现，导出边界）：多个 CSV 导出未中和电子表格公式注入
+
+- **事实**：`app/creative/director_sheet_export.py` 已有 `cell()` 公式前缀中和（注释明确“CSV quoting alone does not prevent spreadsheet formula evaluation”），但其余 CSV 写出点没有同样处理：行业镜头表 `industry_export_formats.shot_list_to_csv`、`NovelService` 的 `shot-list` 导出、agent job 导出 CSV、harness access-audit CSV、agent-job audit CSV。这些单元格包含作者正文/镜头备注/对白（可来自导入的第三方稿件）或调用方配置的 provider/model 字符串。
+- **影响**：导出的 CSV 在 Excel/LibreOffice/Sheets 打开时，以 `= + - @`（含全角变体、前置不可见字符）开头的单元格会被当作公式执行/求值（本地单用户形态主要是自伤；协作形态存在成员间导出注入面）。服务端不执行这些内容，属导出侧纵深防御，不是已证实的远程代码执行。
+- **修复**：新增共享策略 `app/csv_safety.py`（`neutralize_formula`/`csv_safe_cell`），把 Creative 表格已有的规则收敛为唯一实现并让 `cell()` 复用它（行为不变）；上述五个写出点全部改为逐格中和。普通文本字节不变，中和仅在单元格首字符为公式 sigil 时加一个 `'` 前缀，可见文本保持原样。
+- **结果**：新增 `tests/test_csv_formula_injection_boundary.py`（26 passed），覆盖策略矩阵、行业镜头表、NovelService shot-list、agent job CSV、两类审计 CSV；相邻回归批次 A/B 通过（见 26.6）。
+
+### 26.3 已修复（本轮新发现，导入边界）：legacy DOCX/PDF 导入缺少归档、XML 声明与 PDF 提取上限
+
+- **事实**：`app/import_parsers.py` 的 `docx_to_text` 直接把 `word/document.xml` 读入内存，没有成员数量/单成员/总解压大小/压缩比上限，也不拒绝 DTD/ENTITY 声明；`pdf_to_text` 没有页数、提取文本量与输入大小上限。较新的 `app/experimental/research_extract.py::_docx` 已经有等价边界，两条导入路径不一致。该 legacy 路径通过 `POST /api/novels/import`（`content_base64`）可达。
+- **影响**：构造的 .docx/.pdf 可造成解压/内存放大（导入者可是作者本人，也可能是协作环境中的其他成员）；CPython 自带 expat 有放大因子保护，但导入路径仍不应接受 DTD/ENTITY 声明。
+- **修复**：新增 `MAX_DOCX_COMPRESSED_BYTES`/`MAX_DOCX_ARCHIVE_MEMBERS`/`MAX_DOCX_MEMBER_BYTES`/`MAX_DOCX_TOTAL_BYTES`/`MAX_DOCX_COMPRESSION_RATIO` 与 `MAX_PDF_BYTES`/`MAX_PDF_PAGES`/`MAX_PDF_TEXT_CHARS`；DOCX 在读取 document part 前逐成员校验（含加密标志与压缩比）并在解析前拒绝 NUL、`DOCTYPE`、`ENTITY`；PDF 在 pypdf 路径上限制页数与累计文本量，fallback 正则路径限制输入/输出长度。错误仍是原有 `ValueError` 文本（普通导入行为不变）。
+- **结果**：新增 `tests/test_import_parser_limits.py`（14 passed）；`tests/test_import_parsers.py` 2 passed / 1 pre-existing failure（见 26.7）。
+
+### 26.4 已落地加固建议（第 24/25 轮登记观察 2）：`inspect_image` 临时目录清理契约
+
+- **上轮登记**：`media_files.inspect_image` 未使用 `inspect_media` 已具备的 dev/ino + reparse 复核临时目录，清理失败也只以原生 `OSError` 冒泡。
+- **修复**：`inspect_image` 改用共享 `_media_inspection_directory(prefix='novel-image-')`（创建时记录 dev/ino 身份；只有清理重试前才允许对该私有空目录继续操作，并复核 reparse-point/身份/空目录），并把清理失败映射为固定 `MediaValidationError('image temporary directory cleanup failed')`，不回显原生路径/诊断。
+- **结果**：新增 `tests/test_media_image_cleanup_boundary.py`（7 passed / 1 POSIX-only skip），覆盖目录契约接线、清理失败映射、身份不匹配/非空目录拒绝。
+
+### 26.5 已落地加固建议（第 25 轮登记观察 1）：身份注册表锁文件开启边界
+
+- **上轮登记**：`app/stable_identity.py` 的 `.lock` 用普通 `open("r+b")` 打开，存在跟随被替换链接/重解析点的理论风险。
+- **修复**：新增 `_open_lock_file`：打开前 `lstat` 拒绝 link/reparse point（Windows `FILE_ATTRIBUTE_REPARSE_POINT`、POSIX 符号链接），POSIX 再加内核级 `O_NOFOLLOW`；打开后用 `fstat` 身份与打开前身份比较，检测检查与打开之间被替换的窗口；任何不安全/不可读锁状态以 `IdentityIntegrityError` fail-closed，不写入身份数据。普通文件与既有 msvcrt/flock 跨进程语义不变。
+- **结果**：新增 `tests/test_identity_lock_boundary.py`（7 passed / 1 POSIX-only skip）；`tests/test_stable_identity_foundation.py` 的非多进程 36 项与两个多进程用例通过。pytest 级 50 次冷启动压力用例在本机 spawn/import 成本下无法在有限会话内完成（未宣称通过，也非失败结论，见 26.8）；另用独立的有界多进程冷启动检查（10 轮 × 4 进程，每轮删除 registry+lock 后并发 `get_or_create`）在 31.5s 内验证全部单身份/单行（`logs/round17-identity-cold-start-check.json`）。
+
+### 26.6 本轮测试与回归证据
+
+新增测试：
+
+| 文件 | 结果 |
+| --- | --- |
+| `tests/test_outbound_boundary_hardening.py`（扩展现有文件） | 52 passed |
+| `tests/test_csv_formula_injection_boundary.py` | 26 passed |
+| `tests/test_import_parser_limits.py` | 14 passed |
+| `tests/test_media_image_cleanup_boundary.py` | 7 passed / 1 POSIX-only skip |
+| `tests/test_identity_lock_boundary.py` | 7 passed / 1 POSIX-only skip |
+
+相邻回归（本机 Windows · Python 3.11 · File 合成）：
+
+| 批次 | 范围 | 结果 |
+| --- | --- | --- |
+| A | provider config ×4、本轮新增测试、outbound hardening | 117 passed / 1 skipped（`logs/round17-adjacent-a.log`） |
+| B | export jobs、phase8 screenplay/assets/storyboard、asset safety、novel import、harness audit、agent jobs | 108 passed / 2 failed（**预存测试债务**，固定起点复跑同样 2 failed，见 26.7） |
+| C | asset library、audio production、phase1 video runtime、measured result、phase8 storyboard | 14 passed / 7 failed（**预存失败**，固定起点复跑同样 7 failed，见 26.7） |
+| 身份 | `test_stable_identity_foundation.py` 非多进程 36 项 + 两个多进程用例；另有界多进程冷启动检查 10 轮 × 4 进程 | 36 passed / 2 multiprocess passed；检查 31.5s 全部单身份单行 |
+| 导入 | `test_import_parsers.py` | 2 passed / 1 pre-existing failure |
+
+源码前后 SHA-256 与固定起点 blob 对照见 `Validation/security-bounded-20261030/logs/round17-source-hashes.json`；IDNA 绕过修复前/后探针见 `logs/round17-f1-idna-bypass.json`。
+
+### 26.7 预存失败分类（不是本轮回归）
+
+- `tests/test_import_parsers.py::test_pdf_fallback_extracts_simple_literal_text`：该测试假设可选 `pypdf` 缺失以走正则 fallback，但 `pypdf==6.19.0` 是项目必需依赖，实际走 pypdf 路径并报 `unable to extract PDF text`。用固定起点 `2951a167` 的原始模块复跑结果相同（`logs/round17-baseline-import-parsers.txt`），属预存测试债务/依赖形状不一致，**未改断言修绿**。
+- `tests/test_phase8_screenplay.py`（1 failed）、`tests/test_phase8_assets.py`（1 failed）：用独立临时工作树在固定起点 `2951a167` 复跑得到同样的 2 failed / 1 passed（`logs/round17-baseline-phase8.log`），属预存夹具/产品形状债务。
+- `tests/test_asset_library.py`（2 failed，容量写入关闭门导致的旧上传期望）、`tests/test_phase1_video_runtime.py`（4 failed）、`tests/test_phase8_storyboard.py`（1 failed）：固定起点 `2951a167` 复跑同样 7 failed / 1 passed（`logs/round17-baseline-batch-c.log`），与本轮改动无关。不放宽关闭门、不改断言。
+
+### 26.8 未关闭边界与新观察
+
+1. **全量套件长跑仍未完成**：第 24 节启动的全量 pytest 长跑在本轮开始前被用户暂停而终止，本轮只跑变更相邻套件，不宣称 File 全量通过。慢文件 `test_file_backend_safety_http.py`（单文件约 333s）与 `test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations`（本机 pytest+spawn 每次进程启动成本高，50 次迭代远超有限会话预算；本轮实际观察单迭代可到数分钟）在有限会话内不作为通过证据；也不把中途终止当作失败结论。该压力用例的并发正确性用 26.5 的独立有界检查另行覆盖，但不替代原 pytest 用例与全量套件。
+2. **新观察（未改代码）**：`app/media_frames.resolve_motion_frame` 对 `http(s)` 帧引用只在字面 IP 或 `localhost` 时调用 `media_destination`；普通主机名（包括 IDNA lookalike）在该入口既不解析也不校验，直接作为 `REMOTE_REFERENCE` 交给 provider。若本地 provider 服务端会去抓取该 URL，理论上是本轮 26.1 同类风险的另一个回退面。需要与 provider 消费路径（ComfyUI 本地服务是否抓取引用 URL）一并验证后再决定是否收紧；本轮不虚构结论、不改动。
+3. Windows 真机符号链接/reparse 集成验证仍 `NOT_VERIFIED`（当前账号无符号链接权限；本轮以代码路径策略测试 + POSIX-only symlink 测试覆盖）；`O_NOFOLLOW` 在 Linux 的完整验证仍 `NOT_RUN`。
+4. 真实 PostgreSQL、真实媒体/模型、浏览器、打包 Host 会话仍 `NOT_RUN`；本轮所有结论仅为本机 Windows + File 合成。
+
+### 26.9 本轮提交与回退
+
+- 生产改动（9 个文件 + 1 新文件）：`app/net_safety.py`、`app/csv_safety.py`（新）、`app/creative/director_sheet_export.py`、`app/industry_export_formats.py`、`app/services/novel_service.py`、`app/services/agent_job_service.py`、`app/api.py`（仅 CSV 写出）、`app/import_parsers.py`、`app/media_files.py`、`app/stable_identity.py`。
+- 测试改动：4 个新测试文件 + `tests/test_outbound_boundary_hardening.py` 扩展。
+- 未修改：`main`、原工作树、既有 API 合同字段/权限 owner/关闭门/凭据存储；未 push 新提交、未创建 Release、未部署（本轮本地提交，是否推送由后续决定）。
+- 回退：生产改动可整体 `git revert <本轮提交>`；新增测试可独立保留。
+

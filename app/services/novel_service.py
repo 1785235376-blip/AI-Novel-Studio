@@ -8,6 +8,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from ..import_parsers import decode_base64,docx_to_text,pdf_to_text
+from ..csv_safety import csv_safe_cell
 from ..export_formats import novel_to_docx, novel_to_epub
 from ..document import chapter_body_text
 from ..pdf_export import novel_to_pdf
@@ -412,7 +413,7 @@ class NovelService:
                 writer = csv.writer(buffer, lineterminator="\n")
                 writer.writerow(("镜号", "场景", "景别", "角度", "运动", "主体位置", "动作", "时长"))
                 for shot in screenplay.get("shots", []):
-                    writer.writerow(str(shot.get(key, "")) for key in ("number", "scene_id", "shot_size", "camera_angle", "camera_motion", "subject_position", "action", "duration_seconds"))
+                    writer.writerow(csv_safe_cell(shot.get(key, "")) for key in ("number", "scene_id", "shot_size", "camera_angle", "camera_motion", "subject_position", "action", "duration_seconds"))
                 return {"format":"shot-list","filename":f"{nid}-shot-list.csv","content":buffer.getvalue()}
             content = "\n\n".join(f"## 镜头 {card.get('number','')}\n\n画面：{card.get('frame_prompt','')}\n\n构图：{card.get('composition','')}\n\n色彩：{card.get('color','')}" for card in screenplay.get("storyboard",[]))
             return {"format":"storyboard","filename":f"{nid}-storyboard.md","content":content}
