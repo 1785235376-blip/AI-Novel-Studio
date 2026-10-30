@@ -1,0 +1,1 @@
+Temporary credentials, synthetic database cluster and test assets removed after stopped server.

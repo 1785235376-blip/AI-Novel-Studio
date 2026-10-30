@@ -1,0 +1,152 @@
+FFFFFFF............FFFFFF...FFFF....F.                                   [100%]
+=================================== FAILURES ===================================
+____________ test_xml_parts_parse_and_preserve_unicode[\ufffe-docx] ____________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 150
+____________ test_xml_parts_parse_and_preserve_unicode[\ufffe-epub] ____________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 298
+____________ test_xml_parts_parse_and_preserve_unicode[\uffff-docx] ____________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 150
+____________ test_xml_parts_parse_and_preserve_unicode[\uffff-epub] ____________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 298
+_________ test_xml_parts_parse_and_preserve_unicode[\ufffe\uffff-docx] _________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 150
+_________ test_xml_parts_parse_and_preserve_unicode[\ufffe\uffff-epub] _________
+tests/test_export_remaining_rebuild.py:23: in test_xml_parts_parse_and_preserve_unicode
+    texts.append(''.join(ET.fromstring(z.read(name)).itertext()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 298
+___________________________ test_xml_character_range ___________________________
+tests/test_export_remaining_rebuild.py:29: in test_xml_character_range
+    assert _clean_text('\x00\t\n\r\x1f\ud800\udfff\ufffe\uffff中文😀\U0001fffe') == '\t\n\r中文😀\U0001fffe'
+E   AssertionError: assert '\t\n\r\ufffe...中文😀\U0001fffe' == '\t\n\r中文😀\U0001fffe'
+E     
+E       	
+E       
+E     - 中文😀🿾
+E     + ￾￿中文😀🿾
+E     ? ++
+_________________ test_binary_representation_budget[legacy-1] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+_________________ test_binary_representation_budget[legacy-2] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+_________________ test_binary_representation_budget[legacy-3] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+_________________ test_binary_representation_budget[legacy-4] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+_________________ test_binary_representation_budget[legacy-5] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+_________________ test_binary_representation_budget[legacy-6] __________________
+tests/test_export_remaining_rebuild.py:37: in test_binary_representation_budget
+    saved=ExportJobService._serialise_result(result)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:790: in _serialise_result
+    raise ValueError("export result exceeds the 64 MiB limit")
+E   ValueError: export result exceeds the 64 MiB limit
+__________________ test_legacy_invalid_base64_rejected[%%%%] ___________________
+tests/test_export_remaining_rebuild.py:49: in test_legacy_invalid_base64_rejected
+    with pytest.raises(ValueError): ExportJobService._serialise_result({'content':encoded,'content_encoding':'base64'})
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+__________________ test_legacy_invalid_base64_rejected[\xe9] ___________________
+tests/test_export_remaining_rebuild.py:49: in test_legacy_invalid_base64_rejected
+    with pytest.raises(ValueError): ExportJobService._serialise_result({'content':encoded,'content_encoding':'base64'})
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+___________________ test_legacy_invalid_base64_rejected[eA=] ___________________
+tests/test_export_remaining_rebuild.py:49: in test_legacy_invalid_base64_rejected
+    with pytest.raises(ValueError): ExportJobService._serialise_result({'content':encoded,'content_encoding':'base64'})
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+_______________________ test_idempotency_format_conflict _______________________
+tests/test_export_remaining_rebuild.py:58: in test_idempotency_format_conflict
+    with pytest.raises(ValueError,match='EXPORT_IDEMPOTENCY_FORMAT_CONFLICT'): s.create('n','json','k')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+_______________________ test_concurrent_format_conflict ________________________
+tests/test_export_remaining_rebuild.py:76: in test_concurrent_format_conflict
+    assert result.count('EXPORT_IDEMPOTENCY_FORMAT_CONFLICT')==1
+E   AssertionError: assert 0 == 1
+E    +  where 0 = <built-in method count of list object at 0x7f95c0a3c680>('EXPORT_IDEMPOTENCY_FORMAT_CONFLICT')
+E    +    where <built-in method count of list object at 0x7f95c0a3c680> = ['txt', 'txt'].count
+=============================== warnings summary ===============================
+tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe-docx]
+  /workspace/scratch/20a0022d2b33/studio-export-sixfix-rebuild-20261029/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe-docx]
+  /workspace/scratch/20a0022d2b33/studio-export-sixfix-rebuild-20261029/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe-docx]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe-epub]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\uffff-docx]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\uffff-epub]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe\uffff-docx]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_parts_parse_and_preserve_unicode[\ufffe\uffff-epub]
+FAILED tests/test_export_remaining_rebuild.py::test_xml_character_range - Ass...
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-1]
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-2]
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-3]
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-4]
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-5]
+FAILED tests/test_export_remaining_rebuild.py::test_binary_representation_budget[legacy-6]
+FAILED tests/test_export_remaining_rebuild.py::test_legacy_invalid_base64_rejected[%%%%]
+FAILED tests/test_export_remaining_rebuild.py::test_legacy_invalid_base64_rejected[\xe9]
+FAILED tests/test_export_remaining_rebuild.py::test_legacy_invalid_base64_rejected[eA=]
+FAILED tests/test_export_remaining_rebuild.py::test_idempotency_format_conflict
+FAILED tests/test_export_remaining_rebuild.py::test_concurrent_format_conflict
+18 failed, 20 passed, 2 warnings in 11.41s

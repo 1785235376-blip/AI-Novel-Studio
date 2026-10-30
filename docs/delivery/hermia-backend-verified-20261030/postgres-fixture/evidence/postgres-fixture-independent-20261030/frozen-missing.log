@@ -1,0 +1,11 @@
+E                                                                        [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_postgres_identity_membership_round_trip_and_cardinality _
+Explicit TEST_POSTGRES_DATABASE_URL must identify a fresh synthetic ai_novel_studio_e2e_ database on literal 127.0.0.1; production DATABASE_URL and .env fallback are not accepted
+
+During handling of the above exception, another exception occurred:
+Explicit TEST_POSTGRES_DATABASE_URL must identify a fresh synthetic ai_novel_studio_e2e_ database on literal 127.0.0.1; production DATABASE_URL and .env fallback are not accepted
+=========================== short test summary info ============================
+ERROR tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality
+1 error in 0.42s
+PROOF {"label": "missing", "exit": 1, "connection_attempts": 0, "connection_targets": [], "app_main_imported": false, "pg_items": ["tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality"]}

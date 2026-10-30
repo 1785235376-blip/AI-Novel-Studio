@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="13" skipped="0" tests="18" time="1.105" timestamp="2026-10-30T08:04:14.993019+09:00" hostname="93b0b1d08cec"><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\ufffe-novel_to_docx]" time="0.004"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\ufffe-novel_to_epub]" time="0.002"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\uffff-novel_to_docx]" time="0.002"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\uffff-novel_to_epub]" time="0.003"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[1]" time="0.035"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[2]" time="0.036"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[3]" time="0.030"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[4]" time="0.026"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[5]" time="0.025"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[6]" time="0.029"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[7]" time="0.024"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[text-txt]" time="0.007" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[md-markdown]" time="0.007" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[word-docx]" time="0.008" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[screenplay-standard-screenplay-fountain]" time="0.016" /><testcase classname="test_sixfix_independent" name="test_format_conflict_does_not_write_or_capture" time="0.010"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">../test_sixfix_independent.py:58: in test_format_conflict_does_not_write_or_capture
+    with pytest.raises(ValueError,match='EXPORT_IDEMPOTENCY_FORMAT_CONFLICT'):svc.create('n','json','key')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'ValueError'&gt;</failure></testcase><testcase classname="test_sixfix_independent" name="test_scope_and_expiry_still_separate" time="0.036" /><testcase classname="test_sixfix_independent" name="test_concurrent_changed_format_one_owner" time="0.018"><failure message="AssertionError: assert 2 == 1&#10; +  where 2 = len([{'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:16.077666+00:00', ...}, {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:16.077666+00:00', ...}])">../test_sixfix_independent.py:86: in test_concurrent_changed_format_one_owner
+    assert len(rows)==1
+E   AssertionError: assert 2 == 1
+E    +  where 2 = len([{'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:16.077666+00:00', ...}, {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:16.077666+00:00', ...}])</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,564 @@
+EEEEEEEEEEEEEE                                                           [100%]
+==================================== ERRORS ====================================
+__ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[R&amp;D] __
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[Show &lt;tag&gt;] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[&amp;amp; and &nbsp;] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[\u4e2d\u6587 &amp; \U0001f600] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+____ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[R&D] ____
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_external_ffmpeg_preserves_authored_literal[&#65; and &copy;] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_import_decodes_supported_six_reference_subset_once[R&amp;D-R&D] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_import_decodes_supported_six_reference_subset_once[&amp;lt;tag&amp;gt;-&lt;tag&gt;] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_import_decodes_supported_six_reference_subset_once[a&nbsp;b&lrm;c&rlm;d-a\xa0b\u200ec\u200fd] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_ ERROR at setup of test_import_decodes_supported_six_reference_subset_once[&#38; &#x26; &copy; &AMP; &amp-&#38; &#x26; &copy; &AMP; &amp] _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+_______ ERROR at setup of test_decoded_markup_still_rejected[&lt;b&gt;] ________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+__________ ERROR at setup of test_decoded_markup_still_rejected[&gt;] __________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+____________ ERROR at setup of test_srt_literal_contract_unchanged _____________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+________ ERROR at setup of test_lexical_parser_not_general_html_decoder ________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:241: in <module>
+    from .local_interop.host import LocalInteropHost
+app/local_interop/host.py:14: in <module>
+    from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+local_interop_desktop/__init__.py:8: in <module>
+    from .diagnostics import (
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Bounded non-content diagnostics and audit. No arbitrary exception text is retained."""
+    
+    from __future__ import annotations
+    
+    from collections import deque
+    from dataclasses import asdict, dataclass
+    from datetime import datetime
+    from enum import Enum
+    from typing import Callable
+    
+>   from local_interop_protocol import CAPABILITIES, PROTOCOL_VERSION
+E   ModuleNotFoundError: No module named 'local_interop_protocol'
+
+local_interop_desktop/diagnostics.py:11: ModuleNotFoundError
+=========================== short test summary info ============================
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[R&amp;D]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[Show &lt;tag&gt;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[&amp;amp; and &nbsp;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[\u4e2d\u6587 &amp; \U0001f600]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[R&D]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[&#65; and &copy;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[R&amp;D-R&D]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[&amp;lt;tag&amp;gt;-&lt;tag&gt;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[a&nbsp;b&lrm;c&rlm;d-a\xa0b\u200ec\u200fd]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[&#38; &#x26; &copy; &AMP; &amp-&#38; &#x26; &copy; &AMP; &amp]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_decoded_markup_still_rejected[&lt;b&gt;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_decoded_markup_still_rejected[&gt;]
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_srt_literal_contract_unchanged
+ERROR tests/test_studio_vtt_literal_rebuild_20261029.py::test_lexical_parser_not_general_html_decoder
+14 errors in 2.56s

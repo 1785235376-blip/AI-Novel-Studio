@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="15" skipped="0" tests="24" time="6.411" timestamp="2026-10-30T08:05:38.210990+09:00" hostname="93b0b1d08cec"><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\ufffe-novel_to_docx]" time="0.006"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\ufffe-novel_to_epub]" time="0.002"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\uffff-novel_to_docx]" time="0.003"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167</failure></testcase><testcase classname="test_sixfix_independent" name="test_xml_parts_are_parseable[\uffff-novel_to_epub]" time="0.001"><failure message="xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315">../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[1]" time="0.034"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[2]" time="0.027"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[3]" time="0.038"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[4]" time="0.035"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[5]" time="0.023"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[6]" time="0.032"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_actual_binary_budget_not_encoded_text[7]" time="0.029"><failure message="AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}&#10;assert 'failed' == 'succeeded'&#10;  &#10;  - succeeded&#10;  + failed">../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed</failure></testcase><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[text-txt]" time="0.009" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[md-markdown]" time="0.007" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[word-docx]" time="0.010" /><testcase classname="test_sixfix_independent" name="test_alias_replay_same_snapshot[screenplay-standard-screenplay-fountain]" time="0.008" /><testcase classname="test_sixfix_independent" name="test_format_conflict_does_not_write_or_capture" time="0.012"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">../test_sixfix_independent.py:58: in test_format_conflict_does_not_write_or_capture
+    with pytest.raises(ValueError,match='EXPORT_IDEMPOTENCY_FORMAT_CONFLICT'):svc.create('n','json','key')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'ValueError'&gt;</failure></testcase><testcase classname="test_sixfix_independent" name="test_scope_and_expiry_still_separate" time="0.037" /><testcase classname="test_sixfix_independent" name="test_concurrent_changed_format_one_owner" time="0.008"><failure message="AssertionError: assert 2 == 1&#10; +  where 2 = len([{'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:05:39.189803+00:00', ...}, {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:05:39.189803+00:00', ...}])">../test_sixfix_independent.py:86: in test_concurrent_changed_format_one_owner
+    assert len(rows)==1
+E   AssertionError: assert 2 == 1
+E    +  where 2 = len([{'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:05:39.189803+00:00', ...}, {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:05:39.189803+00:00', ...}])</failure></testcase><testcase classname="test_sixfix_independent" name="test_existing_decode_admission_not_regressed[content]" time="0.000" /><testcase classname="test_sixfix_independent" name="test_existing_decode_admission_not_regressed[content_base64]" time="0.000" /><testcase classname="test_sixfix_independent" name="test_actual_decoded_overlimit_still_rejected[content]" time="0.000" /><testcase classname="test_sixfix_independent" name="test_actual_decoded_overlimit_still_rejected[content_base64]" time="0.000" /><testcase classname="test_sixfix_independent" name="test_mounted_http_format_conflict[/api]" time="4.799"><failure message="AssertionError: {&quot;id&quot;:&quot;65ad071d-3b31-49f0-b4f9-d3f2544dbd15&quot;,&quot;novel_id&quot;:&quot;n&quot;,&quot;format&quot;:&quot;txt&quot;,&quot;status&quot;:&quot;running&quot;,&quot;created_at&quot;:&quot;2026-10-29T23:05:43.986769+00:00&quot;,&quot;updated_at&quot;:&quot;2026-10-29T23:05:43.990309+00:00&quot;,&quot;result&quot;:null,&quot;error&quot;:null,&quot;progress&quot;:5,&quot;progress_message&quot;:&quot;处理中&quot;,&quot;retry_of&quot;:null,&quot;attempt&quot;:1,&quot;cancel_requested&quot;:false,&quot;recovery_count&quot;:0,&quot;snapshot_id&quot;:null,&quot;resource_manifest&quot;:{},&quot;missing_resources&quot;:[],&quot;permission_context&quot;:{&quot;mode&quot;:&quot;local&quot;,&quot;novel_id&quot;:&quot;n&quot;},&quot;started_at&quot;:&quot;2026-10-29T23:05:43.990301+00:00&quot;}&#10;assert 202 == 400&#10; +  where 202 = &lt;Response [202 Accepted]&gt;.status_code">../test_sixfix_independent.py:122: in test_mounted_http_format_conflict
+    assert b.status_code==400,b.text
+E   AssertionError: {"id":"65ad071d-3b31-49f0-b4f9-d3f2544dbd15","novel_id":"n","format":"txt","status":"running","created_at":"2026-10-29T23:05:43.986769+00:00","updated_at":"2026-10-29T23:05:43.990309+00:00","result":null,"error":null,"progress":5,"progress_message":"处理中","retry_of":null,"attempt":1,"cancel_requested":false,"recovery_count":0,"snapshot_id":null,"resource_manifest":{},"missing_resources":[],"permission_context":{"mode":"local","novel_id":"n"},"started_at":"2026-10-29T23:05:43.990301+00:00"}
+E   assert 202 == 400
+E    +  where 202 = &lt;Response [202 Accepted]&gt;.status_code</failure></testcase><testcase classname="test_sixfix_independent" name="test_mounted_http_format_conflict[/api/v1]" time="0.604"><failure message="AssertionError: {&quot;id&quot;:&quot;dbe18b5d-a35f-42fe-8c8e-9adfcf942a72&quot;,&quot;novel_id&quot;:&quot;n&quot;,&quot;format&quot;:&quot;txt&quot;,&quot;status&quot;:&quot;running&quot;,&quot;created_at&quot;:&quot;2026-10-29T23:05:44.604290+00:00&quot;,&quot;updated_at&quot;:&quot;2026-10-29T23:05:44.609581+00:00&quot;,&quot;result&quot;:null,&quot;error&quot;:null,&quot;progress&quot;:5,&quot;progress_message&quot;:&quot;处理中&quot;,&quot;retry_of&quot;:null,&quot;attempt&quot;:1,&quot;cancel_requested&quot;:false,&quot;recovery_count&quot;:0,&quot;snapshot_id&quot;:null,&quot;resource_manifest&quot;:{},&quot;missing_resources&quot;:[],&quot;permission_context&quot;:{&quot;mode&quot;:&quot;local&quot;,&quot;novel_id&quot;:&quot;n&quot;},&quot;started_at&quot;:&quot;2026-10-29T23:05:44.609567+00:00&quot;}&#10;assert 202 == 400&#10; +  where 202 = &lt;Response [202 Accepted]&gt;.status_code">../test_sixfix_independent.py:122: in test_mounted_http_format_conflict
+    assert b.status_code==400,b.text
+E   AssertionError: {"id":"dbe18b5d-a35f-42fe-8c8e-9adfcf942a72","novel_id":"n","format":"txt","status":"running","created_at":"2026-10-29T23:05:44.604290+00:00","updated_at":"2026-10-29T23:05:44.609581+00:00","result":null,"error":null,"progress":5,"progress_message":"处理中","retry_of":null,"attempt":1,"cancel_requested":false,"recovery_count":0,"snapshot_id":null,"resource_manifest":{},"missing_resources":[],"permission_context":{"mode":"local","novel_id":"n"},"started_at":"2026-10-29T23:05:44.609567+00:00"}
+E   assert 202 == 400
+E    +  where 202 = &lt;Response [202 Accepted]&gt;.status_code</failure></testcase></testsuite></testsuites>

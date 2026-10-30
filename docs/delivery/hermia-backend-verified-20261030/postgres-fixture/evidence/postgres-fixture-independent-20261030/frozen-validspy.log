@@ -1,0 +1,46 @@
+E                                                                        [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_postgres_identity_membership_round_trip_and_cardinality _
+
+request = <SubRequest 'restore_global_settings' for <Function test_real_postgres_identity_membership_round_trip_and_cardinality>>
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request: pytest.FixtureRequest):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        # Validate explicit selection before app bootstrap can load repositories.
+        # Other tests retain the original settings/environment isolation behavior.
+        selected_url = (request.getfixturevalue("isolated_postgres_url")
+                        if "isolated_postgres_url" in request.fixturenames else None)
+        from app.config import settings
+        with scoped_postgres_bootstrap(settings, selected_url):
+>           from app.main import app
+
+tests/conftest.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:52: in <module>
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.repositories.postgres.session.Database object at 0x7f483a8923f0>
+
+    def require_healthy(self):
+>       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError
+=========================== short test summary info ============================
+ERROR tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality
+1 error in 0.91s
+PROOF {"label": "validspy", "exit": 1, "connection_attempts": 1, "connection_targets": [{"host": "127.0.0.1", "dbname": "ai_novel_studio_e2e_collect"}], "app_main_imported": false, "pg_items": ["tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality"]}
