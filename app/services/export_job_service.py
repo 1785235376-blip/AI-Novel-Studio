@@ -5,6 +5,8 @@ import binascii
 import hashlib
 import json
 import inspect
+import os
+import stat
 import re
 import threading
 import uuid
@@ -345,6 +347,12 @@ class ExportJobService:
             if not submitted:
                 claim.release()
 
+    @staticmethod
+    def _canonical_format(value: object) -> str:
+        fmt = str(value or "json").lower().strip()
+        return {"md": "markdown", "text": "txt", "word": "docx",
+                "screenplay-standard": "screenplay-fountain"}.get(fmt, fmt)
+
     def create(
         self,
         novel_id: str,
@@ -357,14 +365,15 @@ class ExportJobService:
         fmt = str(format or "json").lower().strip()
         if fmt not in self.SUPPORTED:
             raise ValueError("unsupported export format")
-        fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
-        fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
+        fmt = self._canonical_format(fmt)
         existing = None
         with self._mutation():
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
                     if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and item.get("permission_context") == permission_context and self._is_idempotency_fresh(item):
+                        if self._canonical_format(item.get("format")) != fmt:
+                            raise ValueError("EXPORT_IDEMPOTENCY_FORMAT_CONFLICT")
                         existing = self._normalise_job(item)
                         break
             if existing is None:
@@ -628,21 +637,21 @@ class ExportJobService:
                 target = (self.artifact_root / str(artifact["path"])).resolve()
                 if target.parent != root:
                     raise ExportJobResultInvalid("export artifact path is invalid")
-                if target.stat().st_size > self.MAX_RESULT_BYTES:
-                    raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
-                with target.open("rb") as stream:
-                    content_bytes = stream.read(self.MAX_RESULT_BYTES + 1)
-                if len(content_bytes) > self.MAX_RESULT_BYTES:
-                    raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
-                expected_hash = str(artifact.get("sha256") or "")
-                if expected_hash and hashlib.sha256(content_bytes).hexdigest() != expected_hash:
-                    raise ExportJobResultInvalid("export artifact checksum mismatch")
-                if artifact.get("size") is not None and artifact["size"] != len(content_bytes):
-                    raise ExportJobResultInvalid("export artifact size mismatch")
+                content_bytes = self._read_artifact_file(target)
             except FileNotFoundError:
                 content_bytes = None
+            except OSError:
+                raise ExportJobResultInvalid("export artifact is unavailable") from None
         if content_bytes is None:
             content_bytes = self._result_bytes(result)
+        if isinstance(artifact, dict) and artifact.get("path"):
+            # A recovered inline copy remains bound to its original receipt.
+            # Legacy jobs without artifact receipts retain their inline contract.
+            expected_hash = str(artifact.get("sha256") or "")
+            if expected_hash and hashlib.sha256(content_bytes).hexdigest() != expected_hash:
+                raise ExportJobResultInvalid("export artifact checksum mismatch")
+            if artifact.get("size") is not None and artifact["size"] != len(content_bytes):
+                raise ExportJobResultInvalid("export artifact size mismatch")
 
         format = str(job.get("format") or result.get("format") or "bin").lower().strip()
         format = "markdown" if format == "md" else ("txt" if format == "text" else ("docx" if format == "word" else format))
@@ -652,6 +661,39 @@ class ExportJobService:
             "media_type": self._media_type(result.get("media_type"), format),
             "format": format,
         }
+
+    def _read_artifact_file(self, target: Path) -> bytes:
+        """Read bounded regular bytes; prevent blocking POSIX FIFO swaps.
+
+        This is not a general ancestor-path or cross-platform security boundary.
+        """
+        planned = target.stat()
+        if not stat.S_ISREG(planned.st_mode):
+            raise ExportJobResultInvalid("export artifact is not a regular file")
+        if planned.st_size > self.MAX_RESULT_BYTES:
+            raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
+        if os.name == "posix" and not getattr(os, "O_NONBLOCK", 0):
+            raise ExportJobResultInvalid("export artifact nonblocking read is unavailable")
+        flags = (os.O_RDONLY | getattr(os, "O_BINARY", 0)
+                 | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_NOFOLLOW", 0))
+        descriptor = os.open(target, flags)
+        try:
+            opened = os.fstat(descriptor)
+            if (not stat.S_ISREG(opened.st_mode)
+                    or (opened.st_dev, opened.st_ino) != (planned.st_dev, planned.st_ino)):
+                raise ExportJobResultInvalid("export artifact file changed")
+            if opened.st_size > self.MAX_RESULT_BYTES:
+                raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
+            stream = os.fdopen(descriptor, "rb")
+            descriptor = None  # The stream owns the descriptor after fdopen.
+            with stream:
+                content = stream.read(self.MAX_RESULT_BYTES + 1)
+            if len(content) > self.MAX_RESULT_BYTES:
+                raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
+            return content
+        finally:
+            if descriptor is not None:
+                os.close(descriptor)
 
     # Explicit alias for callers that prefer a descriptive method name.
     def download_payload(self, job_id: str) -> dict:
@@ -696,6 +738,8 @@ class ExportJobService:
         else:
             content = result.get("content")
             if result.get("content_encoding") == "base64" and isinstance(content, str):
+                if len(content) > ((ExportJobService.MAX_RESULT_BYTES + 2) // 3) * 4:
+                    raise ExportJobResultInvalid("export result exceeds the 64 MiB limit")
                 try:
                     content_bytes = base64.b64decode(content.encode("ascii"), validate=True)
                 except (ValueError, UnicodeEncodeError, binascii.Error) as exc:
@@ -762,12 +806,22 @@ class ExportJobService:
                 raise ValueError("export result exceeds the 64 MiB limit")
             item["content"] = base64.b64encode(raw).decode("ascii")
             item["content_encoding"] = "base64"
-        elif isinstance(content, str) and len(content.encode("utf-8")) > ExportJobService.MAX_RESULT_BYTES:
-            raise ValueError("export result exceeds the 64 MiB limit")
+        elif isinstance(content, str):
+            if item.get("content_encoding") == "base64":
+                # The limit describes decoded artifact bytes, regardless of
+                # which supported binary representation the exporter uses.
+                try:
+                    ExportJobService._result_bytes({"content": content, "content_encoding": "base64"})
+                except ExportJobResultInvalid as exc:
+                    raise ValueError(str(exc)) from exc
+            elif len(content.encode("utf-8")) > ExportJobService.MAX_RESULT_BYTES:
+                raise ValueError("export result exceeds the 64 MiB limit")
         encoded = item.get("content_base64")
         if encoded is not None:
             if not isinstance(encoded, str) or item.get("content_encoding", "base64") != "base64":
                 raise ValueError("export result content encoding is invalid")
+            if len(encoded) > ((ExportJobService.MAX_RESULT_BYTES + 2) // 3) * 4:
+                raise ValueError("export result exceeds the 64 MiB limit")
             try:
                 raw_encoded = base64.b64decode(encoded, validate=True)
             except (ValueError, UnicodeEncodeError, binascii.Error) as exc:
@@ -785,6 +839,11 @@ class ExportJobService:
         try:
             self._run_owned(job_id)
         finally:
+            # Every terminal path, including cooperative cancellation or an
+            # unexpected worker error, releases only this instance's state.
+            with self._lock:
+                self._futures.pop(job_id, None)
+                self._cancel_events.pop(job_id, None)
             claim.release()
 
     def _run_owned(self, job_id: str) -> None:
@@ -809,9 +868,20 @@ class ExportJobService:
             job.update(status="running", progress=max(5, previous_progress), progress_message="处理中", started_at=_now(), updated_at=_now())
             self._write(jobs)
 
-        def report(progress: object, message: str | None = None):
+        def check_cancelled():
             if cancel_event.is_set():
                 raise _ExportCancelled()
+            # Another same-host service/process can cancel this durable job
+            # without sharing the execution owner's in-memory Event.
+            with self._lock:
+                current = self._read().get(job_id)
+            if isinstance(current, dict) and (current.get("cancel_requested")
+                    or str(current.get("status", "")).lower() == "cancelled"):
+                cancel_event.set()
+                raise _ExportCancelled()
+
+        def report(progress: object, message: str | None = None):
+            check_cancelled()
             self._set_progress(job_id, progress, message)
 
         try:
@@ -819,9 +889,7 @@ class ExportJobService:
             result = self._serialise_result(self._invoke_exporter(job, report))
             # Never publish a success state for a renderer with no usable file.
             self._result_bytes(result)
-            if cancel_event.is_set():
-                self._mark_cancelled_from_worker(job_id)
-                return
+            check_cancelled()
             artifact = self._persist_artifact(job_id, result)
             report(95, "整理导出结果")
             update = {"status": "succeeded", "result": result, "artifact": artifact, "error": None, "progress": 100, "progress_message": "已完成", "finished_at": _now(), "updated_at": _now()}
