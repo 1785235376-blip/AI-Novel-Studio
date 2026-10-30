@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import uuid
 import time
 from types import SimpleNamespace
@@ -18,7 +17,6 @@ from app.lore.context_intelligence import (
     priority_score,
 )
 from app.repositories.factory import create_repository_bundle
-from app.repositories.postgres.session import Database
 from app.services import ChapterService, ContextService, LoreService, NovelService
 
 
@@ -167,10 +165,9 @@ def test_file_context_snapshot_is_persisted(tmp_path):
     assert len(files) == 1
 
 
-def test_postgres_context_snapshot_is_idempotently_persisted():
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
-    if not url or not Database(url).health_check():
-        pytest.skip("real PostgreSQL unavailable")
+@pytest.mark.postgres_backend_only
+def test_postgres_context_snapshot_is_idempotently_persisted(isolated_postgres_url):
+    url = isolated_postgres_url
     bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     slug = f"snapshot-postgres-{uuid.uuid4().hex[:8]}"
     novel_id = NovelService(bundle.novels, bundle.chapters).create(

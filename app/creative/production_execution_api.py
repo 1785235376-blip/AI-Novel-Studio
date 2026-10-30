@@ -630,7 +630,17 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     @router.post("/projects/{nid}/studio/production/timelines/{tid}/transfer-preview")
     def transfer_preview(nid: str, tid: str, request: Request, body: TimelineTransferPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.timeline_transfer_preview(nid, scope, actor, tid, body, guard))
+        from ..experimental.timeline_exchange import ExactTimeMetadataMismatch
+        def preview(actor, scope, guard):
+            try:
+                return service.timeline_transfer_preview(nid, scope, actor, tid, body, guard)
+            except ExactTimeMetadataMismatch as exc:
+                # No fallback parse or inferred importability. Reauthorize before
+                # returning only the first strict parser conflict's safe context.
+                guard()
+                raise HTTPException(422, {"code": "EXPERIMENTAL_INVALID",
+                    "message": str(exc), "diagnostic": exc.diagnostic}) from None
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", preview)
 
     @router.post("/projects/{nid}/studio/production/timelines/{tid}/transfer-import")
     def transfer_import(nid: str, tid: str, request: Request, body: TimelineTransferImport, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

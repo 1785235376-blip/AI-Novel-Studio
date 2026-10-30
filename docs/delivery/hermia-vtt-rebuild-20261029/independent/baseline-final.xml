@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="13" time="12.755" timestamp="2026-10-30T08:11:39.533918+09:00" hostname="93b0b1d08cec"><testcase classname="tests.test_vtt_independent" name="test_actual_external_display_matches_literal[R&amp;amp;D]" time="0.376"><failure message="AssertionError: assert 'R&amp;D' == 'R&amp;amp;D'&#10;  &#10;  - R&amp;amp;D&#10;  + R&amp;D">text = 'R&amp;amp;D'
+
+    @pytest.mark.parametrize('text',['R&amp;amp;D','Show &amp;lt;tag&amp;gt;','Nested &amp;amp;amp; &amp;unknown;','普通中文#x1F642 &amp; raw'])
+    def test_actual_external_display_matches_literal(text):
+        encoded=export_subtitles(timeline(text),'VTT')
+&gt;       assert external_text(encoded)==text
+E       AssertionError: assert 'R&amp;D' == 'R&amp;amp;D'
+E         
+E         - R&amp;amp;D
+E         + R&amp;D
+
+tests/test_vtt_independent.py:21: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_actual_external_display_matches_literal[Show &amp;lt;tag&amp;gt;]" time="0.122"><failure message="AssertionError: assert 'Show &lt;tag&gt;' == 'Show &amp;lt;tag&amp;gt;'&#10;  &#10;  - Show &amp;lt;tag&amp;gt;&#10;  + Show &lt;tag&gt;">text = 'Show &amp;lt;tag&amp;gt;'
+
+    @pytest.mark.parametrize('text',['R&amp;amp;D','Show &amp;lt;tag&amp;gt;','Nested &amp;amp;amp; &amp;unknown;','普通中文#x1F642 &amp; raw'])
+    def test_actual_external_display_matches_literal(text):
+        encoded=export_subtitles(timeline(text),'VTT')
+&gt;       assert external_text(encoded)==text
+E       AssertionError: assert 'Show &lt;tag&gt;' == 'Show &amp;lt;tag&amp;gt;'
+E         
+E         - Show &amp;lt;tag&amp;gt;
+E         + Show &lt;tag&gt;
+
+tests/test_vtt_independent.py:21: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_actual_external_display_matches_literal[Nested &amp;amp;amp; &amp;unknown;]" time="0.102"><failure message="AssertionError: assert 'Nested &amp;amp; &amp;unknown;' == 'Nested &amp;amp;amp; &amp;unknown;'&#10;  &#10;  - Nested &amp;amp;amp; &amp;unknown;&#10;  ?             ----&#10;  + Nested &amp;amp; &amp;unknown;">text = 'Nested &amp;amp;amp; &amp;unknown;'
+
+    @pytest.mark.parametrize('text',['R&amp;amp;D','Show &amp;lt;tag&amp;gt;','Nested &amp;amp;amp; &amp;unknown;','普通中文#x1F642 &amp; raw'])
+    def test_actual_external_display_matches_literal(text):
+        encoded=export_subtitles(timeline(text),'VTT')
+&gt;       assert external_text(encoded)==text
+E       AssertionError: assert 'Nested &amp;amp; &amp;unknown;' == 'Nested &amp;amp;amp; &amp;unknown;'
+E         
+E         - Nested &amp;amp;amp; &amp;unknown;
+E         ?             ----
+E         + Nested &amp;amp; &amp;unknown;
+
+tests/test_vtt_independent.py:21: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_actual_external_display_matches_literal[\u666e\u901a\u4e2d\u6587\U0001f642 &amp; raw]" time="0.097" /><testcase classname="tests.test_vtt_independent" name="test_exact_references_decode_only_once[&amp;amp;lt;-&amp;lt;]" time="0.001"><failure message="AssertionError: assert '&amp;amp;lt;' == '&amp;lt;'&#10;  &#10;  - &amp;lt;&#10;  + &amp;amp;lt;">text = '&amp;amp;lt;', expected = '&amp;lt;'
+
+    @pytest.mark.parametrize('text,expected',[('&amp;amp;lt;','&amp;lt;'),('&amp;amp;amp;','&amp;amp;'),('&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;','&amp;\u00a0\u200e\u200f')])
+    def test_exact_references_decode_only_once(text,expected):
+&gt;       assert parse_subtitle_cues(vtt(text),'VTT')[0]['text']==expected
+E       AssertionError: assert '&amp;amp;lt;' == '&amp;lt;'
+E         
+E         - &amp;lt;
+E         + &amp;amp;lt;
+
+tests/test_vtt_independent.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_exact_references_decode_only_once[&amp;amp;amp;-&amp;amp;]" time="0.001"><failure message="AssertionError: assert '&amp;amp;amp;' == '&amp;amp;'&#10;  &#10;  - &amp;amp;&#10;  + &amp;amp;amp;">text = '&amp;amp;amp;', expected = '&amp;amp;'
+
+    @pytest.mark.parametrize('text,expected',[('&amp;amp;lt;','&amp;lt;'),('&amp;amp;amp;','&amp;amp;'),('&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;','&amp;\u00a0\u200e\u200f')])
+    def test_exact_references_decode_only_once(text,expected):
+&gt;       assert parse_subtitle_cues(vtt(text),'VTT')[0]['text']==expected
+E       AssertionError: assert '&amp;amp;amp;' == '&amp;amp;'
+E         
+E         - &amp;amp;
+E         + &amp;amp;amp;
+
+tests/test_vtt_independent.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_exact_references_decode_only_once[&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;-&amp;\xa0\u200e\u200f]" time="0.002"><failure message="AssertionError: assert '&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;' == '&amp;\xa0\u200e\u200f'&#10;  &#10;  - &amp; ‎‏&#10;  + &amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;">text = '&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;', expected = '&amp;\xa0\u200e\u200f'
+
+    @pytest.mark.parametrize('text,expected',[('&amp;amp;lt;','&amp;lt;'),('&amp;amp;amp;','&amp;amp;'),('&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;','&amp;\u00a0\u200e\u200f')])
+    def test_exact_references_decode_only_once(text,expected):
+&gt;       assert parse_subtitle_cues(vtt(text),'VTT')[0]['text']==expected
+E       AssertionError: assert '&amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;' == '&amp;\xa0\u200e\u200f'
+E         
+E         - &amp; ‎‏
+E         + &amp;amp;&amp;nbsp;&amp;lrm;&amp;rlm;
+
+tests/test_vtt_independent.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_markup_still_rejected_by_owner[&amp;lt;b&amp;gt;unsafe&amp;lt;/b&amp;gt;]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">text = '&amp;lt;b&amp;gt;unsafe&amp;lt;/b&amp;gt;'
+
+    @pytest.mark.parametrize('text',['&amp;lt;b&amp;gt;unsafe&amp;lt;/b&amp;gt;','&lt;b&gt;unsafe&lt;/b&gt;'])
+    def test_markup_still_rejected_by_owner(text):
+&gt;       with pytest.raises(ValueError,match='LITERAL_TEXT_REQUIRED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/test_vtt_independent.py:30: Failed</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_markup_still_rejected_by_owner[&lt;b&gt;unsafe&lt;/b&gt;]" time="0.001" /><testcase classname="tests.test_vtt_independent" name="test_unrecognized_numeric_and_html_references_remain_literal" time="0.000" /><testcase classname="tests.test_vtt_independent" name="test_srt_stays_byte_equivalent" time="0.001" /><testcase classname="tests.test_vtt_independent" name="test_entity_literal_http_import_export_replay_restore[/api]" time="4.343"><failure message="AssertionError: assert 'Show &amp;amp;lt...d R&amp;amp;amp;D' == 'Show &amp;lt;tag&amp;gt; and R&amp;amp;D'&#10;  &#10;  - Show &amp;lt;tag&amp;gt; and R&amp;amp;D&#10;  + Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D&#10;  ?       ++++       ++++              ++++">case = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f608a6cddf0&gt;, nid='query-96825f6ad0544297...0+00:00', 'updated_at': '2026-10-29T23:11:49.545924+00:00', 'version': 1, 'deleted_at': None, 'idempotency_key': None})
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_entity_literal_http_import_export_replay_restore(case,prefix):
+        e=case; url=base(e,prefix)
+        literal='Show &amp;lt;tag&amp;gt; and R&amp;amp;D'
+        request=body(e,'IMPORT',content=vtt('Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D'))
+        request['format']='VTT'
+        before=files(e.rig.root)
+        preview=call(e,url+'/transfer-preview',request)
+        assert files(e.rig.root)==before
+&gt;       assert preview['timeline']['captions'][0]['text']==literal
+E       AssertionError: assert 'Show &amp;amp;lt...d R&amp;amp;amp;D' == 'Show &amp;lt;tag&amp;gt; and R&amp;amp;D'
+E         
+E         - Show &amp;lt;tag&amp;gt; and R&amp;amp;D
+E         + Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D
+E         ?       ++++       ++++              ++++
+
+tests/test_vtt_independent.py:52: AssertionError</failure></testcase><testcase classname="tests.test_vtt_independent" name="test_entity_literal_http_import_export_replay_restore[/api/v1]" time="1.904"><failure message="AssertionError: assert 'Show &amp;amp;lt...d R&amp;amp;amp;D' == 'Show &amp;lt;tag&amp;gt; and R&amp;amp;D'&#10;  &#10;  - Show &amp;lt;tag&amp;gt; and R&amp;amp;D&#10;  + Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D&#10;  ?       ++++       ++++              ++++">case = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f60838534a0&gt;, nid='query-c2d11c7f2ae443ce...4+00:00', 'updated_at': '2026-10-29T23:11:50.566099+00:00', 'version': 1, 'deleted_at': None, 'idempotency_key': None})
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_entity_literal_http_import_export_replay_restore(case,prefix):
+        e=case; url=base(e,prefix)
+        literal='Show &amp;lt;tag&amp;gt; and R&amp;amp;D'
+        request=body(e,'IMPORT',content=vtt('Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D'))
+        request['format']='VTT'
+        before=files(e.rig.root)
+        preview=call(e,url+'/transfer-preview',request)
+        assert files(e.rig.root)==before
+&gt;       assert preview['timeline']['captions'][0]['text']==literal
+E       AssertionError: assert 'Show &amp;amp;lt...d R&amp;amp;amp;D' == 'Show &amp;lt;tag&amp;gt; and R&amp;amp;D'
+E         
+E         - Show &amp;lt;tag&amp;gt; and R&amp;amp;D
+E         + Show &amp;amp;lt;tag&amp;amp;gt; and R&amp;amp;amp;D
+E         ?       ++++       ++++              ++++
+
+tests/test_vtt_independent.py:52: AssertionError</failure></testcase></testsuite></testsuites>

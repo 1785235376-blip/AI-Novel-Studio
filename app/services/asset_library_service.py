@@ -78,6 +78,8 @@ class AssetLibraryService:
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._scope = threading.local()
+        from .audio_asset_history_store import AudioAssetHistoryStore
+        self._audio_history_store = AudioAssetHistoryStore(self.root)
         self._page_source_lock = threading.RLock()
         self._page_source_handles = {}
         self._page_source_request = ContextVar('asset_page_source_request', default=None)
@@ -245,8 +247,137 @@ class AssetLibraryService:
         if meta.get("_owner_actor_id") and meta["_owner_actor_id"] != actor_id: return False
         return branch_id is None or meta.get("branch_id") == branch_id
 
-    def _write_meta(self, meta: dict) -> None:
-        atomic_write(self._meta_path(meta["id"]), json.dumps(meta, ensure_ascii=False, indent=2))
+    AUDIO_HISTORY_RECORD_MAX_BYTES = 512 * 1024
+
+    def _audio_history_dir_bytes(self, asset_id: str) -> int:
+        """Logical bytes currently retained for one asset's immutable history."""
+        store = self._audio_history_store
+        try:
+            path = store.paths(asset_id)
+        except ValueError:
+            return 0
+        if path is None:
+            return 0
+        total = 0
+        count = 0
+        for folder in ("records", "blobs"):
+            directory = path / folder
+            try:
+                entries = sorted(directory.iterdir())
+            except FileNotFoundError:
+                continue
+            for item in entries:
+                try:
+                    info = item.lstat()
+                except OSError:
+                    continue
+                total += int(info.st_size)
+                count += 1
+                if count > 1000 or total > 256 * 1024 * 1024:
+                    raise ValueError("AUDIO_HISTORY_CAPACITY_SCAN_LIMIT")
+        return total
+
+    def _audio_history_capacity_begin(self, meta: dict):
+        """Reserve the bounded history write against the project capacity ledger.
+
+        Only active when both the history feature and the capacity admission gate
+        are enabled. The reservation covers the metadata record and a possible new
+        content blob; settlement charges only the actual history-directory delta.
+        """
+        from ..config import settings
+        if not (settings.enable_audio_asset_history and settings.enable_project_capacity_admission):
+            return None
+        from pathlib import Path
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused, ProjectCapacityLedger
+        binding = meta.get("_project_binding")
+        project = binding.get("novel_id") if isinstance(binding, dict) else None
+        incarnation = binding.get("incarnation") if isinstance(binding, dict) else None
+        if not project or not incarnation:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_PROJECT_UNBOUND")
+        data_root = Path(self.root).parent
+        ledger = ProjectCapacityLedger(data_root / "runtime" / "project-capacity.json")
+        try:
+            snapshot = ledger.peek(project)
+        except CapacityLedgerUnavailable:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_LEDGER_UNAVAILABLE") from None
+        if snapshot is None:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED")
+        if snapshot["unknown"]["blocked"]:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_UNKNOWN_BLOCKED")
+        before = self._audio_history_dir_bytes(meta["id"])
+        sha = meta.get("sha256")
+        blob = None
+        if isinstance(sha, str) and len(sha) == 64 and isinstance(meta.get("size"), int):
+            try:
+                blob_path = self._audio_history_store.paths(meta["id"])
+            except ValueError:
+                blob_path = None
+            if blob_path is not None:
+                candidate = blob_path / "blobs" / (sha + ".bin")
+                if not candidate.exists():
+                    blob = int(meta["size"])
+        estimate = self.AUDIO_HISTORY_RECORD_MAX_BYTES + (blob or 0)
+        try:
+            reservation = ledger.reserve(project, max(1, estimate), operation="audio.history.commit",
+                                        actor_id=meta.get("_owner_actor_id") or "asset-owner",
+                                        ttl_seconds=300, incarnation=incarnation)
+        except CapacityRefused as exc:
+            if exc.code == "PROJECT_CAPACITY_EXCEEDED":
+                raise ValueError("AUDIO_HISTORY_CAPACITY_EXCEEDED") from None
+            raise ValueError(f"AUDIO_HISTORY_CAPACITY_{exc.code.removeprefix('PROJECT_CAPACITY_')}") from None
+        except CapacityLedgerUnavailable:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_LEDGER_UNAVAILABLE") from None
+        return {"ledger": ledger, "project": project, "reservation_id": reservation["reservation_id"],
+                "asset_id": meta["id"], "before": before}
+
+    def _audio_history_capacity_settle(self, context, *, failed: bool) -> None:
+        """Charge the actual history-directory delta, then release the reservation."""
+        if context is None:
+            return
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        ledger, project, reservation_id = context["ledger"], context["project"], context["reservation_id"]
+        try:
+            after = self._audio_history_dir_bytes(context["asset_id"])
+        except ValueError:
+            after = context["before"]
+        delta = max(0, after - context["before"])
+        try:
+            if delta:
+                ledger.commit(project, reservation_id, delta, actor_id="asset-owner")
+            else:
+                ledger.release(project, reservation_id, actor_id="asset-owner",
+                               reason="AUDIO_HISTORY_FAILED" if failed else "AUDIO_HISTORY_NO_DELTA")
+        except (CapacityRefused, CapacityLedgerUnavailable):
+            # The current metadata commit point is unchanged either way; an
+            # unsettleable reservation expires through its TTL and the next
+            # explicit reconcile re-measures the actual history bytes.
+            pass
+    def _write_meta(self, meta: dict, *, guard=None) -> None:
+        from ..config import settings
+        guard = guard or (lambda: None)
+        if not (settings.enable_audio_asset_history and meta.get("kind") == "audio"):
+            atomic_write(self._meta_path(meta["id"]), json.dumps(meta, ensure_ascii=False, indent=2))
+            return
+        # Flag-gated immutable audio history. The current metadata head is the
+        # sole commit point; the history record/blob are prepared before it and
+        # a failed commit leaves prepared objects unreachable but counted.
+        from .audio_asset_history_store import HEAD
+        capacity = self._audio_history_capacity_begin(meta)
+        try:
+            with self._lock, workspace_mutation(self.root, "asset-library"):
+                guard()
+                head = self._audio_history_store.prepare_commit(self, meta, guard=guard)
+                saved = {**meta, HEAD: head}
+                self._audio_history_store.fault("before_current_commit")
+                guard()
+                atomic_write(self._meta_path(meta["id"]), json.dumps(saved, ensure_ascii=False, indent=2))
+                meta[HEAD] = head
+                self._audio_history_store.fault("after_current_commit")
+                guard()
+        except BaseException:
+            self._audio_history_capacity_settle(capacity, failed=True)
+            raise
+        self._audio_history_capacity_settle(capacity, failed=False)
 
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
@@ -578,7 +709,7 @@ class AssetLibraryService:
                 if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                 if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                 os.replace(temporary, target)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             except Exception:
                 # This UUID was allocated by this operation under the existing
                 # owner lock. If metadata never committed, keep no unindexed
@@ -935,7 +1066,7 @@ class AssetLibraryService:
                 updated_at=now(), version=meta["version"] + 1)
             if status == "APPROVED":
                 meta["approved_at"] = receipt["reviewed_at"]
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return meta
 
     def find_text_result(self, novel_id, idempotency_key, *, branch_id, owner_actor_id, proposal_id):
@@ -1125,6 +1256,104 @@ class AssetLibraryService:
         if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
             raise FileNotFoundError(asset_id)
         return meta
+
+    AUDIO_HISTORY_RESTORE_FIELDS = ("filename", "parameters", "character_id", "scene_id")
+    AUDIO_HISTORY_PARAMETER_EXCLUSIONS = ("asset_lineage_v2", "asset_relationships_v2")
+
+    @classmethod
+    def audio_history_restore_plan(cls, meta: dict, target_record: dict) -> dict:
+        """Deterministic plan binding the restore target to the current revision.
+
+        Only reversible display/authoring fields are restored. Review, approval,
+        provenance, source linkage, internal markers and HEAD/history state are
+        never inherited from the target record.
+        """
+        metadata = target_record.get("metadata")
+        if not isinstance(metadata, dict):
+            raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+        restored_fields = []
+        for field in cls.AUDIO_HISTORY_RESTORE_FIELDS:
+            if field not in metadata:
+                continue
+            target_value = metadata[field]
+            if field == "parameters":
+                if not isinstance(target_value, dict):
+                    raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+                current_value = meta.get("parameters")
+                current_value = current_value if isinstance(current_value, dict) else {}
+                if {k: v for k, v in target_value.items() if k not in cls.AUDIO_HISTORY_PARAMETER_EXCLUSIONS} != {
+                        k: v for k, v in current_value.items() if k not in cls.AUDIO_HISTORY_PARAMETER_EXCLUSIONS}:
+                    restored_fields.append(field)
+            elif meta.get(field) != target_value:
+                restored_fields.append(field)
+        plan = {"contract": "audio-history-restore-plan/1",
+                "asset_id": meta["id"],
+                "incarnation": meta.get("_project_binding", {}).get("incarnation"),
+                "current_version": meta.get("version"),
+                "target_version_id": target_record.get("version_id"),
+                "target_metadata_digest": target_record.get("metadata_digest"),
+                "restored_fields": restored_fields,
+                "review_inherited": False}
+        return plan
+
+    def restore_audio_history(self, asset_id: str, *, branch_id: str | None = None, target_version_id: str, expected_version: int,
+                              expected_plan_digest: str, actor_id: str, guard=None):
+        """Explicit restore: append a new traceable current revision from history."""
+        import hashlib
+        import json
+        from .audio_asset_history_store import HEAD
+        from .v1_capability_service import CapabilityVersionConflict
+        guard = guard or (lambda: None)
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            meta = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+            if meta.get("kind") != "audio":
+                raise FileNotFoundError(asset_id)
+            if HEAD not in meta:
+                raise ValueError("AUDIO_HISTORY_UNCAPTURED")
+            if meta.get("version") != expected_version:
+                raise CapabilityVersionConflict(self.public(meta))
+            store = self._audio_history_store
+            chain = store.chain(meta, guard=guard)
+            if target_version_id not in {record["version_id"] for record in chain}:
+                raise ValueError("AUDIO_HISTORY_VERSION_NOT_IN_CHAIN")
+            target = store.record(asset_id, target_version_id, guard=guard)
+            if target["sha256"] != meta.get("sha256") or target["size"] != meta.get("size"):
+                raise ValueError("AUDIO_HISTORY_RESTORE_CONTENT_CHANGED")
+            plan = self.audio_history_restore_plan(meta, target)
+            canonical = json.dumps(plan, ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":"), allow_nan=False).encode("utf-8")
+            if hashlib.sha256(canonical).hexdigest() != expected_plan_digest:
+                raise ValueError("AUDIO_HISTORY_RESTORE_PLAN_CHANGED")
+            target_metadata = target["metadata"]
+            new_meta = copy.deepcopy(meta)
+            for field in self.AUDIO_HISTORY_RESTORE_FIELDS:
+                if field not in target_metadata:
+                    continue
+                if field == "parameters":
+                    value = copy.deepcopy(target_metadata[field])
+                    if not isinstance(value, dict):
+                        raise ValueError("AUDIO_HISTORY_RESTORE_TARGET_INVALID")
+                    for name in self.AUDIO_HISTORY_PARAMETER_EXCLUSIONS:
+                        value.pop(name, None)
+                else:
+                    value = copy.deepcopy(target_metadata[field])
+                new_meta[field] = value
+            new_meta["version"] = int(meta["version"]) + 1
+            new_meta["updated_at"] = now()
+            new_meta["_audio_history_restore_origin"] = {
+                "contract": "audio-history-restore/1",
+                "target_version_id": target_version_id,
+                "target_metadata_digest": target["metadata_digest"],
+                "restored_fields": list(plan["restored_fields"]),
+                "review_inherited": False,
+                "restored_by": str(actor_id or "")[:240],
+                "restored_at": now()}
+            guard()
+            self._write_meta(new_meta, guard=guard)
+            return {"meta": new_meta, "plan": plan,
+                    "head": (self._load(asset_id).get(HEAD)),
+                    "target_version_id": target_version_id,
+                    "version": new_meta["version"]}
 
     def _verified_content(self, meta: dict, *, max_bytes=None, guard=lambda: None) -> bytes:
         budget = current_query_budget()
@@ -1360,7 +1589,7 @@ class AssetLibraryService:
                 if inherited_features or inherited_owner:
                     meta.update(_required_features=sorted(inherited_features), _owner_actor_id=inherited_owner)
                 meta.update(updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta
 
     def promote_owned(self, asset_id: str, *, actor_id: str, branch_id: str | None, expected_version: int, provenance: dict, guard=None, _comic_ora_review=None):
@@ -1394,7 +1623,7 @@ class AssetLibraryService:
                 meta['_comic_ora_review'] = copy.deepcopy(proof)
             meta.update(_owner_actor_id=None, _origin_provenance=saved_provenance,
                         approved_at=now(), updated_at=now(), version=meta["version"] + 1)
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return self.public(meta)
 
     def annotate_lineage(self, asset_id: str, declaration: dict, parent_ids: list[str], *,
@@ -1441,7 +1670,7 @@ class AssetLibraryService:
                 guard()
             if not meta.get("deleted_at"):
                 meta.update(deleted_at=now(), updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             # Keep original bytes and identity. Existing reads deliberately 404.
             return {"id": asset_id, "deleted": True, "recoverable": True,
                     "sha256": meta["sha256"], "version": meta["version"]}
@@ -1454,5 +1683,11 @@ class AssetLibraryService:
                 guard()
             if meta.get("deleted_at"):
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta
+
+
+
+
+
+

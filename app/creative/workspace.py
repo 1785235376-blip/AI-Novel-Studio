@@ -11,6 +11,7 @@ import copy
 import hashlib
 import json
 from contextlib import contextmanager, nullcontext
+from pathlib import Path
 import shutil
 import errno
 import re
@@ -350,7 +351,11 @@ class IndependentWorkspaceService:
         raise ValueError("PROJECT_CAPACITY_WRITE_UNAVAILABLE")
 
     def import_asset(self, nid, scope, actor, value, guard=lambda: None):
-        self._require_manual_import_capacity()
+        from ..config import settings
+        if not settings.enable_project_capacity_admission:
+            # Default: the manual path stays closed. The flag only enables the
+            # ledger reservation/commit path added below.
+            self._require_manual_import_capacity()
         body = ManualAssetImport.model_validate(value)
         try:
             data = base64.b64decode(body.content_base64, validate=True)
@@ -572,6 +577,26 @@ class IndependentWorkspaceService:
             guard()
             if not retry:
                 self.storage_admission.require(len(data))
+            admission = admission_reservation = None
+            if not retry:
+                from ..config import settings
+                if settings.enable_project_capacity_admission:
+                    from fastapi import HTTPException
+                    from ..project_capacity import ProjectCapacityLedger
+                    from ..project_capacity_admission import CapacityAdmission, CapacityAdmissionRefused
+                    try:
+                        incarnation = self.store.incarnation(nid)
+                    except FileNotFoundError:
+                        raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_INITIALIZED"}) from None
+                    admission = CapacityAdmission(
+                        ProjectCapacityLedger(Path(self.store.root) / "runtime" / "project-capacity.json"),
+                        project_id=nid, project_root=Path(self.store.root) / "novels" / nid,
+                        assets_root=self.assets.root, actor_id=actor, incarnation=incarnation,
+                        operation="studio.asset.import")
+                    try:
+                        admission_reservation = admission.begin(len(data))
+                    except CapacityAdmissionRefused as exc:
+                        raise HTTPException(409, {"code": exc.code, **exc.details}) from None
             def before_commit():
                 guard()
                 if not retry:
@@ -582,10 +607,25 @@ class IndependentWorkspaceService:
                 row = self.assets.create(nid, body.filename, body.content_base64, media_type, body.kind,
                     body.idempotency_key, branch_id=scope.get("branch_id"), required_features=(FLAG,), guard=before_commit)
             except OSError as exc:
+                if admission is not None and admission_reservation is not None:
+                    # Charge any landed residue before retiring the reservation.
+                    admission.reconcile_and_release(admission_reservation["reservation_id"])
                 if exc.errno == errno.ENOSPC:
                     from .storage_admission import StudioStorageCapacityError
                     raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE") from None
                 raise
+            except BaseException:
+                if admission is not None and admission_reservation is not None:
+                    admission.reconcile_and_release(admission_reservation["reservation_id"])
+                raise
+            if admission is not None and admission_reservation is not None:
+                try:
+                    landed = admission.landed_bytes(row["id"])
+                    admission.commit(admission_reservation["reservation_id"], landed)
+                except CapacityAdmissionRefused as exc:
+                    admission.reconcile()
+                    from fastapi import HTTPException
+                    raise HTTPException(409, {"code": exc.code, **exc.details}) from None
             guard()
             return self._view(nid, scope, row)
 
@@ -801,3 +841,324 @@ class IndependentWorkspaceService:
                     "model_storage": "EXTERNAL_READ_ONLY", "cache_storage": "SEPARATE_OWNER",
                     "export_storage": "CLIENT_SELECTED_DOWNLOAD", "physical_cleanup_available": False,
                     "admission": admission}
+
+    def _capacity_ledger(self):
+        from ..project_capacity import ProjectCapacityLedger
+        return ProjectCapacityLedger(Path(self.store.root) / "runtime" / "project-capacity.json")
+
+    def capacity_reconcile(self, nid, scope, actor):
+        """Explicit reconcile: measure the original owners and persist the result.
+
+        Read paths never call this. Measurement and ledger semantics stay
+        fail-closed: unknown/unreadable/missing-content objects are recorded as
+        UNKNOWN and block new reservations, without deleting or claiming them.
+        """
+        from fastapi import HTTPException
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        from ..project_capacity_attribution import measure_assets
+        from ..project_capacity_measurement import measure_roots
+        data_root = Path(self.store.root)
+        measurement = measure_roots([("project", data_root / "novels" / nid)])
+        assets = measure_assets(self.assets.root, nid)
+        unknown = (measurement["unknown_count"] + assets["unknown_count"]
+                   + assets["counters"]["unreadable_entries"]
+                   + assets["counters"]["missing_content"]
+                   + assets["counters"]["unattributed_files"])
+        measured = measurement["logical_bytes"] + assets["logical_bytes"]
+        ledger = self._capacity_ledger()
+        try:
+            with self.store.owner_lease(nid) as incarnation:
+                snapshot = ledger.reconcile(nid, measured_bytes=measured, unknown_objects=unknown,
+                                            incarnation=incarnation, actor_id=actor)
+        except FileNotFoundError:
+            raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_INITIALIZED"}) from None
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        except CapacityRefused as exc:
+            raise HTTPException(409, {"code": exc.code, "details": exc.details}) from None
+        return {"contract": "project-capacity-reconcile/1", "snapshot": snapshot,
+                "measurement": {"project_logical_bytes": measurement["logical_bytes"],
+                                "assets_logical_bytes": assets["logical_bytes"],
+                                "unknown_objects": unknown},
+                "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
+                "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
+
+    def capacity_adjust_limit(self, nid, scope, actor, token, body):
+        """Persist a project limit only under the original management lease + CAS."""
+        from fastapi import HTTPException
+        from .project_quota_management_authority import project_management_lease
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        ledger = self._capacity_ledger()
+        try:
+            current = ledger.peek(nid)
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        if current is None:
+            raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_RECONCILED"})
+        try:
+            with project_management_lease(self, nid, token) as lease:
+                snapshot = ledger.adjust_limit(nid, body.limit_bytes,
+                                               expected_version=body.expected_version,
+                                               lease=lease, actor_id=actor)
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        except CapacityRefused as exc:
+            raise HTTPException(409, {"code": exc.code, "details": exc.details}) from None
+        return {"contract": "project-capacity-limit/1", "snapshot": snapshot,
+                "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
+                "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
+
+    def _audio_history_error(self, exc):
+        from fastapi import HTTPException
+        code = str(exc) or "AUDIO_HISTORY_INVALID"
+        raise HTTPException(409, {"code": code}) from None
+
+    def _audio_history_captured_row(self, nid, scope, actor, aid):
+        from ..services.audio_asset_history_store import HEAD
+        row = self._row(nid, scope, aid, actor_id=actor)
+        if row.get("kind") != "audio":
+            raise FileNotFoundError(aid)
+        return row, row.get(HEAD) if HEAD in row else None
+
+    def audio_history(self, nid, scope, actor, aid, guard, *, limit=50):
+        """Read the captured immutable chain; never migrates a legacy asset."""
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_history_status import uncaptured_audio_status
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            return uncaptured_audio_status(self, nid, scope, actor, aid, guard)
+        captured = False
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is not None:
+                captured = True
+                guard()
+                store = self.assets._audio_history_store
+                try:
+                    chain = store.chain(row, guard=guard)
+                except ValueError as exc:
+                    self._audio_history_error(exc)
+                if len(chain) > limit:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_CURSOR_UNAVAILABLE"})
+                items = [version_view(record) for record in chain]
+                guard()
+        if not captured:
+            # The legacy status helper owns its own asset-scope context.
+            return uncaptured_audio_status(self, nid, scope, actor, aid, guard)
+        return {"asset_id": aid, "current_version": row["version"], "head": head,
+                "coverage": "CAPTURED", "items": items, "next_cursor": None}
+
+    def audio_history_version(self, nid, scope, actor, aid, version_id, guard):
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is None:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+            store = self.assets._audio_history_store
+            try:
+                chain = store.chain(row, guard=guard)
+                if version_id not in {record["version_id"] for record in chain}:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+                record = store.record(aid, version_id, guard=guard)
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return version_view(record)
+
+    def audio_history_content(self, nid, scope, actor, aid, version_id, guard):
+        from fastapi import HTTPException
+        from ..config import settings
+        from .audio_asset_history_models import version_view
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+            if head is None:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+            store = self.assets._audio_history_store
+            try:
+                chain = store.chain(row, guard=guard)
+                if version_id not in {record["version_id"] for record in chain}:
+                    raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+                record = store.record(aid, version_id, guard=guard)
+                data = store.content(record, maximum=self.assets.MAX_BYTES, guard=guard)
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return version_view(record), data
+
+    def _audio_history_restore_context(self, nid, scope, actor, aid):
+        """Current-authority captured-history context shared by preview/confirm."""
+        from fastapi import HTTPException
+        from ..config import settings
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        row, head = self._audio_history_captured_row(nid, scope, actor, aid)
+        if head is None:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNCAPTURED"})
+        return row, head
+
+    def _audio_history_restore_target(self, row, head, aid, version_id, guard):
+        from fastapi import HTTPException
+        store = self.assets._audio_history_store
+        try:
+            chain = store.chain(row, guard=guard)
+            if version_id not in {record["version_id"] for record in chain}:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_NOT_IN_CHAIN"})
+            target = store.record(aid, version_id, guard=guard)
+            current = store.record(aid, head, guard=guard)
+        except HTTPException:
+            raise
+        except ValueError as exc:
+            self._audio_history_error(exc)
+        if target["sha256"] != row.get("sha256") or target["size"] != row.get("size"):
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_RESTORE_CONTENT_CHANGED"})
+        return target, current
+
+    def audio_history_restore_preview(self, nid, scope, actor, aid, version_id, guard):
+        import hashlib
+        import json
+        from fastapi import HTTPException
+        from .audio_asset_history_models import version_view
+        with self._asset_scope(nid, scope):
+            row, head = self._audio_history_restore_context(nid, scope, actor, aid)
+            target, current = self._audio_history_restore_target(row, head, aid, version_id, guard)
+            plan = self.assets.audio_history_restore_plan(row, target)
+            canonical = json.dumps(plan, ensure_ascii=False, sort_keys=True,
+                                   separators=(",", ":"), allow_nan=False).encode("utf-8")
+            digest = hashlib.sha256(canonical).hexdigest()
+            differences = []
+            for field in plan["restored_fields"]:
+                if field == "parameters":
+                    differences.append({"field": "parameters", "parameters_changed": True})
+                else:
+                    differences.append({"field": field, "current": row.get(field),
+                                        "target": target["metadata"].get(field)})
+            guard()
+            return {"contract": "studio-audio-history-restore-preview/1", "asset_id": aid,
+                    "incarnation": plan["incarnation"], "current_version": row["version"],
+                    "current": version_view(current), "target": version_view(target),
+                    "restored_fields": list(plan["restored_fields"]),
+                    "differences": differences, "expected_new_version": row["version"] + 1,
+                    "restore_digest": digest, "review_inherited": False,
+                    "restore_available": True}
+
+    def audio_history_restore(self, nid, scope, actor, aid, version_id, expected_version,
+                              expected_restore_digest, guard):
+        from fastapi import HTTPException
+        from ..services.v1_capability_service import CapabilityVersionConflict
+        with self._asset_scope(nid, scope):
+            self._audio_history_restore_context(nid, scope, actor, aid)
+            try:
+                result = self.assets.restore_audio_history(
+                    aid, branch_id=scope.get("branch_id"), target_version_id=version_id,
+                    expected_version=expected_version,
+                    expected_plan_digest=expected_restore_digest, actor_id=actor, guard=guard)
+            except CapabilityVersionConflict as exc:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_CONFLICT",
+                                          "current": exc.current}) from None
+            except HTTPException:
+                raise
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            guard()
+            return {"contract": "audio-asset-history-restore/1", "asset_id": aid,
+                    "target_version_id": version_id, "new_current_version": result["version"],
+                    "current_version": result["version"], "head": result["head"],
+                    "restored_fields": list(result["plan"]["restored_fields"]),
+                    "review_inherited": False,
+                    "restore_origin": result["meta"]["_audio_history_restore_origin"]}
+
+    def capture_audio_history(self, nid, scope, actor, aid, expected_version, guard):
+        """Explicit migration: capture the current revision as the baseline."""
+        from fastapi import HTTPException
+        from ..config import settings
+        from ..storage import atomic_write
+        from ..services.audio_asset_history_store import HEAD
+        if not settings.enable_audio_asset_history:
+            raise HTTPException(409, {"code": "AUDIO_HISTORY_UNAVAILABLE"})
+        with self._asset_scope(nid, scope):
+            row = self._row(nid, scope, aid, actor_id=actor)
+            if row.get("kind") != "audio":
+                raise FileNotFoundError(aid)
+            if HEAD in row:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_ALREADY_CAPTURED"})
+            if row.get("version") != expected_version:
+                raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_CONFLICT"})
+            try:
+                capacity = self.assets._audio_history_capacity_begin(row)
+            except ValueError as exc:
+                self._audio_history_error(exc)
+            try:
+                guard()
+                data = self.assets._verified_content(row, guard=guard)
+                store = self.assets._audio_history_store
+                try:
+                    baseline = store.prepare(row, data)
+                except ValueError as exc:
+                    self._audio_history_error(exc)
+                saved = {**row, HEAD: baseline}
+                atomic_write(self.assets._meta_path(aid), json.dumps(saved, ensure_ascii=False, indent=2))
+                guard()
+            except BaseException:
+                self.assets._audio_history_capacity_settle(capacity, failed=True)
+                raise
+            self.assets._audio_history_capacity_settle(capacity, failed=False)
+            return {"contract": "audio-asset-history/capture/1", "asset_id": aid,
+                    "version_id": baseline, "asset_version": row["version"],
+                    "current_version": row["version"], "head": baseline,
+                    "coverage": "CAPTURED", "migrated": True}
+    def capacity_diagnostics(self, nid, scope):
+        """Read-only capacity observation: measurement + ledger state only.
+
+        This never initializes the capacity owner, reserves bytes or opens a
+        write gate. Write admission stays explicitly unavailable until the
+        cross-owner reservation/reconcile chain is wired.
+        """
+        from ..project_capacity import CapacityLedgerUnavailable, DEFAULT_LIMIT_BYTES, ProjectCapacityLedger
+        from ..project_capacity_attribution import measure_assets
+        from ..project_capacity_measurement import measure_roots
+        data_root = Path(self.store.root)
+        measurement = measure_roots([("project", data_root / "novels" / nid)])
+        assets = measure_assets(self.assets.root, nid)
+        combined_bytes = measurement["logical_bytes"] + assets["logical_bytes"]
+        combined_unknown = measurement["unknown_count"] + assets["unknown_count"]
+        ledger_path = data_root / "runtime" / "project-capacity.json"
+        ledger = None
+        ledger_state = "NOT_INITIALIZED"
+        if ledger_path.exists():
+            try:
+                ledger = ProjectCapacityLedger(ledger_path).peek(nid)
+                ledger_state = "AVAILABLE" if ledger is not None else "PROJECT_NOT_INITIALIZED"
+            except CapacityLedgerUnavailable:
+                ledger_state = "UNAVAILABLE"
+        return {"contract": "project-capacity-diagnostics/1", "project_id": nid,
+                "measurement": measurement, "assets_attribution": assets,
+                "combined": {"logical_bytes": combined_bytes, "unknown_count": combined_unknown,
+                             "complete": measurement["complete"] and assets["complete"],
+                             "allocated_storage_bytes": "UNKNOWN"},
+                "ledger_state": ledger_state, "ledger": ledger,
+                "limits": {"default_limit_bytes": DEFAULT_LIMIT_BYTES,
+                           "applied_limit_bytes": ledger["limit_bytes"] if ledger else None},
+                "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
+                "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
+                "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
+
+
+
+
+
+
+
+
+

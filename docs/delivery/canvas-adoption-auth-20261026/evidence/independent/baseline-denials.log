@@ -1,0 +1,62 @@
+F
+=================================== FAILURES ===================================
+_ test_real_shared_authority_denials_preserve_all_owner_bytes[missing-401-/api] _
+
+shared_queued = (namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f2d09a36a50>, nid='query-d5af32152323468...d4c44d9e973cb52540b61565214d0cca9bbaba7ab3', 'expected_incarnation': 'file:97b7bf21-b8e0-4a53-9e75-fc4e17047768', ...})
+prefix = '/api', denial = 'missing', expected = 401
+
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("denial,expected", [("missing",401),("invalid",401),("revoked",401),
+        ("read",403),("write",403),("membership",403),("other-actor",403),("branch",404)])
+    def test_real_shared_authority_denials_preserve_all_owner_bytes(shared_queued, prefix, denial, expected):
+        e, target, body = shared_queued
+        headers = deepcopy(e.headers)
+        if denial == "missing": headers.pop("X-Session-Token")
+        elif denial == "invalid": headers["X-Session-Token"] = "invalid-session-token"
+        elif denial == "revoked": e.rig.sessions.revoke("token-reader")
+        elif denial == "read": e.rig.grants.revoke_permission("query-read", "independent fixture")
+        elif denial == "write": e.rig.grants.revoke_permission("independent-write", "independent fixture")
+        elif denial == "membership": e.rig.identities.set_membership_status("reader", "query-workspace", IdentityStatus.INACTIVE)
+        elif denial == "other-actor": headers["X-Session-Token"] = "token-no-grants"
+        elif denial == "branch": headers["X-Branch-Id"] = "query-branch-b"
+        before = owner_bytes(e)
+        result = e.client.post(prefix + f"/projects/{e.nid}/studio/canvas-views/{target['id']}/image-node-result",
+            headers=headers, json=body)
+        assert result.status_code == expected, result.text
+        assert owner_bytes(e) == before
+        assert "never-created-output" not in result.text
+>       assert result.headers["cache-control"] == "no-store"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_canvas_adoption_auth_independent.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Headers({'content-length': '38', 'content-type': 'application/json', 'vary': 'Origin'})
+key = 'cache-control'
+
+    def __getitem__(self, key: str) -> str:
+        """
+        Return a single header value.
+    
+        If there are multiple headers with the same key, then we concatenate
+        them with commas. See: https://tools.ietf.org/html/rfc7230#section-3.2.2
+        """
+        normalized_key = key.lower().encode(self.encoding)
+    
+        items = [
+            header_value.decode(self.encoding)
+            for _, header_key, header_value in self._list
+            if header_key == normalized_key
+        ]
+    
+        if items:
+            return ", ".join(items)
+    
+>       raise KeyError(key)
+E       KeyError: 'cache-control'
+
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/httpx/_models.py:302: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_canvas_adoption_auth_independent.py::test_real_shared_authority_denials_preserve_all_owner_bytes[missing-401-/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 63.99s (0:01:03)

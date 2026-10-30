@@ -1,0 +1,33 @@
+........................................................................ [ 77%]
+.....................                                                    [100%]
+=============================== warnings summary ===============================
+../../..<CLOUD_WORKSPACE>/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <CLOUD_WORKSPACE>/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_studio_asset_query.py:14
+  <TEMP_PATH>:14: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  <TEMP_PATH>:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  <TEMP_PATH>:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_studio_workspace_identity_history_contract.py:27
+  <TEMP_PATH>:27: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+tests/test_studio_otio_runtime_20261029.py:22
+  <TEMP_PATH>:22: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+../test_otio_diagnostic_independent.py:6
+  <TEMP_PATH>:6: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark=pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+93 passed, 7 warnings in 8.53s

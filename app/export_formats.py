@@ -59,7 +59,8 @@ def _clean_text(value: object) -> str:
     return "".join(
         char
         for char in text
-        if char in "\t\n\r" or (ord(char) >= 0x20 and not 0xD800 <= ord(char) <= 0xDFFF)
+        if char in "\t\n\r" or 0x20 <= ord(char) <= 0xD7FF
+        or 0xE000 <= ord(char) <= 0xFFFD or 0x10000 <= ord(char) <= 0x10FFFF
     )
 
 

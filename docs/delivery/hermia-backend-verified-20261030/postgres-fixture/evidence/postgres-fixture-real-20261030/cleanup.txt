@@ -1,0 +1,1 @@
+Verified server stopped. Temporary credentials, entire synthetic instance and test assets removed.

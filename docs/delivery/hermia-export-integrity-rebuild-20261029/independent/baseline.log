@@ -1,0 +1,83 @@
+FF..FF.F....FFFF                                                         [100%]
+=================================== FAILURES ===================================
+_____________________ test_receipt_on_missing_file[inline] _____________________
+tests/test_independent_export_rebuild.py:37: in test_receipt_on_missing_file
+    with pytest.raises(ExportJobResultInvalid): svc.download(row['id'])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.services.export_job_service.ExportJobResultInvalid'>
+______________________ test_receipt_on_missing_file[size] ______________________
+tests/test_independent_export_rebuild.py:37: in test_receipt_on_missing_file
+    with pytest.raises(ExportJobResultInvalid): svc.download(row['id'])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.services.export_job_service.ExportJobResultInvalid'>
+___________________ test_http_rejects_corrupt_fallback[/api] ___________________
+tests/test_independent_export_rebuild.py:60: in test_http_rejects_corrupt_fallback
+    assert response.status_code==500
+E   assert 200 == 500
+E    +  where 200 = <Response [200 OK]>.status_code
+_________________ test_http_rejects_corrupt_fallback[/api/v1] __________________
+tests/test_independent_export_rebuild.py:60: in test_http_rejects_corrupt_fallback
+    assert response.status_code==500
+E   assert 200 == 500
+E    +  where 200 = <Response [200 OK]>.status_code
+_______________________ test_predecode_admission[False] ________________________
+tests/test_independent_export_rebuild.py:73: in test_predecode_admission
+    assert calls==[]
+E   assert [1] == []
+E     
+E     Left contains one more item: 1
+E     Use -v to get more diff
+___________________ test_special_file_and_open_window[fifo] ____________________
+tests/test_independent_export_rebuild.py:115: in test_special_file_and_open_window
+    assert not proc.is_alive(),'special-file open exceeded watchdog'
+E   AssertionError: special-file open exceeded watchdog
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = <ForkProcess name='ForkProcess-1' pid=23 parent=11 started>.is_alive
+_________________ test_special_file_and_open_window[directory] _________________
+tests/test_independent_export_rebuild.py:117: in test_special_file_and_open_window
+    assert out.get(timeout=1)=='invalid'
+E   AssertionError: assert 'IsADirectoryError' == 'invalid'
+E     
+E     - invalid
+E     + IsADirectoryError
+_________________ test_special_file_and_open_window[swapfifo] __________________
+tests/test_independent_export_rebuild.py:115: in test_special_file_and_open_window
+    assert not proc.is_alive(),'special-file open exceeded watchdog'
+E   AssertionError: special-file open exceeded watchdog
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = <ForkProcess name='ForkProcess-3' pid=28 parent=11 started>.is_alive
+_______________ test_special_file_and_open_window[swapdirectory] _______________
+tests/test_independent_export_rebuild.py:117: in test_special_file_and_open_window
+    assert out.get(timeout=1)=='invalid'
+E   AssertionError: assert 'IsADirectoryError' == 'invalid'
+E     
+E     - invalid
+E     + IsADirectoryError
+=============================== warnings summary ===============================
+tests/test_independent_export_rebuild.py::test_receipt_on_missing_file[inline]
+  /tmp/export-rebuild-independent/baseline/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_independent_export_rebuild.py::test_receipt_on_missing_file[inline]
+  /tmp/export-rebuild-independent/baseline/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_independent_export_rebuild.py::test_http_rejects_corrupt_fallback[/api]
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+------- generated xml file: /tmp/export-rebuild-independent/baseline.xml -------
+=========================== short test summary info ============================
+FAILED tests/test_independent_export_rebuild.py::test_receipt_on_missing_file[inline]
+FAILED tests/test_independent_export_rebuild.py::test_receipt_on_missing_file[size]
+FAILED tests/test_independent_export_rebuild.py::test_http_rejects_corrupt_fallback[/api]
+FAILED tests/test_independent_export_rebuild.py::test_http_rejects_corrupt_fallback[/api/v1]
+FAILED tests/test_independent_export_rebuild.py::test_predecode_admission[False]
+FAILED tests/test_independent_export_rebuild.py::test_special_file_and_open_window[fifo]
+FAILED tests/test_independent_export_rebuild.py::test_special_file_and_open_window[directory]
+FAILED tests/test_independent_export_rebuild.py::test_special_file_and_open_window[swapfifo]
+FAILED tests/test_independent_export_rebuild.py::test_special_file_and_open_window[swapdirectory]
+9 failed, 7 passed, 3 warnings in 18.00s

@@ -205,7 +205,11 @@ def save():
 
 async def app(scope, receive, send):
     if scope['type'] != 'http' or scope['method'] != 'GET':
-        return await original_app(scope, receive, send)
+        token = active.set(None)
+        try:
+            return await original_app(scope, receive, send)
+        finally:
+            active.reset(token)
     record = {'path': scope['path'], 'completed': False, 'strict': b'strict_read_only=true' in scope['query_string'],
               'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': [], 'budget_reads': []}
     token = active.set(record)

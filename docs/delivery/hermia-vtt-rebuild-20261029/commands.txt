@@ -1,0 +1,3 @@
+Baseline: immutable faede394 archive of app/tests/local_interop_desktop/local_interop_protocol/pyproject.toml plus NEW codec test; isolated XDG_DATA_HOME/NOVEL_DATA_PATH; otio-test-venv-20261029/bin/python -m pytest -q tests/test_studio_vtt_literal_rebuild_20261029.py
+Fixed: frozen f007fb4e worktree; isolated XDG_DATA_HOME=/tmp/vtt-new-joint-xdg NOVEL_DATA_PATH=/tmp/vtt-new-joint-data; ../otio-test-venv-20261029/bin/python -m pytest -q tests/test_studio_vtt_literal_rebuild_20261029.py tests/test_studio_otio_runtime_20261029.py tests/test_studio_workspace_identity_history_contract.py --junitxml=docs/delivery/hermia-vtt-rebuild-20261029/joint.xml
+Independent: clean archives of faede394 and f007fb4e; exact interpreter and commands detailed in independent/REVIEW.md.

@@ -272,6 +272,8 @@ def studio_timeline_to_exchange(timeline, *, title):
                     _loss(report, ip, "EMBEDDED_VIDEO_AUDIO_MIX_REQUIRES_STUDIO_METADATA")
                 if clip["source_snapshot"]["asset_kind"] == "image":
                     _loss(report, ip, "STILL_IMAGE_DURATION_INTEROPERABILITY_NOT_RUN", "WARNING")
+    if normalized.get("clip_links"):
+        _loss(report, "clip_links", "CLIP_LINKS_REQUIRE_STUDIO_METADATA")
     if "caption_style" in normalized:
         _loss(report, "caption_style", "CAPTION_STYLE_NOT_NATIVE_NLE_PRESERVED_IN_STUDIO_METADATA")
     if normalized["captions"]:

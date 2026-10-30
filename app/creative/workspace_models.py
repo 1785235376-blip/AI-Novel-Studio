@@ -111,6 +111,19 @@ class StudioAssetQuery(StrictModel):
         return value
 
 
+class AudioHistoryRestorePreview(StrictModel):
+    expected_version: int = Field(ge=1, strict=True)
+
+
+class AudioHistoryRestoreConfirm(AudioHistoryRestorePreview):
+    expected_restore_digest: str = Field(pattern=r"^[a-f0-9]{64}$", strict=True)
+
+
+class ProjectCapacityLimitUpdate(StrictModel):
+    limit_bytes: int = Field(ge=1, le=64 * 1024 * 1024 * 1024, strict=True)
+    expected_version: int = Field(ge=0, strict=True)
+
+
 class ManualAssetImport(StrictModel):
     filename: str = Field(min_length=1, max_length=255)
     kind: Literal["image", "video", "audio"] = "image"
@@ -192,3 +205,5 @@ class StaticCameraExport(StrictModel):
     node_index: int = Field(ge=0, le=255)
     camera_index: int = Field(ge=0, le=63)
     profile: Literal["GLTF_2_CAMERA_ONLY"]
+
+

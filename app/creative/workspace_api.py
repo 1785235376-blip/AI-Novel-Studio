@@ -8,25 +8,26 @@ from contextlib import nullcontext
 from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
 
+from ..config import settings
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
-from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
-                               StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
+from .workspace_models import (AssetRelationshipIn, AssetVersion, AudioHistoryRestoreConfirm, AudioHistoryRestorePreview, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
+                               ProjectCapacityLimitUpdate, StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
 
 
 def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
-        "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
+        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|assets/[^/]+/history/[a-f0-9]{64}/restore(?:/preview)?|assets/[^/]+/history/migrate|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
+        "PUT": root + r"/(?:capacity/limit|preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
         return True
-    if method == "GET" and re.fullmatch(root + r"/assets/[^/]+/history", normalized_path):
+    if method == "GET" and re.fullmatch(root + r"/assets/[^/]+/history(?:/[a-f0-9]{64}(?:/download)?)?", normalized_path):
         return True
     production = root + r"/production"
     owners = r"(?:image|audio|video|timeline)"
@@ -437,7 +438,14 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         # Check the original authority before disclosing the closed entry, but
         # do not initialize a project marker just to reject the write.
         access(nid, x_session_token, x_branch_id, "domain.write")
-        raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
+        if not settings.enable_project_capacity_admission:
+            raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
+        # Flag-gated path: the original asset owner still performs the write,
+        # bounded by the capacity ledger admission in IndependentWorkspaceService.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard),
+                          existing_owner=True)
 
     from .video_reference import ReferencePreview, ReferenceSave
     video_reference_router = APIRouter(route_class=VideoReferenceRoute)
@@ -604,6 +612,34 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             return invoke(nid, x_session_token, x_branch_id, "domain.read",
                           lambda actor, scope, guard: service.storage(nid, scope), existing_owner=True)
 
+    @router.get("/projects/{nid}/studio/capacity")
+    def capacity_diagnostics(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Read-only observation: no ledger initialization, reservation or gate.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                          lambda actor, scope, guard: service.capacity_diagnostics(nid, scope),
+                          existing_owner=True)
+
+    @router.post("/projects/{nid}/studio/capacity/reconcile")
+    def capacity_reconcile(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Explicit reconcile is a server-computed write to the capacity ledger;
+        # it never admits a content write (the write gate stays closed).
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.capacity_reconcile(nid, scope, actor),
+                          existing_owner=True)
+
+    @router.put("/projects/{nid}/studio/capacity/limit")
+    def capacity_limit(nid: str, body: ProjectCapacityLimitUpdate,
+                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # The original project-management lease, incarnation and ledger CAS are
+        # all required; the handler itself does not define a new authority owner.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.capacity_adjust_limit(
+                              nid, scope, actor, x_session_token, body),
+                          existing_owner=True)
+
     @router.get("/projects/{nid}/studio/references")
     def references(nid: str, kind: Literal["ASSET", "CHAPTER", "SCREENPLAY"],
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -673,7 +709,7 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             def checked():
                 guard()
                 session_guard()
-            result = uncaptured_audio_status(service, nid, scope, actor, aid, checked)
+            result = service.audio_history(nid, scope, actor, aid, checked, limit=(parsed_limits[0] if parsed_limits else 50))
             if authority_observation is not None:
                 checked()
                 if file_collaboration_observation(service, nid, scope, actor, x_session_token) != authority_observation[2]:
@@ -690,6 +726,51 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                 if file_collaboration_observation(service, nid, scope, actor, x_session_token) != initial:
                     raise HTTPException(403, {"code": "AUDIO_HISTORY_AUTHORITY_CHANGED"})
             return result
+
+    @router.get("/projects/{nid}/studio/assets/{aid}/history/{version_id}")
+    def audio_history_version(nid: str, aid: str, version_id: str,
+                              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.audio_history_version(
+                          nid, scope, actor, aid, version_id, guard))
+
+    @router.get("/projects/{nid}/studio/assets/{aid}/history/{version_id}/download")
+    def audio_history_download(nid: str, aid: str, version_id: str,
+                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        view, data = invoke(nid, x_session_token, x_branch_id, "domain.read",
+                            lambda actor, scope, guard: service.audio_history_content(
+                                nid, scope, actor, aid, version_id, guard))
+        media_type = view["metadata"]["media_type"]
+        return Response(data, media_type=media_type, headers={
+            "Content-Disposition": f"attachment; filename=\"history-{version_id[:12]}\"; filename*=UTF-8''{quote('history-' + version_id[:12], safe='')}",
+            "X-Asset-SHA256": view["sha256"], "X-Asset-Version": str(view["asset_version"]),
+            "X-History-Version-Id": version_id})
+
+    @router.post("/projects/{nid}/studio/assets/{aid}/history/{version_id}/restore/preview")
+    def audio_history_restore_preview(nid: str, aid: str, version_id: str, body: AudioHistoryRestorePreview,
+                                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.audio_history_restore_preview(
+                          nid, scope, actor, aid, version_id, guard))
+
+    @router.post("/projects/{nid}/studio/assets/{aid}/history/{version_id}/restore")
+    def audio_history_restore(nid: str, aid: str, version_id: str, body: AudioHistoryRestoreConfirm,
+                              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Explicit restore appends a new traceable current revision; the target's
+        # review/approval/provenance are not inherited.
+        return commit_invoke(nid, x_session_token, x_branch_id, "domain.write",
+                             lambda actor, scope, guard: service.audio_history_restore(
+                                 nid, scope, actor, aid, version_id, body.expected_version,
+                                 body.expected_restore_digest, guard))
+
+    @router.post("/projects/{nid}/studio/assets/{aid}/history/migrate")
+    def audio_history_migrate(nid: str, aid: str, body: AssetVersion,
+                              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Explicit migration of a legacy uncaptured audio asset: reads never do
+        # this, and no baseline is fabricated from Job/Timeline history.
+        return commit_invoke(nid, x_session_token, x_branch_id, "domain.write",
+                             lambda actor, scope, guard: service.capture_audio_history(
+                                 nid, scope, actor, aid, body.expected_version, guard))
 
     from .production_contract_api import create_production_contract_router
     router.include_router(create_production_contract_router(service, invoke))
@@ -751,3 +832,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
     return router
+
+
+
+
+

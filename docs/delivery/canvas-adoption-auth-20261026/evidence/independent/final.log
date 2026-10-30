@@ -1,0 +1,47 @@
+...................................F
+=================================== FAILURES ===================================
+_____ test_authority_revocation_after_route_admission_is_rechecked[scope] ______
+
+shared_queued = (namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f61a9049790>, nid='query-168563cdd0f7469...d4c44d9e973cb52540b61565214d0cca9bbaba7ab3', 'expected_incarnation': 'file:de7e922c-867b-442a-ad97-a3a7d8d70669', ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f61a81c2870>
+revocation = 'scope'
+
+    @pytest.mark.parametrize('revocation', ['read','write','membership','session','actor','scope'])
+    def test_authority_revocation_after_route_admission_is_rechecked(shared_queued, monkeypatch, revocation):
+        from app.creative.canvas_views import CreativeCanvasViews
+        e, target, body = shared_queued
+        original = CreativeCanvasViews.image_node_result
+        if revocation == 'actor':
+            grant_scope = AuthorizationScope(ScopeKind.PROJECT, 'query-workspace', e.nid)
+            for permission in ('domain.read', 'domain.write'):
+                e.rig.grants.assign_permission(PermissionAssignment('late-other-'+permission, 'no-grants', permission, ModalityDomain.NOVEL, grant_scope, 'independent fixture'))
+        observed = []
+        def late(owner, nid, scope, actor, rid, value, guard=lambda: None):
+            observed.append((actor, deepcopy(scope)))
+            if revocation == 'read': e.rig.grants.revoke_permission('query-read', 'independent late hook')
+            elif revocation == 'write': e.rig.grants.revoke_permission('independent-write', 'independent late hook')
+            elif revocation == 'membership': e.rig.identities.set_membership_status('reader','query-workspace',IdentityStatus.INACTIVE)
+            elif revocation == 'session': e.rig.sessions.revoke('token-reader')
+            elif revocation == 'actor':
+                from app.actor_context import SessionContext
+                e.rig.sessions.register('token-reader', SessionContext('other-session','client','no-grants','query-workspace'))
+            elif revocation == 'scope':
+                from app.collaboration import Workspace
+                e.rig.scopes.create_workspace(Workspace('late-workspace','Synthetic changed workspace'))
+                e.rig.scopes.link_project('late-workspace', e.nid)
+            return original(owner, nid, scope, actor, rid, value, guard)
+        monkeypatch.setattr(CreativeCanvasViews, 'image_node_result', late)
+        before = owner_bytes(e)
+        result = e.client.post(e.base + f"/canvas-views/{target['id']}/image-node-result", headers=e.headers, json=body)
+        assert observed == [('reader', e.scope)], observed
+>       assert result.status_code == (401 if revocation == 'session' else 403), result.text
+E       AssertionError: {"detail":{"code":"CREATIVE_CANVAS_REQUEST_INVALID"},"code":"CREATIVE_CANVAS_REQUEST_INVALID","message":"CREATIVE_CANVAS_REQUEST_INVALID","details":{"code":"CREATIVE_CANVAS_REQUEST_INVALID"},"request_id":"ece02215-dbaa-4fc3-b1ca-9375929ce1e7"}
+E       assert 422 == 403
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_canvas_adoption_auth_independent.py:166: AssertionError
+- generated xml file: /workspace/shared/canvas-auth-independent-evidence/final-junit.xml -
+=========================== short test summary info ============================
+FAILED tests/test_canvas_adoption_auth_independent.py::test_authority_revocation_after_route_admission_is_rechecked[scope]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 35 passed, 3 warnings in 109.37s (0:01:49)
