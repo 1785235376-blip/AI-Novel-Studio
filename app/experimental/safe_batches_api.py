@@ -34,8 +34,12 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
             studio = any(s['input']['kind'] == 'STUDIO_IMAGE' for s in row['snapshot']['steps'])
             if not studio and expected_version is not None:
                 # The selected host authority must describe the same batch
-                # version that the downstream writer will commit.
-                api_call(check_version, row, expected_version)
+                # version that the downstream writer will commit. Original
+                # source visibility must precede any stale-version response.
+                visible = api_call(service._owned, ctx, rid)
+                studio = any(s['input']['kind'] == 'STUDIO_IMAGE' for s in visible['snapshot']['steps'])
+                if not studio:
+                    api_call(check_version, visible, expected_version)
         if not studio:
             return api_call(fn, ctx, *args, check)
         if service.studio_image is None:
