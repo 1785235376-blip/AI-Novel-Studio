@@ -89,7 +89,7 @@ describe('M4 defense-in-depth layer (pin checks absent)',()=>{
  it('card asset ≠ origin asset is rejected even without a pin',async()=>{
   const e=fixture();render(<CanvasImageNodeTask {...e.props}/>);const binding=await prepare(e),job=approved(binding);const row=saved(e,binding,job);
   expect(()=>assertSavedImageNode(row,binding,job)).not.toThrow();
-  const tampered=structuredClone(row);tampered.definition.cards[0].asset={...tampered.definition.cards[0].asset,asset_id:'asset-evil'};
+  const tampered=structuredClone(row);const a0=tampered.definition.cards[0].asset;if(!a0)throw new Error('fixture card has asset');tampered.definition.cards[0].asset={...a0,asset_id:'asset-evil'};
   expect(()=>assertSavedImageNode(tampered,binding,job)).toThrow();
  });
  it('reference_states not CURRENT_METADATA is rejected even without a pin',async()=>{
