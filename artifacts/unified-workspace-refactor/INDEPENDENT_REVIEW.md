@@ -1948,3 +1948,30 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 3. P3（残留）：en 下 IMAGE aside 的 aria-label 仍是"图片生成"；VIDEO 栏的"这里排镜头…"、meta "卡片 · 参考素材 · 连线"仍为中文；专业模式的三层说明也是中文。
 
 证据：/workspace/hr/vera-compare/align-62f7684f/（top/、p3/、theme/、full1-3.json/log、full-status.txt、iso.log）
+
+## [VERA-FE] 第 5 轮：62f7684f..66f2f989 增量复审
+
+**结论：有条件通过（无 P0/P1）。** 路由改动是有意的行为变化，失败数没有退化；有一个 P2，是 App 级测试缺失。
+
+1. **路由回归**
+   - 隔离重跑 10×2，结果见 iso/。62 和 66 上 ISI 都确定性失败 8 条，名称和消息逐条一致。
+   - flaky 次数相近：delayed local file 62 上 3/10、66 上 2/10；newly mounted owner 两边都是 2/10。
+   - LEGACY 项目从资产送入工作室，19 条 GET 请求序列完全一致，没有 nonget。
+   - NEUTRAL 项目的 IMAGE 现在落到图片页，是有意改动，但只有纯单测覆盖。
+   - revert 01dd8918 后，浏览器能看出差异；App 级测试失败数与 revert 前相同（基线里的 8 条），所以覆盖不到这条路由。→ **P2**
+2. **确认入口**
+   - 实际门控条件是 overview 返回 200 且 entry_kind===LEGACY。overview 返回 422 时只显示通用错误，不出现入口。代码也没有区分本地和远程。→ P3，描述与实现不符
+   - 取消和 Esc 都没有写请求，焦点回到入口按钮；axe 0 违规。
+   - 确认之后焦点落到 BODY（P3）；en 下整段仍是中文（P3）；弹窗文案「下次直接进入工作室」对 IMAGE 已不准确（P3）。
+3. **stage4**（只读）
+   - REAL_API_PLUS_MOCK_PROVIDER，activation 1 次，reopen 时没有写请求。
+   - auto_exec_posts 实际统计的是全部 execute 请求，命名有误（P3）。
+4. **P3-2 / P3-3**
+   - P3-2：switcher 隐藏时焦点落到 BUTTON；revert e134e833 后又落回 BODY，mutation 被检出。
+   - P3-3：目标字符串已英文化；revert 66f2f989 后中文回来，mutation 被检出。其余大面积中文属于既有问题。
+   - s375 加 NOSKIP 复核通过。
+5. **回归**
+   - 顶栏宽度与第 4 轮相同，只有既有的 1540 pro en 截断。
+   - theme：0 对比度违规，token 无变化；tour：fails 0。
+   - NSFW 存储没有单独复测，标 NOT_RUN。
+6. **门禁**：见下方报告。
