@@ -340,3 +340,10 @@ files created: none
   4. 2 处测试子进程 `_export_service.<locals>.<lambda>() got an unexpected keyword argument 'recovery'` + `BrokenPipeError`（子进程夹具协议漂移）——预存测试债务。
 - 临时对比工作树已清理；**本轮无代码/测试改动**（仅本记录）。
 - 未覆盖：真实 PostgreSQL、真实渲染器、真实跨进程崩溃恢复 —— `NOT_RUN`。
+
+## 22. 第十三轮续做（2026-10-30）：音频/工作流消费者与打包运行时安全套件
+
+- **音频与工作流消费者**：运行 `test_audio_candidate_admission_closed`、`test_audio_history_bounded_budget`、`test_audio_history_independent_read`、`test_audio_history_legacy_public_read`、`test_audio_history_status_readonly`、`test_audio_production_api`、`test_audio_scope_write_closed`、`test_audio_writegate_independent`、`test_audio_snapshot_privacy_counterexample`、`test_audio_scope_snapshot_privacy`、`test_workflow`：**87 passed / 0 failed**（19.38s）。
+- **打包运行时身份/控制面**：运行 control pipe、desktop bridge/composition、initial workspace、local session bootstrap、process factory：**56 passed / 0 failed**（12.67s）；覆盖 launcher 一次性 bootstrap、会话签发/拒绝、control pipe 不回显/不记录、桌面组合与进程工厂边界。
+- 两批全部在本机 Windows/File 合成夹具下通过，**无需失败分类**；未覆盖真实打包桌面进程、真实 WebView/浏览器、真实 Windows 符号链接/ACL —— `NOT_RUN` / `BLOCKED / NOT_VERIFIED`。
+- **本轮无代码/测试改动**（仅本记录）。
