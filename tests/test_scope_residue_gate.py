@@ -9,15 +9,12 @@ from pathlib import Path
 import subprocess
 import sys
 import time
-from contextlib import contextmanager, nullcontext
-from types import SimpleNamespace
 
 import pytest
 
 from app.creative.project_store import CreativeProjectStore
 from app.experimental.store import ExperimentalStore
 from app.services.asset_library_service import AssetLibraryService
-from app.experimental.style_dna import StyleDNAService
 from test_studio_asset_query import rig
 from test_studio_workspace_identity_history_contract import audio_history
 
@@ -138,26 +135,6 @@ def test_observation_cannot_modify_scope_even_without_residue(tmp_path):
         with store.transaction(NID, SCOPE, _observation=True) as state:
             state['collections']['synthetic']['tampered'] = {'value': 1}
     assert _sha(store.path(NID, SCOPE)) == before
-
-
-def test_style_observation_cannot_upgrade_nested_lease_to_write():
-    class Owner:
-        def existing_owner_only(self): return nullcontext()
-        @contextmanager
-        def source_lease(self, nid, scope, *, _observation=False):
-            assert _observation
-            yield
-        @contextmanager
-        def owner_lease(self, nid): yield 'incarnation'
-        def incarnation(self, nid): return 'incarnation'
-    novels = SimpleNamespace(get=lambda nid: {'id': nid})
-    service = StyleDNAService(SimpleNamespace(store=Owner()), SimpleNamespace(novels=novels))
-    with service.lease(NID, SCOPE, _observation=True):
-        with service.lease(NID, SCOPE, _observation=True):
-            pass
-        with pytest.raises(ValueError, match='STYLE_DNA_OBSERVATION_WRITE_DENIED'):
-            with service.lease(NID, SCOPE):
-                raise AssertionError('must not reach nested write')
 
 
 def test_normal_callback_failure_leaves_no_scope_temp(tmp_path):

@@ -15,6 +15,13 @@ from pathlib import Path
 UNRECONCILED = 'EXPERIMENTAL_SCOPE_UNRECONCILED'
 
 
+class ScopeResidueUnreconciled(ValueError):
+    """No name, path, size or inferred owner is exposed in this failure."""
+
+    def __init__(self):
+        super().__init__(UNRECONCILED)
+
+
 def reject_suspected_scope_residue(path: Path):
     # Preserve existing non-Windows behaviour; that combination is not
     # verified by this narrow fence and is not safe project admission.
@@ -44,10 +51,10 @@ def reject_suspected_scope_residue(path: Path):
         # volumes, removable volumes, or an unknown drive type. This uses no
         # ACL or junction probe; root ancestry identity remains unverified.
         if name.startswith('\\\\'):
-            raise ValueError(UNRECONCILED)
+            raise ScopeResidueUnreconciled()
         drive, _ = os.path.splitdrive(name)
         if len(drive) != 2 or drive[1] != ':' or kernel.GetDriveTypeW(drive + '\\') != 3:
-            raise ValueError(UNRECONCILED)
+            raise ScopeResidueUnreconciled()
         # Extended-length syntax is derived from the server-owned absolute
         # path, never supplied as a client-selected device path.
         name = '\\\\?\\' + name
@@ -58,9 +65,9 @@ def reject_suspected_scope_residue(path: Path):
             # No matching name, or the scope directory itself does not exist.
             if error in (2, 3):
                 return
-            raise ValueError(UNRECONCILED)
+            raise ScopeResidueUnreconciled()
         if not kernel.FindClose(handle):
-            raise ValueError(UNRECONCILED)
-        raise ValueError(UNRECONCILED)
+            raise ScopeResidueUnreconciled()
+        raise ScopeResidueUnreconciled()
     except (AttributeError, OSError, ImportError):
-        raise ValueError(UNRECONCILED) from None
+        raise ScopeResidueUnreconciled() from None

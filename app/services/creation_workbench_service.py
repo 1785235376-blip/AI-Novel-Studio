@@ -138,7 +138,7 @@ class CreationWorkbenchService:
         self.style_dna_service = None
 
     @contextmanager
-    def _style_guard(self, nid, scope, row=None, body=None, *, create=False, sources=False, _observation=False):
+    def _style_guard(self, nid, scope, row=None, body=None, *, create=False, sources=False):
         """Guard original APIs too; never upgrade unbound legacy STYLE on read/edit."""
         from ..experimental.style_dna import EPOCH
         bound = row is not None and ('style_dna' in row or EPOCH in row)
@@ -153,7 +153,7 @@ class CreationWorkbenchService:
             raise ValueError('STYLE_DNA_NEW_PROFILE_REQUIRED')
         if bound and body is not None and 'style_dna' in body.model_fields_set and spec is None:
             raise ValueError('STYLE_DNA_CLEAR_NOT_SUPPORTED')
-        with service.lease(nid, scope, create=create and row is None, _observation=_observation) as identity:
+        with service.lease(nid, scope, create=create and row is None) as identity:
             if bound:
                 service.assert_epoch(row, identity)
                 service.assert_access(nid, scope, row)
@@ -173,7 +173,7 @@ class CreationWorkbenchService:
 
     def _style_visible(self, nid, scope, row):
         try:
-            with self._style_guard(nid, scope, row, _observation=True):
+            with self._style_guard(nid, scope, row):
                 return True
         except FileNotFoundError:
             return False
@@ -188,10 +188,13 @@ class CreationWorkbenchService:
         from ..experimental.planning import digest
         stale = False
         try:
-            with self._style_guard(nid, scope, row, _observation=True):
+            with self._style_guard(nid, scope, row):
                 self.style_dna_service.validate(nid, scope, row['style_dna'])
                 self._style_sources_current(nid, scope, row)
-        except ValueError:
+        except ValueError as error:
+            from ..experimental.scope_residue_fence import ScopeResidueUnreconciled
+            if isinstance(error, ScopeResidueUnreconciled):
+                raise
             stale = True
         result = copy.deepcopy(row)
         result['style_dna_resolution'] = {'stale': stale,

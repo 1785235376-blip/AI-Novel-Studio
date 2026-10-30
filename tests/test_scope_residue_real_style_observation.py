@@ -49,3 +49,6 @@ with ExperimentalStore(Path(os.environ['SYNTHETIC_ROOT'])).transaction(nid, scop
     except ValueError as exc:
         assert str(exc) == 'EXPERIMENTAL_SCOPE_UNRECONCILED'
     assert not path.exists(), 'read-only STYLE visibility must not create a document package'
+    with pytest.raises(ValueError, match='^EXPERIMENTAL_SCOPE_UNRECONCILED$'):
+        creation._style_public(rig.nid, rig.scope, row)
+    assert not path.exists(), 'unreconciled state must not be hidden as ordinary stale'
