@@ -7,7 +7,7 @@ import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNod
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
-import {useLocale} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
+import {useLocale, useTz} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 import {displayNodeTitle} from '../../i18n/defaultNodeTitle';
 
 export type CanvasKind = 'image' | 'video';
@@ -69,6 +69,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
   storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
   onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
   const locale = useLocale(); // [HERMIA-FE-20261031 VERA-EN]
+  const z = useTz();
   const key = storageKey ?? canvasStorageKey(kind, scope);
   const palette = typesProp ?? NODE_TYPES[kind];
   const typeOf = (_k: CanvasKind, t: string) => palette.find(x => x.id === t) ?? NODE_TYPES[_k].find(x => x.id === t);
@@ -203,8 +204,8 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
     <div data-rcv-wrap="" style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto', alignSelf: 'stretch', flex: '1 1 auto', width: '100%', minWidth: 0}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
-      <span className="rcv-local" title={badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢'}>{badge ?? '仅本机草稿 · 未同步服务端'}</span>
-      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={ariaLabel ?? (kind === 'image' ? '图片无限画布' : '视频无限画布')} tabIndex={0}
+      <span className="rcv-local" title={z(badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢')}>{z(badge ?? '仅本机草稿 · 未同步服务端')}</span>
+      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={z(ariaLabel ?? (kind === 'image' ? '图片无限画布' : '视频无限画布'))} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel}
         onKeyDown={e => { if ((e.key === 'Delete' || e.key === 'Backspace') && sel) delNode(sel); }}>
         <g transform={`translate(${vp.x},${vp.y}) scale(${vp.k})`}>
@@ -214,44 +215,44 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
             return <g key={n.id} className="rcv-node" data-node-id={n.id} data-sel={sel === n.id} transform={`translate(${n.x},${n.y})`}>
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
               <text className="ttl" x={16} y={24}>{ty?.icon} {(tl => tl.length > 12 ? tl.slice(0, 12) + '…' : tl)(displayNodeTitle(locale, n.title))}</text>
-              <text className="sub" x={16} y={44}>{ty?.label || n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">本地</text>
-              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>输入端口</title></circle> : null}
-              {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>输出端口（拖动连线）</title></circle> : null}
+              <text className="sub" x={16} y={44}>{ty?.label ? z(ty.label) : n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">{z('本地')}</text>
+              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>{z('输入端口')}</title></circle> : null}
+              {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>{z('输出端口（拖动连线）')}</title></circle> : null}
             </g>; })}
         </g>
       </svg>
-      {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{emptyHint}<br /></> : null}在空白处<b>右键</b>添加节点 · 滚轮缩放 · 拖动空白平移</p> : null}
-      <div className="rcv-zoom" aria-label="缩放">
-        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label="缩小">−</button><span>{Math.round(vp.k * 100)}%</span>
-        <button type="button" onClick={() => zoom(1.2)} aria-label="放大">＋</button><button type="button" onClick={fit}>适配</button>
+      {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{z(emptyHint)}<br /></> : null}{z('在空白处右键添加节点 · 滚轮缩放 · 拖动空白平移')}</p> : null}
+      <div className="rcv-zoom" aria-label={z('缩放')}>
+        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label={z('缩小')}>−</button><span>{Math.round(vp.k * 100)}%</span>
+        <button type="button" onClick={() => zoom(1.2)} aria-label={z('放大')}>＋</button><button type="button" onClick={fit}>{z('适配')}</button>
       </div>
-      <div className="rcv-status">节点 {g.nodes.length} · 连线 {g.edges.length} · 只改图结构，不触发生成</div>
+      <div className="rcv-status">{z('节点')} {g.nodes.length} · {z('连线')} {g.edges.length} · {z('只改图结构，不触发生成')}</div>
       {menu ? <div className="rcv-menu" role="menu" data-add-node-menu="rebuild" style={{left: menu.cx, top: menu.cy}} onPointerDown={e => e.stopPropagation()}>
         {menu.node ? <>
-          <div className="grp">节点</div>
-          <button type="button" role="menuitem" onClick={() => delNode(menu.node!)}>删除节点</button>
+          <div className="grp">{z('节点')}</div>
+          <button type="button" role="menuitem" onClick={() => delNode(menu.node!)}>{z('删除节点')}</button>
         </> : <>
-          <div className="grp">{menuTitle ?? `添加到${kind === 'image' ? '图片' : '视频'}画布（本机草稿）`}</div>
-          <input autoFocus placeholder="搜索节点类型" aria-label="搜索节点类型" value={q} onChange={e => setQ(e.target.value)}
+          <div className="grp">{z(menuTitle ?? (kind === 'image' ? '添加到图片画布（本机草稿）' : '添加到视频画布（本机草稿）'))}</div>
+          <input autoFocus placeholder={z('搜索节点类型')} aria-label={z('搜索节点类型')} value={q} onChange={e => setQ(e.target.value)}
             onKeyDown={e => { if (e.key === 'Escape') setMenu(null); if (e.key === 'Enter' && types[0]) addNode(types[0]); }} />
-          <div className="lst">{types.map(t => <button key={t.id} type="button" role="menuitem" data-node-type={t.id} onClick={() => addNode(t)}><i style={{background: t.color}} />{t.icon} {t.label}</button>)}
-            {types.length === 0 ? <p className="none">没有匹配的类型</p> : null}</div>
+          <div className="lst">{types.map(t => <button key={t.id} type="button" role="menuitem" data-node-type={t.id} onClick={() => addNode(t)}><i style={{background: t.color}} />{t.icon} {z(t.label)}</button>)}
+            {types.length === 0 ? <p className="none">{z('没有匹配的类型')}</p> : null}</div>
         </>}
       </div> : null}
     </div>
-    {imageTaskNode ? <Panel title="所选图片节点参数" aria-label="所选图片节点参数" style={{flexShrink: 0}}>
-      <p>节点：{displayNodeTitle(locale, imageTaskNode.title)}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
-      <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
+    {imageTaskNode ? <Panel title={z('所选图片节点参数')} aria-label={z('所选图片节点参数')} style={{flexShrink: 0}}>
+      <p>{z('节点：')}{displayNodeTitle(locale, imageTaskNode.title)}{z('。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。')}</p>
+      <label>{z('本次提示词')}<textarea aria-label={z('本次提示词')} rows={3} maxLength={8000} value={taskPrompt}
         onChange={event => { const prompt = event.target.value; promptRevisions.current.set(imageTaskNode.id, (promptRevisions.current.get(imageTaskNode.id) || 0) + 1); setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
       <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {
         if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) {
           onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()}, sourceCurrent(imageTaskNode.id));
         }
-      }}>为此节点准备图片任务</Button>
+      }}>{z('为此节点准备图片任务')}</Button>
       {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision, formalSourceCurrent(imageTaskNode, promptRevision))}
-      <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
-    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage data-unsupported="video-node">视频节点的正式任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage>
-      : kind === 'video' && selectedNode ? <StatusMessage data-unsupported="video-canvas">VIDEO 画布节点正式执行未接线（unsupported）。</StatusMessage> : null}
+      <StatusMessage>{z(onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。')}</StatusMessage>
+    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage data-unsupported="video-node">{z('视频节点的正式任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。')}</StatusMessage>
+      : kind === 'video' && selectedNode ? <StatusMessage data-unsupported="video-canvas">{z('VIDEO 画布节点正式执行未接线（unsupported）。')}</StatusMessage> : null}
     </div>
   );
 }
