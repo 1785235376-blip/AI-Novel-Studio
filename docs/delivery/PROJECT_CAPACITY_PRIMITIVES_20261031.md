@@ -77,3 +77,12 @@
 ### 6.4 仍未完成（不变项）
 
 写入口接入（所有容量/音频写门仍关闭）、启动对账强制门、调额 HTTP 入口与审批竞争、跨 owner 迁移/临时峰值预留、真实 PG/崩溃窗口与全产品验收仍 NOT_RUN。
+
+## 7. 批次 2 第三部分：显式对账与调额 HTTP 入口（2026-10-31 续）
+
+- `POST /api[/v1]/projects/{nid}/studio/capacity/reconcile`：显式对账操作（不是 GET、不写门）。服务端测量项目自有根 + 归属资产后，在**原 project owner lease** 下把 `used/unknown/incarnation/reconciled_at` 写入容量账本；返回测量明细与账本快照；`admission` 仍 `UNAVAILABLE`。未知/不可读/缺正文对象记为 UNKNOWN（阻塞后续新增预留），不删除、不认领；移走问题对象后可再次对账恢复 `OK`。
+- `PUT /api[/v1]/projects/{nid}/studio/capacity/limit`：调额必须同时满足原 project/incarnation **management lease**（`project_management_lease`，本地模式原 workbench 权限、协作模式原成员/授权/拓扑/incarnation 观察）、ledger **CAS `expected_version`** 与持久审计 `LIMIT_CHANGE`（记录 previous/limit/incarnation/actor）。未对账项目拒绝（409 `PROJECT_CAPACITY_NOT_RECONCILED`）；降低到已用额度以下只把状态标为 `OVER_LIMIT`，不删除内容、不取消既有有效预留；无效请求体 422。
+- 账本快照增加 `ledger_version`（只读观测，供 CAS 使用）；容量诊断 GET 同时返回该版本，但仍不初始化/不写账本。
+- 两条路由均加入 `is_independent_studio_route` 的精确方法/路径允许清单（GET `/capacity` 不变，POST 仅 `/capacity/reconcile`，PUT 仅 `/capacity/limit`）。
+- 测试：`tests/test_project_capacity_admin_api.py` 11 项（两别名、对账初始化/UNKNOWN 阻塞与恢复、CAS 陈旧版本、审计、降低额度 OVER_LIMIT、未对账拒绝、422、非项目 owner 409、非管理 token 拒绝、精确允许清单）；容量全组 44 passed；与 U16/storage/asset-query/authority 组合回归见 `batch2c-combined.log`。
+- **仍未完成**：内容写入路径仍未接入容量预留/提交（所有容量/音频写门保持关闭，`admission=UNAVAILABLE`）；启动时自动对账尚未强制；跨 owner 临时峰值/失败残留/崩溃窗口未实现；真实 PostgreSQL 下同样测试仍 NOT_RUN。

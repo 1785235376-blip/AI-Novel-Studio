@@ -803,6 +803,71 @@ class IndependentWorkspaceService:
                     "export_storage": "CLIENT_SELECTED_DOWNLOAD", "physical_cleanup_available": False,
                     "admission": admission}
 
+    def _capacity_ledger(self):
+        from ..project_capacity import ProjectCapacityLedger
+        return ProjectCapacityLedger(Path(self.store.root) / "runtime" / "project-capacity.json")
+
+    def capacity_reconcile(self, nid, scope, actor):
+        """Explicit reconcile: measure the original owners and persist the result.
+
+        Read paths never call this. Measurement and ledger semantics stay
+        fail-closed: unknown/unreadable/missing-content objects are recorded as
+        UNKNOWN and block new reservations, without deleting or claiming them.
+        """
+        from fastapi import HTTPException
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        from ..project_capacity_attribution import measure_assets
+        from ..project_capacity_measurement import measure_roots
+        data_root = Path(self.store.root)
+        measurement = measure_roots([("project", data_root / "novels" / nid)])
+        assets = measure_assets(self.assets.root, nid)
+        unknown = (measurement["unknown_count"] + assets["unknown_count"]
+                   + assets["counters"]["unreadable_entries"]
+                   + assets["counters"]["missing_content"])
+        measured = measurement["logical_bytes"] + assets["logical_bytes"]
+        ledger = self._capacity_ledger()
+        try:
+            with self.store.owner_lease(nid) as incarnation:
+                snapshot = ledger.reconcile(nid, measured_bytes=measured, unknown_objects=unknown,
+                                            incarnation=incarnation, actor_id=actor)
+        except FileNotFoundError:
+            raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_INITIALIZED"}) from None
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        except CapacityRefused as exc:
+            raise HTTPException(409, {"code": exc.code, "details": exc.details}) from None
+        return {"contract": "project-capacity-reconcile/1", "snapshot": snapshot,
+                "measurement": {"project_logical_bytes": measurement["logical_bytes"],
+                                "assets_logical_bytes": assets["logical_bytes"],
+                                "unknown_objects": unknown},
+                "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
+                "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
+
+    def capacity_adjust_limit(self, nid, scope, actor, token, body):
+        """Persist a project limit only under the original management lease + CAS."""
+        from fastapi import HTTPException
+        from .project_quota_management_authority import project_management_lease
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        ledger = self._capacity_ledger()
+        try:
+            current = ledger.peek(nid)
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        if current is None:
+            raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_RECONCILED"})
+        try:
+            with project_management_lease(self, nid, token) as lease:
+                snapshot = ledger.adjust_limit(nid, body.limit_bytes,
+                                               expected_version=body.expected_version,
+                                               lease=lease, actor_id=actor)
+        except CapacityLedgerUnavailable as exc:
+            raise HTTPException(409, {"code": exc.code}) from None
+        except CapacityRefused as exc:
+            raise HTTPException(409, {"code": exc.code, "details": exc.details}) from None
+        return {"contract": "project-capacity-limit/1", "snapshot": snapshot,
+                "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
+                "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
+
     def capacity_diagnostics(self, nid, scope):
         """Read-only capacity observation: measurement + ledger state only.
 
@@ -838,5 +903,6 @@ class IndependentWorkspaceService:
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
 
 

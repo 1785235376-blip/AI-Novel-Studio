@@ -12,7 +12,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute, api_ca
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
 from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
-                               StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
+                               ProjectCapacityLimitUpdate, StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
 
 
 def is_independent_studio_route(method, normalized_path):
@@ -20,8 +20,8 @@ def is_independent_studio_route(method, normalized_path):
     root = r"/api/projects/[^/]+/studio"
     patterns = {
         "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
-        "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
+        "PUT": root + r"/(?:capacity/limit|preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
@@ -612,6 +612,26 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                           lambda actor, scope, guard: service.capacity_diagnostics(nid, scope),
                           existing_owner=True)
 
+    @router.post("/projects/{nid}/studio/capacity/reconcile")
+    def capacity_reconcile(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Explicit reconcile is a server-computed write to the capacity ledger;
+        # it never admits a content write (the write gate stays closed).
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.capacity_reconcile(nid, scope, actor),
+                          existing_owner=True)
+
+    @router.put("/projects/{nid}/studio/capacity/limit")
+    def capacity_limit(nid: str, body: ProjectCapacityLimitUpdate,
+                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # The original project-management lease, incarnation and ledger CAS are
+        # all required; the handler itself does not define a new authority owner.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.capacity_adjust_limit(
+                              nid, scope, actor, x_session_token, body),
+                          existing_owner=True)
+
     @router.get("/projects/{nid}/studio/references")
     def references(nid: str, kind: Literal["ASSET", "CHAPTER", "SCREENPLAY"],
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -759,4 +779,5 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
     return router
+
 

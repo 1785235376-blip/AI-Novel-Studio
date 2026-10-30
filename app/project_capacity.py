@@ -218,7 +218,7 @@ class ProjectCapacityLedger:
                 record["reservations"].pop(reservation_id, None)
 
 
-    def _view(self, project_id: str, record: dict) -> dict:
+    def _view(self, project_id: str, record: dict, ledger_version: int) -> dict:
         reserved = self._active_reserved(record)
         limit = record["limit_bytes"]
         remaining = max(0, limit - record["used_bytes"] - reserved)
@@ -229,6 +229,7 @@ class ProjectCapacityLedger:
         else:
             state = "OK"
         return {"project_id": project_id, "incarnation": record["incarnation"],
+                "ledger_version": ledger_version,
                 "limit_bytes": limit, "used_bytes": record["used_bytes"],
                 "reserved_bytes": reserved, "remaining_bytes": remaining, "state": state,
                 "reservations": len(record["reservations"]),
@@ -242,13 +243,13 @@ class ProjectCapacityLedger:
             record = data["projects"].get(project_id)
             if record is None:
                 raise CapacityLedgerUnavailable("PROJECT_CAPACITY_NOT_INITIALIZED")
-            return self._view(project_id, record)
+            return self._view(project_id, record, data["version"])
 
     def peek(self, project_id: str) -> dict | None:
         """Read-only snapshot that never creates, locks or initializes files."""
         data = self._load()
         record = data["projects"].get(project_id)
-        return None if record is None else self._view(project_id, record)
+        return None if record is None else self._view(project_id, record, data["version"])
     def reserve(self, project_id: str, incoming_bytes: int, *, operation: str,
                 actor_id: str, ttl_seconds: int = 900, incarnation: str | None = None) -> dict:
         size = _positive_int(incoming_bytes, maximum=MAX_RESERVATION_BYTES,
@@ -285,7 +286,7 @@ class ProjectCapacityLedger:
             data["version"] += 1
             self._write(data)
             return {"reservation_id": reservation_id, "expires_at": expires_at,
-                    "bytes": size, "capacity": self._view(project_id, record)}
+                    "bytes": size, "capacity": self._view(project_id, record, data["version"])}
 
     def commit(self, project_id: str, reservation_id: str, actual_bytes: int, *,
                actor_id: str) -> dict:
@@ -309,7 +310,7 @@ class ProjectCapacityLedger:
                         reserved_bytes=reservation["bytes"], actual_bytes=actual)
             data["version"] += 1
             self._write(data)
-            return self._view(project_id, record)
+            return self._view(project_id, record, data["version"])
 
     def release(self, project_id: str, reservation_id: str, *, actor_id: str,
                 reason: str = "RELEASED") -> dict:
@@ -329,7 +330,7 @@ class ProjectCapacityLedger:
                         bytes=reservation["bytes"], operation=reservation["operation"], reason=reason)
             data["version"] += 1
             self._write(data)
-            return self._view(project_id, record)
+            return self._view(project_id, record, data["version"])
 
     def reconcile(self, project_id: str, *, measured_bytes: int, unknown_objects: int,
                   incarnation: str | None, actor_id: str) -> dict:
@@ -353,7 +354,7 @@ class ProjectCapacityLedger:
                         active_reservations=len(record["reservations"]))
             data["version"] += 1
             self._write(data)
-            return self._view(project_id, record)
+            return self._view(project_id, record, data["version"])
 
     def adjust_limit(self, project_id: str, limit_bytes: int, *, expected_version: int,
                      lease: dict, actor_id: str) -> dict:
@@ -379,6 +380,7 @@ class ProjectCapacityLedger:
                         limit_bytes=limit, incarnation=lease["incarnation"])
             data["version"] += 1
             self._write(data)
-            return self._view(project_id, record)
+            return self._view(project_id, record, data["version"])
+
 
 
