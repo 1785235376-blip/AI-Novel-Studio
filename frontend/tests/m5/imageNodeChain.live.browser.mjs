@@ -1,8 +1,10 @@
 /**
- * [HERMIA-FE-20261030 BE-ALIGN] 「真实 API＋Mock provider」 IMAGE node chain harness (real app.main File storage; mock only for model output).
- * Env: DCI_BASE_URL (vite proxying to app.main), DCI_HOST_TOKEN (the dev session configured on that backend run; never hard-coded), DCI_OUT, PLAN (JSON steps).
- * Known limit (d657b424): local File novels need studio activation for providers (422 STUDIO_NEUTRAL_PROJECT_ACTIVATION_REQUIRED); activation is a labelled harness API step,
- * and once activated the app renders the neutral-studio shell, where this classic canvas path is not reachable. Not a pass harness yet.
+ * [HERMIA-FE-20261031 ACT] 「真实 API＋Mock provider」 IMAGE formal-node chain via the real UI
+ * (real app.main, File storage; mock A1111 only for model output; backend must NOT be pre-activated).
+ * Env: DCI_BASE_URL (vite proxying /api to app.main), DCI_HOST_TOKEN (dev session configured for that backend run; never hard-coded),
+ * DCI_OUT, PLAN (JSON steps: click/check/select/dbl/replay/reload/dump/wait). Activation goes through the UI entry
+ * 启用独立工作室… → 确认启用 (no harness activation). `dbl` records the POSTs a double-click sends; `replay` re-sends the
+ * captured image-node-result request verbatim (idempotency); `reload` reopens and records any POST before user action.
  * Stage 3: Playwright + real app.main (File) + Mock A1111 via vite proxy.
  * Barriers = waitForResponse (no sleep for readiness of API steps).
  */
@@ -12,7 +14,7 @@ import fs from 'fs';
 import path from 'path';
 
 const BASE = process.env.DCI_BASE_URL || 'http://127.0.0.1:4741';
-const OUT = process.env.DCI_OUT || '/workspace/hr/align-20261030/stage3';
+const OUT = process.env.DCI_OUT || '/workspace/hr/align-20261030/stage4';
 const shots = path.join(OUT, 'shots');
 fs.mkdirSync(shots, {recursive: true});
 
@@ -48,6 +50,7 @@ async function barrier(page, name, predicate, action) {
 const browser = await chromium.launch({executablePath: '/usr/bin/google-chrome', headless: true});
 const context = await browser.newContext({viewport: {width: 1440, height: 900}});
 const page = await context.newPage();
+page.on('requestfinished', async (req) => { try { if (req.method() !== 'GET' && /image-node-result|canvas-views/.test(req.url())) { const res = await req.response(); report.captured = report.captured || {}; const key = /image-node-result/.test(req.url()) ? 'image-node-result' : 'canvas-views'; const h = await req.allHeaders(); report.captured[key] = {url: req.url(), method: req.method(), headers: Object.fromEntries(Object.entries(h).filter(([k]) => /^(x-|content-type|idempotency)/i.test(k))), body: req.postData(), response: res ? {status: res.status(), body: (await res.text()).slice(0, 400)} : null}; } } catch {} });
 page.on('request', (req) => {
   if (req.method() !== 'GET' && req.url().includes('/api/')) {
     report.network_posts.push({method: req.method(), url: req.url()});
@@ -63,10 +66,7 @@ try {
   const novel = await novelRes.json();
   step('api.novel', {status: novelRes.status(), id: novel.id});
   if (!novelRes.ok()) throw new Error('novel create failed ' + novelRes.status());
-  // HARNESS SETUP (not UI): local File novels have no UI path to studio activation in this frontend (only the collaboration entry calls activate()).
-  const act = await page.request.post(`${BASE}/api/projects/${novel.id}/studio/activate`, {headers: {'X-Session-Token': process.env.DCI_HOST_TOKEN}});
-  step('api.studioActivate(harness)', {status: act.status()}); if (!act.ok()) throw new Error('activate ' + act.status() + ' ' + (await act.text()).slice(0, 200));
-
+  // [ACT] No harness activation: activation must happen through the explicit UI entry (启用独立工作室… → 确认启用).
   // Pre-seed IMAGE canvas draft with one image_generate node (browser localStorage key)
   const graph = {
     nodes: [{id: 'generation-node-one', t: 'image_generate', x: 48, y: 80, title: 'Explicit generation node', prompt: 'A synthetic node intent; mock provider only'}],
@@ -104,7 +104,7 @@ try {
     await page.getByText(/《[^》]+》|项目：/).first().waitFor({state: 'visible', timeout: 30000}).catch(() => {}); const txt = await page.locator('body').innerText(); const m = txt.match(/《([^》]+)》/) || txt.match(/项目：\s*([^\n]+)/); const shown = m && m[1];
     const list = await (await page.request.get(`${BASE}/api/novels`)).json(); const arr = Array.isArray(list) ? list : (list.items || []);
     const hit = arr.find(x => x.title === shown); if (!hit) throw new Error('cannot resolve opened novel ' + shown);
-    if (hit.id !== novel.id) { const a2 = await page.request.post(`${BASE}/api/projects/${hit.id}/studio/activate`, {headers: {'X-Session-Token': process.env.DCI_HOST_TOKEN}}); step('api.studioActivate(opened,harness)', {status: a2.status(), id: hit.id}); novel.id = hit.id; }
+    novel.id = hit.id;
   }
   step('ui.openNovel', {status: 'ok', novel: novel.id});
   if (process.env.EXPLORE) {
@@ -138,7 +138,8 @@ try {
   if (!process.env.EXPLORE) await bindSession('initial');
   await page.screenshot({path: path.join(shots, '01-novel-open.png'), fullPage: true});
 
-  await page.getByText('图片',{exact:true}).first().click();
+  const reachFormal = async (afterReload) => {
+  await page.locator('[data-module-tab="IMAGE"]').first().click().catch(async () => page.getByText('图片',{exact:true}).first().click());
   // IMAGE shell
   await page.waitForTimeout(1500); { const nm = page.getByText('新手模式', {exact: true}).first(); if (await nm.isVisible().catch(() => false)) { await nm.click(); await page.waitForTimeout(1500); step('ui.interfaceMode新手', {status: 'ok'}); } }
   await page.waitForSelector('[data-module="IMAGE"], [data-module-shell="IMAGE"], .img-ws, [aria-label="图片工作区"]', {timeout: 45_000});
@@ -172,15 +173,31 @@ try {
   step('ui.selectNode', {status: 'ok'});
   await page.screenshot({path: path.join(shots, '03-node-selected.png'), fullPage: true});
 
-  await page.locator('textarea:visible').first().fill('A synthetic node intent; mock provider only');
+  if (!afterReload) await page.locator('textarea:visible').first().fill('A synthetic node intent; mock provider only');
   const openFormal = page.getByRole('button',{name:'打开正式生成与服务端保存'});
   if (await openFormal.isVisible().catch(()=>false)) await openFormal.click();
   // Formal panel should appear (RebuildFormalImageNode / CanvasImageNodeTask)
   const formal = page.getByRole('region', {name: '正式图片节点与保存位置'}).or(page.getByText('正式图片节点任务'));
-  await formal.first().waitFor({state: 'visible', timeout: 20_000});
+  const actBtn = page.getByRole('button', {name: '启用独立工作室…'});
+  await formal.first().or(actBtn).first().waitFor({state: 'visible', timeout: 20_000});
+  if (await actBtn.isVisible().catch(() => false)) {
+    if (afterReload) throw new Error('activation entry re-appeared after reopen');
+    await page.screenshot({path: path.join(shots, '04a-activation-required.png'), fullPage: true});
+    const before = report.network_posts.length;
+    await actBtn.click(); await page.getByRole('dialog').waitFor({state: 'visible'});
+    await page.screenshot({path: path.join(shots, '04b-activation-confirm.png'), fullPage: true});
+    const ok = page.getByRole('button', {name: '确认启用'});
+    await barrier(page, 'studio-activate(UI)', r => /\/studio\/activate$/.test(r.url()) && r.request().method() === 'POST', async () => { await ok.dblclick().catch(() => ok.click()); });
+    await formal.first().waitFor({state: 'visible', timeout: 20_000});
+    const acts = report.network_posts.slice(before).filter(x => /studio\/activate/.test(x.url));
+    report.activation_posts = acts.length; step('ui.activation', {status: acts.length === 1 ? 'ok' : 'FAIL', posts: acts.length});
+    await page.screenshot({path: path.join(shots, '04c-activated-formal.png'), fullPage: true});
+  }
   step('ui.formalPanel', {status: 'ok'});
 
 
+  };
+  await reachFormal(false);
   globalThis.__page = page;
   const dump = async (tag) => {
     const names = await page.locator('button:visible, input[type=checkbox]:visible').evaluateAll(els => els.map(e => (e.getAttribute('aria-label')||e.textContent||'').trim().slice(0,40) + (e.disabled?' [D]':'')));
@@ -196,7 +213,13 @@ try {
     if (kind === 'trycheck') { const c = page.getByRole('checkbox', {name: new RegExp(name)}).first(); if (await c.isEnabled().catch(() => false)) await c.check(); else console.log('SKIP', name); }
     if (kind === 'dump') await dump('step' + i);
     if (kind === 'wait') { await page.waitForTimeout(Number(name)); }
-    if (kind === 'reload') { await page.reload({waitUntil:'domcontentloaded'}); await page.waitForTimeout(3000); const n2 = page.locator('[data-node-id]').filter({hasText:'生成图片'}); const t=page.getByText('图片画布',{exact:true}); if (await t.first().isVisible().catch(()=>false)) await t.first().click(); await n2.first().waitFor({state:'visible', timeout: 30000}); await n2.first().click(); }
+    if (kind === 'reload') { const mark = report.network_posts.length; await page.reload({waitUntil:'domcontentloaded'}); await page.waitForTimeout(4000);
+      await page.screenshot({path: path.join(shots, `r${i}-reopened-shell.png`), fullPage: true});
+      if (name === 'bind') await bindSession('reopen');
+      await reachFormal(true); await page.waitForTimeout(3000);
+      const posts = report.network_posts.slice(mark).filter(x => !/local-session/.test(x.url)); report.reopen_posts = posts; console.log('REOPEN_POSTS', JSON.stringify(posts)); }
+    if (kind === 'replay') { const req = report.captured && report.captured[name]; if (!req) throw new Error('nothing captured for ' + name);
+      const r = await page.request.fetch(req.url, {method: req.method, headers: req.headers, data: req.body}); const t = await r.text(); report.replay = report.replay || []; report.replay.push({name, status: r.status(), body: t.slice(0, 400), original: req.response}); console.log('REPLAY', name, r.status(), t.slice(0, 300)); }
     if (kind === 'text') { const loc = page.getByRole('definition').or(page.locator('dl[aria-label="'+name+'"]')); console.log('TEXT', name, (await page.locator('[aria-label="'+name+'"]').first().innerText().catch(e=>'ERR '+e)).slice(0,800)); }
     await page.waitForTimeout(1500);
     await page.screenshot({path: path.join(shots, `c${String(i).padStart(2,'0')}-${kind}.png`), fullPage: true});

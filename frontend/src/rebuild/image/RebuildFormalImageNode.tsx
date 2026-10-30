@@ -7,6 +7,7 @@ import { studioProductionClient } from '../../creative/studioProductionClient';
 import { studioGraphDraftOwner } from '../../creative/studioGraphLocalDraft';
 import { CanvasImageNodeTask } from '../../creative/CanvasImageNodeTask';
 import { Button, StatusMessage } from '../../ui/primitives';
+import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import type { CvNode } from '../canvas/RebuildCanvas';
 
 /** One explicit selection enters the original owners; the browser graph is never uploaded. */
@@ -52,12 +53,34 @@ function FormalSelection(props: Parameters<typeof RebuildFormalImageNode>[0] & {
     catch (reason) { if (current()) setError(reason instanceof Error ? reason.message : '正式工作区暂不可用。'); }
     finally { running.current = false; if (alive.current) setBusy(false); }
   }
-  const owner = overview && studioGraphDraftOwner(props.projectId, overview.project.incarnation, props.context, props.host);
+  // [HERMIA-FE-20261031 ACT] 未激活（LEGACY）的本机项目：服务商会返回 422 STUDIO_NEUTRAL_PROJECT_ACTIVATION_REQUIRED。
+  // 这里给出唯一、显式、需确认的启用入口；不自动启用，不在启用前挂载正式面板。
+  const [askActivate, setAskActivate] = useState(false), activating = useRef(false);
+  async function activate() {
+    if (activating.current || !current()) return;
+    activating.current = true; setBusy(true); setError(''); setAskActivate(false);
+    try {
+      await run(() => props.client.activate());
+      const row = await run(() => props.client.overview()); if (current()) setOverview(row);
+    } catch (reason) { if (current()) setError(`启用失败：${reason instanceof Error ? reason.message : '请稍后重试。'}`); }
+    finally { activating.current = false; if (alive.current) setBusy(false); }
+  }
+  const legacy = overview?.project.entry_kind === 'LEGACY';
+  const owner = !legacy && overview && studioGraphDraftOwner(props.projectId, overview.project.incarnation, props.context, props.host);
   return <section aria-label="所选节点的正式生产与服务端保存">
     <Button disabled={busy || !!overview || !current()} onClick={() => void open()}>打开正式生成与服务端保存</Button>
     <p>仅关联这个节点的位置与正式结果。提示词、连线和其他节点仍是浏览器草稿；每一步都需单独确认。</p>
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}
-    {overview && !owner && <StatusMessage tone="warning">缺少可核实的项目代次或作者身份，不能建立服务端节点目标。</StatusMessage>}
+    {legacy && <div data-studio-activation="required">
+      <StatusMessage tone="warning">这个项目还没启用独立工作室，正式生成需要先启用（服务端提示：需要启用独立工作室）。</StatusMessage>
+      <Button disabled={busy || !current()} onClick={() => setAskActivate(true)}>启用独立工作室…</Button>
+    </div>}
+    {askActivate && <ConfirmDialog title="为这个项目启用独立工作室？" confirmLabel="确认启用" cancelLabel="取消" initialFocus="cancel"
+      onConfirm={() => void activate()} onCancel={() => setAskActivate(false)}>
+      <p>只在服务端保存一条「独立工作室入口」记录，让图片、视频、音频等正式生产可以使用。不会改动正文、章节、权限或项目类型，也不会生成、执行或采用任何内容。</p>
+      <p>启用后，下次打开这个项目会直接进入工作室界面；目前界面里没有撤销入口。</p>
+    </ConfirmDialog>}
+    {overview && !legacy && !owner && <StatusMessage tone="warning">缺少可核实的项目代次或作者身份，不能建立服务端节点目标。</StatusMessage>}
     {overview && owner && <CanvasImageNodeTask projectId={props.projectId} node={{ ...props.node, prompt: props.node.prompt || '' }} client={props.client}
       production={props.production} owner={owner} canMutate={overview.capabilities.can_mutate}
       canReview={overview.capabilities.can_review === true} isCurrent={current} read={run} mutate={run} />}
