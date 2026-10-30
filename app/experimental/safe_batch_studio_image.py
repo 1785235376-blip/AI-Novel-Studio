@@ -103,6 +103,14 @@ class BatchStudioImageAuthority:
                 raise StaleSourceError(reason) from None
             raise
 
+    def reject_closed_audio_preflight(self, ctx, guard):
+        """Check original host authority only to refuse a closed audio write."""
+        request = _request.get()
+        reject = getattr(self.invoke, 'reject_closed_audio_batch', None)
+        if request is None or not callable(reject):
+            raise ValueError('BATCH_STUDIO_HOST_INVOKER_REQUIRED')
+        return reject(request, ctx.novel_id, ctx.token, ctx.branch, ctx.actor, ctx.scope, guard)
+
     def catalog(self, ctx):
         def read(guard):
             guard()

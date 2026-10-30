@@ -251,6 +251,38 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     from .production_execution_api import create_production_invoker
     mask_call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+
+    def reject_closed_audio_batch(request, nid, token, branch, expected_actor, expected_scope, outer_guard):
+        """Reuse the host checks solely to reject a mixed closed preflight.
+
+        This cannot authorize a write and never initializes a project owner.
+        Ordinary Studio operations retain the full incarnation-bound invoker.
+        """
+        actor, scope = access(nid, token, branch, 'domain.write')
+        if (actor, scope) != (expected_actor, expected_scope):
+            raise HTTPException(403, {'code': 'BATCH_STUDIO_AUTHORITY_CHANGED'})
+        if require_host_session is None or model_host_authority is None:
+            raise HTTPException(403, {'code': 'CREATIVE_MODEL_HOST_REQUIRED'})
+        authority = model_host_authority(request, token)
+        if not authority.principal:
+            raise HTTPException(403, {'code': 'CREATIVE_MODEL_HOST_BINDING_REQUIRED'})
+        def current():
+            if access(nid, token, branch, 'domain.write') != (actor, scope):
+                raise HTTPException(403, {'code': 'CREATIVE_AUTHORITY_CHANGED'})
+            require_host_session(token); authority.guard(); outer_guard()
+        current()
+        require_flag('voice_direction_v2'); require_flag('audiobook_v2')
+        try:
+            from ..experimental.audiobook import AudiobookV2Service
+            AudiobookV2Service._require_candidate_write_capacity()
+        except Exception:
+            current()
+            raise
+        # This diagnostic path must never become a write-capable shortcut if
+        # the audio owner's normal gate is opened in a later version.
+        raise HTTPException(503, {'code': 'BATCH_STUDIO_HOST_INVOKER_REQUIRED'})
+
+    mask_call.reject_closed_audio_batch = reject_closed_audio_batch
     mask_router = APIRouter(route_class=ManualMaskRoute)
 
     @mask_router.post("/projects/{nid}/studio/assets/{aid}/mask", status_code=201)

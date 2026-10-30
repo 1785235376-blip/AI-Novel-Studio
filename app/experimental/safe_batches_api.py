@@ -58,7 +58,12 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
     @router.post('/preflight')
     def preflight(nid: str, body: BatchIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write')
-        return batch_call(ctx, check, 'domain.write', service.preflight, body, studio=any(i.kind == 'STUDIO_IMAGE' for i in body.items))
+        studio = any(i.kind == 'STUDIO_IMAGE' for i in body.items)
+        if studio and any(i.kind == 'VOICE_REDO' for i in body.items):
+            if service.studio_image is None:
+                raise HTTPException(403, {'code': 'BATCH_STUDIO_HOST_INVOKER_REQUIRED'})
+            return api_call(service.studio_image.reject_closed_audio_preflight, ctx, check)
+        return batch_call(ctx, check, 'domain.write', service.preflight, body, studio=studio)
     @router.post('/{rid}/confirm')
     def confirm(nid: str, rid: str, body: ConfirmIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return batch_call(ctx, check, 'domain.write', service.confirm, rid, body, rid=rid)
