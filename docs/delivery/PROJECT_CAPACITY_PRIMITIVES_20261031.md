@@ -46,3 +46,34 @@
 ## 5. 回退
 
 新增模块与路由均为增量：`git revert <本批提交>` 可完全移除；既有 `GET /studio/storage`、`project_usage`、写门与所有原测试未改动。
+
+## 6. 批次 2 第二部分：资产归属测量 + U16 门/claim 顺序证据（2026-10-31 续）
+
+### 6.1 新增 `app/project_capacity_attribution.py`
+
+- 只按原资产 metadata 的精确 `novel_id` 归属；读取根目录有界 metadata（严格 JSON、单文件 1 MiB、扫描上限/截止时间），实际计 metadata 文件字节 + `<id>.bin` 正文实际字节，而不是 metadata 自报 size。
+- 同物理对象（`st_dev`/`st_ino`）只计一次；不同物理文件即使内容/摘要相同分别计。
+- 其他项目 metadata 只累计计数、**不返回任何 id/路径**；损坏/缺正文/不可读分别计数；reparse point 不跟随；共享派生目录（`.asset-query-index` 等）不扫描、不认领；只读、不删除。
+- 读取 `assets_attribution` 已并入只读诊断 `GET /studio/capacity`：`combined.logical_bytes = 项目自有根 + 本项归属资产`，`allocated_storage_bytes` 仍为 `UNKNOWN`，`admission` 仍 `UNAVAILABLE`。
+
+### 6.2 U16 关闭门先于 RUNNING claim / 崩溃恢复（合成 File 证据）
+
+`app/experimental/safe_batches.py` 当前实现（本批复核，非本轮新增代码）：`confirm` 与 `dispatch` 在创建 batch claim、broker reservation、RUNNING/attempts 之前调用 `_require_stage_write_capacity`；`RUNNING` 且 claim 不在本进程 ACTIVE 集合时公开投影为 `UNKNOWN` + `BATCH_INTERRUPTED_RECONCILIATION_REQUIRED_NO_REPLAY`，只能由原执行器/`stop` 处理，不自动重放。本批新增 4 个定向测试覆盖：
+1. 中断的 RUNNING/claim 投影为 UNKNOWN、attempts 保留、limitations 含“必须在原执行器对账”；
+2. `stop` 将中断 RUNNING 改为 CANCELLED 且 claim 清空、attempts 不重放；
+3. 关闭门拒绝时没有 claim/RUNNING/attempts/receipts/task_id/reservation_id，磁盘内容不变；
+4. confirm 门拒绝时 batch 仍 PREFLIGHT、confirmed=False、items PENDING、无 claim。
+
+边界：这是 File 合成顺序/恢复证据，不是 broker/真实授权/真实模型或跨机器证明；真实 PostgreSQL 下同一顺序测试仍归 NOT_RUN。
+
+### 6.3 本部分测试
+
+| 范围 | 结果 | 日志 |
+| --- | --- | --- |
+| 资产归属测量（归属、聚合计数、同物理对象、扫描上限、只读、诊断合并/跨项目不泄漏） | 6 passed | `Validation/backend-finalize-20261031/batch2-capacity-attribution.log` |
+| U16 门先于 claim + 崩溃恢复（新增 4 项，连同既有 U16 套件） | 24 passed | `Validation/backend-finalize-20261031/batch2-u16-crash.log` |
+| 容量原语+诊断+归属全组 | 33 passed | 同上 |
+
+### 6.4 仍未完成（不变项）
+
+写入口接入（所有容量/音频写门仍关闭）、启动对账强制门、调额 HTTP 入口与审批竞争、跨 owner 迁移/临时峰值预留、真实 PG/崩溃窗口与全产品验收仍 NOT_RUN。

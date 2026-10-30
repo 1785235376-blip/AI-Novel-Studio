@@ -811,9 +811,13 @@ class IndependentWorkspaceService:
         cross-owner reservation/reconcile chain is wired.
         """
         from ..project_capacity import CapacityLedgerUnavailable, DEFAULT_LIMIT_BYTES, ProjectCapacityLedger
+        from ..project_capacity_attribution import measure_assets
         from ..project_capacity_measurement import measure_roots
         data_root = Path(self.store.root)
         measurement = measure_roots([("project", data_root / "novels" / nid)])
+        assets = measure_assets(self.assets.root, nid)
+        combined_bytes = measurement["logical_bytes"] + assets["logical_bytes"]
+        combined_unknown = measurement["unknown_count"] + assets["unknown_count"]
         ledger_path = data_root / "runtime" / "project-capacity.json"
         ledger = None
         ledger_state = "NOT_INITIALIZED"
@@ -824,10 +828,15 @@ class IndependentWorkspaceService:
             except CapacityLedgerUnavailable:
                 ledger_state = "UNAVAILABLE"
         return {"contract": "project-capacity-diagnostics/1", "project_id": nid,
-                "measurement": measurement, "ledger_state": ledger_state, "ledger": ledger,
+                "measurement": measurement, "assets_attribution": assets,
+                "combined": {"logical_bytes": combined_bytes, "unknown_count": combined_unknown,
+                             "complete": measurement["complete"] and assets["complete"],
+                             "allocated_storage_bytes": "UNKNOWN"},
+                "ledger_state": ledger_state, "ledger": ledger,
                 "limits": {"default_limit_bytes": DEFAULT_LIMIT_BYTES,
                            "applied_limit_bytes": ledger["limit_bytes"] if ledger else None},
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
 
