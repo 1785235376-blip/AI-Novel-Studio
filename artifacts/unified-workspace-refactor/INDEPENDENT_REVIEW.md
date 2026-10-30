@@ -1906,3 +1906,45 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 6. P3（既有）：375 宽时起始门"跳过"按钮在视口外且不能滚动。
 
 证据：/workspace/hr/vera-compare/ux-d6b291ab/（tour.json、audit-head.json、theme/、shots/、mut/、full1-3.json/log、full-status.txt）
+
+## [VERA-FE] 第 4 轮 · 62f7684f（d6b291ab..62f7684f，tree 5839b22d）前端复核
+
+**结论：PASS（附 P3）。** 上轮的 MUST-FIX（en + NSFW 开，1441–1720 宽时设置按钮被挤出视口）已修复，变异验证会变红；d3d9ee0f 的 5 项 P3 均已修复，各自变异都会变红，但有两处残留（见问题列表）。
+
+- 137af294：我的上轮复审段落逐字一致（56 行）。依赖没有变化。
+- **顶栏全扫**：16 个宽度（1024–1920）× 普通/专业 × 中/英 × NSFW 开/关，共 128 个组合。全部满足 header sw==cw，所有按钮的右缘都在视口内、命中测试通过（bad=[]）。
+  - 搜索标签：cw=1 是有意视觉隐藏（保留可访问名），不算截断。
+  - 真正截断的只有 1540 / 专业 / en / 关 一个组合（171→155px）。d6b291ab 和 e91806e4 上同样存在，是既有问题，与 NSFW 无关，定级 P3。
+  - en + 开在 ≤1800 时标签隐藏，1801 时完整显示且不溢出。
+- **变异**：反向应用 62f7684f 的 nsfwMode.css 后，1441 普通/专业、1540 专业、1720 专业（en 开）共 4 个组合变红，设置按钮右缘分别到 1441/1505/1540/1734。
+- **d3d9ee0f 逐项（浏览器 + 变异）**
+  - aria-pressed：按钮禁用时为 false；变异后为 true。✔
+  - M4：Ann-Marie、li_wei、王小明显示真名；u-a、usr-7f3a、u-m5 显示"本机作者"。变异后 Ann-Marie/li_wei 被当作原始 id。✔
+  - en 词条：参考叠看、禁用原因 title、IMAGE 右栏标题 "Image generation"、VIDEO 三步说明均为英文；变异后变回中文。✔
+  - 引导焦点：切换器和设置按钮都被移除时焦点落到 MAIN.workspace-body，变异后为 BODY。✔
+  - 375 起始门：跳过按钮初始在视口外（top 860，视口高 480/560/740），起始门可以滚动，鼠标点击成功；变异后 overflow 为 visible、点击超时。✔
+- **回归**
+  - 引导 tour：fails 0。
+  - 对话框焦点 p2：4/4 通过。
+  - axe：暗/亮两套主题 × 6 个模块 + 顶栏/菜单/对话框均为 0 违规。
+  - token 关闭后全部恢复。
+  - NSFW 会话模式不写存储；持久模式只写自己的那个 key。
+- **后端对齐（只读）**
+  - CONTRACT_DIFF 与代码一致。
+  - c479995f（requires_source_read）+ 5eec654b（提交前复核资产）修复了 image-node-result 的 403。
+  - 前端请求体 8 个字段与 CanvasImageNodeResult 完全一致；重放时 version 不变，也能通过前端校验。
+  - capture.json 中 /api 与 /api/v1 均为 200，重放 version=2。
+  - effective_content_policy / model_content_policy_support 在 content_policy.py 之外没有调用方。
+  - 实测 API：NOT_RUN（未起隔离实例，未碰 8000）。
+- IMAGE 回填 / 重开浏览器链路的前端独立验证：NOT_RUN。
+- **门禁（vera-align，3 轮）**
+  - raw 294/293/293，ISI 各 8 条，adj 294/293/293，满足 ≤297。
+  - 唯一不在基线里的失败是 run1 的 u1.purge.host（已知 flaky），单独重跑通过。
+  - Hermia 的 299/295/293（跑在 wt-dci 54fa28d0，frontend/src 与 62f7684f 相同）：run1 多出的 6 条中，4 条在已知 flaky 名单内（creative×2、PortableProjectsPanel.assetRelations、u1.purge.host）。另外 2 条 ImageJobExecute.file-api、PromptWorkspace.receiptReopen 是超时或负载下找不到元素，我的 3 轮里都通过，单独重跑也通过，判为负载 flaky。按规则 (a)/(b) 均 PASS。
+
+问题列表：
+1. P3（既有）：1540 / 专业 / en / NSFW 关时搜索标签被截断 16px。
+2. P3（残留）：切换器只是 display:none（节点还在）时，引导关闭后焦点仍落到 BODY。兜底逻辑只处理节点不存在的情况，可改为过滤不可见元素。
+3. P3（残留）：en 下 IMAGE aside 的 aria-label 仍是"图片生成"；VIDEO 栏的"这里排镜头…"、meta "卡片 · 参考素材 · 连线"仍为中文；专业模式的三层说明也是中文。
+
+证据：/workspace/hr/vera-compare/align-62f7684f/（top/、p3/、theme/、full1-3.json/log、full-status.txt、iso.log）
