@@ -70,6 +70,7 @@
 | 运行时能力合同 | 14 passed；能力/storage/query 组合 102 passed | `batch4-runtime-capabilities.log`、`batch4-capability-regression.log` |
 | 行业导出打包 | 8 passed | `round10-industry-packages.log` |
 | motion frame 安全 | 10 passed | `round11-motion-security.log` |
+| 音频恢复权限/重建/并发反例 | 3 passed | `round14-restore-races.log` |
 | **宽回归（103 个相关测试文件）** | **1431 passed / 9 failed / 57 skipped / 1 error**；9 failed+1 error 在基线 A 独立 probe worktree 全部同样失败（2 旧资产上传期望、2 关闭音频门期望、2 mock provider 期望、3 Windows 符号链接环境、1 fixture 环境错误）→ **本分支该组零新失败** | `round10-broad-regression.log` |
 | 生命周期/重建/恢复定向组 | 223 passed / 1 failed / 6 skipped；唯一失败在基线 A 同样失败（U16 合成子进程夹具） | `round12-lifecycle-recovery.log` |
 | issue 相关（#16 fixture 合同、#17 pdf/screenplay、#18 provider/credential） | 137 passed / 2 skipped / 1 pre-existing screenplay failure | `round10-issue-tests.log` |
@@ -123,3 +124,4 @@
 ## 10. 结论
 
 本轮完成：86 head/PR/工作区只读核验与基线选择；sibling 及其他独立后端线逐文件对账与安全整合；Export/PG 迁移/VTT-OTIO/Canvas、容量账本与 admission、音频历史捕获-读取-迁移-恢复、运行时能力合同、行业打包验证等 20 个可审查提交；宽回归 1431 passed 且覆盖组零新失败；issue #14/#16/#17/#18 与 D-17/D-20/motion frame 均按当前候选重新取证并如实标注 NOT_RUN/BLOCKED/UNKNOWN。**全产品验收、真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面与历史产品线合并不在本轮结论内。**
+

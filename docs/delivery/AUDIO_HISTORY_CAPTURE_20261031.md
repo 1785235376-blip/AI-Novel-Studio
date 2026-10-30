@@ -84,3 +84,13 @@
 测试：`tests/test_audio_history_capacity_accounting.py` 7 项——实际增量计费/审计、revision 只计新增记录（blob 去重）、未对账拒绝、超额拒绝且写前无副作用、UNKNOWN blocked 拒绝与恢复、当前提交前崩溃仍计费残留且无预留泄漏、双 flag 关闭时无账本行为。回归组合（音频历史全部套件 + 容量原语/诊断/归属/管理/admission + U16）：**151 passed / 1 skipped**。
 
 边界：本批只覆盖历史记录/blob 写入的容量预留与结算；资产正文/metadata 主写入仍由各自的 admission/关闭门负责；真实 PostgreSQL/浏览器/模型未运行。
+
+## 7. 批次 3 补充：恢复的权限/重建/并发反例（2026-10-31 续）
+
+`tests/test_audio_history_restore_authority_races.py`（3 项，通过）：
+
+- **项目重建**：预览后删除并同 ID 重建项目（incarnation 变化）→ 确认恢复返回 404/409，磁盘快照不变（旧资产/历史不可被新 incarnation 采用）。
+- **恢复 vs metadata 编辑竞争**：同一 `expected_version` 下并发执行显式恢复与 metadata 编辑 → 恰好一个成功、另一个 409 `AUDIO_HISTORY_VERSION_CONFLICT`；历史链只追加 1 个版本（[4,3,2,1]），恢复标记仅在恢复成功时存在。
+- **flag 关闭后预览**：预览接口返回 409 `AUDIO_HISTORY_UNAVAILABLE` 且磁盘无写。
+
+本地模式边界说明：恢复写入口依赖原项目权限 + `commit_invoke` 的 commit authority/incarnation 复核，不依赖 local-mode 的 session token 作为授权来源；历史只读路由的 session 撤销语义仍由原 route 的 session guard 处理。协作模式下的会话撤销/成员撤权反例属于真实权限 owner 路径，本轮未新增协作专用用例，故不宣称其已覆盖。
