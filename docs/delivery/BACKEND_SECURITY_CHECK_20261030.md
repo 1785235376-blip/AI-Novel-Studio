@@ -329,3 +329,14 @@ files created: none
   3. **已绑定 preview 的响应窗口**：撤权使 permission generation 变化 → 绑定响应 403；源版本在投递前变化 → 409 `SOURCE_CHANGED`。
 - **未覆盖**：`run` 的 15 秒硬超时未实跑（会拖慢套件；属已知常量而非安全缺口），真实 peer/浏览器/命名管道 —— `NOT_RUN`。
 - **提交**：`9d671729`；无生产代码改动。
+
+## 21. 第十二轮续做（2026-10-30）：导出所有权/恢复与 File 后端安全套件回归
+
+- 运行 10 个套件（导出只读/独立进程所有权、执行 claim 重试恢复、恢复所有权、执行 claim 独立、本地窗口观测、快照导入评审、File 后端安全集成/独立/子进程）：**117 passed / 9 failed / 3 skipped**（55.02s）。
+- 用独立临时工作树在**固定起点 `2951a167`** 复跑失败文件：**9 failed / 18 passed / 1 skipped**，失败集合与原因**逐条一致**，确认全部为预存环境/测试债务，与本轮改动无关：
+  1. 3 处子进程输出 `UnicodeDecodeError: 'gbk'`（本机中文 locale 下测试子进程未显式 UTF-8）——环境；
+  2. 3 处 `WinError 1314` 符号链接权限不足（当前账号无 symlink 权利）——环境 `NOT_VERIFIED`；
+  3. 1 处 `original lock did not release after TerminateProcess`（Windows 进程/锁语义与测试假设不符）——环境；
+  4. 2 处测试子进程 `_export_service.<locals>.<lambda>() got an unexpected keyword argument 'recovery'` + `BrokenPipeError`（子进程夹具协议漂移）——预存测试债务。
+- 临时对比工作树已清理；**本轮无代码/测试改动**（仅本记录）。
+- 未覆盖：真实 PostgreSQL、真实渲染器、真实跨进程崩溃恢复 —— `NOT_RUN`。
