@@ -1094,16 +1094,25 @@ class IndependentWorkspaceService:
                 raise HTTPException(409, {"code": "AUDIO_HISTORY_ALREADY_CAPTURED"})
             if row.get("version") != expected_version:
                 raise HTTPException(409, {"code": "AUDIO_HISTORY_VERSION_CONFLICT"})
-            guard()
-            data = self.assets._verified_content(row, guard=guard)
-            store = self.assets._audio_history_store
             try:
-                baseline = store.prepare(row, data)
+                capacity = self.assets._audio_history_capacity_begin(row)
             except ValueError as exc:
                 self._audio_history_error(exc)
-            saved = {**row, HEAD: baseline}
-            atomic_write(self.assets._meta_path(aid), json.dumps(saved, ensure_ascii=False, indent=2))
-            guard()
+            try:
+                guard()
+                data = self.assets._verified_content(row, guard=guard)
+                store = self.assets._audio_history_store
+                try:
+                    baseline = store.prepare(row, data)
+                except ValueError as exc:
+                    self._audio_history_error(exc)
+                saved = {**row, HEAD: baseline}
+                atomic_write(self.assets._meta_path(aid), json.dumps(saved, ensure_ascii=False, indent=2))
+                guard()
+            except BaseException:
+                self.assets._audio_history_capacity_settle(capacity, failed=True)
+                raise
+            self.assets._audio_history_capacity_settle(capacity, failed=False)
             return {"contract": "audio-asset-history/capture/1", "asset_id": aid,
                     "version_id": baseline, "asset_version": row["version"],
                     "current_version": row["version"], "head": baseline,

@@ -184,3 +184,80 @@ def test_capacity_accounting_requires_both_flags(audio_history):
 
 
 
+
+def migrate_url(e, asset_id):
+    return f"/api/v1/projects/{e.rig.nid}/studio/assets/{asset_id}/history/migrate"
+
+
+def set_both_flags(history: bool, capacity: bool):
+    object.__setattr__(settings, "enable_audio_asset_history", history)
+    object.__setattr__(settings, "enable_project_capacity_admission", capacity)
+
+
+def test_explicit_migration_charges_baseline_bytes(audio_history):
+    e = audio_history
+    asset = create_audio(e)  # legacy asset captured only by an explicit migration
+    set_both_flags(True, True)
+    try:
+        current = reconcile(e)
+        before = current["ledger"]["used_bytes"]
+        response = e.client.post(migrate_url(e, asset["id"]), headers=e.headers,
+                                 json={"expected_version": 1})
+        assert response.status_code == 200, response.text
+        assert response.json()["migrated"] is True
+        delta = history_bytes(e, asset["id"])
+        assert delta > 0
+        record = ledger_record(e)
+        assert record["reservations"] == {}
+        assert record["used_bytes"] == before + delta
+        commits = [entry for entry in record["audit"] if entry["action"] == "COMMIT"]
+        assert commits and commits[-1]["actual_bytes"] == delta
+    finally:
+        set_both_flags(False, False)
+
+
+def test_explicit_migration_refused_before_reconcile(audio_history):
+    from app.services.audio_asset_history_store import HEAD
+    e = audio_history
+    asset = create_audio(e)
+    set_both_flags(True, True)
+    try:
+        assert not ledger_path(e).exists()
+        response = e.client.post(migrate_url(e, asset["id"]), headers=e.headers,
+                                 json={"expected_version": 1})
+        assert response.status_code == 409, response.text
+        assert response.json()["detail"]["code"] == "AUDIO_HISTORY_CAPACITY_NOT_RECONCILED"
+        assert not ledger_path(e).exists()
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            assert HEAD not in e.rig.assets._load(asset["id"])
+        assert history_bytes(e, asset["id"]) == 0
+    finally:
+        set_both_flags(False, False)
+
+
+def test_failed_explicit_migration_charges_residue_without_reservation(audio_history, monkeypatch):
+    from app.services.audio_asset_history_store import HEAD
+    e = audio_history
+    asset = create_audio(e)
+    set_both_flags(True, True)
+    try:
+        current = reconcile(e)
+        before = current["ledger"]["used_bytes"]
+        import app.storage as storage_module
+        original = storage_module.atomic_write
+
+        def failing(path, value):
+            raise OSError("synthetic crash during explicit migration commit")
+        monkeypatch.setattr(storage_module, "atomic_write", failing)
+        with pytest.raises(OSError):
+            e.client.post(migrate_url(e, asset["id"]), headers=e.headers,
+                          json={"expected_version": 1})
+        monkeypatch.setattr(storage_module, "atomic_write", original)
+        record = ledger_record(e)
+        assert record["reservations"] == {}
+        assert record["used_bytes"] > before
+        assert any(entry["action"] == "COMMIT" for entry in record["audit"])
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            assert HEAD not in e.rig.assets._load(asset["id"])
+    finally:
+        set_both_flags(False, False)
