@@ -31,15 +31,9 @@ def project_operation(data: Path, novel_id: str, *, require_exists=True, expecte
         if require_exists and not root.is_dir():
             raise FileNotFoundError(novel_id)
         if expected_incarnation is not None:
-            from .creative.project_store import _read_marker, BINDING
-            from uuid import UUID
+            from .creative.project_store import _marker_file_identity, _read_marker
             marker = _read_marker(root / "creative_project_v2.json")
-            if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
-                    or type(marker.get("schema_version")) is not int or marker["schema_version"] != 1
-                    or not isinstance(marker.get(BINDING), str)):
-                raise ValueError("GENERATION_REVIEW_PROJECT_OWNER_CHANGED")
-            identity = UUID(marker[BINDING])
-            if identity.version != 4 or str(identity) != marker[BINDING] or "file:" + str(identity) != expected_incarnation:
+            if _marker_file_identity(marker) != expected_incarnation:
                 raise ValueError("GENERATION_REVIEW_PROJECT_OWNER_CHANGED")
         yield
 

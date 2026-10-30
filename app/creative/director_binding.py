@@ -123,7 +123,7 @@ from contextlib import contextmanager
 def _creative_director_owner_lease(documents, binding):
     """Original owner, scope first, with no missing-marker provisioning."""
     from ..file_project_lifecycle import project_operation
-    from .project_store import BINDING, _read_marker
+    from .project_store import _marker_file_identity, _read_marker
     binding = _passive_source_binding(binding)
     store, nid = documents.store, binding.project_id
     key = store.store.key(nid, binding.scope.model_dump())
@@ -134,13 +134,7 @@ def _creative_director_owner_lease(documents, binding):
             owners.enter_context(project_operation(store.root, nid))
             try:
                 marker = _read_marker(store.root / "novels" / nid / "creative_project_v2.json")
-                if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
-                        or type(marker["schema_version"]) is not int or marker["schema_version"] != 1
-                        or not isinstance(marker[BINDING], str)):
-                    raise ValueError("invalid original marker")
-                identity = UUID(marker[BINDING])
-                if (identity.version != 4 or str(identity) != marker[BINDING]
-                        or "file:" + str(identity) != binding.project_incarnation):
+                if _marker_file_identity(marker) != binding.project_incarnation:
                     raise ValueError("different original owner")
             except (OSError, ValueError, TypeError, KeyError):
                 raise ValueError("CREATIVE_DIRECTOR_SOURCE_OWNER_CHANGED") from None

@@ -140,7 +140,7 @@ class GenerationRepository:
     @contextmanager
     def _graph_owner(self, item, binding):
         from ..file_project_lifecycle import project_operation
-        from ..creative.project_store import _read_marker, BINDING
+        from ..creative.project_store import _marker_file_identity, _read_marker
         data = self.root.parent.parent
         from ..services.generation_project_binding import FIELD
         if FIELD in item:
@@ -163,13 +163,7 @@ class GenerationRepository:
                 # Read the original owner's marker; never call incarnation(),
                 # whose first-use behavior can provision a missing marker.
                 marker = _read_marker(data / "novels" / item["novel_id"] / "creative_project_v2.json")
-                if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
-                        or type(marker["schema_version"]) is not int or marker["schema_version"] != 1
-                        or not isinstance(marker[BINDING], str)):
-                    raise ValueError("invalid project marker")
-                identity = UUID(marker[BINDING])
-                if (identity.version != 4 or str(identity) != marker[BINDING]
-                        or binding["project_incarnation"] != "file:" + str(identity)):
+                if _marker_file_identity(marker) != binding["project_incarnation"]:
                     raise ValueError("different project owner")
             except (FileNotFoundError, ValueError, TypeError, KeyError, OSError):
                 raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED") from None

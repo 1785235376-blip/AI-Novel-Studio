@@ -26,6 +26,24 @@ BINDING = "project_incarnation"
 MAX_MARKER_BYTES = 256
 
 
+def _marker_file_identity(marker):
+    """Validate the exact existing File owner marker without creating it.
+
+    A structurally valid but malformed UUID keeps UUID's original ValueError;
+    callers retain their established private error translations. Unknown keys,
+    other schema versions and noncanonical/non-v4 identities remain invalid.
+    This does not migrate or add any capacity or reservation state.
+    """
+    if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
+            or type(marker.get("schema_version")) is not int or marker["schema_version"] != 1
+            or not isinstance(marker.get(BINDING), str)):
+        return None
+    parsed = UUID(marker[BINDING])
+    if parsed.version != 4 or str(parsed) != marker[BINDING]:
+        return None
+    return "file:" + str(parsed)
+
+
 def _read_marker(path):
     """Never follow a marker symlink/reparse point or read unbounded content."""
     from .asset_usage_budget import current_usage_budget
@@ -102,17 +120,12 @@ class CreativeProjectStore:
                         raise FileNotFoundError(nid) from None
                     marker = {"schema_version": 1, BINDING: str(uuid4())}
                     atomic_write(path, json.dumps(marker, sort_keys=True))
-                if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
-                        or type(marker.get("schema_version")) is not int or marker["schema_version"] != 1
-                        or not isinstance(marker.get(BINDING), str)):
-                    raise ValueError("CREATIVE_PROJECT_IDENTITY_INVALID")
                 try:
-                    parsed = UUID(marker[BINDING])
-                    if parsed.version != 4 or str(parsed) != marker[BINDING]:
-                        raise ValueError("invalid identity")
-                    identity = "file:" + str(parsed)
+                    identity = _marker_file_identity(marker)
                 except ValueError:
                     raise ValueError("CREATIVE_PROJECT_IDENTITY_INVALID") from None
+                if identity is None:
+                    raise ValueError("CREATIVE_PROJECT_IDENTITY_INVALID")
             else:
                 connection = locks.enter_context(self.store._connect())
                 row = connection.execute("SELECT id FROM novels WHERE slug = %s FOR KEY SHARE", (nid,)).fetchone()
