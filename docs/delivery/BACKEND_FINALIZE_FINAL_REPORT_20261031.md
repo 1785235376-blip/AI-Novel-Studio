@@ -9,11 +9,11 @@
 | 项 | 值 |
 | --- | --- |
 | 工作分支 | `work/backend-finalize-20261031` |
-| 本地 head / tree | `3d36379835d36c33bfc39b93d5a94ba741d9921d` / `d264638a65edd8edbf58a3ccb7691d02ce4baa00` |
+| 本地 head / tree | `a28a6d5c0ddd3bbc436691b49aeace63bc0b8e9e` / `3a868a519cfb193a4a75dd22dbe5186d7a39ad96` |
 | 远端回读 | `refs/heads/work/backend-finalize-20261031` = 同一 SHA（`git ls-remote`） |
-| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、251 files、20 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
+| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、254 files、23 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
 | 基线 | PR #51 head `317da4cc3c9b68d4f9e09e6222b4e110bad4e94b`（tree `677156be5750dc93ca5b3fc8bdae73dfd414472e`） |
-| 相对基线 diff | 251 files changed, +30920 / −199 |
+| 相对基线 diff | 254 files changed, +31043 / −199 |
 | 其他分支 | `work/capability-completion-20261030`=`317da4cc`（未改动）；`main`=`7b35e4cb`（未改动、未合并） |
 | #51 关联 | 已在 #51 下评论指向 #52（前置链） |
 
@@ -55,6 +55,7 @@
 | 3 | `c40742d0` `e1af152d` `ee351673` | 音频历史：捕获层（审查复用旧 store，显式迁移适配）；读取/详情/下载 + 显式迁移 API；显式恢复生成可追溯新当前版本（评审不继承） |
 | 4 | `1fc03a83` `a70c5dde` | 运行时机器可读能力合同扩展；行业导出打包验证 + issue #14/#16/#17/#18 重验 |
 | 5 | `d090edc1` `debf9c2f` `19a85490` | 39 个非祖先 head 精确差异与处置；motion frame 远程引用/审批信任边界证据；生命周期/重建/恢复定向复核与 PR #49 D-17/D-20 适用性调查 |
+| 补充 | a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 session 撤销/成员停用/只读授权反例 |
 
 全部提交均通过普通工作分支推送并更新同一个 Draft PR #52（未合并、未发布、未删分支）。
 
@@ -124,6 +125,7 @@
 
 ## 10. 结论
 
-本轮完成：86 head/PR/工作区只读核验与基线选择；sibling 及其他独立后端线逐文件对账与安全整合；Export/PG 迁移/VTT-OTIO/Canvas、容量账本与 admission、音频历史捕获-读取-迁移-恢复、运行时能力合同、行业打包验证等 20 个可审查提交；宽回归 1431 passed 且覆盖组零新失败；issue #14/#16/#17/#18 与 D-17/D-20/motion frame 均按当前候选重新取证并如实标注 NOT_RUN/BLOCKED/UNKNOWN。**全产品验收、真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面与历史产品线合并不在本轮结论内。**
+本轮完成：86 head/PR/工作区只读核验与基线选择；sibling 及其他独立后端线逐文件对账与安全整合；Export/PG 迁移/VTT-OTIO/Canvas、容量账本与 admission/历史写入计费、音频历史捕获-读取-迁移-恢复及权限反例、运行时能力合同、行业打包验证等 23 个可审查提交；宽回归 1431 passed 且覆盖组零新失败；issue #14/#16/#17/#18 与 D-17/D-20/motion frame 均按当前候选重新取证并如实标注 NOT_RUN/BLOCKED/UNKNOWN。**全产品验收、真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面与历史产品线合并不在本轮结论内。**
+
 
 
