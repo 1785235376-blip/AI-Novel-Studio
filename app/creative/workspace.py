@@ -364,6 +364,7 @@ class IndependentWorkspaceService:
         return self._persist_manual_import(nid, scope, actor, body, data, measured["media_type"], guard)
 
     def import_model_reference(self, nid, scope, actor, value, guard=lambda: None):
+        self._require_manual_import_capacity()
         from .model_reference_glb import inspect_static_glb
         body = ManualModelReferenceImport.model_validate(value)
         if not body.filename.lower().endswith(".glb"):

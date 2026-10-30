@@ -492,8 +492,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     @model_reference_router.post("/projects/{nid}/studio/assets/model-reference", status_code=201)
     def import_model_reference(nid: str, body: ManualModelReferenceImport,
                                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return model_reference_call(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.import_model_reference(nid, scope, actor, body, guard))
+        access(nid, x_session_token, x_branch_id, "domain.write")
+        raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
 
     router.include_router(model_reference_router)
 
