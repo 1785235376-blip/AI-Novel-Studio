@@ -273,3 +273,14 @@ files created: none
   4. **最小化诊断预览会暂停更宽的 standing grant**，且诊断预览要求 `diagnostics.read` capability。
 - **未覆盖**：真实 peer/命名管道传输、浏览器端 SSE 消费、真实上传/案件流——`NOT_RUN`。
 - **提交**：`f116b2d9`；无生产代码改动。
+
+## 15. 第六轮续做（2026-10-30）：Interop 取消/断开收据 + 安全相邻独立套件回归
+
+- **新增** `tests/test_local_interop_cancel_disconnect_boundary.py`（4 passed，冻结合成对端 + 注入 transport）：
+  1. 同一 owner 重复占用同一 in-flight `request_id` → 409 `CANCELLED`，原请求不受影响；
+  2. `cancel` 对未知请求返回固定收据，会话参数受 owner 会话门约束；
+  3. `disconnect_revoke` 先撤销本地授权再做对端往返：报告 `revoked/subscriptions_stopped/pending_cancelled/standing_grants_cleared`、`transport_disconnected=True`、`peer_disconnect_acknowledged=True`、`status=DISCONNECTED`，会话进入 closed_sessions 且旧 token 请求 401；重复断开保持幂等且不虚报；
+  4. 同步 `disconnect` 返回固定收据、撤销会话，但不声称对端状态；未知会话 id 只返回与调用者 owner 投影绑定的收据，不泄露跨 owner 信息。
+- **安全相邻独立套件回归**（15 个既有独立/反例套件，含上传关闭门、资产使用/查询授权、U16 stop 来源隐私、范围残留模型上传、图片叶重跑 HTTP、音频历史 collab、存储观测、生成 worker 授权、Studio 独立集成）：**164 passed / 0 failed**（122.48s）。
+- **未覆盖**：真实 peer ACK/真实命名管道断开、浏览器 SSE 断开、跨 owner（合成 provider 只有单一 actor）会话取消 —— `NOT_RUN`。
+- **提交**：`f1c6b8f4`；无生产代码改动。
