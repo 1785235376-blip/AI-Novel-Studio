@@ -1832,3 +1832,20 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - **P3** B3 的 light 主题对比度未修复（死代码，可延后）；B4 残留中文为观察项。
 
 未提交、未推送、未改业务代码。
+
+## [VERA-FE] 增量复审 299a738c..e91806e4（tree f490b544）
+
+**结论：PASS（P1/P2 已修复，变异均转红）；遗留 2 个 P3，不阻塞。**
+
+- 前置：1360e578 中落地的上轮 [VERA-FE] 段与我本地未提交稿逐字一致（VERBATIM）。增量另含未提及的 c62987e7（仅测试类型收窄，无断言改动）。
+- 顶栏：1440/1439/1366/1280/1024 × normal/pro × zh/en × 徽章开/关 共 40 组，sw==cw 全部成立，按钮全部可达、无裁切；.global-header axe 0 违规。紧凑徽章 <1440 宽 56(zh)/49(en)，可访问名在 AX 树中为 status「成人内容（NSFW）模式已开启 · 仅界面偏好，后端未接入」+ button「关闭 NSFW 模式」。变异：仅删紧凑媒体查询 → 1366 normal en 1371/1366、1024 pro en 1070/1024 溢出（红）；整体回退 CSS 同样转红。（Hermia 提交说明写 1437→1366，与实测 1371 不符，建议更正。）
+- 130/95 复核（299a738c）：复现。测的是 BUTTON.global-search 内的标签 SPAN 的 scrollWidth/clientWidth（span 带 text-overflow:ellipsis），按钮本身 178/178。即"搜索标签被省略号截断"，并非顶栏溢出——原结论成立，措辞据此精确化。
+- P2：Esc/取消/确认/键盘 Esc 后焦点均回到 [data-settings-trigger]；变异（focus 调用改 void 0）四项均落到 BODY，vitest src/ui/nsfw 18/18 → 3 失败，已还原。
+- 夜色酒红主题：六个工作区 + 顶栏 + 菜单 + DualStack 弹窗，暗色 axe 全 0；144 个 token 中暗色改 83、亮色改 77，7 个状态色 token 未变；关闭后 notRestored=[]、data-nsfw=null。会话模式零写入（LS/SS/cookie/IDB 无变化，non-GET 0），重载后恢复；持久模式仅写 poemseed.nsfwmode.v1::u-a::… 一个键。
+- 门禁（3 次全量）：raw 294/293/294，ISI 8，adj 294/293/294，规则 (a)(b) 均 ≤297 通过；新增失败仅 u1.purge.host（已知 flaky，单独重跑 1/1 通过）；LocalAiBrowserJourneyContracts ENOENT 为基线。
+
+**问题清单**
+1. P3：zh、NSFW 开、1366–1440 时搜索标签省略：1366 为 130/65，1439/1440 为 130/73（关时 175/175；299a738c 时 130/95）。
+2. P3：亮色+NSFW 开，NOVEL `.nv-badge--ok` 对比度 4.42（#166534 on #d2caca）< 4.5，关时通过；两次复现。状态色未变，是背景变了。
+
+证据：/workspace/hr/vera-compare/nsfw-e91806e4/
