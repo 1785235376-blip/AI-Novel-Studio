@@ -111,6 +111,9 @@ def create_audiobook_router(service, authorize, require_flag):
     def mix_review(nid: str, rid: str, action: str, body: AudioActionIn,
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, "domain.review")
+        # This route identifies a mix, so it can refuse before the inherited
+        # review lookup initializes scope coordination. Plan review is separate.
+        call(actor, service._require_candidate_write_capacity)
         return call(actor, service.review, nid, scope, actor, rid, action, body.expected_version)
 
     return router

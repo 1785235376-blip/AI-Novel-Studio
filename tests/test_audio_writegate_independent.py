@@ -28,7 +28,8 @@ def closed(rig, monkeypatch):
         doc['collections']['audio_v2_mix_proposals'] = {row['id']: row}
         doc['collections']['audio_v2_plans'] = {'synthetic-plan': {
             'id': 'synthetic-plan', 'novel_id': rig.nid, 'scope': copy.deepcopy(scope),
-            'version': 1, 'segments': []}}
+            'version': 1, 'segments': [], 'status': 'PENDING_REVIEW',
+            'history': [], 'created_by': 'reader', 'created_at': 'synthetic-time'}}
     service = AudiobookV2Service(rig.workspace.store.store, rig.novels,
         rig.workspace.creative.chapters, assets=rig.assets)
     mounted = experimental_api.audiobook_service
@@ -135,3 +136,17 @@ def test_closed_candidate_review_on_uninitialized_scope_does_not_create_lock(rig
                                json={'expected_version': 1})
     assert response.status_code == 422, response.text
     assert snapshot(rig.root) == before
+
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_plan_review_still_uses_original_authorization_and_write_path(closed, alias):
+    rig, scope, headers, _, _ = closed
+    prefix = f"/api{'/v1' if alias else ''}"
+    path = prefix + f'/novels/{rig.nid}/experimental/audiobook/plans/synthetic-plan/reject'
+    denied = rig.client.post(path, headers={**headers, 'X-Session-Token': 'token-no-grants'},
+                             json={'expected_version': 1})
+    assert denied.status_code == 403, denied.text
+    allowed = rig.client.post(path, headers=headers, json={'expected_version': 1})
+    assert allowed.status_code == 200, allowed.text
+    assert allowed.json()['status'] == 'REJECTED'
+    assert rig.workspace.store.store.read(rig.nid, scope)['collections']['audio_v2_plans']['synthetic-plan']['status'] == 'REJECTED'
