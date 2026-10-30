@@ -14,6 +14,7 @@ import type { Draft, DraftContent } from './promptDraft';
 import { bodyStateLabel } from './PromptLibraryPanel';
 import { PROMPT_BOUNDS, type PromptEntry } from './promptTypes';
 import { PromptBodyFinder } from './PromptBodyFinder';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 
 type Props = {
   draft: Draft;
@@ -55,7 +56,8 @@ export function PromptEditorPanel(props: Props) {
   const bodyComposingRef = useRef(false);
   useEffect(() => { bodyComposingRef.current = false; setBodyComposing(false); }, [draft.key, props.copyScopeKey]);
   const professional = mode === 'PROFESSIONAL';
-  const status = draftStatus(draft);
+  const z = useTz();
+  const status = z(draftStatus(draft));
   const fieldErrorId = useId();
   const byteCountId = useId();
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -111,51 +113,50 @@ export function PromptEditorPanel(props: Props) {
   }, [fieldError, locked, draft.key]);
 
   return (
-    <section className="prompt-editor" aria-label="Prompt 编辑器">
+    <section className="prompt-editor" aria-label={z('Prompt 编辑器')}>
       {/* Persistent, screen-reader visible status — not a transient toast. */}
       <p className="prompt-status" role="status" aria-live="polite">{status}</p>
-      {draft.message && <StatusMessage>{draft.message}</StatusMessage>}
+      {draft.message && <StatusMessage>{z(draft.message)}</StatusMessage>}
       {conflictCode && (
         <StatusMessage tone="warning">
-          {conflictReason(conflictCode)} 你的草稿已保留；请先重新加载服务器版本，再明确重新基准。
+          {z(conflictReason(conflictCode))} {z('你的草稿已保留；请先重新加载服务器版本，再明确重新基准。')}
         </StatusMessage>
       )}
-      {saveError && <StatusMessage tone="error">{saveError}</StatusMessage>}
-      {fieldError && <StatusMessage tone="error"><span id={fieldErrorId}>{fieldError.message}</span></StatusMessage>}
+      {saveError && <StatusMessage tone="error">{z(saveError)}</StatusMessage>}
+      {fieldError && <StatusMessage tone="error"><span id={fieldErrorId}>{z(fieldError.message)}</span></StatusMessage>}
 
       {detail && detail.body.state !== 'COMPLETE' && (
         <StatusMessage tone="warning">
-          服务器上这一修订的正文状态是「{bodyStateLabel(detail.body.state)}」，
-          下方显示的内容**不是**完整正文，编辑前请先核对。
+          {z(`服务器上这一修订的正文状态是「${bodyStateLabel(detail.body.state)}」，下方显示的内容**不是**完整正文，编辑前请先核对。`)}
         </StatusMessage>
       )}
 
-      <label htmlFor="prompt-text">正文</label>
+      <label htmlFor="prompt-text">{z('正文')}</label>
       <textarea onCompositionStart={() => { bodyComposingRef.current = true; setBodyComposing(true); }} onCompositionEnd={() => { bodyComposingRef.current = false; setBodyComposing(false); }} ref={textRef} id="prompt-text" rows={8} value={draft.content.text} disabled={locked}
         aria-describedby={`prompt-text-hint ${byteCountId}${fieldError?.field === 'text' ? ` ${fieldErrorId}` : ''}`}
         aria-invalid={fieldError?.field === 'text' || excessBytes > 0}
         onChange={event => onEdit({ text: event.target.value })} />
-      <p id="prompt-text-hint">按 UTF-8 字节计最长 64 KiB。不会自动去除空格、换行或 emoji。</p>
-      <p id={byteCountId}>正文已用 {textBytes} / {PROMPT_BOUNDS.textBytes} 字节 · {excessBytes > 0
+      <p id="prompt-text-hint">{z('按 UTF-8 字节计最长 64 KiB。不会自动去除空格、换行或 emoji。')}</p>
+      <p id={byteCountId}>{z(`正文已用 ${textBytes} / ${PROMPT_BOUNDS.textBytes} 字节`)} · {z(excessBytes > 0
         ? `超过上限 ${excessBytes} 字节，请缩短后保存；当前内容未被截断。`
-        : `剩余 ${-excessBytes} 字节。`}</p>
+        : `剩余 ${-excessBytes} 字节。`)}</p>
       <PromptBodyFinder
         key={JSON.stringify([props.copyScopeKey, draft.key, draft.familyId, draft.baseAssetId, draft.baseRevision])}
         text={draft.content.text} target={textRef} disabled={locked || busy || bodyComposing} />
       <div className="prompt-editor-actions">
         <Button type="button" disabled={locked || !draft.content.text || copyPending !== null}
-          onClick={() => void copyBody()}>{copyPending !== null ? '正在复制正文…' : '复制当前正文'}</Button>
+          onClick={() => void copyBody()}>{z(copyPending !== null ? '正在复制正文…' : '复制当前正文')}</Button>
         {currentCopyFeedback === 'FAILED' && <Button type="button" variant="ghost" disabled={locked}
-          onClick={() => { textRef.current?.focus(); textRef.current?.select(); }}>选中正文手动复制</Button>}
+          onClick={() => { textRef.current?.focus(); textRef.current?.select(); }}>{z('选中正文手动复制')}</Button>}
       </div>
-      <p>只复制当前正文，不包含其他参数，也不代表已保存。请粘贴到你选择的位置并核对。</p>
-      <p>离开页面不会取消已发出的复制请求；重新打开后请核对粘贴内容。</p>
-      {copyPending !== null && <StatusMessage>{copyPending.stale || !matchesCopySource(copyPending)
+      <p>{z('只复制当前正文，不包含其他参数，也不代表已保存。请粘贴到你选择的位置并核对。')}</p>
+      <p>{z('离开页面不会取消已发出的复制请求；重新打开后请核对粘贴内容。')}</p>
+      {copyPending !== null && <StatusMessage>{z(copyPending.stale || !matchesCopySource(copyPending)
         ? '先前正文的复制请求仍在处理中；当前正文尚未复制。'
-        : '正在请求剪贴板写入，尚未确认复制。'}</StatusMessage>}
-      {currentCopyFeedback === 'COPIED' && <StatusMessage>当前正文已复制到剪贴板；请粘贴后核对，未新增服务器修订。</StatusMessage>}
+        : '正在请求剪贴板写入，尚未确认复制。')}</StatusMessage>}
+      {currentCopyFeedback === 'COPIED' && <StatusMessage>{z('当前正文已复制到剪贴板；请粘贴后核对，未新增服务器修订。')}</StatusMessage>}
       {currentCopyFeedback === 'FAILED' && <StatusMessage tone="warning">
-        无法自动复制。可选中正文后按 Ctrl+C 或 Command+C 手动复制；不会自动重试。
+        {z('无法自动复制。可选中正文后按 Ctrl+C 或 Command+C 手动复制；不会自动重试。')}
       </StatusMessage>}
 
       <PromptVariablesPanel text={draft.content.text} owner={draft.content} scope={JSON.stringify([props.copyScopeKey,draft.key])} disabled={locked || busy || bodyComposing} onApply={text => { if (!bodyComposingRef.current && !locked && !busy) onEdit({text}); }} />
@@ -166,7 +167,7 @@ export function PromptEditorPanel(props: Props) {
 
       <div className="prompt-row">
         <div>
-          <label htmlFor="prompt-purpose-select">用途</label>
+          <label htmlFor="prompt-purpose-select">{z('用途')}</label>
           <select id="prompt-purpose-select" value={draft.content.purpose} disabled={locked}
             onChange={event => onEdit({ purpose: event.target.value as DraftContent['purpose'] })}>
             <option value="IMAGE">IMAGE</option>
@@ -176,7 +177,7 @@ export function PromptEditorPanel(props: Props) {
           </select>
         </div>
         <div>
-          <label htmlFor="prompt-model">模型偏好</label>
+          <label htmlFor="prompt-model">{z('模型偏好')}</label>
           <input id="prompt-model" value={draft.content.modelReference} disabled={locked}
             onChange={event => onEdit({ modelReference: event.target.value })} />
         </div>
@@ -191,8 +192,8 @@ export function PromptEditorPanel(props: Props) {
 
       {showParameters && (
         <>
-          {!professional && <p>参数已展开供修正与核对；修改不会自动保存。</p>}
-          <label htmlFor="prompt-parameters">参数（JSON，不会执行）</label>
+          {!professional && <p>{z('参数已展开供修正与核对；修改不会自动保存。')}</p>}
+          <label htmlFor="prompt-parameters">{z('参数（JSON，不会执行）')}</label>
           <textarea ref={parametersRef} id="prompt-parameters" rows={3} value={draft.content.parameters} disabled={locked}
             aria-invalid={fieldError?.field === 'parameters'}
             aria-describedby={fieldError?.field === 'parameters' ? fieldErrorId : undefined}
@@ -201,65 +202,64 @@ export function PromptEditorPanel(props: Props) {
       )}
 
       <fieldset className="prompt-bindings" disabled={locked}>
-        <legend>引用绑定（逗号或空格分隔 ID）</legend>
-        <label htmlFor="prompt-characters">角色 ID</label>
+        <legend>{z('引用绑定（逗号或空格分隔 ID）')}</legend>
+        <label htmlFor="prompt-characters">{z('角色 ID')}</label>
         <input id="prompt-characters" value={draft.content.characterIds.join(', ')}
           onChange={event => onEdit({ characterIds: ids(event.target.value) })} />
-        <label htmlFor="prompt-scenes">场景 ID</label>
+        <label htmlFor="prompt-scenes">{z('场景 ID')}</label>
         <input id="prompt-scenes" value={draft.content.sceneIds.join(', ')}
           onChange={event => onEdit({ sceneIds: ids(event.target.value) })} />
-        <label htmlFor="prompt-shots">镜头 ID</label>
+        <label htmlFor="prompt-shots">{z('镜头 ID')}</label>
         <input id="prompt-shots" value={draft.content.shotIds.join(', ')}
           onChange={event => onEdit({ shotIds: ids(event.target.value) })} />
-        <label htmlFor="prompt-assets">参考素材 ID</label>
+        <label htmlFor="prompt-assets">{z('参考素材 ID')}</label>
         <input id="prompt-assets" value={draft.content.referenceAssetIds.join(', ')}
           onChange={event => onEdit({ referenceAssetIds: ids(event.target.value) })} />
       </fieldset>
 
       {professional && detail && bindingSummary(detail).length > 0 && (
         <div className="prompt-binding-truth">
-          <p>服务器解析结果（绑定核实的唯一来源）：</p>
+          <p>{z('服务器解析结果（绑定核实的唯一来源）：')}</p>
           <ul>
             {bindingSummary(detail).map(row => (
               <li key={`${row.label}:${row.id}`}>
-                {row.label} {row.id} ·{' '}
+                {z(row.label)} {row.id} ·{' '}
                 <Badge tone={row.resolution === 'KNOWN' ? 'success' : 'warning'}>
-                  {row.resolution === 'KNOWN' ? '索引中存在' : '未找到'}
+                  {z(row.resolution === 'KNOWN' ? '索引中存在' : '未找到')}
                 </Badge>{' '}
-                来源 {row.verification}
+                {z(`来源 ${row.verification}`)}
               </li>
             ))}
           </ul>
           <p>
-            <strong>INDEX_SUPPLIED 只表示索引里有这个目标</strong>，不代表已审核、可生成，
-            也不代表保存时校验通过 —— 写入时引用校验仍为 NOT_RUN。
+            <strong>{z('INDEX_SUPPLIED 只表示索引里有这个目标')}</strong>{z('，不代表已审核、可生成，也不代表保存时校验通过 —— 写入时引用校验仍为 NOT_RUN。')}
           </p>
         </div>
       )}
 
-      <label htmlFor="prompt-note">修改备注</label>
+      <label htmlFor="prompt-note">{z('修改备注')}</label>
       <input id="prompt-note" value={draft.content.changeNote} disabled={locked}
         onChange={event => onEdit({ changeNote: event.target.value })} />
-      <label htmlFor="prompt-reason">修改原因</label>
+      <label htmlFor="prompt-reason">{z('修改原因')}</label>
       <input id="prompt-reason" value={draft.content.changeReason} disabled={locked}
         onChange={event => onEdit({ changeReason: event.target.value })} />
 
       <div className="prompt-editor-actions">
         <Button onClick={onSave} disabled={!canSave || locked || busy}>
-          {draft.familyId ? '保存新版本' : '保存为新 Prompt'}
+          {z(draft.familyId ? '保存新版本' : '保存为新 Prompt')}
         </Button>
         {draft.state === 'UNKNOWN' && (
-          <Button onClick={onRetry}>用同一请求重试</Button>
+          <Button onClick={onRetry}>{z('用同一请求重试')}</Button>
         )}
-        {conflictCode && <Button onClick={onRebase}>重新基准到服务器最新修订</Button>}
-        <Button onClick={onDiscard} disabled={locked}>放弃本地修改</Button>
+        {conflictCode && <Button onClick={onRebase}>{z('重新基准到服务器最新修订')}</Button>}
+        <Button onClick={onDiscard} disabled={locked}>{z('放弃本地修改')}</Button>
       </div>
       {professional && (
         <dl className="prompt-identity">
-          <dt>家族</dt><dd>{draft.familyId ?? '（新建）'}</dd>
-          <dt>基准修订</dt><dd>{draft.baseRevision ?? '（新建）'}</dd>
-          <dt>基准资产</dt><dd>{draft.baseAssetId ?? '（新建）'}</dd>
-          <dt>请求标识</dt><dd>{draft.requestId ?? '（未提交）'}</dd>
+          <dt>{z('家族')}</dt><dd>{draft.familyId ?? z('（新建）')}</dd>
+          <dt>{z('基准修订')}</dt><dd>{draft.baseRevision ?? z('（新建）')}</dd>
+          <dt>{z('基准资产')}</dt><dd>{draft.baseAssetId ?? z('（新建）')}</dd>
+          <dt>{z('请求标识')}</dt><dd>{draft.requestId ?? z('（未提交）')}</dd>
         </dl>
       )}
     </section>

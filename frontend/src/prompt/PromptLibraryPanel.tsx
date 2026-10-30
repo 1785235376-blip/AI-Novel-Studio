@@ -8,6 +8,7 @@ import { useMemo, useState } from 'react';
 
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import type { PromptEntry, PromptLibrary } from './promptTypes';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 
 type Props = {
   library: PromptLibrary | null;
@@ -28,6 +29,7 @@ const anomalyLabels: Record<string, string> = {
 };
 
 export function PromptLibraryPanel(props: Props) {
+  const z = useTz();
   const { library, loading, error, selectedFamilyId, onSelect, onRefresh, onNew } = props;
   const [query, setQuery] = useState('');
   const [purpose, setPurpose] = useState('ALL');
@@ -57,51 +59,50 @@ export function PromptLibraryPanel(props: Props) {
   const incomplete = !!library && (!library.readComplete || library.hasMore || library.truncated);
 
   return (
-    <section className="prompt-library" aria-label="Prompt 列表">
+    <section className="prompt-library" aria-label={z('Prompt 列表')}>
       <div className="prompt-library-actions">
-        <Button onClick={onNew}>新建 Prompt</Button>
-        <Button onClick={onRefresh} disabled={loading}>{loading ? '正在读取…' : '重新读取'}</Button>
+        <Button onClick={onNew}>{z('新建 Prompt')}</Button>
+        <Button onClick={onRefresh} disabled={loading}>{z(loading ? '正在读取…' : '重新读取')}</Button>
       </div>
 
       <div className="prompt-filters">
-        <label htmlFor="prompt-search">搜索</label>
-        <input id="prompt-search" type="search" value={query} placeholder="在当前已加载的 Prompt 中搜索"
+        <label htmlFor="prompt-search">{z('搜索')}</label>
+        <input id="prompt-search" type="search" value={query} placeholder={z('在当前已加载的 Prompt 中搜索')}
           onChange={event => setQuery(event.target.value)} />
-        <label htmlFor="prompt-purpose">用途</label>
+        <label htmlFor="prompt-purpose">{z('用途')}</label>
         <select id="prompt-purpose" value={purpose} onChange={event => setPurpose(event.target.value)}>
-          <option value="ALL">全部</option>
+          <option value="ALL">{z('全部')}</option>
           <option value="IMAGE">IMAGE</option>
           <option value="VIDEO">VIDEO</option>
           <option value="AUDIO">AUDIO</option>
           <option value="TEXT">TEXT</option>
         </select>
-        <label htmlFor="prompt-review">状态</label>
+        <label htmlFor="prompt-review">{z('状态')}</label>
         <select id="prompt-review" value={review} onChange={event => setReview(event.target.value)}>
-          <option value="ALL">全部</option>
-          <option value="DRAFT">草稿</option>
-          <option value="APPROVED">已审核</option>
+          <option value="ALL">{z('全部')}</option>
+          <option value="DRAFT">{z('草稿')}</option>
+          <option value="APPROVED">{z('已审核')}</option>
         </select>
       </div>
 
       {incomplete && (
         <StatusMessage tone="warning">
-          服务端只读取了有上限的一部分结果：搜索与筛选**仅在已加载的条目中进行**，
-          已加载的 {library?.promptCount ?? 0} 条不代表整个项目的 Prompt 总数。
+          {z(`服务端只读取了有上限的一部分结果：搜索与筛选**仅在已加载的条目中进行**，已加载的 ${library?.promptCount ?? 0} 条不代表整个项目的 Prompt 总数。`)}
         </StatusMessage>
       )}
       {library && library.conflictedCount > 0 && (
         <StatusMessage tone="warning">
-          有 {library.conflictedCount} 份修订在并发保存中落败，已保留内容但**不计入**正式修订链。
+          {z(`有 ${library.conflictedCount} 份修订在并发保存中落败，已保留内容但**不计入**正式修订链。`)}
         </StatusMessage>
       )}
-      {error && <StatusMessage tone="error">{error}</StatusMessage>}
-      {loading && !library && <StatusMessage>正在读取 Prompt 列表…</StatusMessage>}
+      {error && <StatusMessage tone="error">{z(error)}</StatusMessage>}
+      {loading && !library && <StatusMessage>{z('正在读取 Prompt 列表…')}</StatusMessage>}
 
       {library && library.entries.length === 0 && !loading && (
-        <EmptyState title="还没有 Prompt" detail="这里只会显示当前身份有权读取的 Prompt。可以新建一份手写草稿。" />
+        <EmptyState title={z('还没有 Prompt')} detail={z('这里只会显示当前身份有权读取的 Prompt。可以新建一份手写草稿。')} />
       )}
       {library && library.entries.length > 0 && visible.length === 0 && (
-        <EmptyState title="没有匹配的结果" detail="当前筛选或搜索在已加载的条目里没有匹配项。" />
+        <EmptyState title={z('没有匹配的结果')} detail={z('当前筛选或搜索在已加载的条目里没有匹配项。')} />
       )}
 
       <ul className="prompt-list">
@@ -111,17 +112,17 @@ export function PromptLibraryPanel(props: Props) {
               aria-current={entry.familyId === selectedFamilyId}
               onClick={() => onSelect(entry.familyId)}>
               <span className="prompt-list-title">
-                {entry.purpose} · {entry.familyId.slice(0, 8)} · 修订 {entry.revision}
+                {entry.purpose} · {entry.familyId.slice(0, 8)} · {z(`修订 ${entry.revision}`)}
               </span>
               <span className="prompt-list-meta">
                 <Badge tone={entry.approved ? 'success' : 'info'}>
-                  {entry.reviewStatus === 'APPROVED' ? '已审核' : '草稿'}
+                  {z(entry.reviewStatus === 'APPROVED' ? '已审核' : '草稿')}
                 </Badge>
-                {entry.redacted && <Badge tone="warning">已脱敏</Badge>}
-                {!entry.historyComplete && <Badge tone="warning">历史不完整</Badge>}
-                {entry.body.state !== 'COMPLETE' && <Badge tone="warning">{bodyStateLabel(entry.body.state)}</Badge>}
+                {entry.redacted && <Badge tone="warning">{z('已脱敏')}</Badge>}
+                {!entry.historyComplete && <Badge tone="warning">{z('历史不完整')}</Badge>}
+                {entry.body.state !== 'COMPLETE' && <Badge tone="warning">{z(bodyStateLabel(entry.body.state))}</Badge>}
                 {entry.anomalies.map(row => (
-                  <Badge key={row.kind} tone="warning">{anomalyLabels[row.kind] ?? row.kind}</Badge>
+                  <Badge key={row.kind} tone="warning">{z(anomalyLabels[row.kind] ?? row.kind)}</Badge>
                 ))}
               </span>
             </button>

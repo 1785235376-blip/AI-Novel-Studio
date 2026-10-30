@@ -17,7 +17,7 @@ function select(id: string) {
   fireEvent.pointerDown(node, {button: 0, pointerId: 1, clientX: 40, clientY: 40});
   fireEvent.pointerUp(node, {button: 0, pointerId: 1, clientX: 40, clientY: 40});
 }
-const graph = (t: string): CvGraph => ({nodes: [{id: 'n1', t, x: 0, y: 0, title: t === 'image_generate' ? '新生成图片' : '新生成视频', prompt: 'a lighthouse'}], edges: []});
+const graph = (t: string): CvGraph => ({nodes: [{id: 'n1', t: t as CvGraph['nodes'][number]['t'], x: 0, y: 0, title: t === 'image_generate' ? '新生成图片' : '新生成视频', prompt: 'a lighthouse'}], edges: []});
 beforeEach(() => { localStorage.clear(); vi.stubGlobal('PointerEvent', MouseEvent); act(() => setLocale('en')); });
 afterEach(() => { act(() => setLocale('zh-CN')); cleanup(); vi.unstubAllGlobals(); });
 

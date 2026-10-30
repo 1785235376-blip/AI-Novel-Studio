@@ -17,6 +17,7 @@ import { RevisionDiff } from './PromptRevisionDiff';
 import { PromptVersionHistory } from './PromptVersionHistory';
 import { needsRebase } from './promptDraft';
 import { usePromptWorkspace } from './usePromptWorkspace';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 import './promptWorkspace.css';
 
 export type PromptWorkspaceProps = {
@@ -35,6 +36,7 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
   const { projectId, branchId = null, actor, transport, scope, mode, writable, denied, onDirtyChange } = props;
   const controller = usePromptWorkspace({ projectId, branchId, actor, transport, scope, onDirtyChange });
   const { state, refresh, selectFamily, startNew, edit, save, retry, rebase, discard, compare } = controller;
+  const z = useTz();
   const [fromId, setFromId] = useState('');
   const [toId, setToId] = useState('');
   // P0-I: `redacted` is a **display mask** chosen on a revision, not an access control.
@@ -56,22 +58,19 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
 
   const comparison = useMemo(() => state.compare, [state.compare]);
   if (denied) {
-    return <Panel title="Prompt 工作台">
-      <EmptyState title="当前会话无权访问此项目" detail="重新核对身份与范围后再打开。" />
+    return <Panel title={z('Prompt 工作台')}>
+      <EmptyState title={z('当前会话无权访问此项目')} detail={z('重新核对身份与范围后再打开。')} />
     </Panel>;
   }
 
   return (
-    <Panel title="Prompt 工作台">
-      <p>
-        在这里创建和修订手写 Prompt。保存只会新增一个不可变修订，不会覆盖旧版本；
-        这里不会调用任何模型，也不会因为输入而自动创建内容。
-      </p>
+    <Panel title={z('Prompt 工作台')}>
+      <p>{z('在这里创建和修订手写 Prompt。保存只会新增一个不可变修订，不会覆盖旧版本；这里不会调用任何模型，也不会因为输入而自动创建内容。')}</p>
 
       {/* §1-A: an unsaved draft detected after a reload is *stated*, never "restored".
           Prompt text is deliberately never written to browser storage. */}
       {controller.restoreNotice && (
-        <StatusMessage tone="warning">{controller.restoreNotice}</StatusMessage>
+        <StatusMessage tone="warning">{z(controller.restoreNotice)}</StatusMessage>
       )}
 
       <div className="prompt-workspace">
@@ -98,12 +97,11 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
             onCopy={content => { startNew(); edit(content); }} />
 
           {detail && (
-            <section className="prompt-history" aria-label="版本历史">
-              <h3>版本历史</h3>
+            <section className="prompt-history" aria-label={z('版本历史')}>
+              <h3>{z('版本历史')}</h3>
               {!detail.historyComplete && (
                 <StatusMessage tone="warning">
-                  这个家族的修订链**不完整**（有删除、缺失或重复的修订）。
-                  下面显示的不是一段可信的完整历史，请不要把某一版当作权威最新版。
+                  {z('这个家族的修订链**不完整**（有删除、缺失或重复的修订）。下面显示的不是一段可信的完整历史，请不要把某一版当作权威最新版。')}
                 </StatusMessage>
               )}
               <PromptVersionHistory key={detail.familyId} versions={versions} headAssetId={detail.headAssetId}
@@ -111,28 +109,28 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
                 onSelectFrom={setFromId} onSelectTo={setToId} />
               {detail.anomalies.length > 0 && (
                 <ul className="prompt-anomalies">
-                  {detail.anomalies.map(row => <li key={row.kind}>{row.kind} {row.detail}</li>)}
+                  {detail.anomalies.map(row => <li key={row.kind}>{row.kind} {z(row.detail)}</li>)}
                 </ul>
               )}
 
-              <h3>版本比较</h3>
+              <h3>{z('版本比较')}</h3>
               {versions.length < 2 ? (
-                <p>至少需要两个修订才能比较。</p>
+                <p>{z('至少需要两个修订才能比较。')}</p>
               ) : (
                 <>
                   <div className="prompt-compare-picker">
-                    <label htmlFor="prompt-from">对比旧版</label>
+                    <label htmlFor="prompt-from">{z('对比旧版')}</label>
                     <select id="prompt-from" value={fromId} onChange={event => setFromId(event.target.value)}>
                       {versions.map(row => (
                         <option key={row.assetId} value={row.assetId}>
-                          修订 {row.revision}{row.available ? '' : '（不可读）'}
+                          {z(`修订 ${row.revision}`)}{row.available ? '' : z('（不可读）')}
                         </option>
                       ))}
                     </select>
-                    <label htmlFor="prompt-to">与新版</label>
+                    <label htmlFor="prompt-to">{z('与新版')}</label>
                     <select id="prompt-to" value={toId} onChange={event => setToId(event.target.value)}>
                       {versions.map(row => (
-                        <option key={row.assetId} value={row.assetId}>修订 {row.revision}</option>
+                        <option key={row.assetId} value={row.assetId}>{z(`修订 ${row.revision}`)}</option>
                       ))}
                     </select>
                     <Button disabled={!fromId || !toId || comparison.loading}
@@ -143,19 +141,17 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
                           // Refuse by default; this is not an unlock feature and needs no
                           // new permission system. The authorised raw read still exists
                           // outside this panel.
-                          setMaskNotice('选中的修订包含已标记为「展示遮罩」的版本'
-                            + `（修订 ${masked.map(row => row.revision).join('、')}），`
-                            + '默认不参与明文比较。请改选未遮罩的修订。');
+                          setMaskNotice(`选中的修订包含已标记为「展示遮罩」的版本（修订 ${masked.map(row => row.revision).join('、')}），默认不参与明文比较。请改选未遮罩的修订。`);
                           return;
                         }
                         setMaskNotice(null);
                         void compare(detail.familyId, fromId, toId);
                       }}>
-                      {comparison.loading ? '正在读取正文…' : '比较正文'}
+                      {z(comparison.loading ? '正在读取正文…' : '比较正文')}
                     </Button>
                   </div>
-                  {maskNotice && <StatusMessage tone="warning">{maskNotice}</StatusMessage>}
-                  {comparison.error && <StatusMessage tone="error">{comparison.error}</StatusMessage>}
+                  {maskNotice && <StatusMessage tone="warning">{z(maskNotice)}</StatusMessage>}
+                  {comparison.error && <StatusMessage tone="error">{z(comparison.error)}</StatusMessage>}
                   {comparison.from && comparison.to && (
                     <RevisionDiff
                       from={comparison.from} to={comparison.to} professional={mode === 'PROFESSIONAL'} />
