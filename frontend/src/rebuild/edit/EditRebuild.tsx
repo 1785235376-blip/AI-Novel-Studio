@@ -78,12 +78,12 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
   const toggleTrack = (tid: string, f: 'mute' | 'lock') => setTracks(t => ({...t, [tid]: {...(t[tid] ?? {mute: false, lock: false}), [f]: !t[tid]?.[f]}}));
 
   const binItems = handoffs.filter(h => binTabOf(h) === binTab);
-  const binEmpty = binTab === 'sub' ? '字幕轨还没接到这里。字幕请先在声音页准备好。' : '还没有可用素材。去视频或声音页把成品送过来，或从资产拖进来。';
+  const binEmpty = i18nTz(binTab === 'sub' ? '字幕轨还没接到这里。字幕请先在声音页准备好。' : '还没有可用素材。去视频或声音页把成品送过来，或从资产拖进来。');
   const grid = (big = false) => (
-    <div className="bin-grid" role={binItems.length ? 'listbox' : undefined} /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */ aria-label="媒体池素材" style={big ? {gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))'} : undefined}>
+    <div className="bin-grid" role={binItems.length ? 'listbox' : undefined} /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */ aria-label={i18nTz('媒体池素材')} style={big ? {gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))'} : undefined}>
       {binItems.length === 0 ? <p className="bin-empty" data-edit-handoff="empty">{binEmpty}</p> : binItems.map(h =>
         <button key={h.id} type="button" role="option" className="bin-item" aria-selected={binSel === h.id} data-handoff-source={h.source} data-handoff-source-strip="true"
-          title="放到时间线＝引用，不复制" onClick={() => setBinSel(s => s === h.id ? null : h.id)} onDoubleClick={() => addToTimeline(h)}>
+          title={i18nTz('放到时间线＝引用，不复制')} onClick={() => setBinSel(s => s === h.id ? null : h.id)} onDoubleClick={() => addToTimeline(h)}>
           <div className={`th ${binTabOf(h) === 'audio' ? 'aud' : ''}`} /><em className="ref-em">引用</em>
           <div className="nm">{h.label}<span className="src">来自{EDIT_HANDOFF_SOURCE_LABEL[h.source]}</span></div>
         </button>)}
@@ -92,45 +92,45 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
   const picked = handoffs.find(h => h.id === binSel) ?? null;
   const bin = (
     <div className="nle-bin" id="nleBin" aria-label="剪辑媒体池" data-edit-handoff={handoffs.length ? 'received' : 'empty'}>
-      <div className="bin-h"><span>媒体池 · 引用</span><button type="button" className="nv-btn" id="nleBinToggle" onClick={() => setBinOpen(false)}>收起</button></div>
+      <div className="bin-h"><span>{i18nTz('媒体池 · 引用')}</span><button type="button" className="nv-btn" id="nleBinToggle" onClick={() => setBinOpen(false)}>{i18nTz('收起')}</button></div>
       <div className="bin-tabs" role="tablist">
         {([['video', '视频'], ['audio', '音频'], ['sub', '字幕']] as [BinTab, string][]).map(([id, l]) =>
-          <button key={id} type="button" role="tab" data-bintab={id} aria-selected={binTab === id} onClick={() => setBinTab(id)}>{l}</button>)}
+          <button key={id} type="button" role="tab" data-bintab={id} aria-selected={binTab === id} onClick={() => setBinTab(id)}>{i18nTz(l)}</button>)}
       </div>
       {grid()}
-      {picked ? <button type="button" className="nv-btn" style={{margin: '0 8px 8px'}} data-bin-place="true" onClick={() => addToTimeline(picked)}>放到时间线</button> : null}
+      {picked ? <button type="button" className="nv-btn" style={{margin: '0 8px 8px'}} data-bin-place="true" onClick={() => addToTimeline(picked)}>{i18nTz('放到时间线')}</button> : null}
     </div>
   );
 
   const insp = cur ? (
-    <><div className="insp-h">片段检视</div><div className="insp-b">
-      <dl className="kv"><dt>名称</dt><dd>{cur.name}</dd><dt>轨道</dt><dd>{cur.track === 'S1' ? '字幕' : cur.track}</dd>
-        <dt>入点</dt><dd>{fmtTc(cur.start)}</dd><dt>出点</dt><dd>{fmtTc(cur.start + cur.dur)}</dd>
-        {isPro ? <><dt>速度</dt><dd>100%</dd>{cur.kind === 'a' ? <><dt>音量</dt><dd>0 dB</dd></> : <><dt>透明度</dt><dd>100%</dd></>}</> : null}</dl>
+    <><div className="insp-h">{i18nTz('片段检视')}</div><div className="insp-b">
+      <dl className="kv"><dt>{i18nTz('名称')}</dt><dd>{cur.name}</dd><dt>{i18nTz('轨道')}</dt><dd>{cur.track === 'S1' ? i18nTz('字幕') : cur.track}</dd>
+        <dt>{i18nTz('入点')}</dt><dd>{fmtTc(cur.start)}</dd><dt>{i18nTz('出点')}</dt><dd>{fmtTc(cur.start + cur.dur)}</dd>
+        {isPro ? <><dt>{i18nTz('速度')}</dt><dd>100%</dd>{cur.kind === 'a' ? <><dt>{i18nTz('音量')}</dt><dd>0 dB</dd></> : <><dt>{i18nTz('透明度')}</dt><dd>100%</dd></>}</> : null}</dl>
       {isPro ? <p className="edr-note" data-w-ux="09" data-writable="false" data-pro-only="inspector-params">速度、透明度、音量暂时只能看，改动和保存的接口还待核实。</p> : null}
     </div></>
   ) : (
-    <><div className="insp-h">序列属性</div><div className="insp-b">
-      <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="EDIT"><h4>尚未选中片段</h4><p>{isPro ? '点一个片段看它的入出点和音量。' : '点一个片段看它的入出点。' /* [HERMIA-FE-20261022 U5] */}</p></div>
-      <dl className="kv" style={{marginTop: 8}}><dt>时长</dt><dd>{fmtTc(clips.length ? duration : 0)}</dd>
-        <dt>入 / 出</dt><dd>{mark.in == null ? '—' : fmtTc(mark.in)} → {mark.out == null ? '—' : fmtTc(mark.out)}</dd>
-        <dt>画面</dt><dd>1920×1080 · 24 fps</dd><dt>轨道 / 片段</dt><dd>{rows.length} / {clips.length}</dd></dl>
+    <><div className="insp-h">{i18nTz('序列属性')}</div><div className="insp-b">
+      <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="EDIT"><h4>{i18nTz('尚未选中片段')}</h4><p>{i18nTz(isPro ? '点一个片段看它的入出点和音量。' : '点一个片段看它的入出点。') /* [HERMIA-FE-20261022 U5] */}</p></div>
+      <dl className="kv" style={{marginTop: 8}}><dt>{i18nTz('时长')}</dt><dd>{fmtTc(clips.length ? duration : 0)}</dd>
+        <dt>{i18nTz('入 / 出')}</dt><dd>{mark.in == null ? '—' : fmtTc(mark.in)} → {mark.out == null ? '—' : fmtTc(mark.out)}</dd>
+        <dt>{i18nTz('画面')}</dt><dd>1920×1080 · 24 fps</dd><dt>{i18nTz('轨道 / 片段')}</dt><dd>{rows.length} / {clips.length}</dd></dl>
       <div style={{display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12}}>
         <button type="button" className="nv-btn" onClick={onBackToVideo}>{i18nTz('从视频送入')}</button>
         <button type="button" className="nv-btn" onClick={() => setView('export')}>{i18nTz('导出成片…')}</button>
       </div>
-      <p className="edr-note" data-w-ux="09" data-writable="false" data-honest-badge="local-only">这里的编排只留在本页，不会保存。</p>
+      <p className="edr-note" data-w-ux="09" data-writable="false" data-honest-badge="local-only">{i18nTz('这里的编排只留在本页，不会保存。')}</p>
     </div></>
   );
 
   const mons = (
     <div className="nle-mons" aria-label="监视器">
-      <div className="nle-mon" data-monitor="source"><div className="mon-frame"><span className="io" style={{top: 8, bottom: 'auto'}}>源监视器</span>
-        <div className="ph">{cur ? <>{cur.name}<br /><span style={{fontSize: 11, opacity: .75}}>还没有可预览的画面</span></> : <>—<br /><span style={{fontSize: 11, opacity: .75}}>选中片段后在这里看</span></>}</div></div></div>
-      <div className="nle-mon" data-monitor="program"><div className="mon-frame"><span className="io" style={{top: 8, bottom: 'auto'}}>节目监视器</span>
-        <div className="ph">{playhead.toFixed(2)}s<br /><span style={{fontSize: 11, opacity: .75}}>1920×1080 · 24 fps · {clips.length} 片段</span></div>
-        <span className="io">入 {mark.in == null ? '—' : fmtTc(mark.in)}</span><span className="io r">出 {mark.out == null ? '—' : fmtTc(mark.out)}</span></div>
-        <div className="mon-bar"><button type="button" className="nv-btn" id="nlePlay2" aria-label={playing ? '暂停' : '播放'} onClick={() => setPlaying(p => !p)}>{playing ? '❚❚' : '▶'}</button>
+      <div className="nle-mon" data-monitor="source"><div className="mon-frame"><span className="io" style={{top: 8, bottom: 'auto'}}>{i18nTz('源监视器')}</span>
+        <div className="ph">{cur ? <>{cur.name}<br /><span style={{fontSize: 11, opacity: .75}}>{i18nTz('还没有可预览的画面')}</span></> : <>—<br /><span style={{fontSize: 11, opacity: .75}}>{i18nTz('选中片段后在这里看')}</span></>}</div></div></div>
+      <div className="nle-mon" data-monitor="program"><div className="mon-frame"><span className="io" style={{top: 8, bottom: 'auto'}}>{i18nTz('节目监视器')}</span>
+        <div className="ph">{playhead.toFixed(2)}s<br /><span style={{fontSize: 11, opacity: .75}}>{i18nTz(`1920×1080 · 24 fps · ${clips.length} 片段`)}</span></div>
+        <span className="io">{i18nTz('入')} {mark.in == null ? '—' : fmtTc(mark.in)}</span><span className="io r">{i18nTz('出')} {mark.out == null ? '—' : fmtTc(mark.out)}</span></div>
+        <div className="mon-bar"><button type="button" className="nv-btn" id="nlePlay2" aria-label={i18nTz(playing ? '暂停' : '播放')} onClick={() => setPlaying(p => !p)}>{playing ? '❚❚' : '▶'}</button>
           <span style={{fontVariantNumeric: 'tabular-nums'}}>{fmtTc(playhead)} / {fmtTc(clips.length ? duration : 0)}</span></div></div>
     </div>
   );
@@ -140,25 +140,25 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
     ticks.push(<div key={t} className={`tick ${major ? 'major' : 'minor'}`} style={{left: t * px}}>{major ? <span>{t}s</span> : null}</div>); }
   const timeline = (
     <div className="nle-tl" aria-label={i18nTz('多轨时间线')} data-timeline-hero="true">
-      <div className="nle-track-meta"><span>{rows.length} 轨 · {clips.length} 片段</span><small>视频 / 音频 / 字幕并行</small></div>
-      <div className="nle-tl-tools"><span>工具</span><button type="button" className="nv-btn" id="nleCut" disabled={!cur} onClick={cut} title="在播放头处切开选中片段（C）">切割</button>
-        <span>{snap ? '吸附开 · 对齐片段边缘' : '吸附关'}</span>
-        {isPro ? <span data-pro-only="shortcuts" className="nle-keys">快捷键：空格 播放 · I 入点 · O 出点 · C 切割</span> : null}</div>
+      <div className="nle-track-meta"><span>{i18nTz(`${rows.length} 轨 · ${clips.length} 片段`)}</span><small>{i18nTz('视频 / 音频 / 字幕并行')}</small></div>
+      <div className="nle-tl-tools"><span>{i18nTz('工具')}</span><button type="button" className="nv-btn" id="nleCut" disabled={!cur} onClick={cut} title={i18nTz('在播放头处切开选中片段（C）')}>{i18nTz('切割')}</button>
+        <span>{i18nTz(snap ? '吸附开 · 对齐片段边缘' : '吸附关')}</span>
+        {isPro ? <span data-pro-only="shortcuts" className="nle-keys">{i18nTz('快捷键：空格 播放 · I 入点 · O 出点 · C 切割')}</span> : null}</div>
       <div className="nle-scroll">
         <div className="nle-board" id="nleBoard" style={{width: Math.max(960, duration * px + 80), ['--nle-step' as string]: `${px}px`}}>
           <div className="nle-ruler" id="nleRuler" onMouseDown={scrub}>{ticks}</div>
           <div className="nle-playhead" id="nlePlayhead" style={{left: playhead * px}} />
           {rows.map(tid => { const tr = tracks[tid] || {mute: false, lock: false}; const cs = clips.filter(c => c.track === tid);
             return <div key={tid} className={`nle-row ${tid.toLowerCase()} ${cs.length ? '' : 'empty'}`} data-track={tid}>
-              <div className="thdr"><span className="tn">{tid === 'S1' ? '字幕' : tid}</span><div className="tbtns">
-                <button type="button" title="静音" aria-pressed={tr.mute} onClick={() => toggleTrack(tid, 'mute')}>M</button>
-                <button type="button" title="锁定" aria-pressed={tr.lock} onClick={() => toggleTrack(tid, 'lock')}>L</button></div></div>
+              <div className="thdr"><span className="tn">{tid === 'S1' ? i18nTz('字幕') : tid}</span><div className="tbtns">
+                <button type="button" title={i18nTz('静音')} aria-pressed={tr.mute} onClick={() => toggleTrack(tid, 'mute')}>M</button>
+                <button type="button" title={i18nTz('锁定')} aria-pressed={tr.lock} onClick={() => toggleTrack(tid, 'lock')}>L</button></div></div>
               <div className="trk">{cs.map(c => <button key={c.key} type="button" className={`clip ${c.kind} ${sel === c.key ? 'sel' : ''}`} style={{left: c.start * px, width: Math.max(28, c.dur * px), opacity: tr.mute ? .5 : 1}}
                 title={c.name} onClick={() => setSel(s => s === c.key ? null : c.key)}>{c.name}</button>)}</div>
             </div>; })}
-          {clips.length === 0 ? <div className="tl-empty" data-edit-empty="timeline"><span>把镜头或声音拖到这里开始剪。也可以从视频页一键送来。</span>
+          {clips.length === 0 ? <div className="tl-empty" data-edit-empty="timeline"><span>{i18nTz('把镜头或声音拖到这里开始剪。也可以从视频页一键送来。')}</span>
             <div className="nv-row"><button type="button" className="nv-btn" onClick={onBackToVideo}>{i18nTz('从视频送入')}</button>{/* [HERMIA-FE-20261022 R6] 空时间线不再用主色（一页一主＝导出成片…） */}
-              <button type="button" className="nv-btn" onClick={() => setView('media')}>导入媒体</button></div></div> : null}
+              <button type="button" className="nv-btn" onClick={() => setView('media')}>{i18nTz('导入媒体')}</button></div></div> : null}
         </div>
       </div>
     </div>
@@ -166,16 +166,16 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
 
   const media = (
     <div className="edr-sub nle-bin" data-edit-view="media" style={{background: 'var(--color-bg-app)'}}>
-      <div className="nv-row" style={{alignItems: 'center'}}><h3>{i18nTz('媒体池')}</h3><span className="nv-spacer" /><button type="button" className="nv-btn" onClick={() => setView('tl')}>回到时间线</button></div>
+      <div className="nv-row" style={{alignItems: 'center'}}><h3>{i18nTz('媒体池')}</h3><span className="nv-spacer" /><button type="button" className="nv-btn" onClick={() => setView('tl')}>{i18nTz('回到时间线')}</button></div>
       <div className="bin-tabs" role="tablist">{([['video', '视频'], ['audio', '音频'], ['sub', '字幕']] as [BinTab, string][]).map(([id, l]) =>
-        <button key={id} type="button" role="tab" aria-selected={binTab === id} onClick={() => setBinTab(id)}>{l}</button>)}</div>
+        <button key={id} type="button" role="tab" aria-selected={binTab === id} onClick={() => setBinTab(id)}>{i18nTz(l)}</button>)}</div>
       {grid(true)}
-      {picked ? <div><button type="button" className="nv-btn" onClick={() => addToTimeline(picked)}>放到时间线</button></div> : null}
+      {picked ? <div><button type="button" className="nv-btn" onClick={() => addToTimeline(picked)}>{i18nTz('放到时间线')}</button></div> : null}
     </div>
   );
   const exportView = (
     <div className="edr-sub" data-edit-view="export">
-      <div className="nv-row" style={{alignItems: 'center'}}><h3>{i18nTz('导出成片')}</h3><span className="nv-spacer" /><button type="button" className="nv-btn" onClick={() => setView('tl')}>回到时间线</button></div>
+      <div className="nv-row" style={{alignItems: 'center'}}><h3>{i18nTz('导出成片')}</h3><span className="nv-spacer" /><button type="button" className="nv-btn" onClick={() => setView('tl')}>{i18nTz('回到时间线')}</button></div>
       <div className="card" data-export-render="video"><b>视频成片 · MP4 1080p</b>
         <p className="edr-note">导出功能还没接好，现在点了不会生成文件。</p>
         <button type="button" className="nv-btn" disabled data-export-disabled="true">导出（不可用）</button></div>
