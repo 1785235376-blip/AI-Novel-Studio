@@ -39,7 +39,7 @@ from app.repositories.file import mutation_coordinator as m
 root = Path(os.environ['COORDINATION_TEST_ROOT'])
 assert not m._locks
 with m.existing_disk_coordination_only(), m.workspace_mutation(root, 'synthetic'):
-    assert len(m._locks) == 1
+    assert not m._locks and len(m._cold_locks) == 1
 '''
     child = _child(tmp_path, code)
     assert child.returncode == 0, (child.stdout, child.stderr)
@@ -154,6 +154,42 @@ assert entered.wait(10)
 assert not second_entered.wait(.3)
 release.set(); a.join(10); b.join(10)
 assert not a.is_alive() and not b.is_alive() and not errors and second_entered.is_set()
+assert not m._locks
+'''
+    child = _child(tmp_path, code)
+    assert child.returncode == 0, (child.stdout, child.stderr)
+    assert _files(tmp_path) == before
+
+
+def test_ordinary_writer_reuses_cold_observation_mutex(tmp_path):
+    with workspace_mutation(tmp_path, 'synthetic'):
+        pass
+    before = _files(tmp_path)
+    code = r'''
+import os, threading
+from pathlib import Path
+from app.repositories.file import mutation_coordinator as m
+root = Path(os.environ['COORDINATION_TEST_ROOT'])
+entered, writer_entered, release = threading.Event(), threading.Event(), threading.Event()
+errors = []
+def observer():
+    try:
+        with m.existing_disk_coordination_only(), m.workspace_mutation(root, 'synthetic'):
+            entered.set()
+            assert release.wait(10)
+    except BaseException as exc: errors.append(exc)
+def writer():
+    try:
+        assert entered.wait(10)
+        with m.workspace_mutation(root, 'synthetic'):
+            writer_entered.set()
+    except BaseException as exc: errors.append(exc)
+a, b = threading.Thread(target=observer), threading.Thread(target=writer)
+a.start(); b.start()
+assert entered.wait(10)
+assert not writer_entered.wait(.3)
+release.set(); a.join(10); b.join(10)
+assert not a.is_alive() and not b.is_alive() and not errors and writer_entered.is_set()
 assert len(m._locks) == 1
 '''
     child = _child(tmp_path, code)

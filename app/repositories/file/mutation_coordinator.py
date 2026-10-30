@@ -9,9 +9,13 @@ import stat
 from threading import RLock
 from threading import local
 from pathlib import Path
+from weakref import WeakValueDictionary
 
 _guard = RLock()
 _locks: dict[tuple[str, str], RLock] = {}
+# Cold observations share the identical in-process mutex with other active
+# users, but do not enroll it in the original strict-mode warm registry.
+_cold_locks = WeakValueDictionary()
 _thread_state = local()
 _existing_only = ContextVar('workspace_existing_coordination_only', default=False)
 _existing_disk_memory_lock = ContextVar('workspace_existing_disk_memory_lock', default=False)
@@ -80,11 +84,22 @@ def workspace_mutation_lock(root: Path, workspace_id: str) -> RLock:
         if _existing_only.get():
             lock = _locks.get(key)
             if lock is None and _existing_disk_memory_lock.get():
-                lock = _locks.setdefault(key, RLock())
+                lock = _cold_locks.get(key)
+                if lock is None:
+                    lock = RLock()
+                    _cold_locks[key] = lock
             if lock is None:
                 raise ReadOnlyCoordinationUnavailable()
             return lock
-        return _locks.setdefault(key, RLock())
+        lock = _locks.get(key)
+        if lock is None:
+            # If a cold observation is already active, the original writer
+            # must reuse its mutex rather than create a second object.
+            lock = _cold_locks.get(key)
+            if lock is None:
+                lock = RLock()
+            _locks[key] = lock
+        return lock
 
 
 def _existing_lock(root, workspace_id):
