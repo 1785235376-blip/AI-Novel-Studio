@@ -182,6 +182,13 @@ class LocalPcmMixer:
 class AudiobookV2Service(DomainService):
     PROFILES, MAPPINGS, PLANS, MIXES = "audio_v2_profiles", "audio_v2_mappings", "audio_v2_plans", "audio_v2_mix_proposals"
 
+    @staticmethod
+    def _require_candidate_write_capacity():
+        # The existing audio rows have no project-incarnation binding and
+        # this path has no project-wide physical-byte reservation/recovery.
+        # Close before a mixer or asset owner can produce side effects.
+        raise ValueError("AUDIO_CAPACITY_WRITE_UNAVAILABLE")
+
     def __init__(self, store, novels, chapters, assets=None, attribution=None, mixer=None):
         super().__init__(store, novels, chapters)
         self.assets = assets
@@ -483,6 +490,8 @@ class AudiobookV2Service(DomainService):
             self.get(nid, scope, collection, item_id)
         except FileNotFoundError:
             collection = self.MIXES
+        if collection == self.MIXES:
+            self._require_candidate_write_capacity()
         if collection == self.MIXES and action == "approve":
             return self._approve_mix(nid, scope, actor, item_id, expected_version)
         def change(row):
@@ -514,6 +523,7 @@ class AudiobookV2Service(DomainService):
         return plan
 
     def _approve_mix(self, nid, scope, actor, item_id, expected_version):
+        self._require_candidate_write_capacity()
         current = self.get(nid, scope, self.MIXES, item_id)
         check_version(current, expected_version)
         if current["status"] == "PENDING_REVIEW":
@@ -559,6 +569,7 @@ class AudiobookV2Service(DomainService):
         return {}
 
     def mix(self, nid, scope, actor, rid, expected_version, check_authority=None):
+        self._require_candidate_write_capacity()
         if self.mixer is None:
             raise ValueError("AUDIO_MIXER_NOT_CONFIGURED")
         if not self.mixer.local:
