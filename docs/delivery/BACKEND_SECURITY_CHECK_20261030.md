@@ -60,15 +60,18 @@
 
 - **触发条件**：`tests/test_p0_security_regressions.py` 只调用 `app.net_safety.validate_outbound_url`，而该函数与 `fetch_outbound_bytes` 在固定源码中没有生产调用点；实际抓取入口是 `app.media_files.media_destination` / `fetch_media_bytes`。
 - **影响范围**：生产抓取边界的回退（协议/端口/重定向/压缩/精确 origin）不会被这些 P0 断言发现。
-- **修复**：新增独立测试把同一拒绝矩阵绑定到实际抓取函数，并覆盖 redirect、Content-Encoding、精确本地 provider origin、公网地址放行。
-- **结果**：`test_outbound_boundary_hardening.py` 44 passed（本机合成 HTTP 监听器，仅 loopback）。
-- **提交**：`099cc2b7`。
+- **修复**：新增独立测试把同一拒绝矩阵绑定到实际抓取函数，并覆盖 redirect、Content-Encoding、精确本地 provider origin、公网地址放行，以及 image-job 参考 URL 的创建前护栏。
+- **结果**：`test_outbound_boundary_hardening.py` 45 passed（本机合成 HTTP 监听器，仅 loopback）。
+- **提交**：`099cc2b7`、`ce3950ce`（image-job 参考 URL 用例）。
 
-### 4.3 待验证 / 需产品决策：endpoint 改配后已存凭据的复用
+### 4.3 已自审定性：endpoint 改配后已存凭据的复用（受支持信任模型内接受，不升级为漏洞）
 
-- **事实（静态核对）**：`OpenAICompatibleImageProvider`/`HttpAudioProvider`/`HttpVideoProvider` 在构造时把 vault 中的凭据保存为 bearer 并发送到当前配置 endpoint；配置入口只需要“有效 session”而不要求 workspace.admin。`待验证`：同一写入者能否在不掌握凭据值的情况下，把另一用户已配置凭据发往新的公网 endpoint；本机 wire capture 受本机 HTTP 客户端 502 影响，未能取得真实请求头证据（`NOT_VERIFIED`，不是“未发生”）。
-- **未修复原因**：绑定“凭据—endpoint”或要求管理员授权会改变既有权限 owner/API 合同，需用户明确决策；本轮不擅自改动。
-- **建议**：要么在本机打包形态确认单用户信任模型成立并记录，要么在协作形态对 provider/credential 全局写入增加既有 `workspace.admin` 授权与终审时间点复核。
+- **事实（静态核对）**：`OpenAICompatibleImageProvider`/`HttpAudioProvider`/`HttpVideoProvider` 在构造时把 vault 中的凭据保存为 bearer 并发送到当前配置 endpoint；配置入口只需要“有效 session”而不要求 workspace.admin。本机 wire capture 受本机 HTTP 客户端 502 影响，未取得真实请求头证据（`NOT_VERIFIED`）。
+- **自审结论（2026-10-30 续做）**：在仓库当前支持的两个运行形态里，这个行为不构成越权：
+  1. **packaged 形态**：只有一个 launcher 签发会话的受信本地 principal（`LocalSessionBootstrap`），provider/credential 全局配置对其本就可信；session gate 防的是浏览器/其他本地进程无 token 驱动后端，不是防同一受信用户改配。
+  2. **development / collaboration 形态**：`create_runtime_session_resolver` 的注释明确称 dev sessions 为 “explicitly insecure developer sessions”；该形态仅本机 loopback，本来就没有多用户权限边界。
+  因此**不新增 workspace.admin 要求、不绑定凭据与 endpoint、不改权限 owner**；登记为受支持信任模型内的残余风险，若将来支持多用户协作/局域网部署必须重新评估（见 10.2）。
+- **同类残余**：供应商主机名 DNS rebinding（配置期不做 DNS）同属上述信任模型内的残余；已在准入层拒绝字面受限地址，`NOT_VERIFIED` 保留。
 
 ### 4.4 已独立验证通过的审批边界（File 合成）
 
@@ -108,7 +111,7 @@ python -m pytest tests/test_p0_security_regressions.py tests/test_studio_asset_q
 | 浏览器 / 真实前后端 | `NOT_RUN` |
 | 真实外部网络目标 | `NOT_RUN`（只使用 loopback 合成监听器；未向任何第三方发送载荷） |
 | Windows ACL / junction 探测 | `BLOCKED / NOT_VERIFIED`（上轮策略拒绝，未重试、未换入口） |
-| Windows 游标签名密钥实现 | **OPEN**：38 项 503 复现；只读源码分析 + 合成失败复现已完成，等价安全实现未获用户确认，未替换现有机制 |
+| Windows 游标签名密钥实现 | **OPEN**：38 项 503 复现；只读源码分析与合成拒绝层复现完成；fail-closed 回归已补（提交 `ce3950ce`）；等价 DPAPI 方案仅建议，未获批准未实施，现有机制未替换 |
 | 历史 F37（37 个未明拒绝） | `UNKNOWN`，继续独立登记；本轮未复现、未关闭 |
 | warm 首屏间歇 409 | `UNKNOWN`，继续独立登记；本轮未复现、未关闭 |
 
@@ -116,7 +119,7 @@ python -m pytest tests/test_p0_security_regressions.py tests/test_studio_asset_q
 
 1. **PUBLISHING 隔离发布原语的后续独立审阅：`BLOCKED`**。前驱 `bc316e1`；上轮自动安全审查返回 `Agent errored: This content was flagged for possible cybersecurity risk` 并中止。本轮未重试、未转派、未改措辞、未换入口；依赖该项的验收继续保持缺口，任何其他测试不能替代。
 2. **Windows ACL / junction：`BLOCKED / NOT_VERIFIED`**。未尝试替代命令或入口。
-3. **Windows 资产游标签名密钥：OPEN**。当前无符合“私密密钥 + 防替换”合同的 Windows 实现；不得降级到普通路径，不替换现有机制。
+3. **Windows 资产游标签名密钥：OPEN**。当前无符合“私密密钥 + 防替换”合同的 Windows 实现；不得降级到普通路径，不替换现有机制。只读分析、拒绝层复现与 fail-closed 回归已完成（见 10.1）；等价 Windows 方案仅作为待批准建议，未实施、未验收。
 4. **审批跨 owner 竞争：部分未证明**。File 合成覆盖已列入 4.4；真实 PG 事务、跨 owner 原子边界、跨机器锁、外部效果 exactly-once 均 `NOT_RUN`/未证明。
 5. **容量闭环：未完成**。统一物理计量、持久预留/失败释放、启动对账、跨项目归属与孤儿处理仍未闭环；调额、音频历史写入/恢复继续关闭；`project_usage` 仍只统计当前 branch 元数据逻辑大小。本轮未接线、也未放宽任何关闭门。
 6. **供应商 endpoint 剩余风险**：主机名 DNS 解析到受限地址（配置期不做 DNS）与凭据—endpoint 绑定（4.3）标 `待验证`。
@@ -129,9 +132,10 @@ python -m pytest tests/test_p0_security_regressions.py tests/test_studio_asset_q
 | `7874bae7` | 供应商 endpoint 受限地址准入（6 个文件） | 有：缩小可接受配置范围 |
 | `099cc2b7` | 独立出站边界回归测试（1 个文件 293 行） | 无 |
 | `a67c0045` | pending Canon 审批边界独立测试（1 个文件 272 行） | 无 |
+| `ce3950ce` | 游标密钥 fail-closed + 图片任务参考 URL 回归（2 个文件 123 行） | 无 |
 
-- 起点/回退点：`2951a167`（远端分支原 HEAD）。回退生产改动：`git revert 7874bae7`；两个测试提交可独立 revert。
-- 变更范围：`app/net_safety.py`、`app/asset_provider_config.py`、`app/audio_provider_config.py`、`app/audio_providers.py`、`app/dependencies.py`、`app/api.py`（仅 VideoProviderConfigIn 校验）＋ 2 个新测试文件。
+- 起点/回退点：`2951a167`（远端分支原 HEAD）。回退生产改动：`git revert 7874bae7`；三个测试提交可独立 revert。
+- 变更范围：`app/net_safety.py`、`app/asset_provider_config.py`、`app/audio_provider_config.py`、`app/audio_providers.py`、`app/dependencies.py`、`app/api.py`（仅 VideoProviderConfigIn 校验）＋ 3 个新测试文件 ＋ 交付文档。
 - 未修改：`main`、原工作树、既有 API 合同字段、权限 owner、只读行为、关闭门、凭据存储；未 push / Release / 部署。
 - 最终冻结 HEAD/tree 与最终回归日志见交付答复及 `Validation/security-bounded-20261030/logs/`；本文件所在提交只增加文档，不改产品源码。
 
@@ -140,3 +144,38 @@ python -m pytest tests/test_p0_security_regressions.py tests/test_studio_asset_q
 - **有条件适合**：本轮的固定起点核对、入口清单、出站边界修复与审批边界回归可以作为下一轮的基线；生产代码只改了一个防御性边界，未触及权限 owner。
 - **仍不适合宣称生产安全完成**：PUBLISHING 审阅、Windows ACL/junction、游标签名密钥、审批跨 owner 原子性、容量闭环仍为阻塞/开放；持久写入链依赖被拒审阅的部分继续保持 `BLOCKED`。
 - 下一轮建议优先顺序：① 被拒发布原语审阅的替代授权路径（需用户批准）；② 协作形态 provider/credential 全局写入授权（4.3）；③ 真实 PostgreSQL 下的审批/撤销/重建事务验证；④ 统一容量计量与预留；⑤ Windows 游标签名密钥等价方案（需用户确认后再替换）。
+
+## 10. 续做自审记录（2026-10-30，用户授权“自行审核解决”）
+
+### 10.1 Windows 资产游标签名密钥：只读分析、拒绝层复现与等价方案（未实施）
+
+只读探针（本机 Windows / Python 3.11.9，合成临时目录，不读真实项目数据、不做 ACL/junction 探测）实际结果：
+
+```
+platform: win32
+os.open in os.supports_dir_fd: False
+os.stat in os.supports_dir_fd: False
+has O_NOFOLLOW: False
+has O_DIRECTORY: False
+signing_key_primitives_available: False
+load_signing_key refused: AssetQueryCursorUnavailable ASSET_QUERY_CURSOR_UNAVAILABLE
+files created: none
+```
+
+- **直接拒绝层**：`asset_query_cursor.load_signing_key` 在 `signing_key_primitives_available()` 为 False 时立即抛 `AssetQueryCursorUnavailable`，不 `mkdir`、不打开任何路径、不创建密钥/身份文件，也不降级到普通路径。
+- **上游表现**：资产列表游标模式返回固定 `503 ASSET_QUERY_CURSOR_UNAVAILABLE`；用户列出的游标测试 38 项失败即该拒绝层复现，不是新回归。
+- **本轮新增回归**（提交 `ce3950ce`，`tests/test_cursor_key_fail_closed.py`）：锁定“缺原语必须 fail-closed、不得创建降级文件”；同时覆盖 32 字节密钥类型/长度、跨绑定重放、篡改签名、过期不滑动续期。该测试不声称 Windows 密钥后端已实现。
+- **等价方案（仅建议，需另行批准后实施与验收）**：在现有 Windows 句柄/身份体系上，用 DPAPI（`CryptProtectData`，当前用户 scope）保护 32 字节随机密钥 blob，与独立身份 marker 分离存放；身份 marker 用 HMAC 绑定密钥摘要与版本；读取时沿用既有 Windows 受限句柄、reparse-point 拒绝、文件大小/身份对照和主体权限；密钥丢失/不一致一律拒绝并保留人工修复路径，不自动替换、不静默重建。未实现原因：需新增/确认 Windows 凭据保护路径与依赖、需要真实 Windows 验收，且属于替换现有安全机制，超出本轮“只读分析 + 合成复现 + 等价方案”授权。
+- **未验证**：DPAPI 等价方案在打包 Host、真实 ACL、重启/轮换/删除重建下的行为；POSIX 路径仍 `NOT_RUN`。
+
+### 10.2 provider/credential 全局写入：接受为受支持信任模型内残余风险
+
+- 结论与理由见 4.3：packaged 单受信本地 principal；development/collaboration 明确为 insecure dev sessions，仅本机 loopback。不是多用户权限边界，故不改权限 owner、不新增管理员门槛、不做凭据—endpoint 绑定。
+- **重新评估触发器**：若将来支持真实多用户协作、局域网/远程访问或把 dev sessions 用于非本机场景，必须在开放前补 `workspace.admin`（既有权限 owner）与终审时点复核，并重新验证 provider/credential 全局写入。
+- DNS rebinding 同一结论：准入层已拒绝字面受限地址；主机名解析到受限地址仍 `NOT_VERIFIED`，属于同一信任模型内残余。
+
+### 10.3 外部请求边界补充回归与工具限制
+
+- 新增 `test_outbound_boundary_hardening.py::test_image_job_reference_url_is_fenced_before_job_creation`：mounted image-job 路由在创建持久任务/调用 provider 之前拒绝 `169.254.169.254`、`127.0.0.1`、`[fe80::1]` 参考 URL，且不回显目标地址（提交 `ce3950ce`）。
+- `hindsight_*` 记忆工具本轮实际返回 `401 ... API key required`（未配置凭据），未使用其内容，也未虚构记忆结论。
+- GraphFlow `graphflow_context` 仍超时；本文件所有结论来自源码、固定源码测试与本机合成探针。
