@@ -320,3 +320,12 @@ files created: none
   3. 游标绑定包含 authority 选择：用窄 authority 签发的游标改成更宽 authority 组合重放 → 409/422 拒绝且不泄露行。
 - **未覆盖**：真实 PostgreSQL、真实模型、浏览器 TaskCenter UI；真实多用户项目边界（本地运行模式本身不提供）——`NOT_RUN`。
 - **提交**：`d8f51584`；无生产代码改动。
+
+## 20. 第十一轮续做（2026-10-30）：Interop 迟到响应 / 陈旧投影窗口
+
+- **新增** `tests/test_local_interop_response_window_boundary.py`（4 passed，冻结 peer + 注入 transport）：
+  1. **桌面权限投影的最后帧 guard**：在撤权后、以及运行中关闭功能开关后，基于旧状态构造的浏览器投影在发送前被拒（403），不会带着旧权限投递；
+  2. **取消后的迟到结果**：取消 in-flight 请求 → 原任务收 409 `CANCELLED`；迟到响应无法通过 delivery guard（409）；同一 request id 不能重放；
+  3. **已绑定 preview 的响应窗口**：撤权使 permission generation 变化 → 绑定响应 403；源版本在投递前变化 → 409 `SOURCE_CHANGED`。
+- **未覆盖**：`run` 的 15 秒硬超时未实跑（会拖慢套件；属已知常量而非安全缺口），真实 peer/浏览器/命名管道 —— `NOT_RUN`。
+- **提交**：`9d671729`；无生产代码改动。
