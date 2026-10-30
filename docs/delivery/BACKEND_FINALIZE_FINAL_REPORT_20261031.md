@@ -16,6 +16,7 @@
 | 相对基线 diff | 254 files changed, +31043 / −199 |
 | 其他分支 | `work/capability-completion-20261030`=`317da4cc`（未改动）；`main`=`7b35e4cb`（未改动、未合并） |
 | #51 关联 | 已在 #51 下评论指向 #52（前置链） |
+> 说明：本报告内容回读于 head 28a6d5c0ddd3bbc436691b49aeace63bc0b8e9e（tree 3a868a519cfb193a4a75dd22dbe5186d7a39ad96）；其后提交仅为本报告刷新（无产品/测试代码变化）。远端最终 head 以 PR #52 实时回读为准。
 
 未执行：合并 main、强推、删除分支、创建 Release/部署；以上均保持禁止。
 
@@ -126,6 +127,7 @@
 ## 10. 结论
 
 本轮完成：86 head/PR/工作区只读核验与基线选择；sibling 及其他独立后端线逐文件对账与安全整合；Export/PG 迁移/VTT-OTIO/Canvas、容量账本与 admission/历史写入计费、音频历史捕获-读取-迁移-恢复及权限反例、运行时能力合同、行业打包验证等 23 个可审查提交；宽回归 1431 passed 且覆盖组零新失败；issue #14/#16/#17/#18 与 D-17/D-20/motion frame 均按当前候选重新取证并如实标注 NOT_RUN/BLOCKED/UNKNOWN。**全产品验收、真实 PostgreSQL/浏览器/真实模型/Windows 打包桌面与历史产品线合并不在本轮结论内。**
+
 
 
 
