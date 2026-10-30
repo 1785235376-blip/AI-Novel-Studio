@@ -15,6 +15,7 @@ import pytest
 from app.creative.project_store import CreativeProjectStore
 from app.experimental.store import ExperimentalStore
 from app.services.asset_library_service import AssetLibraryService
+from app.repositories.file.mutation_coordinator import workspace_mutation
 from test_studio_asset_query import rig
 from test_studio_workspace_identity_history_contract import audio_history
 
@@ -96,10 +97,26 @@ def test_observed_view_is_detached_after_lease(tmp_path):
     assert 'after_return' not in store.read(NID, SCOPE)['collections']['synthetic']
 
 
+def test_explicit_observation_does_not_initialize_missing_project_marker(tmp_path):
+    store, creative = _write_original(tmp_path)
+    marker = tmp_path / 'novels' / NID / 'creative_project_v2.json'
+    marker.unlink()  # synthetic fixture only
+    scope_before = _sha(store.path(NID, SCOPE))
+    with pytest.raises(FileNotFoundError):
+        with creative.source_lease(NID, SCOPE, _observation=True):
+            pytest.fail('must not provision missing owner')
+    assert not marker.exists()
+    assert _sha(store.path(NID, SCOPE)) == scope_before
+
+
 @pytest.mark.skipif(os.name != 'nt', reason='Windows name-filtered residue fence')
 def test_observation_flag_is_not_a_general_cross_owner_capability(tmp_path):
     store, creative = _write_original(tmp_path)
     assets = AssetLibraryService(tmp_path)
+    # Existing-only coordination does not turn this into a general write
+    # capability when all original locks already exist and are warmed.
+    with workspace_mutation(assets.root, 'asset-library'):
+        pass
     _crash_after_temp_fsync(tmp_path)
     # Deliberate misuse demonstrates the limitation of the internal flag: it
     # must be reserved for statically audited production paths that do not

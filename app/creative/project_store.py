@@ -188,16 +188,21 @@ class CreativeProjectStore:
         # Default to a write-capable source lease: existing callers can write
         # through other owners. Only audited pure observations may explicitly
         # bypass the residue fence; neither form can mutate this scope.
-        with self.store.transaction(nid, scope, _observation=_observation) as document:
-            before = canonical(document)
-            # Resolve only briefly here; no project lock is held at yield.
-            view = self._view(document, self.incarnation(nid))
-            snapshot = canonical(view)
-            try:
-                yield view
-            finally:
-                if canonical(document) != before or canonical(view) != snapshot:
-                    raise ValueError("CREATIVE_SOURCE_LEASE_MUTATION_DENIED")
+        with ExitStack() as observations:
+            if _observation:
+                from ..repositories.file.mutation_coordinator import existing_coordination_only
+                observations.enter_context(existing_coordination_only())
+                observations.enter_context(self.existing_owner_only())
+            with self.store.transaction(nid, scope, _observation=_observation) as document:
+                before = canonical(document)
+                # Resolve only briefly here; no project lock is held at yield.
+                view = self._view(document, self.incarnation(nid))
+                snapshot = canonical(view)
+                try:
+                    yield view
+                finally:
+                    if canonical(document) != before or canonical(view) != snapshot:
+                        raise ValueError("CREATIVE_SOURCE_LEASE_MUTATION_DENIED")
 
     @contextmanager
     def transaction(self, nid, scope):
