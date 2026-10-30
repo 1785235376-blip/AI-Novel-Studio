@@ -1,3 +1,4 @@
+import { tz } from "../i18n"; // [HERMIA-UX-20261030 L1]
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, ApiError, apiErrorView, getCollaborationContext, type AgentContextPreview } from "../api";
@@ -358,7 +359,7 @@ export function AiContextPreviewPanel({
     <section className="ai-context-preview" aria-labelledby="ai-context-preview-title">
       <header className="ai-context-preview__header">
         <div>
-          <h3 id="ai-context-preview-title">AI Context Preview</h3>
+          <h3 id="ai-context-preview-title">{tz("AI 上下文预览")}</h3>
           <p className="novel-help">角色上下文资料检查。它与写作生成的请求构造不同，不是最终发送预览。</p>
         </div>
         <Badge tone={requestIsCurrent && contextQuery.isSuccess ? "success" : "info"}>
@@ -392,7 +393,7 @@ export function AiContextPreviewPanel({
         <EmptyState title="尚未选择章节" detail="在左侧章节树打开章节后，才能读取真实上下文。" />
       )}
       {canPreview && !request && (
-        <StatusMessage tone="info">点击“刷新上下文”，读取当前写作方式对应的 Context Service 数据。</StatusMessage>
+        <StatusMessage tone="info">点击“刷新上下文”，读取当前写作方式对应的创作资料。</StatusMessage>
       )}
       {canPreview && request && contextQuery.isPending && (
         <div className="ai-context-preview__loading" role="status">

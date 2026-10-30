@@ -88,8 +88,9 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   const rail = (
     <nav className="vid-rail" aria-label="视频工作区导航">
       <div className="eyebrow">视频</div>
-      <strong>三层工作区</strong>
-      <ul><li>① 镜头脚本</li><li>② 无限画布</li><li>③ 内置导演台</li></ul>
+      {/* [HERMIA-UX-20261030 M2] 普通模式不用「三层工作区 / 节点 / 关系边」这类内部说法 */}
+      <strong>{isPro ? '三层工作区' : i18nTz('三步做视频')}</strong>
+      <ul>{isPro ? <><li>① 镜头脚本</li><li>② 无限画布</li><li>③ 内置导演台</li></> : <><li>{i18nTz('① 列出镜头')}</li><li>{i18nTz('② 在画布上摆参考')}</li><li>{i18nTz('③ 看导演建议')}</li></>}</ul>
       <button type="button" className="nv-btn" id="vidSendEditRail" onClick={askSend}>{i18nTz('送去剪辑')}</button>
       <p className="hint">这里排镜头和画面关系；剪成片在剪辑页。</p>
       <div className="mw-lh vid-rail-lh">场景 / 镜头树</div>
@@ -159,7 +160,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         </div>
       </section>
       <section className="vid-layer vid-layer--canvas" aria-label="② 无限画布">
-        <div className="vl-h"><span className="lab">② 无限画布</span><span className="nv-spacer" /><span className="vl-meta">节点 · 素材引用 · 关系边</span></div>
+        <div className="vl-h"><span className="lab">② 无限画布</span><span className="nv-spacer" /><span className="vl-meta">{isPro ? '节点 · 素材引用 · 关系边' : i18nTz('卡片 · 参考素材 · 连线')}</span></div>
         <div className="vid-canvas-host" id="vidCanvasHost" data-surface="canvas">
           {/* [HERMIA-FE-20261022 U1] 换成共用黑色无限画布：右键空白加节点；镜头作为初始种子（仅首次，之后按本机草稿） */}
           {loaded ? (isPro ? <DualStack kind="video" scope={novelId} seed={shotSeed} /> : <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} />) : <p className="vid-canvas-empty">读取中…</p>}

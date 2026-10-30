@@ -168,7 +168,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
           <div className="hero-tools">
             <b>{view === 'gen' ? '生成检视' : '图像预览'}</b>
             <span className="nv-spacer" />
-            <button type="button" className="nv-btn" aria-pressed={refOverlay} id="imgToggleRef" disabled={!cur} onClick={() => setRefOverlay(v => !v)}>参考叠看 {refOverlay ? '开' : '关'}</button>
+            <button type="button" className="nv-btn" aria-pressed={refOverlay} id="imgToggleRef" disabled={!cur} title={!cur ? i18nTz('先选一张图片，才能叠看参考') : undefined} aria-describedby={!cur ? 'imgToggleRefWhy' : undefined} onClick={() => setRefOverlay(v => !v)}>参考叠看 {cur && refOverlay ? '开' : '关'}</button>
+            {/* [HERMIA-UX-20261030 M3] 置灰必须说明原因 */}
+            {!cur ? <span id="imgToggleRefWhy" className="sr-only">{i18nTz('先选一张图片，才能叠看参考')}</span> : null}
           </div>
           <div className="hero-stage">
             {!loaded ? <p className="mw-muted">读取中…</p> : !cur ? (
