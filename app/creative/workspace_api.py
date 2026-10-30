@@ -19,7 +19,7 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
+        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
         "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
@@ -604,6 +604,14 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             return invoke(nid, x_session_token, x_branch_id, "domain.read",
                           lambda actor, scope, guard: service.storage(nid, scope), existing_owner=True)
 
+    @router.get("/projects/{nid}/studio/capacity")
+    def capacity_diagnostics(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # Read-only observation: no ledger initialization, reservation or gate.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                          lambda actor, scope, guard: service.capacity_diagnostics(nid, scope),
+                          existing_owner=True)
+
     @router.get("/projects/{nid}/studio/references")
     def references(nid: str, kind: Literal["ASSET", "CHAPTER", "SCREENPLAY"],
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -751,3 +759,4 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
     return router
+

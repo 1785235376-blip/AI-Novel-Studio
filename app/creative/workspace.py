@@ -11,6 +11,7 @@ import copy
 import hashlib
 import json
 from contextlib import contextmanager, nullcontext
+from pathlib import Path
 import shutil
 import errno
 import re
@@ -801,3 +802,32 @@ class IndependentWorkspaceService:
                     "model_storage": "EXTERNAL_READ_ONLY", "cache_storage": "SEPARATE_OWNER",
                     "export_storage": "CLIENT_SELECTED_DOWNLOAD", "physical_cleanup_available": False,
                     "admission": admission}
+
+    def capacity_diagnostics(self, nid, scope):
+        """Read-only capacity observation: measurement + ledger state only.
+
+        This never initializes the capacity owner, reserves bytes or opens a
+        write gate. Write admission stays explicitly unavailable until the
+        cross-owner reservation/reconcile chain is wired.
+        """
+        from ..project_capacity import CapacityLedgerUnavailable, DEFAULT_LIMIT_BYTES, ProjectCapacityLedger
+        from ..project_capacity_measurement import measure_roots
+        data_root = Path(self.store.root)
+        measurement = measure_roots([("project", data_root / "novels" / nid)])
+        ledger_path = data_root / "runtime" / "project-capacity.json"
+        ledger = None
+        ledger_state = "NOT_INITIALIZED"
+        if ledger_path.exists():
+            try:
+                ledger = ProjectCapacityLedger(ledger_path).peek(nid)
+                ledger_state = "AVAILABLE" if ledger is not None else "PROJECT_NOT_INITIALIZED"
+            except CapacityLedgerUnavailable:
+                ledger_state = "UNAVAILABLE"
+        return {"contract": "project-capacity-diagnostics/1", "project_id": nid,
+                "measurement": measurement, "ledger_state": ledger_state, "ledger": ledger,
+                "limits": {"default_limit_bytes": DEFAULT_LIMIT_BYTES,
+                           "applied_limit_bytes": ledger["limit_bytes"] if ledger else None},
+                "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
+                "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
+                "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
