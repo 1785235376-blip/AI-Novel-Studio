@@ -163,7 +163,8 @@ class GenerationRepository:
                 # Read the original owner's marker; never call incarnation(),
                 # whose first-use behavior can provision a missing marker.
                 marker = _read_marker(data / "novels" / item["novel_id"] / "creative_project_v2.json")
-                if _marker_file_identity(marker) != binding["project_incarnation"]:
+                identity = _marker_file_identity(marker)
+                if identity is None or identity != binding["project_incarnation"]:
                     raise ValueError("different project owner")
             except (FileNotFoundError, ValueError, TypeError, KeyError, OSError):
                 raise GenerationProjectIdentityError("GENERATION_GRAPH_PROJECT_OWNER_CHANGED") from None

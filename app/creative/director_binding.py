@@ -134,7 +134,8 @@ def _creative_director_owner_lease(documents, binding):
             owners.enter_context(project_operation(store.root, nid))
             try:
                 marker = _read_marker(store.root / "novels" / nid / "creative_project_v2.json")
-                if _marker_file_identity(marker) != binding.project_incarnation:
+                identity = _marker_file_identity(marker)
+                if identity is None or identity != binding.project_incarnation:
                     raise ValueError("different original owner")
             except (OSError, ValueError, TypeError, KeyError):
                 raise ValueError("CREATIVE_DIRECTOR_SOURCE_OWNER_CHANGED") from None

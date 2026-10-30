@@ -9,6 +9,7 @@ from app.creative.project_store import CreativeProjectStore
 from app.creative.director_binding import _creative_director_owner_lease
 from app.experimental.store import ExperimentalStore
 from app.file_project_lifecycle import project_operation
+from app.repositories.generation_repository import GenerationProjectIdentityError, GenerationRepository
 
 pytestmark = pytest.mark.file_backend_only
 
@@ -68,6 +69,22 @@ def test_existing_only_does_not_recreate_missing_marker(marker_owner):
         with pytest.raises(FileNotFoundError):
             owner.incarnation('synthetic')
     assert not path.exists()
+
+
+def test_corrupt_marker_and_none_binding_cannot_match_at_generation_owner(marker_owner):
+    root, _, path, _ = marker_owner
+    value = json.loads(path.read_text(encoding='utf-8'))
+    value['unexpected'] = 'synthetic'
+    path.write_text(json.dumps(value), encoding='utf-8')
+    before = path.read_bytes()
+    repository = GenerationRepository(root)
+    # This calls the original internal owner seam with an invalid binding. It
+    # guards against None matching the invalid-marker sentinel; public job
+    # validation normally rejects such a binding earlier.
+    with pytest.raises(GenerationProjectIdentityError, match='^GENERATION_GRAPH_PROJECT_OWNER_CHANGED$'):
+        with repository._graph_owner({'novel_id': 'synthetic'}, {'project_incarnation': None}):
+            pytest.fail('invalid marker and binding matched')
+    assert path.read_bytes() == before
 
 
 @pytest.mark.parametrize('damage', ['none', 'extra', 'bool-version', 'bad-uuid', 'recreated'])
