@@ -447,3 +447,18 @@ if settings.enable_packaged_runtime:
 # This narrow middleware leaves all other routes and legacy unpaged calls alone.
 from .creative.asset_usage_request import AssetUsageRequestBudgetMiddleware
 app.add_middleware(AssetUsageRequestBudgetMiddleware)
+
+
+@app.middleware("http")
+async def security_response_headers(request: Request, call_next):
+    """Add the local-host browser boundary headers to every response.
+
+    Registered last so it also covers early denials produced by the outer
+    fail-closed middleware. Routes that already set a stricter value (for
+    example asset downloads) keep it.
+    """
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    return response
