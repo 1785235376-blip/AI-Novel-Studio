@@ -17,7 +17,8 @@ def test_unproven_quota_does_not_probe_disk_or_claim_import_capacity(monkeypatch
     result = admission.view(None)
     assert result['state'] == 'UNAVAILABLE'
     assert result['available_import_bytes'] is None
-    assert result['project_quota_status'] == 'UNVERIFIED'
+    assert set(result) == {'state', 'available_import_bytes', 'reserve_bytes', 'measurement', 'paths',
+                           'external_model_scan', 'automatic_cleanup', 'automatic_migration'}
 
 
 def test_proven_quota_view_preserves_existing_contract(monkeypatch):
@@ -40,7 +41,8 @@ def test_storage_does_not_present_unavailable_project_quota_as_ready(audio_histo
     admission = result['admission']
     assert admission['state'] == 'UNAVAILABLE'
     assert admission['available_import_bytes'] is None
-    assert admission['project_quota_status'] == 'UNVERIFIED'
+    assert set(admission) == {'state', 'available_import_bytes', 'reserve_bytes', 'measurement', 'paths',
+                              'external_model_scan', 'automatic_cleanup', 'automatic_migration'}
     # This legacy constant is required by the original client parser; the
     # UNAVAILABLE state explicitly says no project quota has been measured.
     assert admission['measurement'] == 'CURRENT_ORIGINAL_ASSET_FILESYSTEM_AND_PROJECT_QUOTA'

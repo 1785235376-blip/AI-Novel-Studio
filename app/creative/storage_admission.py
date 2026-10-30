@@ -45,15 +45,9 @@ class StudioStorageAdmission:
                 state = "READY" if available else "LOW_SPACE_OR_QUOTA"
             except StudioStorageCapacityError:
                 available, state = None, "UNAVAILABLE"
-        result = {"state": state, "available_import_bytes": available, "reserve_bytes": self.RESERVE_BYTES,
+        return {"state": state, "available_import_bytes": available, "reserve_bytes": self.RESERVE_BYTES,
                 "measurement": "CURRENT_ORIGINAL_ASSET_FILESYSTEM_AND_PROJECT_QUOTA",
                 "paths": {"project": "EXISTING_PROJECT_OWNER", "assets": "EXISTING_ASSET_LIBRARY",
                           "models": "MODEL_CENTER_REFERENCES_ONLY", "cache": "EXISTING_CACHE_OWNER",
                           "exports": "USER_SELECTED_DOWNLOAD"},
                 "external_model_scan": False, "automatic_cleanup": False, "automatic_migration": False}
-        if quota_remaining is None:
-            # The original client requires the legacy ``measurement`` literal
-            # even for UNAVAILABLE. This explicit field prevents API callers
-            # from mistaking that compatibility label for a measurement.
-            result["project_quota_status"] = "UNVERIFIED"
-        return result
