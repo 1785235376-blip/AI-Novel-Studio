@@ -80,6 +80,7 @@ a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 se
 | 47 个 test_studio_* 宽回归 | 520 passed / 10 failed / 139 skipped / 1 xfailed / 125 errors；失败+错误节点集合与基线 A（419 passed/125 skipped）**完全相同** → 零新失败 | `round16-studio-broad.log`、`round16-studio-broad-baseline.log` |
 | TaskCenter 回执/期限/竞态/存储定向组（17 个套件） | 480 passed / 23 skipped | `round17-taskcenter.log` |
 | Graph/VIDEO/Timeline 合成验证组（6 graph + phase1 video + phase4 timeline + studio video/timeline failures 共 12 文件） | 32 passed / 4 failed（4 项均为 phase1_video_runtime 既有失败，已在新旧基线同样复现） | `round18-graph-video-timeline.log`、`round18-phase1-video-baseline.log` |
+| 99 文件 core 宽扫（asset/file/project/generation/phase*/import/api/novel/chapter/continuity/model/provider/credential，仅排除已知超时 file_safety_http） | **1051 passed / 30 failed / 30 skipped**；30 个失败节点集合与基线 A（993 passed/30 failed）**完全相同 → 零新失败** | `round19-core-sweep.log`、`round19-core-sweep-baseline.log` |
 | **宽回归（103 个相关测试文件）** | **1431 passed / 9 failed / 57 skipped / 1 error**；9 failed+1 error 在基线 A 独立 probe worktree 全部同样失败（2 旧资产上传期望、2 关闭音频门期望、2 mock provider 期望、3 Windows 符号链接环境、1 fixture 环境错误）→ **本分支该组零新失败** | `round10-broad-regression.log` |
 | 生命周期/重建/恢复定向组 | 223 passed / 1 failed / 6 skipped；唯一失败在基线 A 同样失败（U16 合成子进程夹具） | `round12-lifecycle-recovery.log` |
 | issue 相关（#16 fixture 合同、#17 pdf/screenplay、#18 provider/credential） | 137 passed / 2 skipped / 1 pre-existing screenplay failure | `round10-issue-tests.log` |
