@@ -133,9 +133,11 @@ python -m pytest tests/test_p0_security_regressions.py tests/test_studio_asset_q
 | `099cc2b7` | 独立出站边界回归测试（1 个文件 293 行） | 无 |
 | `a67c0045` | pending Canon 审批边界独立测试（1 个文件 272 行） | 无 |
 | `ce3950ce` | 游标密钥 fail-closed + 图片任务参考 URL 回归（2 个文件 123 行） | 无 |
+| `8493d1ab` | 本地响应安全头（1 个生产文件 + 1 个测试文件） | 有：仅新增响应头 |
+| `1021e67f` | 归档成员遍历边界回归（1 个测试文件 126 行） | 无 |
 
-- 起点/回退点：`2951a167`（远端分支原 HEAD）。回退生产改动：`git revert 7874bae7`；三个测试提交可独立 revert。
-- 变更范围：`app/net_safety.py`、`app/asset_provider_config.py`、`app/audio_provider_config.py`、`app/audio_providers.py`、`app/dependencies.py`、`app/api.py`（仅 VideoProviderConfigIn 校验）＋ 3 个新测试文件 ＋ 交付文档。
+- 起点/回退点：`2951a167`（远端分支原 HEAD）。回退生产改动：`git revert 7874bae7 8493d1ab`；四个测试提交可独立 revert。
+- 变更范围：`app/net_safety.py`、`app/asset_provider_config.py`、`app/audio_provider_config.py`、`app/audio_providers.py`、`app/dependencies.py`、`app/api.py`（仅 VideoProviderConfigIn 校验）、`app/main.py`（仅新增响应头中间件）＋ 4 个新测试文件 ＋ 交付文档。
 - 未修改：`main`、原工作树、既有 API 合同字段、权限 owner、只读行为、关闭门、凭据存储；未 push / Release / 部署。
 - 最终冻结 HEAD/tree 与最终回归日志见交付答复及 `Validation/security-bounded-20261030/logs/`；本文件所在提交只增加文档，不改产品源码。
 
@@ -179,3 +181,45 @@ files created: none
 - 新增 `test_outbound_boundary_hardening.py::test_image_job_reference_url_is_fenced_before_job_creation`：mounted image-job 路由在创建持久任务/调用 provider 之前拒绝 `169.254.169.254`、`127.0.0.1`、`[fe80::1]` 参考 URL，且不回显目标地址（提交 `ce3950ce`）。
 - `hindsight_*` 记忆工具本轮实际返回 `401 ... API key required`（未配置凭据），未使用其内容，也未虚构记忆结论。
 - GraphFlow `graphflow_context` 仍超时；本文件所有结论来自源码、固定源码测试与本机合成探针。
+
+## 11. 第二轮续做（2026-10-30）：浏览器响应头、归档路径边界、预存失败分类
+
+### 11.1 已修复（浏览器侧边界，防御性）：全局安全响应头
+
+- **触发/风险**：本地 loopback 服务此前只在资产下载等少数响应上设置 `X-Content-Type-Options: nosniff`；其余 API、静态前端、以及“路由前”的 loopback/session 拒绝响应没有嗅探、Referer、framing 边界。对本机 Localhost 应用属于纵深防御，不改变任何 API 字段或权限。
+- **修复**：`app/main.py` 增加最外层 `security_response_headers` 中间件，对每个响应 `setdefault`：`X-Content-Type-Options: nosniff`、`Referrer-Policy: no-referrer`、`X-Frame-Options: DENY`；已有更严格值的路由（如下载）不被覆盖。注册在最后，因此早于路由的 401/403/501 拒绝响应也带 header。
+- **证据**：`tests/test_security_headers.py`（3 passed）覆盖成功响应、路由 404、以及“路由前”的 `403 LOCAL_RUNTIME_LOOPBACK_REQUIRED` 三种路径；受影响主中间件样本回归 74 passed（另 4 项为下文预存失败）。
+- **提交**：`8493d1ab`。
+
+### 11.2 已验证（文件访问，负结果 + 回归锁）：归档成员路径穿越
+
+- **审查结论**：交付包与可移植项目读取均为**纯内存读取**，不存在 `extractall` 到磁盘的路径；成员名经过独立路径校验：
+  - `interactive_export_contract.read_zip_safely`：要求声明前缀、`safe_bundle_path`（拒绝 `/`、`\\`、`:`、`.`/`..`/空段、Windows 保留名、超深路径）、大小写碰撞/文件-目录前缀冲突、加密标志、声明与实际大小/总量上限；
+  - `portable_projects.read_archive`：成员名必须匹配 `manifest.json` 或 `media/aNNNN.<ext>` 严格白名单，拒绝重复、反斜杠、NUL、绝对路径、`.`/`..`、符号链接、加密、非 STORED/DEFLATED、压缩比与展开上限，并要求 manifest 声明且摘要一致；
+  - `comic_ora_import.preview_ora` / `comic_author_archive.decode`：同样按固定成员白名单/结构校验读取，无磁盘解包。
+- **未发现可在本机合成的 zip-slip 或路径逃逸**；`待验证`：其他平台、真实第三方归档、以及未来新增解包调用点。
+- **新增回归**：`tests/test_archive_member_traversal_boundary.py`（29 passed）覆盖穿越/绝对/冒号/保留名/点段/大小写碰撞/文件-目录冲突/符号链接/重复成员/未声明 payload，并记录 Windows 与 POSIX 对反斜杠成员的安全差异（Windows 标准库归一化为嵌套路径、POSIX 直接拒绝，两种结果都不能逃出声明根）。
+- **提交**：`1021e67f`。
+
+### 11.3 预存失败分类（不是本轮回归）
+
+用独立临时工作树在**固定起点 `2951a167`** 上复跑下列 4 项，结果与当前 HEAD 完全一致（同样失败），确认与本轮改动无关，另行登记为测试债务/环境限制：
+
+| 测试 | 失败原因 | 分类 |
+| --- | --- | --- |
+| `test_phase1_feature_closure.py::test_motion_task_stays_pending_without_provider_and_rejects_placeholder` | `KeyError: 'transitions'`（该功能夹具与当前数据形状不一致） | 预存测试债务 |
+| `test_plugin_discovery_security.py::test_symlink_escape_is_rejected` | `WinError 1314`（当前 Windows 账号无符号链接权限，测试无法造夹具） | 环境限制（`NOT_VERIFIED`） |
+| `test_asset_library.py::test_asset_upload_list_metadata_and_download` | 旧上传路由现返回 `503 PROJECT_CAPACITY_WRITE_UNAVAILABLE`，旧测试仍期望 200 | 关闭门导致的预存测试债务（**不放宽关闭门**） |
+| `test_asset_library.py::test_concurrent_asset_upload_with_same_key_is_single_resource` | 同上，`KeyError: 'id'` | 同上 |
+
+不通过改测试期望或放宽门禁来“修绿”；这些项保持为已知债务，容量闭环后再处理。
+
+### 11.4 第二轮提交与变更
+
+| 提交 | 内容 | 生产影响 |
+| --- | --- | --- |
+| `8493d1ab` | 本地响应安全头（`app/main.py` + 3 项测试） | 有：仅新增响应头 |
+| `1021e67f` | 归档成员遍历边界回归（1 个测试文件 126 行） | 无 |
+
+- 第二轮新增生产改动仅一个中间件；未触碰权限 owner、API 字段、关闭门；仍未 push/Release/部署。
+- 最终 HEAD/tree 与第二轮验证日志见交付答复与 `Validation/security-bounded-20261030/logs/`。
