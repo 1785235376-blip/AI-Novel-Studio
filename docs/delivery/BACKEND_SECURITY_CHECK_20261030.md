@@ -263,3 +263,13 @@ files created: none
   7. 运行中关闭功能开关 → owner 会话被撤销且后续请求 403。
 - **未覆盖**：真实桌面 peer、打包 Named Pipe 传输、SSE 事件流/standing metadata 事件投递、tutor/verifier 往返、真实浏览器——仍 `NOT_RUN`，本测试不声称 interop 全链路安全。
 - **提交**：`a3231035`；无生产代码改动。
+
+## 14. 第五轮续做（2026-10-30）：Interop 事件同意与 Tutor/Verifier 结果边界
+
+- **新增** `tests/test_local_interop_events_guidance_boundary.py`（3 passed），仍用冻结合成对端 + 注入 transport（事件对象由注入 transport 精确回执，因为冻结 peer 没有 EVENTS 操作），让真实 `LocalInteropHost` 完成：
+  1. **上下文预览是 Tutor 请求的前置且单次有效**：未确认的 ask 403 `CONTEXT_NOT_AUTHORIZED`；已消费的 preview 重放 409 `CONTEXT_STALE`；capsule 内容级别在预览阶段为 `NONE`；
+  2. **Tutor 文本不能变成 Host 的 VERIFIED 结果**：guidance 必须 `LOCAL_ONLY`，Verifier 用**新鲜 Host 状态**重新评估，对端 prose/`AUTHORITATIVE` 标签不构成证据，结果保持 `UNKNOWN`；
+  3. **事件订阅必须显式确认 preview 且持有 standing consent**：未确认 403；确认后 `subscription_active=True` 且有 grant；撤销 `standing_metadata_events` 后 grant 立即清空，旧 grant 与旧 request binding 均 403 `PERMISSION_DENIED`；
+  4. **最小化诊断预览会暂停更宽的 standing grant**，且诊断预览要求 `diagnostics.read` capability。
+- **未覆盖**：真实 peer/命名管道传输、浏览器端 SSE 消费、真实上传/案件流——`NOT_RUN`。
+- **提交**：`f116b2d9`；无生产代码改动。
