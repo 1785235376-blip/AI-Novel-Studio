@@ -347,3 +347,12 @@ files created: none
 - **打包运行时身份/控制面**：运行 control pipe、desktop bridge/composition、initial workspace、local session bootstrap、process factory：**56 passed / 0 failed**（12.67s）；覆盖 launcher 一次性 bootstrap、会话签发/拒绝、control pipe 不回显/不记录、桌面组合与进程工厂边界。
 - 两批全部在本机 Windows/File 合成夹具下通过，**无需失败分类**；未覆盖真实打包桌面进程、真实 WebView/浏览器、真实 Windows 符号链接/ACL —— `NOT_RUN` / `BLOCKED / NOT_VERIFIED`。
 - **本轮无代码/测试改动**（仅本记录）。
+
+## 23. 第十四轮续做（2026-10-30）：备份/恢复、离线同步、来源外发静态审查（只读）
+
+为配合全套件后台长跑（见第 24 节），本轮做不并发测试的只读审查：
+
+- **备份/恢复（`app/backup_restore.py`，仅 CLI，未挂 HTTP）**：备份要求显式 `offline_confirmed`；目标必须不存在、非 symlink，且不得位于源目录或数据目录内；成员扫描拒绝 symlink；JSON 明文凭据拒绝导出；逐文件复制前后哈希一致、前后清单一致，写 manifest 后再次 verify；恢复要求目标不存在，`_member` 拒绝绝对路径/反斜杠/冒号/`.`/`..`/未支持根/凭据文件，只复制 manifest 声明成员并逐个核对 sha256，导入 PG 前再次 verify；`verify_restored_directory` 只做元数据清单（不打开意外文件、拒绝链接/特殊文件/硬链接、深度/条目上限）。PG 侧：URL 不允许 query 透传（禁 libpq options/service），`pg_restore --no-owner --no-acl --single-transaction --exit-on-error`，拒绝覆盖已有数据库，失败时不自动 DROP；错误信息不回显 URL/libpq stderr。**未发现路径穿越或凭据泄露问题**。
+- **离线同步（`app/experimental/offline_sync_production.py`）**：每个方法先 `owner._local(ctx)` 做原本地授权复核并重新检查项目存在；行按 `scope/novel_id/created_by` 绑定、跨 scope 即报 `SYNC_RECORD_SCOPE_MISMATCH`；manifest/快照/change-set 全部摘要校验，传输前再次校验源版本与设备 epoch；journal 有数量与字节上限；合同显式声明 `network_enabled=False`、`MOCK_ONLY`、加密接口未配置。**未发现越权或外发问题**。
+- **来源外发（`app/source_privacy.py`）**：权限记录以 `(novel, chapter, branch)` 哈希为键并绑定章节版本+内容摘要；章节编辑/换分支即失效；项目/大纲/知识条目的限制独立且不可被章节级批准覆盖；最终派发前再次复核原始权限、当前章节版本/内容摘要与 `CLOUD_ALLOWED`；错误信息不回显私有值。**未发现可绕过的外发路径**。
+- 以上为静态审查结论；未执行真实 PG/桌面/网络验证（`NOT_RUN`）。
