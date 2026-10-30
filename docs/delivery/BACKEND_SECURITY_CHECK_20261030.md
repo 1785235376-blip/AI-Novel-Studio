@@ -311,3 +311,12 @@ files created: none
 - 2 个失败均为 `test_collaboration_text_models_route.py` 对 mock stand-in 运行时目录的断言（`all(...)` 为 False）；用独立临时工作树在**固定起点 `2951a167`** 复跑同一文件，结果相同（2 failed / 2 passed），确认与本轮改动无关，登记为**预存测试债务**（运行时 mock catalog 假设与当前环境/夹具不一致），不通过改断言或放宽门禁“修绿”。
 - 未覆盖：真实 PostgreSQL、真实模型、浏览器 TaskCenter UI；TaskCenter 跨项目 HTTP 矩阵未新增（本轮以既有消费者套件回归为主）——`NOT_RUN`。
 - **本轮无提交的代码/测试改动**（仅本记录）。
+
+## 19. 第十轮续做（2026-10-30）：TaskCenter 跨项目游标/行来源绑定
+
+- **新增** `tests/test_taskcenter_cross_project_isolation.py`（3 passed，复用既有 File/local TaskCenter cursor rig；本地开发运行时本身没有多用户项目边界，因此固定的是**数据与游标的来源绑定**）：
+  1. 项目 A 签发的游标在项目 B 上重放不会被接受（B 无对应源时 fail-closed 501；否则 409/422），且不泄露 A 的行；对 B 的普通查询为空或明确不支持，绝不继承 A 的行；A 自己的续页不受影响；
+  2. 把“其他 owner 的行”人为放进本项目文档：要么只投影本项目行（observed_total 仍为 3），要么整体 fail-closed 501，**绝不投影该外来行或其私有字段**；
+  3. 游标绑定包含 authority 选择：用窄 authority 签发的游标改成更宽 authority 组合重放 → 409/422 拒绝且不泄露行。
+- **未覆盖**：真实 PostgreSQL、真实模型、浏览器 TaskCenter UI；真实多用户项目边界（本地运行模式本身不提供）——`NOT_RUN`。
+- **提交**：`d8f51584`；无生产代码改动。
