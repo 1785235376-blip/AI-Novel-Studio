@@ -112,4 +112,12 @@ describe('NSFW mode', () => {
     expect(q('[data-nsfw-badge]')?.textContent).not.toMatch(/[\u4e00-\u9fff]/);
     act(() => setLocale('zh-CN'));
   });
+  for (const how of ['esc', 'cancel', 'confirm'] as const) it(`P2: focus returns to settings trigger after ${how}`, () => {
+    signIn(); mount(); openMenu(); click(q('[data-nsfw-toggle]'));
+    if (how === 'esc') act(() => { document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})); });
+    else if (how === 'cancel') click(q('[data-cfd-cancel]'));
+    else { click(q('[data-nsfw-ack]')); click(q('[data-nsfw-confirm]')); }
+    expect(q('[data-nsfw-confirm]')).toBeNull();
+    expect(document.activeElement).toBe(q('[data-settings-trigger]'));
+  });
 });

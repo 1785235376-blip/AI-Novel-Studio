@@ -1,5 +1,5 @@
 // [HERMIA-FE-20261030 NSFW] 成人内容（NSFW）模式入口：设置菜单一项 + 18+ 确认对话框 + 顶栏状态标。仅界面偏好（见 nsfwMode.ts）。
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useRef, useMemo, useState} from 'react';
 import {useStudio} from '../../store';
 import {resolveWorkspaceIdentity} from '../../workspace/state/scopeLease';
 import {useT} from '../../i18n';
@@ -21,6 +21,11 @@ export function useNsfwController(): NsfwController {
   }, [on]);
   const [askedFor, setAskedFor] = useState<string | null>(null);
   const asking = askedFor === identity.key && !on; // a dialog opened for identity A never applies to B
+  const wasAsking = useRef(false);
+  useEffect(() => { // P2: dialog closed (Esc / cancel / confirm) → focus back to the settings trigger, never BODY
+    if (wasAsking.current && !asking) document.querySelector<HTMLElement>('[data-settings-trigger]')?.focus();
+    wasAsking.current = asking;
+  }, [asking]);
   return {
     on, session: identity.kind !== 'real', asking,
     request: () => { if (!on) setAskedFor(identity.key); },
