@@ -5,8 +5,14 @@ from pathlib import Path
 
 import pytest
 
+from app.creative.audio_index_capacity_diagnostic import (
+    AudioIndexCapacityDiagnosticUnavailable,
+    inspect_local_shared_index_capacity,
+)
+from app.repositories.file.mutation_coordinator import ReadOnlyCoordinationUnavailable
 from app.services.asset_library_service import AssetLibraryService
-from app.services.asset_query_index import FileAssetQueryIndex
+from app.services.asset_query_index import AssetQueryBudgetExceeded, FileAssetQueryIndex
+from test_studio_asset_query import rig
 
 
 @pytest.mark.parametrize('name,category', [
@@ -72,3 +78,98 @@ def test_known_name_is_not_proof_the_input_exists(tmp_path):
     owner = AssetLibraryService(tmp_path)
     assert owner._classify_shared_index_capacity_name('index.sqlite3')['ownership'] == 'UNKNOWN'
     assert not (owner.root / '.asset-query-index').exists()
+
+
+def _snapshot(root):
+    return {str(path.relative_to(root)): ('dir' if path.is_dir() else hashlib.sha256(path.read_bytes()).hexdigest())
+            for path in root.rglob('*')}
+
+
+def test_local_existing_original_lease_observes_unknown_classes_without_writes(rig, monkeypatch):
+    rig.seed('fixture.wav', 'audio')
+    directory = rig.assets.root / '.asset-query-index'
+    directory.mkdir()
+    (directory / 'index.sqlite3').write_bytes(b'synthetic index contents')
+    (directory / 'unexpected-private-object').write_bytes(b'synthetic unattributed contents')
+    before = _snapshot(rig.root)
+    original_open = Path.open
+    def guard_index_contents(path, *args, **kwargs):
+        if path.parent == directory:
+            raise AssertionError('shared index contents must not be opened')
+        return original_open(path, *args, **kwargs)
+    with monkeypatch.context() as patch:
+        patch.setattr(Path, 'open', guard_index_contents)
+        result = inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+    assert result == {
+        'observation': 'DIRECTORY_OBSERVED',
+        'classes': ['PRIMARY_INDEX_NAME_UNVERIFIED', 'UNKNOWN_ENTRY'],
+        'complete_inventory': False,
+        'ownership': 'UNKNOWN', 'project_charge_known': False,
+        'capacity_exempt': False, 'write_admission_proven': False,
+        'scope': 'SHARED_INDEX_ONLY',
+    }
+    assert 'unexpected-private-object' not in repr(result)
+    assert 'index.sqlite3' not in repr(result)
+    assert _snapshot(rig.root) == before
+    assert not (directory / 'cursor.key').exists()
+
+
+def test_missing_project_cannot_observe_shared_index(rig, monkeypatch):
+    rig.seed('fixture.wav', 'audio')
+    before = _snapshot(rig.root)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('unavailable project must not inspect shared index')
+    with monkeypatch.context() as patch:
+        patch.setattr(os, 'scandir', forbidden)
+        # Existing-only authority may reject before project lookup if the
+        # missing project's coordination state was never initialized.
+        with pytest.raises(ReadOnlyCoordinationUnavailable):
+            inspect_local_shared_index_capacity(rig.workspace, 'synthetic-nonexistent-project')
+    assert _snapshot(rig.root) == before
+
+
+def test_unobserved_directory_does_not_claim_quota_or_initialize(rig):
+    rig.seed('fixture.wav', 'audio')
+    before = _snapshot(rig.root)
+    result = inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+    assert result['observation'] == 'DIRECTORY_NOT_OBSERVED'
+    assert result['classes'] == [] and result['ownership'] == 'UNKNOWN'
+    assert result['complete_inventory'] is False
+    assert result['project_charge_known'] is False and result['write_admission_proven'] is False
+    assert _snapshot(rig.root) == before
+    assert not (rig.assets.root / '.asset-query-index').exists()
+
+
+def test_missing_existing_asset_lock_fails_without_provisioning(rig):
+    rig.workspace.store.incarnation(rig.nid)
+    before = _snapshot(rig.root)
+    with pytest.raises((ValueError, RuntimeError)):
+        inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+    assert _snapshot(rig.root) == before
+    assert not (rig.assets.root / '.workspace-mutation-locks').exists()
+
+
+def test_unsupported_shared_or_postgres_does_not_scan(rig, monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError('unsupported authority must not inspect shared index')
+    monkeypatch.setattr(os, 'scandir', forbidden)
+    monkeypatch.setattr(rig.workspace.store.store, 'backend', 'postgres')
+    with pytest.raises(AudioIndexCapacityDiagnosticUnavailable):
+        inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+    monkeypatch.setattr(rig.workspace.store.store, 'backend', 'file')
+    object.__setattr__(rig.settings, 'enable_collaboration_runtime', True)
+    with pytest.raises(AudioIndexCapacityDiagnosticUnavailable):
+        inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+
+
+def test_unexpected_large_index_directory_refuses_without_inventory(rig):
+    rig.seed('fixture.wav', 'audio')
+    directory = rig.assets.root / '.asset-query-index'
+    directory.mkdir()
+    for i in range(FileAssetQueryIndex.MAX_INDEX_DIRECTORY_ENTRIES + 1):
+        (directory / f'synthetic-{i:03d}').write_bytes(b'x')
+    before = _snapshot(rig.root)
+    with pytest.raises(AssetQueryBudgetExceeded) as exc:
+        inspect_local_shared_index_capacity(rig.workspace, rig.nid)
+    assert 'synthetic-' not in str(exc.value)
+    assert _snapshot(rig.root) == before

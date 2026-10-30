@@ -195,6 +195,42 @@ class FileAssetQueryIndex:
                 'project_charge_known': False, 'capacity_exempt': False,
                 'write_admission_proven': False}
 
+    def _observe_unverified_capacity_names(self):
+        """Observe names only under the caller's existing asset-owner lease.
+
+        The caller must already hold the original authorization and asset
+        leases. This is not an ownership proof, an admission check, or an
+        accounting scan. No file (including cursor metadata) is opened.
+        """
+        deadline = self._deadline()
+        try:
+            before = self.directory.lstat()
+        except FileNotFoundError:
+            return {'observation': 'DIRECTORY_NOT_OBSERVED', 'classes': []}
+        except OSError:
+            raise AssetQueryUnavailable() from None
+        if not stat.S_ISDIR(before.st_mode) or getattr(before, 'st_file_attributes', 0) & 0x400:
+            raise AssetQueryUnavailable()
+        categories = set()
+        try:
+            with os.scandir(self.directory) as entries:
+                for count, entry in enumerate(entries, 1):
+                    self._check_time(deadline)
+                    if count > self.MAX_INDEX_DIRECTORY_ENTRIES:
+                        raise AssetQueryBudgetExceeded()
+                    # Names stay in memory and are never returned, opened, or
+                    # treated as evidence that the corresponding file belongs
+                    # to the index owner or any project.
+                    categories.add(self._classify_unverified_capacity_name(entry.name)['classification'])
+            after = self.directory.lstat()
+            if (not stat.S_ISDIR(after.st_mode) or getattr(after, 'st_file_attributes', 0) & 0x400
+                    or (before.st_dev, before.st_ino, before.st_ctime_ns)
+                    != (after.st_dev, after.st_ino, after.st_ctime_ns)):
+                raise AssetQueryUnavailable()
+        except OSError:
+            raise AssetQueryUnavailable() from None
+        return {'observation': 'DIRECTORY_OBSERVED', 'classes': sorted(categories)}
+
     def _deadline(self):
         return time.monotonic() + self.MAX_OPERATION_SECONDS
 
