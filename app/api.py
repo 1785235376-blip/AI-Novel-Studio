@@ -2050,12 +2050,10 @@ def get_export(
 def upload_asset(nid:str, body:AssetUploadIn, idempotency_key:str|None=Header(None,alias="Idempotency-Key"),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.write")
     if body.novel_id!=nid: raise HTTPException(400,"novel_id does not match path")
-    try:
-        asset=asset_library_service.create(nid,body.filename,body.content_base64,body.media_type,body.kind,idempotency_key,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
-        if body.character_id or body.scene_id:
-            asset=asset_library_service.update_metadata(asset['id'],{'character_id':body.character_id,'scene_id':body.scene_id},branch_id=_image_branch(x_branch_id))
-        return asset_library_service.public(asset)
-    except ValueError as exc: raise HTTPException(400,str(exc))
+    # This legacy route has no project-wide reservation or restart recovery.
+    # All kinds share that quota and kind is supplied by the caller, so a
+    # media-type-only gate would allow uploads to bypass the closure.
+    raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
 @router.get("/novels/{nid}/assets")
 def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.read")
