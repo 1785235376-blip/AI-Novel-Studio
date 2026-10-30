@@ -83,7 +83,7 @@
 
 测试：`tests/test_audio_history_capacity_accounting.py` 10 项——实际增量计费/审计、revision 只计新增记录（blob 去重）、未对账拒绝、超额拒绝且写前无副作用、UNKNOWN blocked 拒绝与恢复、当前提交前崩溃仍计费残留且无预留泄漏、双 flag 关闭时无账本行为。回归组合（音频历史全部套件 + 容量原语/诊断/归属/管理/admission + U16）：**151 passed / 1 skipped**。
 
-补充：**显式迁移写入口**（`capture_audio_history`）同样纳入双-flag 容量预留/结算：迁移前要求已对账/UNKNOWN 不阻塞/额度足够（未对账 409 `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`，无任何历史字节落盘）；迁移成功后按历史目录实际增量 commit；当前提交失败时结算已准备记录/blob 残留再释放，不产生预留泄漏。新增 3 项测试（迁移计费、未对账拒绝且无 baseline、失败残留计费），音频历史+容量回归 **102 passed**。
+补充：**显式迁移写入口**（`capture_audio_history`）同样纳入双-flag 容量预留/结算：迁移前要求已对账/UNKNOWN 不阻塞/额度足够（未对账 409 `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`，无任何历史字节落盘）；迁移成功后按历史目录实际增量 commit；当前提交失败时结算已准备记录/blob 残留再释放，不产生预留泄漏。新增 3 项测试（迁移计费、未对账拒绝且无 baseline、失败残留计费）。补充：**显式恢复**同样经 `_write_meta` 走该容量钩子，新增 1 项测试证明恢复只追加一个记录、按实际历史增量 commit 且无预留泄漏。音频历史+容量回归 **102 passed**（容量计费文件 11 passed）。
 
 边界：本批只覆盖历史记录/blob 写入的容量预留与结算；资产正文/metadata 主写入仍由各自的 admission/关闭门负责；真实 PostgreSQL/浏览器/模型未运行。
 

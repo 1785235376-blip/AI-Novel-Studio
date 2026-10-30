@@ -261,3 +261,42 @@ def test_failed_explicit_migration_charges_residue_without_reservation(audio_his
             assert HEAD not in e.rig.assets._load(asset["id"])
     finally:
         set_both_flags(False, False)
+
+def test_explicit_restore_is_capacity_accounted(audio_history):
+    from app.services.audio_asset_history_store import HEAD
+    e = audio_history
+    set_both_flags(True, True)
+    try:
+        reconcile(e)
+        asset = create_audio(e)
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            e.rig.assets.update_metadata(asset["id"], {"character_id": "char-a",
+                                                       "parameters": {"tone": "warm"}})
+            e.rig.assets.update_metadata(asset["id"], {"character_id": "char-b",
+                                                       "parameters": {"tone": "cool"}})
+        url = f"/api/v1/projects/{e.rig.nid}/studio/assets/{asset['id']}/history"
+        listing = e.client.get(url, headers=e.headers)
+        assert listing.status_code == 200, listing.text
+        target = listing.json()["items"][1]["version_id"]
+        preview = e.client.post(url + f"/{target}/restore/preview", headers=e.headers,
+                                json={"expected_version": 3})
+        assert preview.status_code == 200, preview.text
+        before_used, before_history = used(e), history_bytes(e, asset["id"])
+        confirmed = e.client.post(url + f"/{target}/restore", headers=e.headers,
+                                  json={"expected_version": 3,
+                                        "expected_restore_digest": preview.json()["restore_digest"]})
+        assert confirmed.status_code == 200, confirmed.text
+        assert confirmed.json()["review_inherited"] is False
+        delta = history_bytes(e, asset["id"]) - before_history
+        assert delta > 0
+        record = ledger_record(e)
+        assert record["reservations"] == {}
+        assert record["used_bytes"] == before_used + delta
+        commits = [entry for entry in record["audit"] if entry["action"] == "COMMIT"]
+        assert commits and commits[-1]["actual_bytes"] == delta
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            meta = e.rig.assets._load(asset["id"])
+        assert meta["version"] == 4 and meta["_audio_history_restore_origin"]["target_version_id"] == target
+        assert HEAD in meta
+    finally:
+        set_both_flags(False, False)
