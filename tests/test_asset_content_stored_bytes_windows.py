@@ -2,10 +2,12 @@
 import base64
 import ctypes
 from ctypes import wintypes
-import msvcrt
 import os
 
 import pytest
+
+if os.name == 'nt':
+    import msvcrt
 
 from app.services.asset_bounded_file_windows import WindowsBoundedAssetError
 from test_asset_physical_observation import observe
