@@ -105,3 +105,18 @@ def test_mix_entry_closed_before_mixer_and_no_mutation(closed, monkeypatch, alia
     assert response.status_code == 422, response.text
     assert response.json()['detail']['message'] == 'AUDIO_CAPACITY_WRITE_UNAVAILABLE'
     assert snapshot(rig.root) == before
+
+@pytest.mark.parametrize('alias', [False, True])
+def test_closed_mix_on_uninitialized_scope_does_not_create_lock(rig, monkeypatch, alias):
+    from app.experimental import api as experimental_api
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'narrative_production_v2,asset_lineage_v2,audiobook_v2')
+    mounted = experimental_api.audiobook_service
+    for name, value in (('store', rig.workspace.store.store), ('novels', rig.novels),
+                        ('chapters', rig.workspace.creative.chapters), ('assets', rig.assets)):
+        monkeypatch.setattr(mounted, name, value)
+    prefix = f"/api{'/v1' if alias else ''}"
+    before = snapshot(rig.root)
+    response = rig.client.post(prefix + f'/novels/{rig.nid}/experimental/audiobook/plans/missing-plan/mix',
+                               json={'expected_version': 1})
+    assert response.status_code in (404, 422), response.text
+    assert snapshot(rig.root) == before
