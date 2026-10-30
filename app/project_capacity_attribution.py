@@ -77,6 +77,9 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
     result["state"] = "MEASURED"
     physical: set[tuple[int, int]] = set()
     deadline = time.monotonic() + deadline_seconds
+    result["counters"].update({"content_files_seen": 0, "content_files_attributed": 0,
+                               "unattributed_files": 0, "unattributed_bytes": 0,
+                               "directories_skipped": 0})
 
     def unknown(path: str, reason: str) -> None:
         if len(result["unknown"]) >= 64:
@@ -86,13 +89,33 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
 
     try:
         with os.scandir(root) as entries:
-            candidates = sorted((entry for entry in entries if entry.name.endswith(".json")),
-                                key=lambda entry: entry.name)
+            all_entries = sorted(entries, key=lambda entry: entry.name)
     except OSError:
         result["unknown"].append({"path": str(root), "reason": "ROOT_UNREADABLE"})
         result["unknown_count"] = 1
         result["complete"] = False
         return result
+
+    candidates = [entry for entry in all_entries if entry.name.endswith(".json")]
+    for entry in all_entries:
+        if entry.name.endswith(".json"):
+            continue
+        try:
+            stray = Path(entry.path).lstat()
+        except OSError:
+            result["counters"]["unreadable_entries"] += 1
+            continue
+        if stat.S_ISDIR(stray.st_mode) or _is_reparse(stray):
+            result["counters"]["directories_skipped"] += 1
+            continue
+        if stat.S_ISREG(stray.st_mode):
+            if entry.name.endswith(".bin"):
+                result["counters"]["content_files_seen"] += 1
+            else:
+                # Crash residue or another owner's root-level file: keep it as
+                # an aggregate signal only; admission treats it as UNKNOWN.
+                result["counters"]["unattributed_files"] += 1
+                result["counters"]["unattributed_bytes"] += int(stray.st_size)
 
     for entry in candidates:
         if result["counters"]["metadata_files_scanned"] >= max_metadata_files:
@@ -161,6 +184,8 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
             added += int(content_info.st_size)
             result["objects"] += 1
         result["logical_bytes"] += added
+        result["counters"]["content_files_attributed"] += 1
     result["unknown_count"] = len(result["unknown"])
     result["complete"] = not result["unknown"] and not result["unknown_truncated"]
     return result
+

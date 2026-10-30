@@ -351,7 +351,11 @@ class IndependentWorkspaceService:
         raise ValueError("PROJECT_CAPACITY_WRITE_UNAVAILABLE")
 
     def import_asset(self, nid, scope, actor, value, guard=lambda: None):
-        self._require_manual_import_capacity()
+        from ..config import settings
+        if not settings.enable_project_capacity_admission:
+            # Default: the manual path stays closed. The flag only enables the
+            # ledger reservation/commit path added below.
+            self._require_manual_import_capacity()
         body = ManualAssetImport.model_validate(value)
         try:
             data = base64.b64decode(body.content_base64, validate=True)
@@ -573,6 +577,26 @@ class IndependentWorkspaceService:
             guard()
             if not retry:
                 self.storage_admission.require(len(data))
+            admission = admission_reservation = None
+            if not retry:
+                from ..config import settings
+                if settings.enable_project_capacity_admission:
+                    from fastapi import HTTPException
+                    from ..project_capacity import ProjectCapacityLedger
+                    from ..project_capacity_admission import CapacityAdmission, CapacityAdmissionRefused
+                    try:
+                        incarnation = self.store.incarnation(nid)
+                    except FileNotFoundError:
+                        raise HTTPException(409, {"code": "PROJECT_CAPACITY_NOT_INITIALIZED"}) from None
+                    admission = CapacityAdmission(
+                        ProjectCapacityLedger(Path(self.store.root) / "runtime" / "project-capacity.json"),
+                        project_id=nid, project_root=Path(self.store.root) / "novels" / nid,
+                        assets_root=self.assets.root, actor_id=actor, incarnation=incarnation,
+                        operation="studio.asset.import")
+                    try:
+                        admission_reservation = admission.begin(len(data))
+                    except CapacityAdmissionRefused as exc:
+                        raise HTTPException(409, {"code": exc.code, **exc.details}) from None
             def before_commit():
                 guard()
                 if not retry:
@@ -583,10 +607,25 @@ class IndependentWorkspaceService:
                 row = self.assets.create(nid, body.filename, body.content_base64, media_type, body.kind,
                     body.idempotency_key, branch_id=scope.get("branch_id"), required_features=(FLAG,), guard=before_commit)
             except OSError as exc:
+                if admission is not None and admission_reservation is not None:
+                    # Charge any landed residue before retiring the reservation.
+                    admission.reconcile_and_release(admission_reservation["reservation_id"])
                 if exc.errno == errno.ENOSPC:
                     from .storage_admission import StudioStorageCapacityError
                     raise StudioStorageCapacityError("CREATIVE_STORAGE_LOW_SPACE") from None
                 raise
+            except BaseException:
+                if admission is not None and admission_reservation is not None:
+                    admission.reconcile_and_release(admission_reservation["reservation_id"])
+                raise
+            if admission is not None and admission_reservation is not None:
+                try:
+                    landed = admission.landed_bytes(row["id"])
+                    admission.commit(admission_reservation["reservation_id"], landed)
+                except CapacityAdmissionRefused as exc:
+                    admission.reconcile()
+                    from fastapi import HTTPException
+                    raise HTTPException(409, {"code": exc.code, **exc.details}) from None
             guard()
             return self._view(nid, scope, row)
 
@@ -903,6 +942,8 @@ class IndependentWorkspaceService:
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
+
 
 
 

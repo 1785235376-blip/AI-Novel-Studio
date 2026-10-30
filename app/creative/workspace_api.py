@@ -8,6 +8,7 @@ from contextlib import nullcontext
 from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
 
+from ..config import settings
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
@@ -437,7 +438,14 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         # Check the original authority before disclosing the closed entry, but
         # do not initialize a project marker just to reject the write.
         access(nid, x_session_token, x_branch_id, "domain.write")
-        raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
+        if not settings.enable_project_capacity_admission:
+            raise HTTPException(503, {"code": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"})
+        # Flag-gated path: the original asset owner still performs the write,
+        # bounded by the capacity ledger admission in IndependentWorkspaceService.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.write",
+                          lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard),
+                          existing_owner=True)
 
     from .video_reference import ReferencePreview, ReferenceSave
     video_reference_router = APIRouter(route_class=VideoReferenceRoute)
@@ -779,5 +787,6 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
     return router
+
 
 

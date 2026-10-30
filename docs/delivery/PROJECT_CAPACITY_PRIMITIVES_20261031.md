@@ -86,3 +86,16 @@
 - 两条路由均加入 `is_independent_studio_route` 的精确方法/路径允许清单（GET `/capacity` 不变，POST 仅 `/capacity/reconcile`，PUT 仅 `/capacity/limit`）。
 - 测试：`tests/test_project_capacity_admin_api.py` 11 项（两别名、对账初始化/UNKNOWN 阻塞与恢复、CAS 陈旧版本、审计、降低额度 OVER_LIMIT、未对账拒绝、422、非项目 owner 409、非管理 token 拒绝、精确允许清单）；容量全组 44 passed；与 U16/storage/asset-query/authority 组合回归见 `batch2c-combined.log`。
 - **仍未完成**：内容写入路径仍未接入容量预留/提交（所有容量/音频写门保持关闭，`admission=UNAVAILABLE`）；启动时自动对账尚未强制；跨 owner 临时峰值/失败残留/崩溃窗口未实现；真实 PostgreSQL 下同样测试仍 NOT_RUN。
+
+## 8. 批次 2 第四部分：内容写入口容量预留/提交接线（flag 保护，2026-10-31 续）
+
+新增 `app/project_capacity_admission.py` 与 `ENABLE_PROJECT_CAPACITY_ADMISSION`（默认 **false**）：
+
+- 默认关闭时，Studio 手工上传仍返回既有 `503 PROJECT_CAPACITY_WRITE_UNAVAILABLE`，与历史关闭测试逐字一致。
+- 显式开启后，`POST /api[/v1]/projects/{nid}/studio/assets` 走既有原资产 owner 写入，但写前必须由容量编排完成：测量项目根 + 归属资产并 `reconcile` 基线 → 存在 UNKNOWN/不可读 metadata/缺正文/根目录崩溃残留时拒绝（`PROJECT_CAPACITY_UNKNOWN_BLOCKED`）→ 预留 `incoming + 1 MiB metadata/staging 峰值`，TTL 900s → 写入成功后按实际落盘 `bin+json` 字节 `commit`，失败先重新对账把已落盘残留计入已用再释放预留。
+- 幂等重试不重复计费；额度不足 409 `PROJECT_CAPACITY_EXCEEDED` 且不产生资源；损坏账本 fail-closed（409 `PROJECT_CAPACITY_LEDGER_UNAVAILABLE`，原文件不被覆盖）；并发导入在额度紧张时串行化，仅一个落地/或全部记账正确。
+- `project_capacity_attribution` 增加根目录非 json/bin 普通文件（崩溃残留）的聚合计数 `unattributed_files/bytes`，作为 admission 的 UNKNOWN 阻塞信号；不返回、不删除。
+
+验证（Windows · File 合成）：新增 8 项测试（flag off 关闭、正向往返与只计落盘、幂等、超额、未知残留阻塞/恢复、损坏账本、并发紧张额度、关闭时不写账本）全部通过；连同既有手工上传关闭/legacy/modelref/容量/U16 套件组合 **104 passed**。
+
+边界：仅 `studio/assets` 手工导入接入了 flag 保护的 admission；模型引用、音频/共享文档、导出、图片/视频产物等写入口仍未接线（仍关闭）。flag 默认 false，未改变任何现有生产行为；真实 PostgreSQL/浏览器/真实模型未运行。
