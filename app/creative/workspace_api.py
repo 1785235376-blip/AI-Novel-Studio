@@ -198,13 +198,20 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
             raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_INVALID"})
         return actor, scope
 
-    def invoke(nid, token, branch, permission, callback, *, commit=False):
+    def invoke(nid, token, branch, permission, callback, *, commit=False, existing_owner=False):
         def operation():
             actor, scope = access(nid, token, branch, permission)
-            incarnation = service.store.incarnation(nid)
+            def current_incarnation():
+                try:
+                    return service.store.incarnation(nid)
+                except FileNotFoundError:
+                    if existing_owner:
+                        raise HTTPException(409, {"code": "STUDIO_STORAGE_READ_ONLY_UNAVAILABLE"}) from None
+                    raise
+            incarnation = current_incarnation()
             def guard():
                 if (access(nid, token, branch, permission) != (actor, scope)
-                        or service.store.incarnation(nid) != incarnation):
+                        or current_incarnation() != incarnation):
                     raise HTTPException(403, {"code": "CREATIVE_AUTHORITY_CHANGED"})
             lease = authority_lease(nid, token, actor, scope) if commit and authority_lease else nullcontext()
             with lease:
@@ -549,8 +556,11 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     @router.get("/projects/{nid}/studio/storage")
     def storage(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return invoke(nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: service.storage(nid, scope))
+        # The original owner and authority chain apply throughout the request;
+        # a read must never provision a missing project incarnation.
+        with service.store.existing_owner_only():
+            return invoke(nid, x_session_token, x_branch_id, "domain.read",
+                          lambda actor, scope, guard: service.storage(nid, scope), existing_owner=True)
 
     @router.get("/projects/{nid}/studio/references")
     def references(nid: str, kind: Literal["ASSET", "CHAPTER", "SCREENPLAY"],
