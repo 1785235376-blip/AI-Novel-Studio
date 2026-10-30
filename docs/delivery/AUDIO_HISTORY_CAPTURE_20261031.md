@@ -69,3 +69,18 @@
 
 仍未完成：历史存量的容量预留/失败残留计费、恢复操作审计持久化（当前仅写入 asset metadata marker）、跨 owner/真实 PG 崩溃窗口、浏览器与真实模型验证。
 
+
+## 6. 批次 2e：音频历史写入容量预留/结算（双 flag 保护，2026-10-31 续）
+
+仅当 **同时** 开启 `ENABLE_AUDIO_ASSET_HISTORY` 与 `ENABLE_PROJECT_CAPACITY_ADMISSION` 时生效；默认关闭时行为与既有测试完全不变（历史写入不建/不读容量账本）。
+
+- `AssetLibraryService._write_meta` 的历史分支在准备记录/blob 之前：要求 meta 具备 `_project_binding{novel_id,incarnation}`（缺失即 `AUDIO_HISTORY_CAPACITY_PROJECT_UNBOUND`）；读取 `data/runtime/project-capacity.json` 已对账快照——账本不存在/未对账 → `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`，UNKNOWN blocked → `AUDIO_HISTORY_CAPACITY_UNKNOWN_BLOCKED`，超额 → `AUDIO_HISTORY_CAPACITY_EXCEEDED`；均在任何历史字节落盘前 fail closed。
+- 预留额度 = 512 KiB 记录上限 +（该内容 blob 尚不存在时）正文大小；TTL 300s、operation=`audio.history.commit`、绑定项目 incarnation。
+- 当前 metadata 提交点成功后，按**历史目录实际增量**结算：`after_bytes - before_bytes`（仅新记录/新 blob，链上旧字节不重复计费）→ ledger `commit(actual)`；无增量则释放。
+- 当前提交失败：仍先结算已准备记录/blob 的实际增量（残留继续计费，不会被释放成免费空间），再释放预留；结算异常不改变历史/当前提交语义，由 TTL + 下次显式对账兜底。
+- 幂等/无变化 metadata 写入不产生历史增量 → 不增计费。
+- `capacity_reconcile` 的 UNKNOWN 计数现在同时包含 assets 根目录不可归属的残留普通文件（`unattributed_files`），与 admission 的 UNKNOWN 判定一致。
+
+测试：`tests/test_audio_history_capacity_accounting.py` 7 项——实际增量计费/审计、revision 只计新增记录（blob 去重）、未对账拒绝、超额拒绝且写前无副作用、UNKNOWN blocked 拒绝与恢复、当前提交前崩溃仍计费残留且无预留泄漏、双 flag 关闭时无账本行为。回归组合（音频历史全部套件 + 容量原语/诊断/归属/管理/admission + U16）：**151 passed / 1 skipped**。
+
+边界：本批只覆盖历史记录/blob 写入的容量预留与结算；资产正文/metadata 主写入仍由各自的 admission/关闭门负责；真实 PostgreSQL/浏览器/模型未运行。

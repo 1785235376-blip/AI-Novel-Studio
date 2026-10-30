@@ -247,6 +247,111 @@ class AssetLibraryService:
         if meta.get("_owner_actor_id") and meta["_owner_actor_id"] != actor_id: return False
         return branch_id is None or meta.get("branch_id") == branch_id
 
+    AUDIO_HISTORY_RECORD_MAX_BYTES = 512 * 1024
+
+    def _audio_history_dir_bytes(self, asset_id: str) -> int:
+        """Logical bytes currently retained for one asset's immutable history."""
+        store = self._audio_history_store
+        try:
+            path = store.paths(asset_id)
+        except ValueError:
+            return 0
+        if path is None:
+            return 0
+        total = 0
+        count = 0
+        for folder in ("records", "blobs"):
+            directory = path / folder
+            try:
+                entries = sorted(directory.iterdir())
+            except FileNotFoundError:
+                continue
+            for item in entries:
+                try:
+                    info = item.lstat()
+                except OSError:
+                    continue
+                total += int(info.st_size)
+                count += 1
+                if count > 1000 or total > 256 * 1024 * 1024:
+                    raise ValueError("AUDIO_HISTORY_CAPACITY_SCAN_LIMIT")
+        return total
+
+    def _audio_history_capacity_begin(self, meta: dict):
+        """Reserve the bounded history write against the project capacity ledger.
+
+        Only active when both the history feature and the capacity admission gate
+        are enabled. The reservation covers the metadata record and a possible new
+        content blob; settlement charges only the actual history-directory delta.
+        """
+        from ..config import settings
+        if not (settings.enable_audio_asset_history and settings.enable_project_capacity_admission):
+            return None
+        from pathlib import Path
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused, ProjectCapacityLedger
+        binding = meta.get("_project_binding")
+        project = binding.get("novel_id") if isinstance(binding, dict) else None
+        incarnation = binding.get("incarnation") if isinstance(binding, dict) else None
+        if not project or not incarnation:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_PROJECT_UNBOUND")
+        data_root = Path(self.root).parent
+        ledger = ProjectCapacityLedger(data_root / "runtime" / "project-capacity.json")
+        try:
+            snapshot = ledger.peek(project)
+        except CapacityLedgerUnavailable:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_LEDGER_UNAVAILABLE") from None
+        if snapshot is None:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED")
+        if snapshot["unknown"]["blocked"]:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_UNKNOWN_BLOCKED")
+        before = self._audio_history_dir_bytes(meta["id"])
+        sha = meta.get("sha256")
+        blob = None
+        if isinstance(sha, str) and len(sha) == 64 and isinstance(meta.get("size"), int):
+            try:
+                blob_path = self._audio_history_store.paths(meta["id"])
+            except ValueError:
+                blob_path = None
+            if blob_path is not None:
+                candidate = blob_path / "blobs" / (sha + ".bin")
+                if not candidate.exists():
+                    blob = int(meta["size"])
+        estimate = self.AUDIO_HISTORY_RECORD_MAX_BYTES + (blob or 0)
+        try:
+            reservation = ledger.reserve(project, max(1, estimate), operation="audio.history.commit",
+                                        actor_id=meta.get("_owner_actor_id") or "asset-owner",
+                                        ttl_seconds=300, incarnation=incarnation)
+        except CapacityRefused as exc:
+            if exc.code == "PROJECT_CAPACITY_EXCEEDED":
+                raise ValueError("AUDIO_HISTORY_CAPACITY_EXCEEDED") from None
+            raise ValueError(f"AUDIO_HISTORY_CAPACITY_{exc.code.removeprefix('PROJECT_CAPACITY_')}") from None
+        except CapacityLedgerUnavailable:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_LEDGER_UNAVAILABLE") from None
+        return {"ledger": ledger, "project": project, "reservation_id": reservation["reservation_id"],
+                "asset_id": meta["id"], "before": before}
+
+    def _audio_history_capacity_settle(self, context, *, failed: bool) -> None:
+        """Charge the actual history-directory delta, then release the reservation."""
+        if context is None:
+            return
+        from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
+        ledger, project, reservation_id = context["ledger"], context["project"], context["reservation_id"]
+        try:
+            after = self._audio_history_dir_bytes(context["asset_id"])
+        except ValueError:
+            after = context["before"]
+        delta = max(0, after - context["before"])
+        try:
+            if delta:
+                ledger.commit(project, reservation_id, delta, actor_id="asset-owner")
+            else:
+                ledger.release(project, reservation_id, actor_id="asset-owner",
+                               reason="AUDIO_HISTORY_FAILED" if failed else "AUDIO_HISTORY_NO_DELTA")
+        except (CapacityRefused, CapacityLedgerUnavailable):
+            # The current metadata commit point is unchanged either way; an
+            # unsettleable reservation expires through its TTL and the next
+            # explicit reconcile re-measures the actual history bytes.
+            pass
     def _write_meta(self, meta: dict, *, guard=None) -> None:
         from ..config import settings
         guard = guard or (lambda: None)
@@ -257,16 +362,22 @@ class AssetLibraryService:
         # sole commit point; the history record/blob are prepared before it and
         # a failed commit leaves prepared objects unreachable but counted.
         from .audio_asset_history_store import HEAD
-        with self._lock, workspace_mutation(self.root, "asset-library"):
-            guard()
-            head = self._audio_history_store.prepare_commit(self, meta, guard=guard)
-            saved = {**meta, HEAD: head}
-            self._audio_history_store.fault("before_current_commit")
-            guard()
-            atomic_write(self._meta_path(meta["id"]), json.dumps(saved, ensure_ascii=False, indent=2))
-            meta[HEAD] = head
-            self._audio_history_store.fault("after_current_commit")
-            guard()
+        capacity = self._audio_history_capacity_begin(meta)
+        try:
+            with self._lock, workspace_mutation(self.root, "asset-library"):
+                guard()
+                head = self._audio_history_store.prepare_commit(self, meta, guard=guard)
+                saved = {**meta, HEAD: head}
+                self._audio_history_store.fault("before_current_commit")
+                guard()
+                atomic_write(self._meta_path(meta["id"]), json.dumps(saved, ensure_ascii=False, indent=2))
+                meta[HEAD] = head
+                self._audio_history_store.fault("after_current_commit")
+                guard()
+        except BaseException:
+            self._audio_history_capacity_settle(capacity, failed=True)
+            raise
+        self._audio_history_capacity_settle(capacity, failed=False)
 
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
@@ -1574,6 +1685,8 @@ class AssetLibraryService:
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
                 self._write_meta(meta, guard=guard)
             return meta
+
+
 
 
 

@@ -862,7 +862,8 @@ class IndependentWorkspaceService:
         assets = measure_assets(self.assets.root, nid)
         unknown = (measurement["unknown_count"] + assets["unknown_count"]
                    + assets["counters"]["unreadable_entries"]
-                   + assets["counters"]["missing_content"])
+                   + assets["counters"]["missing_content"]
+                   + assets["counters"]["unattributed_files"])
         measured = measurement["logical_bytes"] + assets["logical_bytes"]
         ledger = self._capacity_ledger()
         try:
@@ -1142,6 +1143,7 @@ class IndependentWorkspaceService:
                 "admission": "UNAVAILABLE", "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE",
                 "measurement_scope": "PROJECT_OWNED_ROOT_ONLY",
                 "allocated_storage_bytes": "UNKNOWN", "write": False, "initialized": False}
+
 
 
 
