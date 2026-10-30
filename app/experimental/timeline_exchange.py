@@ -81,7 +81,64 @@ def _to_native(value):
     return otio.opentime.RationalTime(float(frames), float(rate))
 
 
-def _read_time(item, key, native):
+class ExactTimeMetadataMismatch(ValueError):
+    """Strict rejection with bounded, value-free context for read-only preview."""
+    def __init__(self, path, field, native_time, *, compatible=False):
+        super().__init__("OTIO_EXACT_TIME_METADATA_MISMATCH")
+        status = "NOT_EVALUATED"
+        try:
+            # Auxiliary context must never replace the original strict failure.
+            # _native_time already produced these rationals; do not revalidate
+            # them through fraction(), which has a separate precision limit.
+            status = "ABSENT" if native_time is None else (
+                "INTEGER_MILLISECONDS" if (Fraction(**native_time["frames"]) * 1000
+                    / Fraction(**native_time["rate"])).denominator == 1
+                else "FRACTIONAL_MILLISECONDS")
+        except (KeyError, TypeError, ValueError, ZeroDivisionError, OverflowError):
+            pass
+        self.diagnostic = {
+            "contract": "studio-otio-precision-diagnostic/1",
+            "path": path, "field": field, "first_conflict_only": True,
+            "native_time_status": status, "strict_import_allowed": False,
+            "source_validation": "NOT_EVALUATED",
+            "remaining_timeline_validation": "NOT_EVALUATED",
+            "compatibility_mode": "EXPLICIT_OPT_IN_AVAILABLE" if compatible and status == "INTEGER_MILLISECONDS" else "NOT_AVAILABLE_FOR_THIS_CONFLICT",
+            "potential_loss_codes": ["EXACT_TIME_METADATA_WOULD_BE_DISCARDED"],
+            "next_action": "PREVIEW_EXPLICIT_EXTERNAL_NATIVE_API_MODE" if compatible and status == "INTEGER_MILLISECONDS" else "REVIEW_SOURCE_APPLICATION_EXPORT",
+        }
+
+
+def _validate_compatibility_hints(item):
+    """Only structurally valid precision evidence can become stale evidence.
+
+    Validate every recognized hint, even one absent from the native object. The
+    opt-in is not a metadata repair facility and never affects source identity.
+    """
+    metadata = getattr(item, "metadata", {}).get(NS, {})
+    if not hasattr(metadata, "items"):
+        raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
+    for key, value in metadata.items():
+        if key == "speed":
+            if not hasattr(value, "items"):
+                raise ValueError("OTIO_EXACT_SPEED_METADATA_INVALID")
+            exact = fraction(dict(value))
+            if not 0 < exact <= 1000000:
+                raise ValueError("OTIO_SPEED_OUTSIDE_SUPPORTED_RANGE")
+        elif key in {"start", "duration", "global_start_time", "in_offset", "out_offset"}:
+            if not hasattr(value, "keys") or set(value.keys()) != {"frames", "rate"}:
+                raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
+            if any(not hasattr(value[k], "items") for k in ("frames", "rate")):
+                raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
+            normalized = time_value(fraction(dict(value["frames"])), fraction(dict(value["rate"])))
+            _to_native(normalized)
+            if not 0 <= seconds(normalized) <= 86400:
+                raise ValueError("OTIO_CLIP_TIME_LIMIT")
+            if (key == "duration" and getattr(item, "schema_name", lambda: "")() in {"Clip", "Gap"}
+                    and not 0 < seconds(normalized) <= 86400):
+                raise ValueError("OTIO_CLIP_TIME_LIMIT")
+
+
+def _read_time(item, key, native, path, *, discard_stale=False, report=None):
     metadata = item.metadata.get(NS, {}) if hasattr(item, "metadata") else {}
     if metadata and not hasattr(metadata, "get"):
         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
@@ -91,16 +148,22 @@ def _read_time(item, key, native):
         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID") from None
     if native is None:
         if exact:
-            raise ValueError("OTIO_EXACT_TIME_METADATA_MISMATCH")
+            raise ExactTimeMetadataMismatch(path, key, None)
         return None
     fallback = _native_time(native)
+    if discard_stale and (seconds(fallback) * 1000).denominator != 1:
+        raise ValueError("STUDIO_EXCHANGE_TIME_REQUIRES_EXACT_MILLISECONDS")
     if exact:
         try:
             exact = {k: dict(v) for k, v in exact.items()}
             normalized = time_value(fraction(exact["frames"]), fraction(exact["rate"]))
             expected = _to_native(normalized)
             if expected.value != native.value or expected.rate != native.rate:
-                raise ValueError("OTIO_EXACT_TIME_METADATA_MISMATCH")
+                if discard_stale:
+                    _loss(report, path + "." + key, "EXACT_TIME_METADATA_DISCARDED_FOR_NATIVE_EDIT")
+                    return fallback
+                raise ExactTimeMetadataMismatch(path, key, fallback, compatible=(
+                    getattr(item, "schema_name", lambda: "")() in {"Clip", "Gap"} and key in {"start", "duration"}))
             return normalized
         except (KeyError, TypeError, ZeroDivisionError):
             raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID") from None
@@ -155,7 +218,7 @@ def _extras(item, path, report, *, speed_supported=False, studio_supported=False
         _loss(report, path, "APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED")
 
 
-def _read_speed(item):
+def _read_speed(item, *, discard_stale=False, report=None, path=""):
     """A single positive LinearTimeWarp changes media speed, not item duration.
 
     Other effects retain the original explicit loss report. Exact speed metadata
@@ -168,7 +231,10 @@ def _read_speed(item):
         if not hasattr(metadata, "get"):
             raise ValueError("OTIO_EXACT_SPEED_METADATA_INVALID")
         if metadata.get("speed") is not None:
-            raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
+            if discard_stale:
+                _loss(report, path + ".speed", "EXACT_SPEED_METADATA_DISCARDED_FOR_NATIVE_EDIT")
+            else:
+                raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
         return None
     if len(effects) != 1:
         raise ValueError("OTIO_MULTIPLE_LINEAR_TIME_WARPS_NOT_SUPPORTED")
@@ -176,12 +242,19 @@ def _read_speed(item):
     if not math.isfinite(scalar) or not 0 < scalar <= 1000000:
         raise ValueError("OTIO_SPEED_OUTSIDE_SUPPORTED_RANGE")
     speed = Fraction(str(scalar)).limit_denominator(1000000)
+    if discard_stale and float(speed) != scalar:
+        raise ValueError("STUDIO_EXCHANGE_SPEED_REQUIRES_SUPPORTED_EXACT_RATIONAL")
     metadata = getattr(item, "metadata", {}).get(NS, {})
     exact = metadata.get("speed") if hasattr(metadata, "get") else None
     if exact is not None:
-        speed = fraction(dict(exact))
-        if float(speed) != scalar:
-            raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
+        exact_speed = fraction(dict(exact))
+        if float(exact_speed) != scalar:
+            if discard_stale:
+                _loss(report, path + ".speed", "EXACT_SPEED_METADATA_DISCARDED_FOR_NATIVE_EDIT")
+            else:
+                raise ValueError("OTIO_EXACT_SPEED_METADATA_MISMATCH")
+        else:
+            speed = exact_speed
     return rational(speed)
 
 
@@ -254,7 +327,7 @@ def _serialized_extras(raw, report):
             stack.extend((child, f"{path}[{index}]") for index, child in enumerate(value))
 
 
-def read_otio(text):
+def read_otio(text, *, external_native=False):
     """Read supported subset and a bounded, explicit normalization loss report."""
     raw = _bounded_json(text)
     otio = _otio()
@@ -267,6 +340,9 @@ def read_otio(text):
     report = []
     _serialized_extras(raw, report)
     studio = raw.get("metadata", {}).get(STUDIO_NS) if isinstance(raw, dict) and isinstance(raw.get("metadata", {}), dict) else None
+    if external_native:
+        _validate_compatibility_hints(timeline)
+        _validate_compatibility_hints(timeline.tracks)
     _extras(timeline, "timeline", report, studio_supported=studio is not None); _extras(timeline.tracks, "tracks", report)
     if not timeline.tracks.enabled:
         raise ValueError("OTIO_DISABLED_ROOT_NOT_SUPPORTED")
@@ -274,7 +350,7 @@ def read_otio(text):
         raise ValueError("OTIO_ROOT_TRIM_NOT_SUPPORTED")
     if timeline.tracks.name:
         _loss(report, "tracks", "ROOT_STACK_NAME_NOT_REPRESENTED")
-    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _read_time(timeline, "global_start_time", timeline.global_start_time)}
+    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _read_time(timeline, "global_start_time", timeline.global_start_time, "timeline")}
     if len(timeline.tracks) > 16:
         raise ValueError("OTIO_TRACK_LIMIT_16")
     total_items = 0
@@ -285,26 +361,32 @@ def read_otio(text):
         if track.kind not in {"Video", "Audio"}:
             _loss(report, path, "SUBTITLE_OR_UNKNOWN_TRACK_NOT_REPRESENTED")
             continue
+        if external_native:
+            _validate_compatibility_hints(track)
         _extras(track, path, report)
         result = {"name": _name(track.name, path + ".name", report), "kind": track.kind, "items": []}
         for ii, item in enumerate(track):
             total_items += 1
             if total_items > 2000: raise ValueError("OTIO_ITEM_LIMIT_2000")
             ip = f"{path}.items[{ii}]"
-            speed = _read_speed(item) if isinstance(item, otio.schema.Clip) else None
+            eligible = external_native and isinstance(item, (otio.schema.Clip, otio.schema.Gap))
+            if external_native:
+                _validate_compatibility_hints(item)
+            speed = _read_speed(item, discard_stale=eligible, report=report, path=ip) if isinstance(item, otio.schema.Clip) else None
             _extras(item, ip, report, speed_supported=speed is not None)
             if isinstance(item, otio.schema.Transition):
                 if item.transition_type != "SMPTE_Dissolve":
                     _loss(report, ip, "TRANSITION_NOT_REPRESENTED_CUT_USED")
                     continue
                 result["items"].append({"kind": "Transition", "name": _name(item.name, ip + ".name", report), "transition_type": "SMPTE_Dissolve",
-                                        "in_offset": _read_time(item, "in_offset", item.in_offset), "out_offset": _read_time(item, "out_offset", item.out_offset)})
+                                        "in_offset": _read_time(item, "in_offset", item.in_offset, ip), "out_offset": _read_time(item, "out_offset", item.out_offset, ip)})
                 continue
             try:
                 span = item.trimmed_range()
             except Exception:
                 raise ValueError("OTIO_EXPLICIT_RESOLVABLE_DURATION_REQUIRED") from None
-            start, duration = _read_time(item, "start", span.start_time), _read_time(item, "duration", span.duration)
+            start = _read_time(item, "start", span.start_time, ip, discard_stale=eligible, report=report)
+            duration = _read_time(item, "duration", span.duration, ip, discard_stale=eligible, report=report)
             if seconds(duration) <= 0 or seconds(duration) > 86400 or seconds(start) < 0:
                 raise ValueError("OTIO_CLIP_TIME_LIMIT")
             row = {"kind": "Clip" if isinstance(item, otio.schema.Clip) else "Gap", "name": _name(item.name, ip + ".name", report), "start": start, "duration": duration}
@@ -312,6 +394,8 @@ def read_otio(text):
                 if speed is not None:
                     row["speed"] = speed
                 ref = item.media_reference
+                if external_native:
+                    _validate_compatibility_hints(ref)
                 _extras(ref, ip + ".media_reference", report)
                 if getattr(ref, "available_image_bounds", None) is not None:
                     _loss(report, ip + ".media_reference", "MEDIA_IMAGE_BOUNDS_NOT_REPRESENTED")
@@ -326,8 +410,8 @@ def read_otio(text):
                     _loss(report, ip, "MEDIA_REFERENCE_TYPE_NOT_REPRESENTED")
                 if isinstance(ref, (otio.schema.ExternalReference, otio.schema.MissingReference)):
                     available = ref.available_range
-                    exact_start = _read_time(ref, "start", available.start_time if available is not None else None)
-                    exact_duration = _read_time(ref, "duration", available.duration if available is not None else None)
+                    exact_start = _read_time(ref, "start", available.start_time if available is not None else None, ip + ".media_reference.available_range")
+                    exact_duration = _read_time(ref, "duration", available.duration if available is not None else None, ip + ".media_reference.available_range")
                     if available is not None:
                         row["available_range"] = {"start": exact_start, "duration": exact_duration}
                 if len(item.media_references()) > 1:

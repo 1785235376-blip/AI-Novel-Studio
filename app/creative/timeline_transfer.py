@@ -20,7 +20,11 @@ class TimelineTransfer:
 
     @staticmethod
     def _input(body):
-        return body.model_dump(include=set(TimelineTransferPreview.model_fields))
+        value = body.model_dump(include=set(TimelineTransferPreview.model_fields))
+        # Preserve the legacy strict digest, including clients which calculate it.
+        if body.otio_edit_mode == "STRICT":
+            value.pop("otio_edit_mode")
+        return value
 
     def _prepare(self, nid, scope, actor, tid, body, context, document, guard):
         from .production_execution import digest
@@ -35,7 +39,7 @@ class TimelineTransfer:
             from ..experimental.timeline_exchange import read_otio, write_otio
             from ..services.studio_timeline_exchange import studio_timeline_to_exchange, exchange_to_studio_timeline
             if body.direction == "IMPORT":
-                exchange, losses = read_otio(body.content)
+                exchange, losses = read_otio(body.content, external_native=body.otio_edit_mode == "EXTERNAL_NATIVE")
                 converted = exchange_to_studio_timeline(exchange,
                     media_bindings=[item.model_dump() for item in body.media_bindings],
                     canvas={key: timeline[key] for key in ("width", "height", "fps")})
@@ -65,10 +69,15 @@ class TimelineTransfer:
             "timeline_snapshot": {"id": tid, "version": row["version"], "digest": row["timeline_digest"]},
             "input_digest": digest(self._input(body)), "timeline": timeline, "timeline_digest": digest(timeline),
             "sources": studio_sources(timeline), "media_bindings": bindings, "loss_report": report,
-            "requires_loss_acknowledgment": bool(report), "output_sha256": hashlib.sha256(attachment).hexdigest() if attachment is not None else None,
+            "requires_loss_acknowledgment": bool(report) or body.otio_edit_mode == "EXTERNAL_NATIVE", "output_sha256": hashlib.sha256(attachment).hexdigest() if attachment is not None else None,
             "output_bytes": len(attachment) if attachment is not None else None,
             "external_media_access": False, "model_called": False, "automatic_replay": False,
             "product_acceptance": "LOCAL_REQUIRED", "target_applications": {"Resolve": "NOT_RUN", "Premiere": "NOT_RUN"}}
+        if body.otio_edit_mode == "EXTERNAL_NATIVE":
+            # Original UTF-8 bytes, not a reserialized/metadata-stripped document.
+            # Mode and all original input options are also bound by input_digest.
+            result["otio_edit_mode"] = body.otio_edit_mode
+            result["input_sha256"] = hashlib.sha256(body.content.encode("utf-8")).hexdigest()
         result["preview_digest"] = digest([context, result])
         guard()
         return row, result, attachment
@@ -93,7 +102,10 @@ class TimelineTransfer:
         if body.direction != "IMPORT":
             raise ValueError("STUDIO_TRANSFER_IMPORT_REQUIRED")
         context = self.owner._base(nid, scope, actor, guard)
-        request_digest = digest(body.model_dump())
+        confirmation = body.model_dump()
+        if body.otio_edit_mode == "STRICT":
+            confirmation.pop("otio_edit_mode")
+        request_digest = digest(confirmation)
         with self.owner.timeline_inputs.transaction(nid, scope, actor, guard) as document:
             row = self.owner._owned_timeline(nid, scope, actor, tid, context, document)
             prior = row.get("last_edit") or {}

@@ -707,6 +707,7 @@ class TimelineMediaBinding(ExecutionModel):
 
 
 class TimelineTransferPreview(ExecutionModel):
+    otio_edit_mode: Literal["STRICT", "EXTERNAL_NATIVE"] = "STRICT"
     expected_version: int = Field(ge=1, le=2**53 - 1)
     reviewed_timeline_digest: Digest
     direction: Literal["IMPORT", "EXPORT"]
@@ -716,6 +717,8 @@ class TimelineTransferPreview(ExecutionModel):
 
     @model_validator(mode="after")
     def transfer_shape(self):
+        if self.otio_edit_mode != "STRICT" and (self.format != "OTIO" or self.direction != "IMPORT"):
+            raise ValueError("STUDIO_TRANSFER_OTIO_EDIT_MODE_IMPORT_ONLY")
         if self.direction == "EXPORT" and (self.content or self.media_bindings):
             raise ValueError("STUDIO_TRANSFER_EXPORT_UNUSED_INPUT")
         if self.direction == "IMPORT" and not self.content.strip():
