@@ -1046,7 +1046,7 @@ class ProductionExecutionService:
         # Inspection of a cancelled private result remains available, but its
         # exact recorded bytes/identity are never replaced by current metadata.
         # Queue reads stay outside the source/asset phase (V1 queue -> asset).
-        with self.store.source_lease(nid, scope):
+        with self.store.source_lease(nid, scope, _observation=True):
             with self.workspace._asset_scope(nid, scope):
                 if row["status"] == "APPROVED":
                     meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)

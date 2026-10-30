@@ -22,22 +22,24 @@ class StyleDNAService:
         self._active = ContextVar("style_dna_owner_lease", default=None)
 
     @contextmanager
-    def lease(self, nid, scope, *, create=False):
+    def lease(self, nid, scope, *, create=False, _observation=False):
         self.require_enabled()
         active = self._active.get()
         if active is not None:
             if active[:2] != (nid, scope):
                 raise ValueError('STYLE_DNA_NESTED_SCOPE_INVALID')
+            if active[3] and not _observation:
+                raise ValueError('STYLE_DNA_OBSERVATION_WRITE_DENIED')
             yield active[2]
             return
         # Workbench lock -> scope -> project. Do not acquire a project lease
         # before the scope lock, or provision identities during observation.
         store = self.creative.store
         with (nullcontext() if create else store.existing_owner_only()):
-            with store.source_lease(nid, scope):
+            with store.source_lease(nid, scope, _observation=_observation):
                 with store.owner_lease(nid) as identity:
                     self.creation.novels.get(nid)
-                    token = self._active.set((nid, scope, identity))
+                    token = self._active.set((nid, scope, identity, _observation))
                     try:
                         yield identity
                     finally:
@@ -142,7 +144,7 @@ class StyleDNAService:
         # observes the same capability lock; the source lease is acquired once.
         from ..repositories.file.mutation_coordinator import workspace_mutation
         with creation.store._lock, workspace_mutation(creation.store.root, 'creation-workbench'):
-            with self.lease(nid, scope) as identity:
+            with self.lease(nid, scope, _observation=True) as identity:
                 rows = creation._rows('creation_records')
                 row = creation._find(rows, nid, scope, rid)
                 self.assert_epoch(row, identity)

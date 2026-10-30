@@ -138,7 +138,7 @@ class CreationWorkbenchService:
         self.style_dna_service = None
 
     @contextmanager
-    def _style_guard(self, nid, scope, row=None, body=None, *, create=False, sources=False):
+    def _style_guard(self, nid, scope, row=None, body=None, *, create=False, sources=False, _observation=False):
         """Guard original APIs too; never upgrade unbound legacy STYLE on read/edit."""
         from ..experimental.style_dna import EPOCH
         bound = row is not None and ('style_dna' in row or EPOCH in row)
@@ -153,7 +153,7 @@ class CreationWorkbenchService:
             raise ValueError('STYLE_DNA_NEW_PROFILE_REQUIRED')
         if bound and body is not None and 'style_dna' in body.model_fields_set and spec is None:
             raise ValueError('STYLE_DNA_CLEAR_NOT_SUPPORTED')
-        with service.lease(nid, scope, create=create and row is None) as identity:
+        with service.lease(nid, scope, create=create and row is None, _observation=_observation) as identity:
             if bound:
                 service.assert_epoch(row, identity)
                 service.assert_access(nid, scope, row)
@@ -173,7 +173,7 @@ class CreationWorkbenchService:
 
     def _style_visible(self, nid, scope, row):
         try:
-            with self._style_guard(nid, scope, row):
+            with self._style_guard(nid, scope, row, _observation=True):
                 return True
         except FileNotFoundError:
             return False
@@ -188,7 +188,7 @@ class CreationWorkbenchService:
         from ..experimental.planning import digest
         stale = False
         try:
-            with self._style_guard(nid, scope, row):
+            with self._style_guard(nid, scope, row, _observation=True):
                 self.style_dna_service.validate(nid, scope, row['style_dna'])
                 self._style_sources_current(nid, scope, row)
         except ValueError:

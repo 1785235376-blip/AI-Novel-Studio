@@ -169,7 +169,7 @@ class CreativeProjectStore:
             return self._view(document, identity)
 
     @contextmanager
-    def source_lease(self, nid, scope):
+    def source_lease(self, nid, scope, *, _observation=False):
         """Lease an unchanged source before acquiring asset -> project locks.
 
         This deliberately enters the raw scope owner, not ``transaction``:
@@ -185,7 +185,10 @@ class CreativeProjectStore:
                 or key in getattr(self.store._local, "active", {})
                 or nid in getattr(self._local, "owners", {})):
             raise ValueError("CREATIVE_SOURCE_LEASE_NESTED_OR_ORDER_INVALID")
-        with self.store.transaction(nid, scope) as document:
+        # Default to a write-capable source lease: existing callers can write
+        # through other owners. Only audited pure observations may explicitly
+        # bypass the residue fence; neither form can mutate this scope.
+        with self.store.transaction(nid, scope, _observation=_observation) as document:
             before = canonical(document)
             # Resolve only briefly here; no project lock is held at yield.
             view = self._view(document, self.incarnation(nid))

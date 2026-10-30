@@ -81,6 +81,18 @@ class ExperimentalStore:
     def path(self, nid, scope):
         return self.root / "experimental_v1" / f"{self.key(nid, scope)}.json"
 
+    def _reject_suspected_scope_residue(self, nid, scope):
+        """Fence a known-shaped unfinished replacement, never claim ownership.
+
+        A name is only a reason to refuse: it proves neither provenance nor
+        project incarnation, and the object is never opened, charged or
+        deleted. One name-filtered Windows query is not a project-wide
+        capacity snapshot or reconciliation. The caller holds the original
+        File scope lock; non-Windows retains its existing unverified behavior.
+        """
+        from .scope_residue_fence import reject_suspected_scope_residue
+        reject_suspected_scope_residue(self.path(nid, scope))
+
     @staticmethod
     def empty(nid, scope):
         return {"schema_version": 1, "novel_id": nid, "scope": copy.deepcopy(scope), "collections": {}}
@@ -236,7 +248,9 @@ class ExperimentalStore:
             return copy.deepcopy(self.validate(result[0], nid, scope) if result else self.empty(nid, scope))
 
     @contextmanager
-    def transaction(self, nid, scope):
+    def transaction(self, nid, scope, *, _observation=False):
+        if type(_observation) is not bool:
+            raise ValueError('EXPERIMENTAL_SCOPE_OBSERVATION_INVALID')
         key = self.key(nid, scope)
         if not hasattr(self._local, "active"):
             self._local.active = {}
@@ -246,6 +260,8 @@ class ExperimentalStore:
             raise ValueError("nested experimental transaction is not supported")
         if self.backend == "file":
             with workspace_mutation(self.root, f"experimental:{key}"):
+                if not _observation:
+                    self._reject_suspected_scope_residue(nid, scope)
                 original_bytes, doc = self._file_snapshot(nid, scope)
                 original = copy.deepcopy(doc)
                 identity = self._initial_project_identity(nid, scope) if original_bytes is None else None
@@ -253,6 +269,8 @@ class ExperimentalStore:
                 before = canonical(doc)
                 try:
                     yield doc
+                    if _observation and canonical(doc) != before:
+                        raise ValueError('EXPERIMENTAL_SCOPE_OBSERVATION_MUTATION')
                     # Reserved metadata is owner-maintained. Accept detached
                     # deep copies (CreativeProjectStore.clear/update), not a
                     # caller's removal, injection, rollback or replacement.
@@ -270,6 +288,7 @@ class ExperimentalStore:
                     if self._file_bytes(nid, scope) != original_bytes:
                         raise ValueError("EXPERIMENTAL_SCOPE_CONCURRENT_WRITE")
                     if canonical(doc) != before:
+                        self._reject_suspected_scope_residue(nid, scope)
                         self._advance_lifecycles(doc, original, identity)
                         self.validate(doc, nid, scope)
                         if identity is not None:
@@ -293,6 +312,8 @@ class ExperimentalStore:
                 before = canonical(doc)
                 try:
                     yield doc
+                    if _observation and canonical(doc) != before:
+                        raise ValueError('EXPERIMENTAL_SCOPE_OBSERVATION_MUTATION')
                     self.validate(doc, nid, scope)
                     if canonical(doc) != before:
                         connection.execute("UPDATE experimental_scope_documents SET document = %s, revision = revision + 1, updated_at = now() WHERE scope_key = %s", (Jsonb(doc), key))
