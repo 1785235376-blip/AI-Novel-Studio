@@ -223,3 +223,30 @@ files created: none
 
 - 第二轮新增生产改动仅一个中间件；未触碰权限 owner、API 字段、关闭门；仍未 push/Release/部署。
 - 最终 HEAD/tree 与第二轮验证日志见交付答复与 `Validation/security-bounded-20261030/logs/`。
+
+## 12. 第三轮续做（2026-10-30）：真实 PG 环境核查、Local Interop 覆盖缺口、插件/身份套件回归
+
+### 12.1 真实 PostgreSQL：`NOT_RUN`（环境不可用，未安装任何新依赖）
+
+只读核查本机结果：`Get-Service *postgres*` 无服务；`psql`/`pg_isready`/`postgres`/`initdb` 均不存在；`docker` 不存在；`TEST_POSTGRES_DATABASE_URL`/`DATABASE_URL` 未设置；5432 无监听。安装 PostgreSQL/Docker 属于新增系统依赖，未执行。因此真实 PG 下的审批/撤权/重建事务验证继续 `NOT_RUN`，不拿 File/Mock 结果替代。
+
+### 12.2 已补覆盖缺口：Local Interop 桥此前没有任何测试
+
+- **事实**：全仓库 grep `local_interop` 只在实现/SDK/`app/main.py` 挂载处出现；`tests/` 下没有任何测试文件引用 `/api/local-interop` 或 `LocalInteropHost`。这是一个真实的安全面覆盖缺口（该面承载会话、权限、handoff/审批流）。
+- **审查结论（静态）**：实现本身防护很强——`SafeRoute` 只接受 `request.client.host == "127.0.0.1"`、query 参数只允许 `session_id`/`after`、请求体 96 KiB 上限、无通用 RPC；Host 侧有 permission generation/owner 绑定、`provider.authorize` 指纹复核、响应发送前 guard、SSE 每帧复核、flag 默认关闭、撤销即清会话与授权。
+- **新增独立回归**：`tests/test_local_interop_security_boundary.py`（13 passed，真实 router + 真实 `LocalInteropHost` + 合成 provider，无真实项目数据）覆盖：双别名 loopback 传输（默认 TestClient 对端被 403 `TRANSPORT_ERROR`）、query 凭据/未知参数拒绝、超大 body 413、固定错误形状、无通用 RPC、flag 关闭时变更 403、只读 status 也要求 Host actor、关闭 flag 后 owner 被撤销。
+- **仍未覆盖**：完整 connect / SSE / handoff / 审批流、packaged Host 会话、真实浏览器 peer —— 这些需要 packaged Host/浏览器夹具，保持 `NOT_RUN`；本测试不声称 interop 全链路安全。
+
+### 12.3 插件信任与身份/授权套件回归证据
+
+- 运行 `test_plugin_contract_v1`、`test_plugin_signature_policy`、`test_plugin_trust_contracts`、`test_plugin_catalog`、`test_official_declarative_plugin_packs`、`test_plugin_discovery_security`、`test_authorization_foundation`、`test_identity_membership`、`test_stable_identity_foundation`、`test_identity_binding_rebuild`：**271 passed / 2 failed**（531.78s）。
+- 2 个失败均为 Windows 符号链接权限限制（`WinError 1314`：`test_plugin_catalog::test_good_plus_symlink_invalid_is_partial`、`test_plugin_discovery_security::test_symlink_escape_is_rejected`），与 11.3 中同类失败一致，属环境限制 `NOT_VERIFIED`，不是产品回归。
+- 静态补充：插件安装只接受声明式 JSON bundle（无代码执行、无 ZIP 解包），`validate_declarative_relative_path` + `resolve_plugin_file` 拒绝绝对/盘符/UNC/反斜杠/`..`/编码变体/符号链接逃逸，并在解析后做 root containment 复核；未发现路径逃逸。
+
+### 12.4 第三轮提交
+
+| 提交 | 内容 | 生产影响 |
+| --- | --- | --- |
+| `6e797d40` | Local Interop 安全边界独立测试（163 行） | 无 |
+
+- 第三轮**没有生产代码改动**；只补覆盖与核查证据。仍未 push/Release/部署，未触碰禁止项。
