@@ -19,3 +19,9 @@
   .global-header .nsfw-badge{gap:2px;padding:0 2px 0 8px}
   .global-header .nsfw-badge__label,.global-header .nsfw-badge__session{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0}
 }
+/* [HERMIA-FE-20261030 P3-1] 徽章出现后搜索标签不再被省略号截断：
+   ≥1441 宽给足空间、不收缩；≤1440 宽有意改为「图标 + Ctrl K」，标签视觉隐藏（仍是可访问名），悬停 title 显示全文。 */
+html .app-shell .global-header:has(.nsfw-badge) .global-search{flex:none;width:auto;min-width:0}
+@media (max-width:1440px){
+  html .app-shell .global-header:has(.nsfw-badge) .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
