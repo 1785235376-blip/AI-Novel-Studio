@@ -356,3 +356,11 @@ files created: none
 - **离线同步（`app/experimental/offline_sync_production.py`）**：每个方法先 `owner._local(ctx)` 做原本地授权复核并重新检查项目存在；行按 `scope/novel_id/created_by` 绑定、跨 scope 即报 `SYNC_RECORD_SCOPE_MISMATCH`；manifest/快照/change-set 全部摘要校验，传输前再次校验源版本与设备 epoch；journal 有数量与字节上限；合同显式声明 `network_enabled=False`、`MOCK_ONLY`、加密接口未配置。**未发现越权或外发问题**。
 - **来源外发（`app/source_privacy.py`）**：权限记录以 `(novel, chapter, branch)` 哈希为键并绑定章节版本+内容摘要；章节编辑/换分支即失效；项目/大纲/知识条目的限制独立且不可被章节级批准覆盖；最终派发前再次复核原始权限、当前章节版本/内容摘要与 `CLOUD_ALLOWED`；错误信息不回显私有值。**未发现可绕过的外发路径**。
 - 以上为静态审查结论；未执行真实 PG/桌面/网络验证（`NOT_RUN`）。
+
+## 24. 第十五轮续做（2026-10-30）：媒体获取/解码静态审查 + 可恢复分批长跑工具
+
+- **媒体获取边界的静态复核（`app/media_files.py`）**：返回值 URL 经 `media_destination` 解析一次并固定数值地址、只允许 http(s)、忽略 proxy、拒绝重定向/压缩/超长/截断，逐块按 deadline 读取并核对 Content-Length；本地 provider 只信任"配置 origin 精确匹配"（包括 IPv4-mapped IPv6 归一），链接本地/多播/未指定/保留地址拒绝。**未发现 SSRF 或资源耗尽缺口。**
+- **媒体解码复核**：`inspect_media`/`inspect_image` 把字节写入私有临时目录（媒体路径额外做 dev/ino 与 reparse-point 复核，清理前再次验证目录身份与空目录），ffprobe/ffmpeg 均带 `-protocol_whitelist file,pipe`、超时、`-xerror`/`-threads 1`/帧数限制；probe JSON 是非可信输入，逐字段校验长度/维度/时长上限后才解码；错误不回显路径或本机诊断。轻微不一致（`inspect_image` 未做与 `inspect_media` 相同的清理前目录身份复核）为**低风险加固建议**，不构成已证实漏洞；本轮未改代码。
+- **长跑工具**：新增外部证据工具 `classify_failures.py`（失败解析 + 固定起点自动对比分类）与 `run_suite_batches.py`（386 个测试文件按 20 文件分批、每批独立日志+JSON 收据、可断点续跑、单批超时 1800s），作为全量套件长跑的受控备选；工具不修改仓库。
+- **全量套件长跑状态**：后台任务进行中（约 21%，处于已知慢文件 `test_file_backend_safety_http.py`，单文件约 333s；不是死锁）。最终结果与失败分类将在其完成后记录到下一节；**在此之前不宣称全量套件通过或失败结论**。
+- 本轮无生产代码/仓库测试改动。
