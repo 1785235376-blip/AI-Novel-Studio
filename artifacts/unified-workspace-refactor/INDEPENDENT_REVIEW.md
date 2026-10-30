@@ -1975,3 +1975,51 @@ Hermia 第 3 轮（14:28–14:46）的情况：
    - theme：0 对比度违规，token 无变化；tour：fails 0。
    - NSFW 存储没有单独复测，标 NOT_RUN。
 6. **门禁**：见下方报告。
+
+## [VERA-FE] 独立复审：66f2f989..252848a7（Hermia 对 66f2 复审意见的修复）
+
+**结论：PASS**（无 P0/P1/P2；66f2 的 P2 与 P3 a–e 均已关闭，并逐项做了变异证明）
+
+证据目录：`/workspace/hr/vera-compare/align-252848a7/`（PROGRESS.md、unit-green.txt、mut-01dd.txt、mut-p3-on-66f2.txt、act.mjs、act252.json(en)、act252zh.json(zh)、shots/、full1-3.json/log、iso/、iso-compare.txt）
+
+### 逐提交核对
+- **3e3d68a8**：把我在 vera-align 未提交的 66f2 审查段与这个提交的 diff 逐行比对，内容完全一致（my-66f2-review.diff 与 3e3d.diff 对比）。
+- **c01844db（关闭 P2）**：AppImageActivatedRoute.test.tsx 跑 3 条，全部通过。回退 01dd8918 的 App.tsx 改动后，"lands the neutral IMAGE default on the formal image page" 变红（1 失败 / 2 通过）；恢复后 3 条全部通过。变异证明成立。
+- **76dc92f6（关闭 P3 a–d）**
+  - a：注释和提示文案现在写的是"概览返回 200 且 entry_kind==='LEGACY'；不区分本地/远程；概览失败（包括 422）只显示通用错误"，和实际代码一致。提示里不再出现"服务端提示"。
+  - b（Playwright 用 route 拦截，zh 和 en 都跑了）：
+    - 确认成功后，焦点落在 `P[data-studio-activation=done][role=status]`，即"已启用独立工作室…"那段结果提示；
+    - activate 返回 403 时，焦点回到"启用独立工作室…"入口按钮；
+    - 取消时焦点也回到入口按钮；
+    - 三种情况焦点都没有落在 BODY。
+    - 弹窗初始焦点在"取消"，Tab 不会跳出弹窗。
+    - 接口序列只有预期的 GET studio /（POST activate）/ GET studio，没有其他非 GET 请求。
+  - c：en 下入口、弹窗（标题、两段正文、按钮）和正式生产区的静态文案都已经是英文。
+  - d：弹窗现在说"图片仍在当前图片页里使用正式节点；视频、音频、剪辑和资产页会改用工作室界面"，和 01dd8918 的路由行为一致。
+  - axe：弹窗 0 违规；确认、失败、取消之后的正式区块也是 0 违规。
+  - RebuildFormalImageNode.p3.test.tsx：在 252848a7 上 6 条全部通过；把同一个文件放到 66f2f989 的代码上跑，6 条全部失败（变异证明成立，临时文件已删除）。src/rebuild/image 目录下 17 个文件、341 条测试全部通过。
+- **252848a7（关闭 P3e）**：全仓（不含 node_modules 和本审查文档）已经搜不到 auto_exec_posts。改动只涉及计数字段名和日志字段名，计数条件仍是 `POST /execute`，语义没变。
+
+### 门禁（每轮 adj = raw − 当轮 ISI + 8；基线 raw298/adj297）
+| 轮次 | raw | ISI | adj | 非基线新增（ISI 以外） |
+|---|---|---|---|---|
+| run1 | 293 | 8 | 293 | 0 |
+| run2 | 293 | 8 | 293 | 0 |
+| run3 | 295 | 10 | 293 | 0 |
+
+按规则(a)三轮最好 293 ≤ 297，通过，不需要用规则(b)的重试。三轮都只有基线里的 LocalAiBrowserJourneyContracts ENOENT 套件错误。
+
+另外，旧 66f2f989 的门禁 run3 已经跑完：raw 294，ISI 8，adj 294。非基线新增只有 1 条 receiptCompanion（已知 flaky）。所以 66f2 的三轮最终是 296/297/294，原 PASS 结论不变。
+
+### ISI 多出的 2 条（Hermia 第 2 轮 ISI=10）
+在 66f2f989（vera-align-b66 worktree）和 252848a7 上，各单独跑 IndependentStudioIdentity.regression.test.tsx 10 次：
+- 8 条确定性失败在两个版本上完全相同，10 次都失败。
+- 另外 2 条会间歇出现："admits a newly mounted owner after the old instance was pe…" 和 "cannot submit a delayed local file after the project retur…"。252848a7 上 10 次里出现 2 次，66f2f989 上 10 次里出现 3 次，所以每轮 ISI 是 8 或 10。
+- 我的门禁 run3 多出来的 2 条正好也是这两条。
+
+结论：这 2 条是 ISI 原有的 flaky，不是回归。另外，这次 diff 没有改动 ISI 相关代码。
+
+### 观察项（不算失败）
+- en 下错误提示仍是中文，例如 403 时显示"当前会话无权访问此内容。请重新核对身份和分支。"
+- StudioMediaExecutionPanel 仍是中文。
+- en 下正式区块里新建节点的默认标题"新生成图片"是中文。这是数据层的默认名，不属于本次修改范围。
