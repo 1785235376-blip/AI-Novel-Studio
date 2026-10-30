@@ -435,7 +435,16 @@ class SafeBatchesService(DomainService):
         return {'items': result[-100:]}
 
     def preflight(self, ctx, body, reauthorize=lambda: None):
-        value = BatchIn.model_validate(body); frozen = self._snapshot(ctx, value); reauthorize()
+        value = BatchIn.model_validate(body)
+        if any(item.kind == 'VOICE_REDO' for item in value.items):
+            # Refuse before source snapshots or batch persistence, using the
+            # same audio-owner gate as standalone voice queue and dispatch.
+            self.flag_check(FEATURE)
+            reauthorize()
+            self.flag_check('voice_direction_v2'); self.flag_check('audiobook_v2')
+            from .audiobook import AudiobookV2Service
+            AudiobookV2Service._require_candidate_write_capacity()
+        frozen = self._snapshot(ctx, value); reauthorize()
         completed = {}
         if value.skip_satisfied:
             for row in self.list(ctx.novel_id, ctx.scope, self.BATCHES):
@@ -505,16 +514,30 @@ class SafeBatchesService(DomainService):
         try: yield
         finally: batch_media_context.reset(token)
 
+    @staticmethod
+    def _require_stage_write_capacity(row, index):
+        if row['snapshot']['steps'][index]['input']['kind'] == 'VOICE_REDO':
+            # The original audio owner keeps voice writes closed until project
+            # capacity reservation/recovery exists. Do not create a batch
+            # claim or a broker reservation before enforcing that same gate.
+            from .audiobook import AudiobookV2Service
+            AudiobookV2Service._require_candidate_write_capacity()
+
     def dispatch(self, ctx, rid, body, reauthorize=lambda: None):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)
         if row['status'] not in {'READY', 'PARTIAL'} or not row['confirmed']: raise ValueError('BATCH_CONFIRM_BEFORE_EXECUTION')
         index = next((i for i, item in enumerate(row['items']) if item['status'] == 'PENDING'), None)
         if index is None: raise ValueError('BATCH_NO_PENDING_ITEM')
+        self._require_stage_write_capacity(row, index)
         claim = uuid4().hex
         with ACTIVE_LOCK: ACTIVE.add(claim)
         try:
             with self.store.transaction(ctx.novel_id, ctx.scope) as state:
                 current = state['collections'][self.BATCHES][rid]
+                # Recheck the actual transaction value before advancing any
+                # state. The original version CAS remains authoritative.
+                check_version(current, value.expected_version)
+                self._require_stage_write_capacity(current, index)
                 def start(r):
                     r.update(status='RUNNING'); r['items'][index].update(status='RUNNING', claim=claim, attempts=r['items'][index]['attempts'] + 1)
                     self._receipt(r['items'][index], snapshot_digest=r['snapshot_digest'], approval_version=(r.get('approvals') or [{}])[-1].get('approved_version'), known_cost_microusd=0)
@@ -634,6 +657,8 @@ class SafeBatchesService(DomainService):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)
         if row['status'] != 'PARTIAL' or any(i['status'] in {'RUNNING', 'UNKNOWN'} for i in row['items']) or not any(i['status'] == 'FAILED' for i in row['items']): raise ValueError('BATCH_ONLY_FAILED_RETRY_UNKNOWN_MUST_RECONCILE')
         if not any(i['status'] == 'FAILED' and step['input']['kind'] != 'STUDIO_IMAGE' for step, i in zip(row['snapshot']['steps'], row['items'])): raise ValueError('BATCH_STUDIO_IMAGE_NO_REPLAY')
+        for index, item in enumerate(row['items']):
+            if item['status'] == 'FAILED': self._require_stage_write_capacity(row, index)
         for step, item in zip(row['snapshot']['steps'], row['items']):
             if item['status'] == 'FAILED' and step['input']['kind'] == 'VOICE_REDO': self.voice.retry(ctx, rid, step['input'])
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
@@ -752,7 +777,8 @@ class SafeBatchesService(DomainService):
             current = self._owned(ctx, rid)
             if current['status'] == 'CANCELLED' or not current['confirmed']: raise ValueError('BATCH_STOPPED')
             self._assert(ctx, current, reauthorize)
-        guard(); result = self.voice.approve(ctx, rid, step['input']['voice_job_id'], value.expected_asset_version, guard)
+        guard(); self._require_stage_write_capacity(row, value.item_index)
+        result = self.voice.approve(ctx, rid, step['input']['voice_job_id'], value.expected_asset_version, guard)
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             current = state['collections'][self.BATCHES][rid]
             change_row(current, ctx.actor, value.expected_version, lambda r: r['items'][value.item_index].update(result=result)); guard()
