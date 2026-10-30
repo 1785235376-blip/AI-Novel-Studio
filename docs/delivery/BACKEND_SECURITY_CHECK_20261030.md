@@ -304,3 +304,10 @@ files created: none
   5. 删除并用同一项目 ID 重建后，旧作业不恢复授权、也不暴露存在性（403/404）。
 - **未覆盖**：真实 PostgreSQL、真实渲染器/浏览器下载、跨进程队列恢复与失败窗口 —— `NOT_RUN`。
 - **提交**：`6639d5bf`；无生产代码改动。
+
+## 18. 第九轮续做（2026-10-30）：TaskCenter / 协作套件回归与失败分类
+
+- 运行 10 个 TaskCenter 消费者/授权相关套件 + 6 个协作套件（光标独立、生命周期 HTTP、本地导出/混合 HTTP、混合外部拒绝、私有缓存、scope 授权观测、单 reader、返回期限、协作应用服务/HTTP 边界/scope API/模型路由/UX）：**266 passed / 2 failed / 1 skipped**（53.23s）。
+- 2 个失败均为 `test_collaboration_text_models_route.py` 对 mock stand-in 运行时目录的断言（`all(...)` 为 False）；用独立临时工作树在**固定起点 `2951a167`** 复跑同一文件，结果相同（2 failed / 2 passed），确认与本轮改动无关，登记为**预存测试债务**（运行时 mock catalog 假设与当前环境/夹具不一致），不通过改断言或放宽门禁“修绿”。
+- 未覆盖：真实 PostgreSQL、真实模型、浏览器 TaskCenter UI；TaskCenter 跨项目 HTTP 矩阵未新增（本轮以既有消费者套件回归为主）——`NOT_RUN`。
+- **本轮无提交的代码/测试改动**（仅本记录）。
