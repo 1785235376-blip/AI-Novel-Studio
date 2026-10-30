@@ -1,0 +1,134 @@
+[
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_independent",
+      "name": "test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "actual Windows native sharing refusal"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_independent.py:275: actual Windows native sharing refusal"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_independent",
+      "name": "test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api/v1]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "actual Windows native sharing refusal"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_independent.py:275: actual Windows native sharing refusal"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_independent",
+      "name": "test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "actual Windows native sharing refusal"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_independent.py:275: actual Windows native sharing refusal"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_independent",
+      "name": "test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api/v1]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "actual Windows native sharing refusal"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_independent.py:275: actual Windows native sharing refusal"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_measurements",
+      "name": "test_combined_source_first_continuation_replay_memory_and_actual_bytes",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows working set observations"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_measurements.py:42: Windows working set observations"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[before_replace-export]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:104: Windows TerminateProcess evidence only"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[before_replace-experimental]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:104: Windows TerminateProcess evidence only"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[after_replace-export]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:104: Windows TerminateProcess evidence only"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[after_replace-experimental]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:104: Windows TerminateProcess evidence only"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_simultaneous_original_export_writers_preserve_jobs_and_idempotency[False]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:165: Windows TerminateProcess evidence only"
+  },
+  {
+    "test": {
+      "classname": "tests.test_file_backend_safety_process",
+      "name": "test_windows_simultaneous_original_export_writers_preserve_jobs_and_idempotency[True]",
+      "time": "0.000"
+    },
+    "reason": {
+      "type": "pytest.skip",
+      "message": "Windows TerminateProcess evidence only"
+    },
+    "text": "<CLOUD_WORKSPACE>/studio-protection-recovered-20261030/tests/test_file_backend_safety_process.py:165: Windows TerminateProcess evidence only"
+  }
+]

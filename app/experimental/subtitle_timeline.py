@@ -20,7 +20,7 @@ from .common import DomainService, StaleSourceError, check_version
 from .flags import require_flag
 from .media import StrictModel, digest
 from ..media_files import inspect_media
-from ..services.studio_timeline_subtitles import MAX_SIDECAR_BYTES, parse_subtitle_cues
+from ..services.studio_timeline_subtitles import MAX_SIDECAR_BYTES, parse_subtitle_cues, decode_vtt_text
 from ..services.pcm16_envelope import pcm16_envelope
 from .subtitle_processing import SubtitleProcessingMixin
 
@@ -116,7 +116,8 @@ def read_captions(text, format):
         start = ((values[0]*60 + values[1])*60 + values[2])*1000 + values[3]
         end = ((values[4]*60 + values[5])*60 + values[6])*1000 + values[7]
         if end <= start: raise ValueError("CAPTION_EXPORT_MILLISECOND_RESOLUTION")
-        rows.append({"start_ms": start, "end_ms": end, "text": "\n".join(lines[2:])})
+        cue_text = "\n".join(lines[2:])
+        rows.append({"start_ms": start, "end_ms": end, "text": decode_vtt_text(cue_text) if format == "vtt" else cue_text})
     return rows
 
 
@@ -130,7 +131,8 @@ def render_captions(row, format):
         if end <= start: raise ValueError("CAPTION_EXPORT_MILLISECOND_RESOLUTION")
         speaker = row.get("speakers", {}).get(cue.get("segment_id"), {}).get("name")
         text = f"[{speaker}] {cue['text']}" if speaker else cue["text"]
-        blocks.append(f"{index}\n{stamp(start,vtt)} --> {stamp(end,vtt)}\n{text}")
+        encoded_text = text.replace("&", "&amp;") if vtt else text
+        blocks.append(f"{index}\n{stamp(start,vtt)} --> {stamp(end,vtt)}\n{encoded_text}")
         expected.append({"start_ms": start, "end_ms": end, "text": text})
     output = ("WEBVTT\n\n" if vtt else "") + "\n\n".join(blocks) + "\n"
     if read_captions(output, format) != expected: raise ValueError("CAPTION_ROUND_TRIP_FAILED")

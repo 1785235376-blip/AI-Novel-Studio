@@ -1,0 +1,46 @@
+{
+  "events": [
+    "packaged migration runner start",
+    "packaged migration baseline ready",
+    "packaged migration verify/apply 0001_chapter_archive_state",
+    "packaged migration verify/apply 0002_context_privacy",
+    "packaged migration verify/apply 0003_experimental_scope_documents",
+    "packaged migration verify/apply 0004_stable_chapter_identity",
+    "packaged migration schema ready",
+    "packaged migration runner start",
+    "packaged migration baseline ready",
+    "packaged migration verify/apply 0001_chapter_archive_state",
+    "packaged migration verify/apply 0002_context_privacy",
+    "packaged migration verify/apply 0003_experimental_scope_documents",
+    "packaged migration verify/apply 0004_stable_chapter_identity",
+    "packaged migration schema ready"
+  ],
+  "ledger_unchanged_on_second_run": true,
+  "ledger": [
+    [
+      "0000_packaged_v070_baseline",
+      "2026-10-30 15:18:34.422909+09:00",
+      "4c390b2268f8201c15fb8a7f586c226a93245ed3f1ed7b119411fb763ea8a748"
+    ],
+    [
+      "0001_chapter_archive_state",
+      "2026-10-30 15:18:34.551964+09:00",
+      "22cdc7c2b96209d3bec8408b7571e26b01dfd0c4e8f9c400a83e66337a85d6b5"
+    ],
+    [
+      "0002_context_privacy",
+      "2026-10-30 15:18:34.552703+09:00",
+      "3afb2bf226409d687221bca32c55c19e84ba84b5c443fe23e09d03321e1f7545"
+    ],
+    [
+      "0003_experimental_scope_documents",
+      "2026-10-30 15:18:34.554277+09:00",
+      "d2992887850ce3696c9c96fe761f0374c198d35e4407381603bb14f9cf462e52"
+    ],
+    [
+      "0004_stable_chapter_identity",
+      "2026-10-30 15:18:34.555434+09:00",
+      "12b83994a2a389bad2f62e8f168ad8f7f25c5488d868fe842b192a0838b126a8"
+    ]
+  ]
+}

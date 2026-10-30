@@ -1,0 +1,17 @@
+FINAL SOURCE FREEZE
+Commit: 9f8ca0aff280eb7c055ae47ee3a610022fd90a3d
+Tree: ad5c04b97939a6e842233da629e2cb447ae9b439
+Baseline: 651aa1a5ef7fbff3866f920216baa975f8ffea54
+Public bundle prerequisite: 395ac26dd2de3d473e56964dbeb9ac9806facb85
+
+Main frozen archive: 114 passed, 0 skipped, exit 0. app/tests manifests identical.
+Independent frozen archive: 110 passed, 0 skipped, exit 0. Includes47 independent and63 repository cases; overlaps main, do not sum. app/tests manifests identical.
+Independent baseline strict19pass; two new acceptance cases fail because mode unsupported (red controls).
+
+Scope: three production Python files, two test files (one new, one existing diagnostic expectation update), one delivery document. Backend API only; default strict success shape/canonical input and historical replay preserved. Strict diagnostic capability changes intentionally to reflect feature truthfully, while original422/code/message retained. Explicit mode previews require loss acknowledgement and bind mode/options/original UTF-8 SHA256/current context/source pins/target version via preview digest.
+
+Reviewer found default-mode inclusion in historical confirmation replay digest; corrected before final verification. Self-review found semantically invalid stale hints could be discarded (zero/overday duration); corrected and independently tested. Initial main harness runs failed because default XDG identity directory was read-only and .runtime parent missing; configured isolated test paths, no escalation. All raw logs retained, not counted as passing evidence.
+
+Not verified: PostgreSQL, full repository suite, Premiere/Resolve application interchange, frontend activation, probe-derived actual media duration. Native source bounds remain declared available_range plus existing formal source checks. No GitHub write, main change, merge, Release, new runtime dependency, Work audio owner change, blocked publication primitive review or Windows ACL/junction probe.
+
+Recovery: source.bundle carries public395..final; feature.patch is baseline651..final. feature-source/ contains exact changed files; source-identity.txt and module provenance identify final code. Existing public395 Git objects are required to unbundle; do not apply feature.patch atop unrelated source. Original old artifact identities were not overwritten.

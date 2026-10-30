@@ -1,0 +1,112 @@
+FFFFFFFFFFF....F.F....                                                   [100%]
+=================================== FAILURES ===================================
+______________ test_xml_parts_are_parseable[\ufffe-novel_to_docx] ______________
+../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167
+______________ test_xml_parts_are_parseable[\ufffe-novel_to_epub] ______________
+../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315
+______________ test_xml_parts_are_parseable[\uffff-novel_to_docx] ______________
+../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 167
+______________ test_xml_parts_are_parseable[\uffff-novel_to_epub] ______________
+../test_sixfix_independent.py:22: in test_xml_parts_are_parseable
+    root=ET.fromstring(z.read(name)); texts.extend(root.itertext())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/xml/etree/ElementTree.py:1335: in XML
+    parser.feed(text)
+E   xml.etree.ElementTree.ParseError: not well-formed (invalid token): line 2, column 315
+________________ test_actual_binary_budget_not_encoded_text[1] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[2] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[3] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[4] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[5] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[6] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_actual_binary_budget_not_encoded_text[7] _________________
+../test_sixfix_independent.py:39: in test_actual_binary_budget_not_encoded_text
+    assert row['status']=='succeeded',row.get('error')
+E   AssertionError: {'code': 'EXPORT_FAILED', 'message': 'export result exceeds the 64 MiB limit'}
+E   assert 'failed' == 'succeeded'
+E     
+E     - succeeded
+E     + failed
+________________ test_format_conflict_does_not_write_or_capture ________________
+../test_sixfix_independent.py:58: in test_format_conflict_does_not_write_or_capture
+    with pytest.raises(ValueError,match='EXPORT_IDEMPOTENCY_FORMAT_CONFLICT'):svc.create('n','json','key')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'ValueError'>
+___________________ test_concurrent_changed_format_one_owner ___________________
+../test_sixfix_independent.py:86: in test_concurrent_changed_format_one_owner
+    assert len(rows)==1
+E   AssertionError: assert 2 == 1
+E    +  where 2 = len([{'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:53.515883+00:00', ...}, {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-29T23:04:53.515883+00:00', ...}])
+- generated xml file: /tmp/sixfix-independent-20261029/evidence/baseline-final.xml -
+=========================== short test summary info ============================
+FAILED ../test_sixfix_independent.py::test_xml_parts_are_parseable[\ufffe-novel_to_docx]
+FAILED ../test_sixfix_independent.py::test_xml_parts_are_parseable[\ufffe-novel_to_epub]
+FAILED ../test_sixfix_independent.py::test_xml_parts_are_parseable[\uffff-novel_to_docx]
+FAILED ../test_sixfix_independent.py::test_xml_parts_are_parseable[\uffff-novel_to_epub]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[1]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[2]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[3]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[4]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[5]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[6]
+FAILED ../test_sixfix_independent.py::test_actual_binary_budget_not_encoded_text[7]
+FAILED ../test_sixfix_independent.py::test_format_conflict_does_not_write_or_capture
+FAILED ../test_sixfix_independent.py::test_concurrent_changed_format_one_owner
+13 failed, 9 passed in 0.95s

@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import json
-import os
 import pytest
 from types import SimpleNamespace
 from uuid import uuid4
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from dotenv import load_dotenv
 
 from app.actor_context import ActorContext, SessionContext
 from app.collaboration_api import CollaborationReadService, create_collaboration_router
@@ -119,11 +117,8 @@ def test_every_endpoint_requires_trusted_session_and_explicit_scope(tmp_path):
 
 
 @pytest.mark.postgres_backend_only
-def test_real_postgres_snapshot_metadata_and_generation_link_are_api_visible():
-    load_dotenv()
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL") or os.getenv("DATABASE_URL")
-    if not url:
-        raise AssertionError("real PostgreSQL is required for V0.5.7 contract verification")
+def test_real_postgres_snapshot_metadata_and_generation_link_are_api_visible(isolated_postgres_url):
+    url = isolated_postgres_url
     bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
     novel_id = novels.create({"title": f"V057 contract {uuid4()}"})["id"]

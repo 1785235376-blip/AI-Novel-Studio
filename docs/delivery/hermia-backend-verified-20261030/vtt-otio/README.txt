@@ -1,0 +1,27 @@
+NEW 2026-10-30 interoperability source and evidence, not restored old logs.
+Final source: 651aa1a5ef7fbff3866f920216baa975f8ffea54
+Tree: 5cc00fcd93f28265dfadfa845970e2e634ab3703
+Branch: work/hermia-timeline-import-interop-20261030 (LOCAL ONLY; no GitHub writes).
+
+1. External WebVTT plain text: current W3C WebVTT section 6.4 consumes HTML character references in data state. Bounded single-pass named/numeric decoding; original owner still rejects decoded markup/controls. SRT unchanged. No broad browser/NLE conformance claim. FFmpeg verifies legacy/literal roundtrip only.
+https://www.w3.org/TR/webvtt1/#webvtt-cue-text-tokenizer
+https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+2. OTIO exports now disclose clip_links reliance on private Studio metadata in the existing LOSS receipt. Native format has no linked-edit relation in this supported projection. Intact extension preserves it; controlled removal loses relation, not clip timing. This does NOT claim all NLEs remove metadata or add native linked-edit support.
+
+Baseline VTT 12 fail / 2 pass; new+legacy28 and realHTTP4 pass; immutable final six-file suite51pass. Independent same final SHA55pass (41 VTT +11 projection +3 actualOTIO). Source hashes before/after identical. Link baseline1fail4pass then5pass; independent baseline3fail8pass. Native controls passed before and after, demonstrating existing private metadata dependence rather than new serialization behavior.
+
+Authorized isolated official PyPI install only opentimelineio==0.18.1 --no-deps; report included. Existing dependencies reused, no paid calls. HTTP tests use synthetic assets and original File backend, preview/acknowledgment/digest/replay/history/restore owners. No Resolve/Premiere/Windows tests claimed.
+
+source.bundle is compact cumulative Git data requiring PUBLIC395ac26dd2de3d473e56964dbeb9ac9806facb85 as prerequisite. Restore that public base, git fetch source.bundle HEAD, checkout FETCH_HEAD. source.patch contains ONLY this round delta from342ad726. Bundle includes cumulative previous changes; current51+55 do not claim a fresh full cumulative repository run.
+
+FINAL CONSUMER COMPATIBILITY ADDENDUM (94c4fcb2):
+Shared-parser caller audit found B04 SubtitleTimelineService.import_preview consumes the decoder, while its own render_captions emitted unescaped literals. Ampersand-reference drift existed on342; additional numeric/named drift was introduced by this round expansion. This is explicitly acknowledged, not labeled wholly pre-existing. Fixed B04 entire composed text (speaker label included) VTT amp escaping and read-back using same one-pass decoder. SRT and original B04 timing/numbering/empty/read-only owner semantics unchanged. No audio history/quota work.
+Same 15 pure cases:342=4fail11pass;46cb=7fail8pass; fixed15pass, plus2 actualFFmpeg literal controls=17pass. Actual mountedHTTP bothprefix consumer tests fail2 on46cb, pass2 afterfix; ownfile->preview unchanged, externalrefs decode, markup rejection and fullscope unchanged.
+FINAL exact94 source primary eight-file suite:70 PASS, no skips. Independent exact94 combined81 PASS, no skips (41VTT+11link+3nativeOTIO+26consumer incl original B04 Cue rejection). Source before/after manifests unchanged. Earlier51/55 logs are explicitly earlier46cb milestone, not latest94 evidence. Compact bundle restored exact94 tree from public395 prerequisite. No full repository/Windows/NLE/browser compliance claim.
+
+READ-ONLY DIAGNOSTIC ADDENDUM (651aa1a5):
+Existing Studio transfer-preview errors for OTIO exact-time metadata mismatch now add a value-free first-conflict diagnostic. Status422 and code/message unchanged. Fields contain generated structural indices, fixed field name, current conflicting native time's integer/fractional-ms/absent/unevaluated status. No clip names, URLs, raw source contents, or time values. strict_import_allowed=false; source and remaining timeline checks NOT_EVALUATED; compatibility mode NOT_IMPLEMENTED; potential loss is hypothetical, never an executed fallback.
+Only preview catches the specific ValueError subclass, reauthorizes, then adds diagnostic. Strict transfer-import/attachment and A12 import still expose their previous error detail without diagnostic. No error is ignored, no second parse, no new endpoint, no new write or opt-in import path. Auxiliary classification cannot change the original error: review caught overstrict revalidation of a high-denominator native time; direct rational inspection plus scoped diagnostic fallback fixed it and regression verifies original mismatch remains. Source application export review is suggested without claiming that any NLE understands private metadata.
+Primary baseline4 realHTTP tests fail missingdiagnostic on94; final sameSHA nine-file77 PASS no skips, including original70 plus7 new controls. Authority revocation wins over diagnostics; immutable source hashes before/after unchanged. Older70/81 and51/55 evidence correspond to their stated prior SHAs and are not claimed as latest-source runs.
+
+FINAL independent exact651 suite:93 PASS, no skips (12 diagnostics+prior81). Baseline94 same12 fail absentdiagnostics, with strict import422 body checked before newdiagnosticassertions. First final-source independent run had8 test-expectation failures due existing enhanced HTTP error envelope; corrected test compares unchanged legacydetail+no diagnostic, no productionchange. Both logs retained, corrected93 is final. Before/after hashes agree.

@@ -1,0 +1,3 @@
+PASS: runtime direct read raises KeyError after actual fixture setup
+PASS: runtime getenv empty; source-identified skip/fail branches receive no URL
+PASS: fixture restores original sentinels at teardown; no DB or network used

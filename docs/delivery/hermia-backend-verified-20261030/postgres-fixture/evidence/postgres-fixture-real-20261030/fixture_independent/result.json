@@ -1,0 +1,23 @@
+{
+  "exit_code": 0,
+  "nodes": [
+    "tests/test_chapter_concurrency.py::test_postgres_two_clients_atomic_cas_and_single_history_row",
+    "tests/test_collaboration_ux_api_v057.py::test_real_postgres_snapshot_metadata_and_generation_link_are_api_visible",
+    "tests/test_v056_atomic_persistence_integration.py::test_real_postgres_two_clients_one_winner_and_transaction_failure_rolls_back",
+    "tests/test_lore_context_contract.py::test_same_name_character_lore_isolated_by_novel_in_file_and_postgres",
+    "tests/test_lore_context_contract.py::test_file_and_postgres_lore_context_match",
+    "tests/test_context_intelligence.py::test_postgres_context_snapshot_is_idempotently_persisted",
+    "tests/test_generation_snapshot_runtime_v056.py::test_real_postgres_identical_generation_context_has_distinct_job_snapshots",
+    "tests/test_generation_snapshot_runtime_v056.py::test_real_postgres_generation_has_durable_snapshot_foreign_key",
+    "tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality"
+  ],
+  "database_name": "ai_novel_studio_e2e_fixture_independent",
+  "counts": {
+    "tests": 9,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "head": "1349026fd209c048f583859f8a9e41af7301160b"
+}

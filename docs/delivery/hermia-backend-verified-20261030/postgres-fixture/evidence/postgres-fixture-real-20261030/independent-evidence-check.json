@@ -1,0 +1,40 @@
+{
+  "rounds": [
+    {
+      "round": "fixture_initial",
+      "tests": 9,
+      "skipped": 0,
+      "exit": 0,
+      "hashes": 5826,
+      "same_source": true,
+      "ledger_second_unchanged": true,
+      "database": "ai_novel_studio_e2e_fixture_initial",
+      "junit_time": "5.135"
+    },
+    {
+      "round": "fixture_independent",
+      "tests": 9,
+      "skipped": 0,
+      "exit": 0,
+      "hashes": 5826,
+      "same_source": true,
+      "ledger_second_unchanged": true,
+      "database": "ai_novel_studio_e2e_fixture_independent",
+      "junit_time": "5.463"
+    },
+    {
+      "round": "fixture_parent",
+      "tests": 9,
+      "skipped": 0,
+      "exit": 0,
+      "hashes": 5826,
+      "same_source": true,
+      "ledger_second_unchanged": true,
+      "database": "ai_novel_studio_e2e_fixture_parent",
+      "junit_time": "5.946"
+    }
+  ],
+  "reverse_order_verified": true,
+  "distinct_databases_same_instance": true,
+  "no_counts_summed": true
+}

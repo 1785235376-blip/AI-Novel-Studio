@@ -178,19 +178,37 @@ def test_original_commit_sigkill_matches_selected_nonce(owner,tmp_path,point):
         child.communicate(timeout=10)
 
 
-def test_original_startup_recovery_and_cancel_still_advance_selected_evidence(owner):
-    from app.services.export_job_service import ExportJobService
-    job=owner.create('book','txt','recovery',permission_context={'mode':'local','novel_id':'book','actor_id':'a'})
-    first=owner.binding_observation([job['id']])
-    restarted=ExportJobService(owner.path.parent,lambda *a:pytest.fail('real exporter forbidden'))
+def test_original_startup_recovery_and_cancel_still_advance_selected_evidence(tmp_path, monkeypatch):
+    from concurrent.futures import Future
+    from app.services import export_job_service as module
+
+    class DeferredPool:
+        # Keep original _submit/claim handling; suppress only actual rendering.
+        def __init__(self, **kwargs): self.pending = []
+        def submit(self, *args):
+            future = Future(); self.pending.append(future); return future
+        def shutdown(self, wait=True):
+            for future in self.pending: future.cancel()
+
+    monkeypatch.setattr(module, 'ThreadPoolExecutor', DeferredPool)
+    owner = module.ExportJobService(tmp_path, lambda *a: pytest.fail('renderer forbidden'))
+    restarted = None
     try:
-        recovered=restarted.get(job['id'])
-        assert recovered['status']=='queued' and recovered['recovery_count']==1
-        after=restarted.binding_observation([job['id']]);assert after!=first
-        cancelled=restarted.cancel(job['id'])
-        assert cancelled['status']=='cancelled'
-        assert restarted.binding_observation([job['id']])!=after
-    finally:restarted._pool.shutdown(wait=True)
+        job = owner.create('book', 'txt', 'recovery', permission_context={'mode':'local','novel_id':'book','actor_id':'a'})
+        first = owner.binding_observation([job['id']])
+        # The queued executor is gone: release its real claim via Future cancel,
+        # without changing the durable job. Recovery may now legitimately run.
+        assert owner._futures[job['id']].cancel()
+        restarted = module.ExportJobService(tmp_path, lambda *a: pytest.fail('renderer forbidden'))
+        recovered = restarted.get(job['id'])
+        assert recovered['status'] == 'queued' and recovered['recovery_count'] == 1
+        after = restarted.binding_observation([job['id']]); assert after != first
+        cancelled = restarted.cancel(job['id'])
+        assert cancelled['status'] == 'cancelled'
+        assert restarted.binding_observation([job['id']]) != after
+    finally:
+        owner._pool.shutdown(wait=True)
+        if restarted: restarted._pool.shutdown(wait=True)
 
 
 def test_malformed_lifecycle_observation_fails_closed_without_repair(owner):

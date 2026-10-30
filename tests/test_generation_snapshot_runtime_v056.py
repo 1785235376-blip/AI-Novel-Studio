@@ -1,13 +1,10 @@
 import json
 import shutil
 import time
-import os
 from uuid import uuid4
 from pathlib import Path
 
-from app import jobs as jobs_module
 from app.config import settings
-from app.jobs import JobManager
 from app.providers import MockProvider
 from app.config import Settings
 from app.repositories.factory import create_repository_bundle
@@ -20,6 +17,7 @@ import pytest
 
 
 def _wait(job):
+    from app.jobs import JobManager
     for _ in range(200):
         if job.status in JobManager.terminal:
             return
@@ -43,6 +41,8 @@ def _wait_for_persisted_job(manager, job):
 
 
 def _manager(tmp_path, monkeypatch, provider):
+    from app import jobs as jobs_module
+    from app.jobs import JobManager
     install_sample_novel(tmp_path)
     monkeypatch.setattr(jobs_module.repo, "data", tmp_path)
     monkeypatch.setattr(jobs_module.repo, "novels", tmp_path / "novels")
@@ -104,10 +104,8 @@ def test_identical_context_for_two_generation_jobs_keeps_distinct_provenance(tmp
 
 
 @pytest.mark.postgres_backend_only
-def test_real_postgres_generation_has_durable_snapshot_foreign_key():
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL") or os.getenv("DATABASE_URL")
-    if not url:
-        pytest.skip("real PostgreSQL unavailable")
+def test_real_postgres_generation_has_durable_snapshot_foreign_key(isolated_postgres_url):
+    url = isolated_postgres_url
     bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     novel_id = NovelService(bundle.novels, bundle.chapters).create(
         {"title": f"Snapshot link {uuid4()}"})["id"]
@@ -123,10 +121,8 @@ def test_real_postgres_generation_has_durable_snapshot_foreign_key():
 
 
 @pytest.mark.postgres_backend_only
-def test_real_postgres_identical_generation_context_has_distinct_job_snapshots():
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL") or os.getenv("DATABASE_URL")
-    if not url:
-        pytest.skip("real PostgreSQL unavailable")
+def test_real_postgres_identical_generation_context_has_distinct_job_snapshots(isolated_postgres_url):
+    url = isolated_postgres_url
     bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     novel_id = NovelService(bundle.novels, bundle.chapters).create({"title": f"Snapshot owners {uuid4()}"})["id"]
     chapter = ChapterService(bundle.chapters).create(novel_id, {"title": "One", "content": "Text"})

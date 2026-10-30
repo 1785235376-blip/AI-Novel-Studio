@@ -1,0 +1,35 @@
+[
+  {
+    "label": "fixture_initial",
+    "exit_code": 0,
+    "counts": {
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    },
+    "head": "1349026fd209c048f583859f8a9e41af7301160b"
+  },
+  {
+    "label": "fixture_independent",
+    "exit_code": 0,
+    "counts": {
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    },
+    "head": "1349026fd209c048f583859f8a9e41af7301160b"
+  },
+  {
+    "label": "fixture_parent",
+    "exit_code": 0,
+    "counts": {
+      "tests": 9,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    },
+    "head": "1349026fd209c048f583859f8a9e41af7301160b"
+  }
+]

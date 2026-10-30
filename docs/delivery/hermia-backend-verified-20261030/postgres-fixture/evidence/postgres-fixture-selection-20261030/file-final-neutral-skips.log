@@ -1,0 +1,27 @@
+s...ss.......s....ss...s...s....s...................................     [100%]
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <CLOUD_WORKSPACE>/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_generation_snapshot_runtime_v056.py::test_generation_persists_snapshot_link_before_model_and_keeps_original_version
+  <CLOUD_WORKSPACE>/studio-pg-fixture-20261030/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_generation_snapshot_runtime_v056.py::test_generation_persists_snapshot_link_before_model_and_keeps_original_version
+  <CLOUD_WORKSPACE>/studio-pg-fixture-20261030/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_identity_membership_postgres.py:19: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_generation_snapshot_runtime_v056.py:106: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_generation_snapshot_runtime_v056.py:123: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_context_intelligence.py:168: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_lore_context_contract.py:147: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_lore_context_contract.py:284: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_v056_atomic_persistence_integration.py:93: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_collaboration_ux_api_v057.py:119: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+SKIPPED [1] tests/test_chapter_concurrency.py:91: PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run
+59 passed, 9 skipped, 3 warnings in 6.14s
+PROOF {"label": "file", "exit": 0, "connection_attempts": 0, "connection_targets": [], "app_main_imported": true, "pg_items": ["tests/test_identity_membership_postgres.py::test_real_postgres_identity_membership_round_trip_and_cardinality", "tests/test_generation_snapshot_runtime_v056.py::test_real_postgres_generation_has_durable_snapshot_foreign_key", "tests/test_generation_snapshot_runtime_v056.py::test_real_postgres_identical_generation_context_has_distinct_job_snapshots", "tests/test_context_intelligence.py::test_postgres_context_snapshot_is_idempotently_persisted", "tests/test_lore_context_contract.py::test_file_and_postgres_lore_context_match", "tests/test_lore_context_contract.py::test_same_name_character_lore_isolated_by_novel_in_file_and_postgres", "tests/test_v056_atomic_persistence_integration.py::test_real_postgres_two_clients_one_winner_and_transaction_failure_rolls_back", "tests/test_collaboration_ux_api_v057.py::test_real_postgres_snapshot_metadata_and_generation_link_are_api_visible", "tests/test_chapter_concurrency.py::test_postgres_two_clients_atomic_cas_and_single_history_row"]}

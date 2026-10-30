@@ -12,6 +12,7 @@ if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
 from sample_novel_fixture import sample_novel_source as _sample_novel_source
+from postgres_test_selection import capture_postgres_test_input, selected_postgres_test_url, scoped_postgres_bootstrap, postgres_tests_selected
 
 _PROVIDER_AND_DATABASE_ENV = (
     "DEEPSEEK_API_KEY",
@@ -30,59 +31,75 @@ _PROVIDER_AND_DATABASE_ENV = (
 )
 
 
+def pytest_configure(config: pytest.Config) -> None:
+    # Capture explicit test input before per-test credential/environment isolation.
+    # Never inspect .env or production DATABASE_URL, and never connect here.
+    capture_postgres_test_input(config, os.environ)
+
+
+@pytest.fixture
+def isolated_postgres_url(request: pytest.FixtureRequest) -> str:
+    return selected_postgres_test_url(request.config, request.node)
+
+
 @pytest.fixture
 def sample_novel_source() -> Path:
     return _sample_novel_source()
 
 
 @pytest.fixture(autouse=True)
-def restore_global_settings():
+def restore_global_settings(request: pytest.FixtureRequest):
     """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
 
     Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
     private state. Tests that need a process-local credential store inject an
     explicit memory vault in a narrow fixture.
     """
+    # Validate explicit selection before app bootstrap can load repositories.
+    # Other tests retain the original settings/environment isolation behavior.
+    selected_url = (request.getfixturevalue("isolated_postgres_url")
+                    if "isolated_postgres_url" in request.fixturenames else None)
     from app.config import settings
-    from app.main import app
-    from app.packaging.control_pipe import credential_store
-    from app.runtime import runtime
+    with scoped_postgres_bootstrap(settings, selected_url):
+        from app.main import app
+        from app.packaging.control_pipe import credential_store
+        from app.runtime import runtime
 
-    original_settings = {field.name: getattr(settings, field.name) for field in fields(settings)}
-    original_overrides = app.dependency_overrides.copy()
-    original_runtime = {
-        key: (value.copy() if isinstance(value, dict) else value)
-        for key, value in runtime.__dict__.items()
-    }
-    original_store = dict(credential_store._values)
-    removed_env: dict[str, str] = {}
-    try:
-        for key in _PROVIDER_AND_DATABASE_ENV:
-            if key in os.environ:
-                removed_env[key] = os.environ.pop(key)
-        yield
-    finally:
-        for key in _PROVIDER_AND_DATABASE_ENV:
-            os.environ.pop(key, None)
-        os.environ.update(removed_env)
-        for name, value in original_settings.items():
-            object.__setattr__(settings, name, value)
-        app.dependency_overrides.clear()
-        app.dependency_overrides.update(original_overrides)
-        runtime.__dict__.clear()
-        runtime.__dict__.update(original_runtime)
-        credential_store._values.clear()
-        credential_store._values.update(original_store)
+        original_settings = {field.name: getattr(settings, field.name) for field in fields(settings)}
+        original_overrides = app.dependency_overrides.copy()
+        original_runtime = {
+            key: (value.copy() if isinstance(value, dict) else value)
+            for key, value in runtime.__dict__.items()
+        }
+        original_store = dict(credential_store._values)
+        removed_env: dict[str, str] = {}
+        try:
+            for key in _PROVIDER_AND_DATABASE_ENV:
+                if key in os.environ:
+                    removed_env[key] = os.environ.pop(key)
+            yield
+        finally:
+            for key in _PROVIDER_AND_DATABASE_ENV:
+                os.environ.pop(key, None)
+            os.environ.update(removed_env)
+            for name, value in original_settings.items():
+                object.__setattr__(settings, name, value)
+            app.dependency_overrides.clear()
+            app.dependency_overrides.update(original_overrides)
+            runtime.__dict__.clear()
+            runtime.__dict__.update(original_runtime)
+            credential_store._values.clear()
+            credential_store._values.update(original_store)
 
 
-def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
-    postgres = os.getenv("STORAGE_BACKEND", "file").strip().lower() == "postgres"
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
+    postgres = postgres_tests_selected(config)
     for item in items:
         file_only = bool(item.get_closest_marker("file_backend_only"))
         postgres_only = bool(item.get_closest_marker("postgres_backend_only"))
         if file_only and postgres_only:
             raise pytest.UsageError(f"contradictory backend-only markers: {item.nodeid}")
         if postgres and file_only:
-            item.add_marker(pytest.mark.skip(reason="File-backend implementation contract; covered by the default/File full suite"))
+            item.add_marker(pytest.mark.skip(reason="File-backend implementation contract; requires the default/File test selection"))
         if not postgres and postgres_only:
-            item.add_marker(pytest.mark.skip(reason="PostgreSQL implementation contract; covered by the real PostgreSQL full suite"))
+            item.add_marker(pytest.mark.skip(reason="PostgreSQL implementation contract; requires an explicitly selected real PostgreSQL run"))

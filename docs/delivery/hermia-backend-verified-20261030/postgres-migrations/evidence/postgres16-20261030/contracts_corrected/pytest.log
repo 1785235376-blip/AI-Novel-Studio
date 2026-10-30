@@ -1,0 +1,12 @@
+..........                                                               [100%]
+=============================== warnings summary ===============================
+tests/test_postgres_repository_contracts.py::test_postgres_contract_flow
+  <CLOUD_WORKSPACE>/studio-timeline-import-20261030/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_postgres_repository_contracts.py::test_postgres_contract_flow
+  <CLOUD_WORKSPACE>/studio-timeline-import-20261030/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+10 passed, 2 warnings in 5.83s

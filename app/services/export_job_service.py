@@ -21,6 +21,7 @@ from ..repositories.file.mutation_coordinator import workspace_mutation
 from ..industry_export_formats import IndustryExportError
 from ..pdf_export import PDFExportError
 from ..storage import atomic_write
+from .export_execution_claim import try_execution_claim
 
 
 def _now() -> str:
@@ -267,83 +268,79 @@ class ExportJobService:
         return item
 
     def _recover_on_startup(self) -> None:
-        """Requeue queued/running jobs left by a previous process.
+        """Recover only candidates for which no current executor holds a claim."""
+        candidates = [str(jid) for jid, raw in self._read().items()
+                      if isinstance(raw, dict) and str(raw.get("status") or "").lower() in {"queued", "running"}]
+        for job_id in candidates:
+            self._submit(job_id, recovery=True)
 
-        ``running`` is converted to ``queued`` before submission.  Exporters
-        only read project state and write the job record, so replaying an
-        interrupted export is safe and deterministic.  A job explicitly marked
-        ``cancel_requested`` is finalised as cancelled instead.
-        """
-        # A queue with no recoverable work remains usable in a read-only
-        # profile. Only a real recovery mutation needs the writer coordinator.
-        if not any(isinstance(raw, dict) and str(raw.get("status") or "").lower() in {"queued", "running"}
-                   for raw in self._read().values()):
-            return
-        pending = []
-        changed = False
+    def _prepare_recovery(self, job_id: str) -> bool:
+        # Caller owns the per-job execution claim. Re-read under the original
+        # short writer coordinator; no whole-queue lock spans exporter work.
         with self._mutation():
             jobs = self._read()
-            for job_id, raw in list(jobs.items()):
-                if not isinstance(raw, dict):
-                    continue
-                status = str(raw.get("status") or "").lower()
-                if status not in {"queued", "running"}:
-                    continue
-                if raw.get("cancel_requested"):
-                    raw.update(
-                        status="cancelled",
-                        progress_message="已取消",
-                        error={"code": "EXPORT_CANCELLED", "message": "export cancelled"},
-                        finished_at=_now(),
-                        updated_at=_now(),
-                    )
-                else:
-                    try:
-                        previous_progress = int(raw.get("progress", 0) or 0)
-                    except (TypeError, ValueError):
-                        previous_progress = 0
-                    try:
-                        previous_recoveries = int(raw.get("recovery_count", 0) or 0)
-                    except (TypeError, ValueError):
-                        previous_recoveries = 0
-                    raw.update(
-                        status="queued",
-                        progress=max(0, min(5, previous_progress)),
-                        progress_message="等待恢复",
-                        recovery_count=previous_recoveries + 1,
-                        recovered_at=_now(),
-                        updated_at=_now(),
-                    )
-                    pending.append(str(job_id))
-                changed = True
-            if changed:
-                self._write(jobs)
-        for job_id in pending:
-            self._submit(job_id)
-
-    def _submit(self, job_id: str) -> None:
-        try:
-            future = self._pool.submit(self._run, job_id)
-        except RuntimeError as exc:
-            # A service being shut down should not leave a forever-queued job.
-            with self._mutation():
-                jobs = self._read()
-                job = jobs.get(job_id)
-                if isinstance(job, dict) and str(job.get("status", "")).lower() == "queued":
-                    job.update(
-                        status="failed",
-                        progress_message="队列不可用",
-                        error={"code": "EXPORT_QUEUE_UNAVAILABLE", "message": str(exc)},
-                        finished_at=_now(),
-                        updated_at=_now(),
-                    )
-                    self._write(jobs)
-            return
-        with self._mutation():
-            if future.done():
-                self._futures.pop(job_id, None)
+            raw = jobs.get(job_id)
+            if not isinstance(raw, dict) or str(raw.get("status") or "").lower() not in {"queued", "running"}:
+                return False
+            if raw.get("cancel_requested"):
+                raw.update(status="cancelled", progress_message="已取消",
+                           error={"code": "EXPORT_CANCELLED", "message": "export cancelled"},
+                           finished_at=_now(), updated_at=_now())
             else:
-                self._futures[job_id] = future
+                try:
+                    previous_progress = int(raw.get("progress", 0) or 0)
+                except (TypeError, ValueError):
+                    previous_progress = 0
+                try:
+                    previous_recoveries = int(raw.get("recovery_count", 0) or 0)
+                except (TypeError, ValueError):
+                    previous_recoveries = 0
+                raw.update(status="queued", progress=max(0, min(5, previous_progress)),
+                           progress_message="等待恢复", recovery_count=previous_recoveries + 1,
+                           recovered_at=_now(), updated_at=_now())
+            self._write(jobs)
+            return raw["status"] == "queued"
+
+    def _submit(self, job_id: str, *, recovery=False) -> None:
+        claim = try_execution_claim(self.path.parent, job_id)
+        if claim is None:
+            return
+        submitted = False
+        try:
+            if recovery and not self._prepare_recovery(job_id):
+                return
+            try:
+                future = self._pool.submit(self._run, job_id, claim)
+            except RuntimeError as exc:
+                # We still own this job: a failed local executor cannot poison
+                # another process's queued/running task.
+                with self._mutation():
+                    jobs = self._read()
+                    job = jobs.get(job_id)
+                    if isinstance(job, dict) and str(job.get("status", "")).lower() == "queued":
+                        job.update(status="failed", progress_message="队列不可用",
+                                   error={"code": "EXPORT_QUEUE_UNAVAILABLE", "message": str(exc)},
+                                   finished_at=_now(), updated_at=_now())
+                        self._write(jobs)
+                return
+            submitted = True
+            # A cancelled queued Future never enters _run; its done callback
+            # must release the exact claim. release() is idempotent.
+            future.add_done_callback(lambda _future: claim.release())
+            with self._mutation():
+                if future.done():
+                    self._futures.pop(job_id, None)
+                else:
+                    self._futures[job_id] = future
+        finally:
+            if not submitted:
+                claim.release()
+
+    @staticmethod
+    def _canonical_format(value: object) -> str:
+        fmt = str(value or "json").lower().strip()
+        return {"md": "markdown", "text": "txt", "word": "docx",
+                "screenplay-standard": "screenplay-fountain"}.get(fmt, fmt)
 
     def create(
         self,
@@ -357,13 +354,14 @@ class ExportJobService:
         fmt = str(format or "json").lower().strip()
         if fmt not in self.SUPPORTED:
             raise ValueError("unsupported export format")
-        fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
-        fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
+        fmt = self._canonical_format(fmt)
         with self._mutation():
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
                     if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and item.get("permission_context") == permission_context and self._is_idempotency_fresh(item):
+                        if self._canonical_format(item.get("format")) != fmt:
+                            raise ValueError("EXPORT_IDEMPOTENCY_FORMAT_CONFLICT")
                         return self._normalise_job(item)
             attempt = 1
             if retry_of:
@@ -786,12 +784,22 @@ class ExportJobService:
                 raise ValueError("export result exceeds the 64 MiB limit")
             item["content"] = base64.b64encode(raw).decode("ascii")
             item["content_encoding"] = "base64"
-        elif isinstance(content, str) and len(content.encode("utf-8")) > ExportJobService.MAX_RESULT_BYTES:
-            raise ValueError("export result exceeds the 64 MiB limit")
+        elif isinstance(content, str):
+            if item.get("content_encoding") == "base64":
+                # The limit describes decoded artifact bytes, regardless of
+                # which supported binary representation the exporter uses.
+                try:
+                    ExportJobService._result_bytes({"content": content, "content_encoding": "base64"})
+                except ExportJobResultInvalid as exc:
+                    raise ValueError(str(exc)) from exc
+            elif len(content.encode("utf-8")) > ExportJobService.MAX_RESULT_BYTES:
+                raise ValueError("export result exceeds the 64 MiB limit")
         encoded = item.get("content_base64")
         if encoded is not None:
             if not isinstance(encoded, str) or item.get("content_encoding", "base64") != "base64":
                 raise ValueError("export result content encoding is invalid")
+            if len(encoded) > ((ExportJobService.MAX_RESULT_BYTES + 2) // 3) * 4:
+                raise ValueError("export result exceeds the 64 MiB limit")
             try:
                 raw_encoded = base64.b64decode(encoded, validate=True)
             except (ValueError, UnicodeEncodeError, binascii.Error) as exc:
@@ -800,7 +808,23 @@ class ExportJobService:
                 raise ValueError("export result exceeds the 64 MiB limit")
         return item
 
-    def _run(self, job_id: str) -> None:
+    def _run(self, job_id: str, claim=None) -> None:
+        # _submit transfers a live claim. Direct internal execution also claims
+        # before reading or changing a queued job.
+        claim = claim if claim is not None else try_execution_claim(self.path.parent, job_id)
+        if claim is None:
+            return
+        try:
+            self._run_owned(job_id)
+        finally:
+            # Every terminal path, including cooperative cancellation or an
+            # unexpected worker error, releases only this instance's state.
+            with self._lock:
+                self._futures.pop(job_id, None)
+                self._cancel_events.pop(job_id, None)
+            claim.release()
+
+    def _run_owned(self, job_id: str) -> None:
         with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
@@ -822,9 +846,20 @@ class ExportJobService:
             job.update(status="running", progress=max(5, previous_progress), progress_message="处理中", started_at=_now(), updated_at=_now())
             self._write(jobs)
 
-        def report(progress: object, message: str | None = None):
+        def check_cancelled():
             if cancel_event.is_set():
                 raise _ExportCancelled()
+            # Another same-host service/process can cancel this durable job
+            # without sharing the execution owner's in-memory Event.
+            with self._lock:
+                current = self._read().get(job_id)
+            if isinstance(current, dict) and (current.get("cancel_requested")
+                    or str(current.get("status", "")).lower() == "cancelled"):
+                cancel_event.set()
+                raise _ExportCancelled()
+
+        def report(progress: object, message: str | None = None):
+            check_cancelled()
             self._set_progress(job_id, progress, message)
 
         try:
@@ -832,9 +867,7 @@ class ExportJobService:
             result = self._serialise_result(self._invoke_exporter(job, report))
             # Never publish a success state for a renderer with no usable file.
             self._result_bytes(result)
-            if cancel_event.is_set():
-                self._mark_cancelled_from_worker(job_id)
-                return
+            check_cancelled()
             artifact = self._persist_artifact(job_id, result)
             report(95, "整理导出结果")
             update = {"status": "succeeded", "result": result, "artifact": artifact, "error": None, "progress": 100, "progress_message": "已完成", "finished_at": _now(), "updated_at": _now()}

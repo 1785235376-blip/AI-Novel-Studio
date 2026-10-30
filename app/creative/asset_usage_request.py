@@ -4,9 +4,10 @@ from urllib.parse import parse_qsl
 
 from starlette.responses import JSONResponse
 
-from .asset_usage_budget import UsageBudgetError, usage_read_budget
+from .asset_usage_budget import UsageBudgetError, usage_read_budget, isolate_usage_request_context
 from ..repositories.file.mutation_coordinator import (
     ReadOnlyCoordinationUnavailable, existing_coordination_only,
+    isolate_coordination_request_context,
 )
 
 _route = re.compile(r'/api/(?:v1/)?novels/[^/]+/experimental/production/assets/[^/]+/studio-(graph|timeline|asset)-usages')
@@ -17,6 +18,13 @@ class AssetUsageRequestBudgetMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
+        # A keepalive server may create the next task while sending the previous
+        # response. Isolate every scope, including unmatched routes/websockets;
+        # nested same-request helpers keep their original reuse semantics.
+        with isolate_usage_request_context(), isolate_coordination_request_context():
+            return await self._request(scope, receive, send)
+
+    async def _request(self, scope, receive, send):
         match = _route.fullmatch(scope.get('path', '')) if scope.get('type') == 'http' else None
         query = scope.get('query_string', b'')
         if (match is None or scope.get('method') != 'GET'

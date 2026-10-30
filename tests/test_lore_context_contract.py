@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import uuid
 from datetime import datetime, timezone
 
@@ -15,7 +14,6 @@ from app.config import Settings
 from app.lore.context_view import LoreContextBuilder
 from app.repositories.factory import create_repository_bundle
 from app.repositories.postgres.models import CharacterModel, NovelModel
-from app.repositories.postgres.session import Database
 from app.services import ChapterService, ContextService, LoreService, MemoryService, NovelService
 from app.storage import atomic_write
 
@@ -146,10 +144,9 @@ def test_agent_adapter_only_exposes_lore_to_writer():
     assert "lore_memory" not in runner.build_prompt("editor", context, "edit")
 
 
-def test_file_and_postgres_lore_context_match(tmp_path):
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
-    if not url or not Database(url).health_check():
-        pytest.skip("real PostgreSQL unavailable")
+@pytest.mark.postgres_backend_only
+def test_file_and_postgres_lore_context_match(tmp_path, isolated_postgres_url):
+    url = isolated_postgres_url
 
     file_bundle = create_repository_bundle(
         Settings(storage_backend="file", novel_data=tmp_path), tmp_path
@@ -284,10 +281,9 @@ def _same_name_novel_views(bundle, prefix: str, tmp_path=None):
     return views
 
 
-def test_same_name_character_lore_isolated_by_novel_in_file_and_postgres(tmp_path):
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
-    if not url or not Database(url).health_check():
-        pytest.skip("real PostgreSQL unavailable")
+@pytest.mark.postgres_backend_only
+def test_same_name_character_lore_isolated_by_novel_in_file_and_postgres(tmp_path, isolated_postgres_url):
+    url = isolated_postgres_url
     run_id = uuid.uuid4().hex[:10]
     file_views = _same_name_novel_views(
         create_repository_bundle(Settings(storage_backend="file", novel_data=tmp_path), tmp_path),
