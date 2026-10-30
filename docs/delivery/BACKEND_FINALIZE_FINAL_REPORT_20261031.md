@@ -9,14 +9,14 @@
 | 项 | 值 |
 | --- | --- |
 | 工作分支 | `work/backend-finalize-20261031` |
-| 本地 head / tree | `e302da48d7086927fa44db80079205f0198a5af6` / `76f41cc0959fc5df29bf13c88d22426d2a2e34d4` |
+| 本地 head / tree | `ea4b839b22cb717ade744ba805dad5e24366655e` / `73dcd1594da02cd4bcfa0c70702a9835f2d679ac` |
 | 远端回读 | `refs/heads/work/backend-finalize-20261031` = 同一 SHA（`git ls-remote`） |
-| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、257 files、26 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
+| Draft PR | **#52**（base `work/capability-completion-20261030`，DRAFT、OPEN、257 files、33 commits）：https://github.com/1785235376-blip/AI-Novel-Studio/pull/52 |
 | 基线 | PR #51 head `317da4cc3c9b68d4f9e09e6222b4e110bad4e94b`（tree `677156be5750dc93ca5b3fc8bdae73dfd414472e`） |
-| 相对基线 diff | 257 files changed, +31419 / −200 |
+| 相对基线 diff | 257 files changed, +31692 / −200 |
 | 其他分支 | `work/capability-completion-20261030`=`317da4cc`（未改动）；`main`=`7b35e4cb`（未改动、未合并） |
 | #51 关联 | 已在 #51 下评论指向 #52（前置链） |
-> 说明：本报告内容回读于 head `e302da48d7086927fa44db80079205f0198a5af6`（tree `76f41cc0959fc5df29bf13c88d22426d2a2e34d4`）；其后提交仅为本报告刷新（无产品/测试代码变化）。远端最终 head 以 PR #52 实时回读为准。
+> 说明：本报告内容回读于 head `ea4b839b22cb717ade744ba805dad5e24366655e`（tree `73dcd1594da02cd4bcfa0c70702a9835f2d679ac`）；报告提交后仅可能有报告刷新提交。远端最终 head 以 PR #52 实时回读为准。
 
 未执行：合并 main、强推、删除分支、创建 Release/部署；以上均保持禁止。
 
@@ -58,6 +58,7 @@
 | 5 | `d090edc1` `debf9c2f` `19a85490` | 39 个非祖先 head 精确差异与处置；motion frame 远程引用/审批信任边界证据；生命周期/重建/恢复定向复核与 PR #49 D-17/D-20 适用性调查 |
 | 补充 | 
 | 成本/验证 | `e302da48` | Studio 任务成本显式 UNKNOWN 合同；47 个 test_studio_* 宽回归零新失败 |
+| 容量补口 | `156e5872` `e021c820` `ea4b839b` | 显式迁移/恢复容量记账；同项目孤儿历史残渣 UNKNOWN 归属 |
 a7ea05d 28a6d5c | 音频恢复项目重建/并发/flag 反例；协作模式 session 撤销/成员停用/只读授权反例 |
 
 全部提交均通过普通工作分支推送并更新同一个 Draft PR #52（未合并、未发布、未删分支）。
