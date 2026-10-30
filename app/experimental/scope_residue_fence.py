@@ -37,13 +37,20 @@ def reject_suspected_scope_residue(path: Path):
         kernel.FindFirstFileW.restype = wintypes.HANDLE
         kernel.FindClose.argtypes = [wintypes.HANDLE]
         kernel.FindClose.restype = wintypes.BOOL
+        kernel.GetDriveTypeW.argtypes = [wintypes.LPCWSTR]
+        kernel.GetDriveTypeW.restype = wintypes.UINT
         name = os.path.abspath(os.fspath(path))
+        # Do not infer same-host coordination from UNC paths, mapped network
+        # volumes, removable volumes, or an unknown drive type. This uses no
+        # ACL or junction probe; root ancestry identity remains unverified.
+        if name.startswith('\\\\'):
+            raise ValueError(UNRECONCILED)
+        drive, _ = os.path.splitdrive(name)
+        if len(drive) != 2 or drive[1] != ':' or kernel.GetDriveTypeW(drive + '\\') != 3:
+            raise ValueError(UNRECONCILED)
         # Extended-length syntax is derived from the server-owned absolute
         # path, never supplied as a client-selected device path.
-        if name.startswith('\\\\'):
-            name = '\\\\?\\UNC\\' + name[2:]
-        else:
-            name = '\\\\?\\' + name
+        name = '\\\\?\\' + name
         data = FindData()
         handle = kernel.FindFirstFileW(name + '.*.tmp', ctypes.byref(data))
         if handle in (None, ctypes.c_void_p(-1).value):

@@ -202,12 +202,33 @@ def test_native_query_failure_refuses_before_callback(tmp_path, monkeypatch):
     class Kernel:
         FindFirstFileW = Function(denied)
         FindClose = Function(lambda *_: 1)
+        GetDriveTypeW = Function(lambda *_: 3)
     monkeypatch.setattr(ctypes, 'WinDLL', lambda *_, **__: Kernel())
     touched = []
     with pytest.raises(ValueError, match='EXPERIMENTAL_SCOPE_UNRECONCILED'):
         with store.transaction(NID, SCOPE):
             touched.append(True)
     assert touched == []
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows name-filtered residue fence')
+def test_unknown_or_remote_drive_is_not_treated_as_same_host(tmp_path, monkeypatch):
+    import ctypes
+    store, _ = _write_original(tmp_path)
+
+    class Function:
+        def __init__(self, callback): self.callback = callback
+        def __call__(self, *args): return self.callback(*args)
+    def should_not_query(*_):
+        raise AssertionError('remote drive must not be scanned')
+    class Kernel:
+        FindFirstFileW = Function(should_not_query)
+        FindClose = Function(lambda *_: 1)
+        GetDriveTypeW = Function(lambda *_: 4)  # injected remote-drive result
+    monkeypatch.setattr(ctypes, 'WinDLL', lambda *_, **__: Kernel())
+    with pytest.raises(ValueError, match='EXPERIMENTAL_SCOPE_UNRECONCILED'):
+        with store.transaction(NID, SCOPE):
+            raise AssertionError('must not reach the write callback')
 
 
 def test_foreign_scope_residue_does_not_claim_or_expose_other_content(tmp_path):
