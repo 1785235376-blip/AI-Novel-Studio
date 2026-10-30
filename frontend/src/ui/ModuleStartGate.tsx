@@ -53,6 +53,8 @@ export function markModuleStartGateDismissed(): void {
   } catch {
     /* session-only ok */
   }
+  // [HERMIA-UX-20261030 ONBOARD] 通知首次引导：起步卡已关，可以出现了
+  try { globalThis.dispatchEvent?.(new Event("studio:start-gate-closed")); } catch { /* ignore */ }
 }
 
 export function resetModuleStartGateDismissed(): void {

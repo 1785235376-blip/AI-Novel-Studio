@@ -28,6 +28,8 @@ import {
   requestFailedTaskFocus,
   type TaskSummary,
 } from "./taskSummary";
+import { OnboardingTour, useOnboarding } from "./onboarding/OnboardingTour";
+import { requestOnboarding } from "./onboarding/onboarding";
 import { NsfwBadge, NsfwConfirm, NsfwMenuItem, useNsfwController, type NsfwController } from "./nsfw/NsfwMode";
 
 export type { StudioModule };
@@ -298,6 +300,9 @@ export function ShellSettingsMenu({
             </button>
           ))}
           {nsfw ? <NsfwMenuItem c={nsfw} onDone={() => setOpen(false)} /> : null /* [HERMIA-FE-20261030 NSFW] 两种模式都可见 */}
+          <button type="button" role="menuitem" data-replay-tour="true" onClick={() => { setOpen(false); requestOnboarding(); }}>
+            <span>{t("settings.replayTour")}</span>
+          </button>
         </div>
       )}
     </div>
@@ -528,6 +533,7 @@ export function AppShell({
   writingContext?: WritingContextLabels;
 }) {
   const nsfw = useNsfwController(); // [HERMIA-FE-20261030 NSFW]
+  const tour = useOnboarding({ shellMode: shellMode === "pro" ? "pro" : "basic" }); // [HERMIA-UX-20261030 ONBOARD]
   const t = useT();
   const searchAction = useRef(onGlobalSearch);
   searchAction.current = onGlobalSearch;
@@ -839,6 +845,7 @@ export function AppShell({
         {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
         <ShellSettingsMenu value={module} onChange={onModuleChange} shellMode={shellMode} nsfw={nsfw} />
         <NsfwConfirm c={nsfw} />
+        <OnboardingTour c={tour} />
         <span className="current-actor">
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}
