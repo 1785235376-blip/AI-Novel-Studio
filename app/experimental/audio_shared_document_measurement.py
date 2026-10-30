@@ -156,3 +156,35 @@ def plan_file_scope_replacement(previous, replacement, nid, scope):
             'persistent_candidate_delta': new['mix_collection_bytes'] - old['mix_collection_bytes'],
             'requires_write': previous != replacement,
             'temporary_reservation_bytes': new['full_document_bytes'] if previous != replacement else 0}
+
+
+def plan_file_scope_first_creation(observed_previous, replacement, nid, scope):
+    """Measure a prospective first File document without asserting ownership.
+
+    This calculation is *only* applicable when the original File owner has
+    independently proved first creation for this project incarnation. A
+    missing file alone does not prove that: it may represent lost old data.
+    The caller must hold the original scope lock, recheck the exact absence
+    precondition and the original project identity before committing, and
+    obtain quota reservation and crash reconciliation from the original owner.
+    This helper performs none of those actions and creates no data or locks.
+
+    ``replacement`` is the final canonical serialization after owner-managed
+    lifecycle metadata has been advanced, if the owner will perform a write.
+    """
+    if observed_previous is not None:
+        raise ValueError('AUDIO_DOCUMENT_CREATION_REQUIRES_ABSENCE')
+    # Validate the complete scope using the original owner's key contract.
+    ExperimentalStore.key(nid, scope)
+    new = measure_file_scope_document(replacement, nid, scope)
+    empty = canonical(ExperimentalStore.empty(nid, scope)).encode('utf-8')
+    requires_write = replacement != empty
+    return {'previous_condition': 'ABSENT',
+            'first_creation_proof': 'REQUIRED',
+            'previous_sha256': None,
+            'replacement_sha256': hashlib.sha256(replacement).hexdigest(),
+            'previous_candidate_bytes': 0,
+            'replacement_candidate_bytes': new['mix_collection_bytes'],
+            'persistent_candidate_delta': new['mix_collection_bytes'],
+            'requires_write': requires_write,
+            'temporary_reservation_bytes': new['full_document_bytes'] if requires_write else 0}
