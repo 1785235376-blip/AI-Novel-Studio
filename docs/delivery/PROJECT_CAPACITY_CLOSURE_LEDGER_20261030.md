@@ -31,6 +31,12 @@
 
 路径梳理还应包含 `app/api.py` 语音/图片导入、`services/audiobook_service.py`、`image_job_service.py`、`screenplay_service.py`、`video_assembly_service.py`，以及关系、lineage、prompt、voice、漫画审核等 `_write_meta` 间接调用。既有静态盘点 `work/audio-quota-write-path-audit.md` 不证明插件或动态回调已穷尽；接线时必须逐入口登记。API 两种别名按现有挂载合同分别测试，不把 File/Mock 证明扩写成浏览器或 PG 通过。
 
+### 本轮安全切片与尚未关闭的路径
+
+音频候选 mix、候选审批/拒绝/重开以及直接 `_approve_mix` 在混音或资产落盘前明确拒绝，旧候选读取保留；旧 `POST /novels/{nid}/assets` 在原授权之后拒绝所有媒体类型上传，旧列表和下载保留。这些是配额闭环前的保守关闭，不能视为预留、对账或审批完成。Studio 上传、模型/语音/图片产物、直接资产 owner 写入及同一 scope 中的音频计划/profile/mapping 等其他写入须分别检查和接入；现有关闭门不能代表所有绕过路径均已关闭。
+
+共享查询索引的名称分类只处理调用者已提供的名称，不读取目录或证明对象存在。曾实现的共享目录枚举切片经独立合成反例显示会向单项目主体暴露共享目录状态，已撤回；它此前没有 HTTP 或其他生产调用点。实际未知索引对象的安全归属诊断仍未接线，不能因纯名称分类而称孤儿诊断完成。
+
 ## 项目归属与共享文档决定项
 
 `ExperimentalStore.key(nid, scope)` 和顶层验证绑定一个公开 `nid` 与 scope；目前没有证据证明同一合法文件同时具有两个不同顶层 `nid`，不能先假定事实。另一方面 `CreativeProjectStore` 明确保留同一 scope 中旧 incarnation 的 Creative 行，且通用 scope 文档可含音频以外 collection；TaskCenter lifecycle 只覆盖其指定 collection，不能为音频行背书。
@@ -56,6 +62,6 @@
 
 ## 固定禁止项与证据边界
 
-上一轮被自动安全审查中止的具体操作，是对 **隔离发布原语 PUBLISHING 修复版本** 的后续独立审阅任务：检查 branch/scope/request identity、原 create metadata、授权租约和响应丢失，并计划重跑原红控及真实子进程反例；该任务当时未固定新的目标 SHA，相关隔离前驱为 `bc316e1`，不是一个已获准的全仓库安全扫描。自动审查给出的理由为可能涉及网络安全风险，任务中止；本轮 **不得重试、转派、更换措辞或入口绕过**，依赖它的独立验收保持 BLOCKED。此前 Windows ACL/junction 探测被自动审批以 `blocked by policy` 拒绝、未执行；同样 BLOCKED / NOT_VERIFIED，不尝试替代命令。
+上一轮被自动安全审查中止的具体操作，是委派对 **隔离发布原语 PUBLISHING 修复版本** 的后续独立审阅。原任务指令为：“请独立审阅并尝试攻破 owner 隔离提交 bc316e1 的 PUBLISHING 流程，特别是预留/落盘/发布/FINISHED 四个真实崩溃窗口、源文件与身份竞争、授权变化和用户上限降低；核对原 create 的兼容性及是否可能产生成功记录无媒体。不要改主树；保留具体可触发问题与验证建议。” 当时未固定修复版本的新目标 SHA，`bc316e1` 是指定的隔离前驱。自动审查返回 `Agent errored: This content was flagged for possible cybersecurity risk` 并中止；本轮 **不得重试、转派、更换措辞或入口绕过**，依赖它的独立验收保持 BLOCKED。此前 Windows ACL/junction 探测被自动审批以 `blocked by policy` 拒绝、未执行；同样 BLOCKED / NOT_VERIFIED，不尝试替代命令。
 
 本轮以后的验证要单独记录运行设备、真实环境和终态；未执行的 File/Windows、POSIX、PG、浏览器或真实模型分别标 NOT_RUN，不能用 Mock 或其他项目证据替换。上轮 F37、warm 首屏 409、Windows 资产游标签名密钥问题继续独立保留，不因本账本更新而关闭。历史 F37 和 warm 首屏根因目前为 UNKNOWN。
