@@ -25,3 +25,8 @@ html .app-shell .global-header:has(.nsfw-badge) .global-search{flex:none;width:a
 @media (max-width:1440px){
   html .app-shell .global-header:has(.nsfw-badge) .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 }
+/* [HERMIA-FE-20261030 VERA-MF d6b291ab] EN 文案更长：徽章开启时 1441–1800 宽设置按钮被挤出视口（flex:none 不收缩）。
+   EN 下把「标签视觉隐藏」断点放宽到 1800（仍是可访问名 + title），保证设置按钮在视口内且标签不被省略号截断。 */
+@media (max-width:1800px){
+  html[lang=en] .app-shell .global-header:has(.nsfw-badge) .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
