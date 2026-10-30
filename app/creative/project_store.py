@@ -190,8 +190,8 @@ class CreativeProjectStore:
         # bypass the residue fence; neither form can mutate this scope.
         with ExitStack() as observations:
             if _observation:
-                from ..repositories.file.mutation_coordinator import existing_coordination_only
-                observations.enter_context(existing_coordination_only())
+                from ..repositories.file.mutation_coordinator import existing_disk_coordination_only
+                observations.enter_context(existing_disk_coordination_only())
                 observations.enter_context(self.existing_owner_only())
             with self.store.transaction(nid, scope, _observation=_observation) as document:
                 before = canonical(document)

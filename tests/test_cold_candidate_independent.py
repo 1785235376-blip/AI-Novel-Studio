@@ -41,7 +41,7 @@ finally:
 '''
     env = os.environ.copy()
     env.update(COLD_ROOT=str(e.root), COLD_NID=e.nid, COLD_JOB=row['id'], COLD_DIGEST=expected, PYTHONUTF8='1')
-    target = Path(os.environ['COLD_TARGET'])
+    target = Path(os.environ.get('COLD_TARGET', str(Path.cwd())))
     runchild = subprocess.run([sys.executable, '-c', code], cwd=target, env=env, text=True, capture_output=True, timeout=40)
     print(runchild.stdout, runchild.stderr)
     assert runchild.returncode == 0

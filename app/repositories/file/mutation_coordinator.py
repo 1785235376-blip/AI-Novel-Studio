@@ -14,15 +14,18 @@ _guard = RLock()
 _locks: dict[tuple[str, str], RLock] = {}
 _thread_state = local()
 _existing_only = ContextVar('workspace_existing_coordination_only', default=False)
+_existing_disk_memory_lock = ContextVar('workspace_existing_disk_memory_lock', default=False)
 
 
 @contextmanager
 def isolate_coordination_request_context():
-    """Clear only an independent request's inherited strict marker."""
+    """Clear an independent request's inherited coordination policy."""
     token = _existing_only.set(False)
+    memory_token = _existing_disk_memory_lock.set(False)
     try:
         yield
     finally:
+        _existing_disk_memory_lock.reset(memory_token)
         _existing_only.reset(token)
 
 
@@ -39,10 +42,32 @@ def existing_coordination_only(enabled=True):
     capability never warms a path or replaces the original locking protocol.
     """
     token = _existing_only.set(_existing_only.get() or enabled)
+    memory_token = _existing_disk_memory_lock.set(False) if enabled else None
+    try:
+        yield
+    finally:
+        if memory_token is not None:
+            _existing_disk_memory_lock.reset(memory_token)
+        _existing_only.reset(token)
+
+
+@contextmanager
+def existing_disk_coordination_only():
+    """Observe only existing disk locks, permitting a cold process RLock.
+
+    Registering a process-local RLock is not disk initialization. The normal
+    strict file open, identity and byte lock checks remain mandatory. An
+    enclosing stricter policy may not be upgraded by an inner caller.
+    """
+    already_strict = _existing_only.get()
+    memory_token = _existing_disk_memory_lock.set(
+        _existing_disk_memory_lock.get() or not already_strict)
+    token = _existing_only.set(True)
     try:
         yield
     finally:
         _existing_only.reset(token)
+        _existing_disk_memory_lock.reset(memory_token)
 
 
 def strict_coordination_active():
@@ -54,6 +79,8 @@ def workspace_mutation_lock(root: Path, workspace_id: str) -> RLock:
     with _guard:
         if _existing_only.get():
             lock = _locks.get(key)
+            if lock is None and _existing_disk_memory_lock.get():
+                lock = _locks.setdefault(key, RLock())
             if lock is None:
                 raise ReadOnlyCoordinationUnavailable()
             return lock
