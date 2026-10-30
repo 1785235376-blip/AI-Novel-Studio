@@ -24,7 +24,8 @@ const report = {
   started_at: new Date().toISOString(),
   barriers: [],
   network_posts: [],
-  auto_exec_posts: 0,
+  // counts POST /execute issued by explicit manual confirm clicks (not auto-exec)
+  manual_exec_posts: 0,
   steps: [],
   BACKEND_BLOCKED: null,
   ok: false,
@@ -54,7 +55,7 @@ page.on('requestfinished', async (req) => { try { if (req.method() !== 'GET' && 
 page.on('request', (req) => {
   if (req.method() !== 'GET' && req.url().includes('/api/')) {
     report.network_posts.push({method: req.method(), url: req.url()});
-    if (/\/execute\b/.test(req.url()) && req.method() === 'POST') report.auto_exec_posts += 1;
+    if (/\/execute\b/.test(req.url()) && req.method() === 'POST') report.manual_exec_posts += 1;
   }
 });
 
@@ -223,7 +224,7 @@ try {
     if (kind === 'text') { const loc = page.getByRole('definition').or(page.locator('dl[aria-label="'+name+'"]')); console.log('TEXT', name, (await page.locator('[aria-label="'+name+'"]').first().innerText().catch(e=>'ERR '+e)).slice(0,800)); }
     await page.waitForTimeout(1500);
     await page.screenshot({path: path.join(shots, `c${String(i).padStart(2,'0')}-${kind}.png`), fullPage: true});
-    console.log('DID', i, kind, name, 'auto_exec_posts', report.auto_exec_posts);
+    console.log('DID', i, kind, name, 'manual_exec_posts', report.manual_exec_posts);
   }
   await dump('final');
   const region = page.getByRole('region', {name: '正式图片节点与保存位置'});
