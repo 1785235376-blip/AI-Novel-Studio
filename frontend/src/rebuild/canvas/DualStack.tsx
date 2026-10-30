@@ -12,6 +12,7 @@ import {CanvasImageQueue} from '../image/CanvasImageQueue';
 import {CanvasNodeTaskStatus} from '../image/CanvasNodeTaskStatus';
 import {RebuildFormalImageNode} from '../image/RebuildFormalImageNode';
 import {imageDraftNodeExists} from '../image/canvasTaskBinding';
+import {ConfirmDialog} from '../../ui/ConfirmDialog';
 
 const TXT: Record<CanvasKind, {upper: string; lower: string}> = {
   image: {upper: '上画布 · 出图主线', lower: '下画布 · 丰富（参考 / 风格 / 变体 / 细节）'},
@@ -81,11 +82,12 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
         {lowerOpen ? <div className="dstk__pane dstk__pane--lower" data-canvas-layer="lower" id={`dstk-lower-${kind}`}>
           <div className="dstk__lowbar">
             <span>{picked ? <>已选：<b>{picked.title}</b></> : '在下画布选一个节点，才可以接入上画布'}</span>
-            {confirm && picked ? <span className="dstk__confirm" role="group" aria-label="确认接入上画布">
-              复制「{picked.title}」到上画布？复制后不联动。
-              <button type="button" className="nv-btn nv-btn--primary" data-feed-confirm onClick={doFeed}>确认接入</button>
-              <button type="button" className="nv-btn" onClick={() => setConfirm(false)}>取消</button>
-            </span> : <button type="button" className="nv-btn" data-feed-upper disabled={!picked} onClick={() => setConfirm(true)}>接入上画布…</button>}
+            {/* [HERMIA-FE-20261030 B1] 确认条 → 模态对话框（焦点进入/圈住/Esc 取消/还给触发按钮） */}
+            <button type="button" className="nv-btn" data-feed-upper disabled={!picked} aria-haspopup="dialog" onClick={() => setConfirm(true)}>接入上画布…</button>
+            {confirm && picked ? <ConfirmDialog title="接入上画布？" confirmLabel="确认接入" cancelLabel="取消" confirmData={{'data-feed-confirm': ''}}
+              onConfirm={doFeed} onCancel={() => setConfirm(false)}>
+              <p>把「{picked.title}」复制一份到上画布。复制后两边各改各的，不会联动。</p>
+            </ConfirmDialog> : null}
             {note ? <span className="dstk__note" role="status">{note}</span> : null}
           </div>
           <RebuildCanvas key={lower.key} kind={kind} scope={scope} storageKey={lower.key} persist={lower.persist} types={LOWER_TYPES[kind]}
