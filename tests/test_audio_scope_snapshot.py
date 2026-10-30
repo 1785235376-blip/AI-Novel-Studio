@@ -30,15 +30,14 @@ def test_existing_file_observation_is_not_a_project_charge(rig):
     assert path.read_bytes() == previous
 
 
-def test_missing_scope_is_unavailable_and_never_created(rig):
+def test_missing_scope_returns_unknown_and_is_never_created(rig):
     project = rig.workspace.store
     project.incarnation(rig.nid)
     with project.store.transaction(rig.nid, rig.scope):
         pass
     path = project.store.path(rig.nid, rig.scope)
     assert not path.exists()
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert not path.exists()
 
 
@@ -55,7 +54,7 @@ def test_guard_failure_is_not_wrapped_or_ignored(rig):
     assert path.read_bytes() == previous
 
 
-def test_changed_second_snapshot_fails_closed(rig, monkeypatch):
+def test_snapshot_is_never_read(rig, monkeypatch):
     project, path = committed(rig)
     original = project.store._file_snapshot
     seen = []
@@ -66,9 +65,8 @@ def test_changed_second_snapshot_fails_closed(rig, monkeypatch):
             return raw + b' ', row
         return raw, row
     monkeypatch.setattr(project.store, '_file_snapshot', changed)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
-    assert len(seen) == 2 and path.read_bytes()
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
+    assert not seen and path.read_bytes()
 
 
 def test_old_unbound_document_is_not_adopted(rig):
@@ -83,14 +81,12 @@ def test_old_unbound_document_is_not_adopted(rig):
     path = raw.path(rig.nid, rig.scope)
     previous = path.read_bytes()
     project.incarnation(rig.nid)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert path.read_bytes() == previous
 
 
-def test_corrupt_committed_scope_is_rejected(rig):
+def test_corrupt_scope_remains_unobserved(rig):
     project, path = committed(rig)
     path.write_bytes(b'{"schema_version":1,')
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert path.read_bytes() == b'{"schema_version":1,'

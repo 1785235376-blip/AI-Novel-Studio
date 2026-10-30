@@ -69,8 +69,7 @@ def test_old_scope_without_lifecycle_is_not_invented(rig):
     assert LIFECYCLE not in json.loads(path.read_bytes())
     project.incarnation(rig.nid)
     before = snapshot(rig.root)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert snapshot(rig.root) == before
 
 
@@ -85,8 +84,11 @@ def test_missing_or_corrupt_committed_inputs_are_not_repaired(rig, mode):
     elif mode == 'invalid_document':
         path.write_bytes(b'{not-a-valid-json')
     before = snapshot(rig.root)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    if mode == 'missing_marker':
+        with pytest.raises(AudioScopeObservationUnavailable):
+            inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    else:
+        assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert snapshot(rig.root) == before
 
 
@@ -150,9 +152,7 @@ def test_existing_outer_request_budget_cannot_be_reset_by_observation(rig):
     before = snapshot(rig.root)
     with usage_read_budget() as budget:
         budget.MAX_SCOPE_BYTES = len(raw) - 1
-        with pytest.raises(AudioScopeObservationUnavailable):
-            inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
-        assert budget.reads > 0
+        assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
         assert budget.MAX_SCOPE_BYTES == len(raw) - 1
     assert snapshot(rig.root) == before
 
@@ -166,7 +166,7 @@ def test_non_file_backend_fails_without_touching_file_owner(rig, monkeypatch):
     assert snapshot(rig.root) == before
 
 
-def test_scope_bytes_changed_between_snapshots_never_return_stale_result(rig, monkeypatch):
+def test_scope_snapshot_reader_is_not_invoked(rig, monkeypatch):
     project, store, _ = initialize(rig)
     original = store._file_snapshot
     path = store.path(rig.nid, rig.scope)
@@ -180,10 +180,9 @@ def test_scope_bytes_changed_between_snapshots_never_return_stale_result(rig, mo
             atomic_write(path, canonical(changed))
         return value
     monkeypatch.setattr(store, '_file_snapshot', swapped)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
-    assert len(calls) == 2
-    assert json.loads(path.read_bytes())['collections']['unrelated_synthetic']['note']['body'] == '外部合成更新'
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
+    assert not calls
+    assert json.loads(path.read_bytes())['collections']['unrelated_synthetic']['note']['body'] == '不要修改雪☃'
 
 
 def test_project_delete_and_same_id_recreate_does_not_adopt_old_scope(rig):
@@ -198,6 +197,5 @@ def test_project_delete_and_same_id_recreate_does_not_adopt_old_scope(rig):
     # former project incarnation; the read must not adopt or rewrite it.
     assert path.read_bytes() == original_bytes
     before = snapshot(rig.root)
-    with pytest.raises(AudioScopeObservationUnavailable):
-        inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)
+    assert inspect_existing_audio_scope(project, rig.nid, rig.scope, lambda: None)['scope_snapshot'] == 'UNKNOWN'
     assert snapshot(rig.root) == before

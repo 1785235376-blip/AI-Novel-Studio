@@ -1,4 +1,4 @@
-"""Bounded, read-only diagnostics for an existing File audio scope document.
+"""Closed, read-only diagnosis for an unbound File audio scope.
 
 The File document lifecycle is the original TaskCenter observation contract.
 It does not bind ``audio_v2_mix_proposals`` rows to a project incarnation.
@@ -7,12 +7,10 @@ must supply its original authorization lease; a guard alone is not a lease.
 """
 from __future__ import annotations
 
-from ..creative.asset_usage_budget import UsageBudgetError, current_usage_budget, usage_read_budget
 from ..creative.project_store import CreativeProjectStore
 from ..repositories.file.mutation_coordinator import (
     ReadOnlyCoordinationUnavailable, existing_coordination_only, workspace_mutation,
 )
-from .audio_shared_document_measurement import MAX_DOCUMENT_BYTES, MAX_MIX_BYTES
 from .store import ExperimentalStore, LIFECYCLE_MODES
 
 
@@ -24,7 +22,7 @@ class AudioScopeObservationUnavailable(ValueError):
 
 
 def inspect_existing_audio_scope(project_store, nid, scope, guard):
-    """Observe one File scope snapshot; all project charge remains unknown.
+    """Return UNKNOWN without observing unbound shared document contents.
 
     ``guard`` is an original-owner reauthorization check. An eventual caller
     must retain an appropriate original authority/session lease across this
@@ -44,40 +42,22 @@ def inspect_existing_audio_scope(project_store, nid, scope, guard):
     lifecycle = next((name for name, pair in LIFECYCLE_MODES.items() if pair[0] == mode), None)
     if lifecycle is None:
         raise AudioScopeObservationUnavailable()
-    prior_budget = current_usage_budget()
-    with existing_coordination_only(), usage_read_budget() as budget, project_store.existing_owner_only():
-        # Do not override an outer request's tighter cumulative limits. A new,
-        # private observation permits one bounded canonical audio scope, read
-        # twice for the exact original-owner snapshot comparison below.
-        if prior_budget is None:
-            budget.MAX_SCOPE_BYTES = MAX_DOCUMENT_BYTES
-            budget.MAX_JSON_STRING_BYTES = 4 * ((MAX_MIX_BYTES + 2) // 3)
-            budget.MAX_READ_BYTES = 2 * MAX_DOCUMENT_BYTES
+    with existing_coordination_only(), project_store.existing_owner_only():
         # Do not invoke caller authorization under the project lease: original
         # File retirement takes authorization before project. The caller must
         # already hold its original authority/session lease for this operation.
         guard()
         try:
             with workspace_mutation(store.root, f'experimental:{key}'):
-                with project_store.owner_lease(nid) as incarnation:
-                    raw, document = store._file_snapshot(nid, scope)
-                    if raw is None or lifecycle not in document:
-                        raise AudioScopeObservationUnavailable()
-                    marker = document[lifecycle]
-                    if marker['project_identity'] != incarnation:
-                        raise AudioScopeObservationUnavailable()
-                    # Compare the original owner's physical bytes twice under
-                    # the same scope and project leases. No caller callback is
-                    # executed while the project lease is held.
-                    fresh, _ = store._file_snapshot(nid, scope)
-                    if fresh is None or fresh != raw:
-                        raise AudioScopeObservationUnavailable()
+                with project_store.owner_lease(nid):
+                    # Even parsing or sizing the shared document can reveal
+                    # content from another project incarnation. A valid lease
+                    # establishes neither document validity nor row ownership.
                     result = {'scope_snapshot': 'UNKNOWN',
                               'audio_row_binding': 'UNVERIFIED',
                               'project_charge_known': False,
                               'new_write_admission': 'CLOSED'}
-        except (FileNotFoundError, ReadOnlyCoordinationUnavailable, UsageBudgetError,
-                ValueError, KeyError, UnicodeError):
+        except (FileNotFoundError, ReadOnlyCoordinationUnavailable, ValueError, KeyError, UnicodeError):
             raise AudioScopeObservationUnavailable() from None
         guard()
         return result
