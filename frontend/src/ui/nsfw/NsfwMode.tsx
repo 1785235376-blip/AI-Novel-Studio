@@ -1,11 +1,12 @@
 // [HERMIA-FE-20261030 NSFW] 成人内容（NSFW）模式入口：设置菜单一项 + 18+ 确认对话框 + 顶栏状态标。仅界面偏好（见 nsfwMode.ts）。
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useStudio} from '../../store';
 import {resolveWorkspaceIdentity} from '../../workspace/state/scopeLease';
 import {useT} from '../../i18n';
 import {ConfirmDialog} from '../ConfirmDialog';
 import {disableNsfwMode, enableNsfwMode, useNsfwMode} from './nsfwMode';
 import './nsfwMode.css';
+import './nsfwTheme.css';
 
 export type NsfwController = {on: boolean; session: boolean; asking: boolean; request: () => void; cancel: () => void; confirm: () => void; turnOff: () => void};
 
@@ -13,6 +14,11 @@ export function useNsfwController(): NsfwController {
   const actorId = useStudio(s => s.actor?.id), collab = useStudio(s => s.scope), novelId = useStudio(s => s.novelId);
   const identity = useMemo(() => resolveWorkspaceIdentity({actorId, collabScope: collab, projectId: novelId || null}), [actorId, collab, novelId]);
   const on = useNsfwMode(identity);
+  useEffect(() => { // [NSFW-THEME] root attribute drives the token override; removed on off/unmount
+    const el = document.documentElement;
+    if (on) el.setAttribute('data-nsfw', 'on'); else el.removeAttribute('data-nsfw');
+    return () => el.removeAttribute('data-nsfw');
+  }, [on]);
   const [askedFor, setAskedFor] = useState<string | null>(null);
   const asking = askedFor === identity.key && !on; // a dialog opened for identity A never applies to B
   return {
