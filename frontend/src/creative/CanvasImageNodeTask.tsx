@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3c]
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import { assertCanvasImageNodeJob, assertSavedImageNode, canonicalImageNode, checkedCanvasImageNodeBinding, imageNodeApprovedPin,
   imageNodePromptDigest, canvasImageNodeInCommand, verifyCanvasImageNodePrompt, type CanvasImageNodeBinding } from './canvasImageNode';
@@ -24,6 +25,7 @@ const scopeFor = (owner: StudioGraphDraftOwner) => owner.mode === 'local'
   : { mode: 'collaboration' as const, novel_id: owner.projectId, workspace_id: owner.workspaceId, storyline_id: owner.storylineId, branch_id: owner.branchId };
 /** A one-node intent; it never serializes the browser graph or owns production state. */
 export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
+  const t = useTz();
   const [createHint, setCreateHint] = useState<CanvasImageNodeCreateHintState>(() => readCanvasImageNodeCreateHint(props.owner, props.node.id));
   const hintRef=useRef(createHint);hintRef.current=createHint;
   const [queueHint,setQueueHint]=useState<CanvasImageNodeQueueHintState>(()=>readCanvasImageNodeQueueHint(props.owner,props.node.id));
@@ -312,13 +314,13 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
   }
   const task = useMemo(() => binding ? { binding, initialPrompt: props.node.prompt, isCurrent: () => current() && hintIsCurrent() &&queueHintIsCurrent()&& bindingRef.current === binding } : undefined, [binding]);
   const approved = job?.status === 'APPROVED';
-  return <section aria-label="正式图片节点与保存位置">
-    <Panel title="正式图片节点任务" actions={props.onClose && <Button onClick={props.onClose}>关闭正式节点任务</Button>}>
-      <p>节点 {props.node.id} · {props.node.title} · 坐标 ({props.node.x}, {props.node.y})。只为此节点创建原生产任务；提示词、连线和其他节点仍是浏览器草稿。</p>
-      <p>先显式保存空白作品位置，再分别预览、入队、执行和人工审核。审核成功后还需单独确认采用；不兼容的旧队列结果不会变成正式来源。</p>
-      {!base && <Button disabled={!current() || !props.canMutate || busy || uncertain} onClick={() => void prepare()}>为此节点保存正式空白位置</Button>}
-      {createHint.state==='present'&&!base&&queueHint.state==='absent'&&<Button disabled={!current()||busy||childDirty} onClick={()=>void resolveCreate()}>重新核对此次空白位置创建</Button>}
-      {queueHint.state==='present'&&<><p>待核对的原入队请求：<code>{queueHint.hint.request_id}</code></p><Button disabled={!current()||busy||!props.production.resolveImageNodeCreate} onClick={()=>void resolveQueue()}>核对原图片任务入队结果</Button>
+  return <section aria-label={t('正式图片节点与保存位置')}>
+    <Panel title={t('正式图片节点任务')} actions={props.onClose && <Button onClick={props.onClose}>{t('关闭正式节点任务')}</Button>}>
+      <p>{t('节点')} {props.node.id} · {props.node.title} · {t('坐标')} ({props.node.x}, {props.node.y}){t('。只为此节点创建原生产任务；提示词、连线和其他节点仍是浏览器草稿。')}</p>
+      <p>{t('先显式保存空白作品位置，再分别预览、入队、执行和人工审核。审核成功后还需单独确认采用；不兼容的旧队列结果不会变成正式来源。')}</p>
+      {!base && <Button disabled={!current() || !props.canMutate || busy || uncertain} onClick={() => void prepare()}>{t('为此节点保存正式空白位置')}</Button>}
+      {createHint.state==='present'&&!base&&queueHint.state==='absent'&&<Button disabled={!current()||busy||childDirty} onClick={()=>void resolveCreate()}>{t('重新核对此次空白位置创建')}</Button>}
+      {queueHint.state==='present'&&<><p>{t('待核对的原入队请求：')}<code>{queueHint.hint.request_id}</code></p><Button disabled={!current()||busy||!props.production.resolveImageNodeCreate} onClick={()=>void resolveQueue()}>{t('核对原图片任务入队结果')}</Button>
         {!props.production.resolveImageNodeCreate&&<StatusMessage tone="warning">当前制作客户端缺少原请求读取能力；请保留原记录，不会改用列表猜测或重新入队。</StatusMessage>}</>}
       {current()&&queueHint.state==='present'&&queueInput?.command.request_id===queueHint.hint.request_id&&queueInput.requestDigest===queueHint.hint.request_digest&&<details><summary>当前会话保留的入队输入</summary>
         <p>{queueInput.command.provider_id} · {queueInput.command.model_id}（只读；不会从此处重发）</p>
@@ -326,11 +328,11 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
         <p>这些输入仅保留在当前会话；浏览器恢复提示只保存身份和摘要。</p></details>}
       {queueHint.state==='blocked'&&<StatusMessage tone="warning">{queueHint.message}</StatusMessage>}
       {createHint.state==='blocked'&&<StatusMessage tone="warning">{createHint.message}</StatusMessage>}
-      <Button disabled={!current() || busy || childDirty} onClick={() => void reopen()}>读取此节点已保存位置与任务</Button>
-      <p>原位置请求 ID：<code>{requestId.current}</code></p>
+      <Button disabled={!current() || busy || childDirty} onClick={() => void reopen()}>{t('读取此节点已保存位置与任务')}</Button>
+      <p>{t('原位置请求 ID：')}<code>{requestId.current}</code></p>
       {base && <p>原服务端画布 {base.id} · v{base.version} · {saved ? '已保存正式资产关联' : '空白位置，尚未采用资产'}</p>}
-      {!current() && <StatusMessage tone="warning">原身份、权限或节点已改变。请取消选择后重新选择节点并打开入口；旧确认不会恢复。</StatusMessage>}
-      {uncertain && <StatusMessage tone="warning">操作结果待核对。当前实例只可读取，不会自动重发；原输入与请求 ID 保留。</StatusMessage>}
+      {!current() && <StatusMessage tone="warning">{t('原身份、权限或节点已改变。请取消选择后重新选择节点并打开入口；旧确认不会恢复。')}</StatusMessage>}
+      {uncertain && <StatusMessage tone="warning">{t('操作结果待核对。当前实例只可读取，不会自动重发；原输入与请求 ID 保留。')}</StatusMessage>}
       {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
       {recovery.map(row => <Button key={row.job.id} disabled={!current() || busy ||queueHint.state!=='absent'|| uncertain&&!row.record.definition.image_node_origin || childDirty} onClick={() => {
         if (!current() || running.current ||queueHintRef.current.state!=='absent'|| unknown.current&&!row.record.definition.image_node_origin || childDirtyRef.current) return; clearProof();
@@ -338,7 +340,7 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
           if(unknown.current&&jobRef.current?.id===row.job.id&&canonicalImageNode(bindingRef.current)===canonicalImageNode(row.binding)){unknown.current=false;setUncertain(false);}
           setSaved(row.record);
         }else setSaved(undefined); bindingRef.current=row.binding;baseRef.current=row.record;jobRef.current=row.job;setBinding(row.binding);setBase(row.record);setJob(row.job);setNotice(row.record.definition.image_node_origin?'已从原服务端画布读回节点、当前坐标、正式任务来源与精确资产 pin；未执行、审核或重新采用。':'已打开原节点任务，只读恢复没有执行或采用。');
-      }}>{row.record.definition.image_node_origin?'查看已保存节点位置':'打开原正式节点任务'} {row.job.id} · {row.job.status}</Button>)}
+      }}>{row.record.definition.image_node_origin?t('查看已保存节点位置'):t('打开原正式节点任务')} {row.job.id} · {row.job.status}</Button>)}
       {saved && <dl aria-label="服务端节点资产关联"><dt>画布及节点</dt><dd>{saved.id} / {saved.definition.image_node_origin?.target.node_id}</dd>
         <dt>保存坐标</dt><dd>{canonicalImageNode(saved.definition.cards.find(card=>card.id===saved.definition.image_node_origin?.target.node_id)?.position)}</dd><dt>正式资产 pin</dt><dd>{canonicalImageNode(saved.definition.image_node_origin?.asset)}</dd>
         <dt>保存来源提示词摘要</dt><dd>{saved.definition.image_node_origin?.target.prompt_digest}（当前浏览器草稿可能已改变）</dd>
@@ -351,12 +353,12 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
       externalJob={job} onUnavailable={() => { first.current={};setError('原生产任务权限或身份已改变，请重新打开项目。'); }}
       onJob={acceptJob}
       onApproved={value=>{acceptJob(value);}}/>}
-    {approved && task && !saved && <Panel title="采用到原节点作品位置">
-      <p>原生产 owner 已记录人工审核。这里重新核对来源元数据，不代替候选预览或审核；保存后固定回到原节点坐标。</p>
-      <Button disabled={!current() || !props.canMutate || busy || uncertain || childDirty} onClick={() => void inspect()}>核对正式结果与原节点位置</Button>
+    {approved && task && !saved && <Panel title={t('采用到原节点作品位置')}>
+      <p>{t('原生产 owner 已记录人工审核。这里重新核对来源元数据，不代替候选预览或审核；保存后固定回到原节点坐标。')}</p>
+      <Button disabled={!current() || !props.canMutate || busy || uncertain || childDirty} onClick={() => void inspect()}>{t('核对正式结果与原节点位置')}</Button>
       {proof && <><p>仅采用资产 {proof.pin.asset_id} · v{proof.pin.version} 到节点 {task.binding.node_id}。</p>
-        <label><input type="checkbox" checked={ack} disabled={busy || uncertain || !current()} onChange={event => {if (!current() || proofRef.current!==proof || running.current || unknown.current)return;ackRef.current=event.target.checked?proof:undefined;setAck(event.target.checked);}}/>确认采用此正式资产到原节点位置</label>
-        <Button disabled={!ack || busy || uncertain || !current()} onClick={() => void adopt()}>确认采用并保存节点位置</Button></>}
+        <label><input type="checkbox" checked={ack} disabled={busy || uncertain || !current()} onChange={event => {if (!current() || proofRef.current!==proof || running.current || unknown.current)return;ackRef.current=event.target.checked?proof:undefined;setAck(event.target.checked);}}/>{t('确认采用此正式资产到原节点位置')}</label>
+        <Button disabled={!ack || busy || uncertain || !current()} onClick={() => void adopt()}>{t('确认采用并保存节点位置')}</Button></>}
     </Panel>}
   </section>;
 }
