@@ -78,6 +78,8 @@ class AssetLibraryService:
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._scope = threading.local()
+        from .audio_asset_history_store import AudioAssetHistoryStore
+        self._audio_history_store = AudioAssetHistoryStore(self.root)
         self._page_source_lock = threading.RLock()
         self._page_source_handles = {}
         self._page_source_request = ContextVar('asset_page_source_request', default=None)
@@ -245,8 +247,26 @@ class AssetLibraryService:
         if meta.get("_owner_actor_id") and meta["_owner_actor_id"] != actor_id: return False
         return branch_id is None or meta.get("branch_id") == branch_id
 
-    def _write_meta(self, meta: dict) -> None:
-        atomic_write(self._meta_path(meta["id"]), json.dumps(meta, ensure_ascii=False, indent=2))
+    def _write_meta(self, meta: dict, *, guard=None) -> None:
+        from ..config import settings
+        guard = guard or (lambda: None)
+        if not (settings.enable_audio_asset_history and meta.get("kind") == "audio"):
+            atomic_write(self._meta_path(meta["id"]), json.dumps(meta, ensure_ascii=False, indent=2))
+            return
+        # Flag-gated immutable audio history. The current metadata head is the
+        # sole commit point; the history record/blob are prepared before it and
+        # a failed commit leaves prepared objects unreachable but counted.
+        from .audio_asset_history_store import HEAD
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            guard()
+            head = self._audio_history_store.prepare_commit(self, meta, guard=guard)
+            saved = {**meta, HEAD: head}
+            self._audio_history_store.fault("before_current_commit")
+            guard()
+            atomic_write(self._meta_path(meta["id"]), json.dumps(saved, ensure_ascii=False, indent=2))
+            meta[HEAD] = head
+            self._audio_history_store.fault("after_current_commit")
+            guard()
 
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
@@ -578,7 +598,7 @@ class AssetLibraryService:
                 if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                 if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                 os.replace(temporary, target)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             except Exception:
                 # This UUID was allocated by this operation under the existing
                 # owner lock. If metadata never committed, keep no unindexed
@@ -935,7 +955,7 @@ class AssetLibraryService:
                 updated_at=now(), version=meta["version"] + 1)
             if status == "APPROVED":
                 meta["approved_at"] = receipt["reviewed_at"]
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return meta
 
     def find_text_result(self, novel_id, idempotency_key, *, branch_id, owner_actor_id, proposal_id):
@@ -1360,7 +1380,7 @@ class AssetLibraryService:
                 if inherited_features or inherited_owner:
                     meta.update(_required_features=sorted(inherited_features), _owner_actor_id=inherited_owner)
                 meta.update(updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta
 
     def promote_owned(self, asset_id: str, *, actor_id: str, branch_id: str | None, expected_version: int, provenance: dict, guard=None, _comic_ora_review=None):
@@ -1394,7 +1414,7 @@ class AssetLibraryService:
                 meta['_comic_ora_review'] = copy.deepcopy(proof)
             meta.update(_owner_actor_id=None, _origin_provenance=saved_provenance,
                         approved_at=now(), updated_at=now(), version=meta["version"] + 1)
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return self.public(meta)
 
     def annotate_lineage(self, asset_id: str, declaration: dict, parent_ids: list[str], *,
@@ -1441,7 +1461,7 @@ class AssetLibraryService:
                 guard()
             if not meta.get("deleted_at"):
                 meta.update(deleted_at=now(), updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             # Keep original bytes and identity. Existing reads deliberately 404.
             return {"id": asset_id, "deleted": True, "recoverable": True,
                     "sha256": meta["sha256"], "version": meta["version"]}
@@ -1454,5 +1474,6 @@ class AssetLibraryService:
                 guard()
             if meta.get("deleted_at"):
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta
+

@@ -27,6 +27,7 @@ MAX_METADATA_FILES = 50_000
 MAX_METADATA_BYTES = 1024 * 1024
 MAX_DURATION_SECONDS = 30.0
 _FILE_ATTRIBUTE_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+MAX_HISTORY_FILES = 5000
 
 
 class CapacityAttributionError(ValueError):
@@ -39,6 +40,39 @@ def _is_reparse(info: os.stat_result) -> bool:
 
 def _entry_identity(info: os.stat_result) -> tuple[int, int]:
     return int(info.st_dev), int(info.st_ino)
+def _measure_history_tree(history_root: Path, physical: set[tuple[int, int]]):
+    """Bounded measurement of one asset's immutable history directory."""
+    total = objects = files = 0
+    pending = [history_root]
+    while pending:
+        current = pending.pop()
+        try:
+            with os.scandir(current) as entries:
+                children = sorted(entries, key=lambda entry: entry.name)
+        except OSError:
+            raise CapacityAttributionError("CAPACITY_HISTORY_DIRECTORY_UNREADABLE") from None
+        for child in children:
+            try:
+                info = Path(child.path).lstat()
+            except OSError:
+                raise CapacityAttributionError("CAPACITY_HISTORY_ENTRY_UNREADABLE") from None
+            if _is_reparse(info):
+                raise CapacityAttributionError("CAPACITY_HISTORY_REPARSE_POINT")
+            if stat.S_ISDIR(info.st_mode):
+                pending.append(Path(child.path))
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                raise CapacityAttributionError("CAPACITY_HISTORY_ENTRY_INVALID")
+            files += 1
+            if files > MAX_HISTORY_FILES:
+                raise CapacityAttributionError("CAPACITY_HISTORY_FILE_LIMIT")
+            identity = _entry_identity(info)
+            if identity in physical:
+                continue
+            physical.add(identity)
+            total += int(info.st_size)
+            objects += 1
+    return total, objects
 
 
 def measure_assets(assets_root: Path | str, project_id: str, *,
@@ -79,7 +113,7 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
     deadline = time.monotonic() + deadline_seconds
     result["counters"].update({"content_files_seen": 0, "content_files_attributed": 0,
                                "unattributed_files": 0, "unattributed_bytes": 0,
-                               "directories_skipped": 0})
+                               "directories_skipped": 0, "history_bytes": 0, "history_objects": 0})
 
     def unknown(path: str, reason: str) -> None:
         if len(result["unknown"]) >= 64:
@@ -185,7 +219,29 @@ def measure_assets(assets_root: Path | str, project_id: str, *,
             result["objects"] += 1
         result["logical_bytes"] += added
         result["counters"]["content_files_attributed"] += 1
+        history_root = root / ".audio-history" / asset_id
+        try:
+            history_info = history_root.lstat()
+        except FileNotFoundError:
+            history_info = None
+        except OSError:
+            unknown(str(history_root), "HISTORY_UNREADABLE")
+            history_info = None
+        if history_info is not None:
+            if _is_reparse(history_info) or not stat.S_ISDIR(history_info.st_mode):
+                unknown(str(history_root), "HISTORY_NOT_REGULAR_DIRECTORY")
+            else:
+                try:
+                    history_bytes, history_objects = _measure_history_tree(history_root, physical)
+                except CapacityAttributionError as exc:
+                    unknown(str(history_root), str(exc))
+                else:
+                    result["logical_bytes"] += history_bytes
+                    result["objects"] += history_objects
+                    result["counters"]["history_bytes"] += history_bytes
+                    result["counters"]["history_objects"] += history_objects
     result["unknown_count"] = len(result["unknown"])
     result["complete"] = not result["unknown"] and not result["unknown_truncated"]
     return result
+
 
