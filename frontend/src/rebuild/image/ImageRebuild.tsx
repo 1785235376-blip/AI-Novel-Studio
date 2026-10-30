@@ -197,7 +197,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
           </div> : null}
         </section>
 
-        <aside className="mw-right" aria-label="图片生成">
+        <aside className="mw-right" aria-label={i18nTz('图片生成')}>
           <div className="mw-rh">{view === 'gen' || !cur ? i18nTz('图片生成') : `检视 · ${cur.name}`}</div>
           <div className="mw-rb">
             <div className="sec"><h4>{i18nTz('生成')}</h4>

@@ -577,6 +577,13 @@ export const zhCN = {
   'rough.71': '图片生成', // [HERMIA-FE-20261030 VERA-P3]
   'rough.72': '参考叠看 开', // [HERMIA-FE-20261030 VERA-P3]
   'rough.73': '参考叠看 关', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.74': '这里排镜头和画面关系；剪成片在剪辑页。', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.75': '卡片 · 参考素材 · 连线', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.76': '节点 · 素材引用 · 关系边', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.77': '三层工作区', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.78': '① 镜头脚本', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.79': '② 无限画布', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.80': '③ 内置导演台', // [HERMIA-FE-20261031 VERA-P3-3]
   // [HERMIA-FE-20261030 NSFW]
   'nsfw.menu.label': '成人内容（NSFW）模式',
   'nsfw.menu.on': '已开启',

@@ -584,6 +584,13 @@ export const en: Record<MessageKey, string> = {
   'rough.71': 'Image generation', // [HERMIA-FE-20261030 VERA-P3]
   'rough.72': 'Reference overlay: on', // [HERMIA-FE-20261030 VERA-P3]
   'rough.73': 'Reference overlay: off', // [HERMIA-FE-20261030 VERA-P3]
+  'rough.74': 'Plan shots and how frames relate here; cut the final video on the Edit page.', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.75': 'Cards · references · links', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.76': 'Nodes · asset refs · relation edges', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.77': 'Three-layer workspace', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.78': '① Shot script', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.79': '② Infinite canvas', // [HERMIA-FE-20261031 VERA-P3-3]
+  'rough.80': '③ Built-in director desk', // [HERMIA-FE-20261031 VERA-P3-3]
   // [HERMIA-FE-20261030 NSFW]
   'nsfw.menu.label': 'Adult content (NSFW) mode',
   'nsfw.menu.on': 'On',
