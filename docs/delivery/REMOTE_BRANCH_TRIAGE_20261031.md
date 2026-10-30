@@ -91,3 +91,5 @@
 | work/taskcenter-lifecycle-cursor-20261025 | c2bb1d5e81 | 64647fd30f | 祖先 | 0/0/0 | - | 已包含于基线（祖先，无需另整合） |
 | work/taskcenter-local-export-cursor-20261026 | 31b6cb56ba | fc6f7e5510 | 祖先 | 0/0/0 | - | 已包含于基线（祖先，无需另整合） |
 | work/taskcenter-rebuild-20261026 | 692c2c6657 | bdbf527b6f | 祖先 | 0/0/0 | - | 已包含于基线（祖先，无需另整合） |
+
+> 更精确的逐文件后端差异与处置见 `HISTORICAL_BRANCH_TRIAGE_20261031.md`（相对 A=#51 的 missing/divergent/equal 分类与历史分支说明）。
