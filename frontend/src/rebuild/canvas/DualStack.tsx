@@ -4,13 +4,15 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {PointerEvent as RPE} from 'react';
 import {useStudio} from '../../store';
+import {useLocalHostSession} from '../../localHostSession';
 import {resolveWorkspaceIdentity} from '../../workspace/state/scopeLease';
 import {Drawer} from '../primitives';
 import {useScopedRequestConsent} from '../../useScopedRequestConsent';
 import {RebuildCanvas, canvasStorageKey, readCanvasGraph, writeCanvasGraph, type CanvasKind, type CvGraph, type CvNode, type CvViewport} from './RebuildCanvas';
 import {feedToUpper, lowerCanvasStore} from './dualStackModel';
 import {ComfyCanvas} from './comfy/ComfyCanvas';
-import {nodeLabel, type CfNode, type NodeDef} from './comfy/comfyRegistry';
+import {defaultRegistry, mergeImported, nodeLabel, type CfNode, type NodeDef, type Registry} from './comfy/comfyRegistry';
+import {fetchImportedObjectInfo, type ComfyRemoteContext} from './comfy/comfyRemote';
 import {readLayout, writeLayout, layoutStore, splitterKey, toggleMax, toggleSwap, topShare, withTopShare, RATIO_MIN, RATIO_MAX, type DualLayout} from './dualLayout';
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {useLocale, useT, type Locale} from '../../i18n';
@@ -35,6 +37,22 @@ export function displayLowerTitle(n: CfNode, d: NodeDef | null, locale: Locale):
 export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string; seed?: CvGraph}) {
   const actorId = useStudio(s => s.actor?.id), collab = useStudio(s => s.scope), novelId = useStudio(s => s.novelId);
   const identity = useMemo(() => resolveWorkspaceIdentity({actorId, collabScope: collab, projectId: novelId || scope}), [actorId, collab, novelId, scope]);
+  const sessionToken = useStudio(s => s.sessionToken);
+  const localHostToken = useLocalHostSession(s => s.token);
+  // [HERMIA-FE-20261031 DUALCANVAS-COMFY WIRING] Backend sync exists only for a complete real
+  // workspace identity. No identity keeps the old session-only behavior and sends no request.
+  const remote = useMemo<ComfyRemoteContext | undefined>(() => identity.kind === 'real'
+    ? {projectId: scope, token: sessionToken || localHostToken, branchId: collab?.branchId}
+    : undefined, [identity.kind, scope, sessionToken, localHostToken, collab?.branchId]);
+  const [registry, setRegistry] = useState<Registry>(() => defaultRegistry(kind));
+  useEffect(() => {
+    if (!remote) return;
+    const ac = new AbortController(); let alive = true;
+    fetchImportedObjectInfo(ac.signal).then(imported => {
+      if (alive && imported?.defs.length) setRegistry(prev => mergeImported(prev, imported.defs));
+    }).catch(() => { /* keep the built-in registry */ });
+    return () => { alive = false; ac.abort(); };
+  }, [remote, kind]);
   const lower = lowerCanvasStore(kind, identity);
   const tr = useT();
   const session = lower.persist === 'session';
@@ -149,8 +167,9 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
           </div>
           <ComfyCanvas key={lower.key} kind={kind} storageKey={lower.key} persist={lower.persist}
             label={t.lower} ariaLabel={tr('dual.infinite', {label: t.lower})} onSelect={onLowerSel}
-            badge={tr(session ? 'dual.badge.session' : 'dual.badge.real')}
-            badgeTitle={tr('dual.badge.title')}
+            registry={registry} remote={remote}
+            badge={tr(remote ? 'dual.badge.remote' : session ? 'dual.badge.session' : 'dual.badge.real')}
+            badgeTitle={tr(remote ? 'dual.badge.remote.title' : 'dual.badge.title')}
             emptyHint={tr('dual.empty')} />
         </div> : null}
       </div>;

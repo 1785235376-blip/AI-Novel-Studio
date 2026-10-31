@@ -37,7 +37,12 @@
 未实现（下一步）：
 
 3. `POST .../lower-canvas/{kind}/runs` 与 `GET .../runs/{run_id}`：Convert to ComfyUI prompt、报价确认、执行状态、产物写资产库。阻塞点：前端节点参数尚不可编辑，CfGraph 没有 widget 值；需要前端补 params 后再实现真实执行与费用合同。当前后端不提供任何虚假执行/价格/状态接口。
-4. 前端尚未调用上述新接口（Grok 分支保持不连接状态）。
+4. 前端 wiring 已接入（本批新增）：
+   - 真实账号/作品身份（`resolveWorkspaceIdentity().kind === 'real'`）时，`DualStack` 拉取 `GET /api/comfy/object_info`，用 `parseObjectInfo` + `mergeImported` 合并到节点库；503 时保留内置节点库；
+   - 下画布草稿通过 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}` 同步，携带 `X-Session-Token` / `X-Branch-Id`，使用 `expected_version` CAS；
+   - 无身份仍保持 session-only（内存），不发任何请求；本地 localStorage 仍保留离线缓存；
+   - 云端冲突/不可用时保留本机草稿并在状态栏标注，不覆盖；
+   - 徽标从「未连接 ComfyUI」改为「云端草稿 · 不会执行 · 节点库只读」；仍不执行、不计费、不调用模型。
+   - 测试：`comfyRemote.test.ts`（6）、`DualStack.remote.test.tsx`（1，mock fetch）；真实浏览器 mock 验证 importedCount=1 / lowerWrites>=1 / nonGet=0。
 
 测试：`tests/test_comfy_lower_canvas_api.py`（10 passed），`tests/test_comfyui_node_library.py`（18 passed）。
-
