@@ -155,7 +155,7 @@ def read_app(app):
         dirs[:] = [d for d in dirs if d != "__pycache__"]
         for f in fs:
             if f.endswith(".py"):
-                p = os.path.join(root, f); files[os.path.relpath(p, app)] = open(p, encoding="utf8").read()
+                p = os.path.join(root, f); files[os.path.relpath(p, app).replace(os.sep, "/")] = open(p, encoding="utf8").read()
     return files
 def main(argv):
     app = argv[1] if len(argv) > 1 else os.path.join(os.path.dirname(__file__), "../../app")

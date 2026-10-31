@@ -39,22 +39,23 @@ beforeEach(() => {
   } } as unknown as StudioClient; vi.mocked(studioClient).mockReturnValue(client);
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-function mount() { const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={imageGraphProject} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: 'Synthetic video', storyline: '默认', branch: '主线' }} actor="作者" module="VIDEO" onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
 }
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const change = (name: string, value: string) => fireEvent.change(screen.getByLabelText(name), { target: { value } });
-async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); }
+async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button', { name: '执行画布' })); }
 async function adopt() { click('明确读取视频图节点目录'); await screen.findByRole('region', { name: '视频图版本确认' });
   fireEvent.click(screen.getByLabelText('确认当前兼容草稿采用视频图 v5，保留来源、审核与原任务')); click('明确采用视频图 v5');
 }
-async function addBoard() { change('节点类型', 'storyboard_plan'); click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic saved storyboard · v4' }); change('原创作文档', document.id); click('添加节点'); }
+async function addBoard() { change('节点类型', 'storyboard_plan'); click('明确读取已保存导演与分镜文档'); await waitFor(() => expect((screen.getByLabelText('原创作文档') as HTMLSelectElement).options.length).toBeGreaterThan(1)); change('原创作文档', document.id); click('添加节点'); }
 describe('Explicit video Graph keeps saved shot and original execution authority', () => {
   it("migration: adds exact current shot pins and video controls without starting a job", async () => {
     mount(); await enter(); expect(client.graphs.videoCatalog).not.toHaveBeenCalled(); await adopt(); await addBoard();
     change('节点类型', 'storyboard_shot'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
     const source = screen.getByLabelText('图中分镜来源') as HTMLSelectElement; change('图中分镜来源', source.options[1].value); click('明确读取来源分镜镜头');
-    await screen.findByRole('option', { name: 'SHOT 1 · shot-1 · v1' }); change('原分镜镜头', 'shot-1'); click('添加节点');
+    await waitFor(() => expect((screen.getByLabelText('原分镜镜头') as HTMLSelectElement).options.length).toBeGreaterThan(1)); change('原分镜镜头', 'shot-1'); click('添加节点');
     change('节点类型', 'video_generate'); click('添加节点'); click('读取节点服务配置'); await screen.findByRole('option', { name: 'synthetic-comfy · observed-model · 本地' }); change('节点服务商与模型', mediaProviderKey(pickerRow));
     change('视频操作', 'm7.video.v2v'); change('参考视频用途', 'camera'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const definition = vi.mocked(client.graphs.create).mock.calls[0][0].definition;

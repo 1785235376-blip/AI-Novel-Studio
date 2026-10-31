@@ -32,12 +32,12 @@ beforeEach(() => {
   } } as unknown as StudioClient; vi.mocked(studioClient).mockReturnValue(client);
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-function mount() { const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+function mount() { Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={imageGraphProject} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: 'Synthetic Production', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
 }
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const change = (name: string, value: string) => fireEvent.change(screen.getByLabelText(name), { target: { value } });
-async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); }
+async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); fireEvent.click(screen.getByRole('button', { name: '执行画布' })); }
 async function production() { click('明确读取导演、分镜与视觉制作节点目录'); await screen.findByRole('region', { name: '图片图版本确认' });
   fireEvent.click(screen.getByLabelText('确认将当前兼容草稿采用为图片图 v4，保持原资产绑定与人工审核')); click('明确采用图片图 v4');
 }

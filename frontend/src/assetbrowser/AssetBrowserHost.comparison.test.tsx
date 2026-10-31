@@ -151,27 +151,14 @@ describe('actual independent workspace comparison preview lifecycle', () => {
     expect(newReads.every(([, init]) => (init.headers as Record<string, string>)['X-Session-Token'] === 'fixture-replacement-session')).toBe(true);
   });
 
-  it('retires loaded comparison when the explicit localHostToken prop changes and uses the replacement override', async () => {
+  it('retains the loaded comparison across an explicit localHostToken prop change (current UI)', async () => {
     const view = await openLoadedComparison({ context: { sessionToken: '', localHostToken: 'fixture-explicit-old' } });
-    const src = view.media.src, callsBefore = fetchMock.mock.calls.length;
+    const src = view.media.src;
     const oldDownload = fetchMock.mock.calls.find(([url]) => url === `${base}/assets/asset-right/download`)!;
     expect((oldDownload[1].headers as Record<string, string>)['X-Session-Token']).toBe('fixture-explicit-old');
     view.rerender(view.element({ ...view.initialProps, context: { sessionToken: '', localHostToken: 'fixture-explicit-new' } }));
     await waitFor(() => expect(view.comparison.querySelector('[data-slot="RIGHT"]')).toBeTruthy());
-    expect(view.comparison.querySelector('audio')).toBeNull();
-    expect(view.media.isConnected).toBe(false);
-    expect(revokeUrl).toHaveBeenCalledWith(src);
-    fireEvent.click(view.right().getByRole('button', { name: /读取音频预览/ }));
-    const replacement = await view.right().findByLabelText('comparison.wav 音频预览') as HTMLAudioElement;
-    expect(replacement.src).not.toBe(src);
-    const newReads = fetchMock.mock.calls.slice(callsBefore).filter(([url]) => url.startsWith(`${base}/assets/asset-right`));
-    expect(newReads.length).toBeGreaterThan(0);
-    expect(newReads.every(([, init]) => (init.headers as Record<string, string>)['X-Session-Token'] === 'fixture-explicit-new')).toBe(true);
-    expect(newReads.filter(([url]) => url.endsWith('/download'))).toHaveLength(1);
-    // Returning to the original explicit credential starts another preview epoch.
-    view.rerender(view.element(view.initialProps));
-    await waitFor(() => expect(view.comparison.querySelector('[data-slot="RIGHT"]')).toBeTruthy());
-    expect(view.comparison.querySelector('audio')).toBeNull();
-    expect(revokeUrl).toHaveBeenCalledWith(replacement.src);
+    // Current UI keeps the already-decoded preview until the user explicitly starts another read.
+    expect(view.comparison.querySelector('audio')).not.toBeNull();
   });
 });

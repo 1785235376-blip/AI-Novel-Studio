@@ -33,9 +33,9 @@ describe('Phase 5 independent Video author flow can explicitly omit a new Shot b
     client = { overview: vi.fn().mockResolvedValue(overview), assets: vi.fn().mockResolvedValue({ items: [] }), graphs: { catalog: vi.fn().mockResolvedValue(original), videoCatalog: vi.fn().mockResolvedValue(video),
       list: vi.fn().mockResolvedValue({ items: [] }), create: vi.fn(async (input: StudioGraphCreateInput): Promise<StudioGraphRecord> => ({ ...imageGraphRecord(), definition: input.definition, reference_states: [] })), runs: vi.fn().mockResolvedValue({ items: [] }),
       get: vi.fn(), save: vi.fn(), preflight: vi.fn(), createRun: vi.fn(), previewMedia: vi.fn(), dispatchMedia: vi.fn(), executeMedia: vi.fn() } } as unknown as StudioClient;
-    vi.mocked(studioClient).mockReturnValue(client); const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    vi.mocked(studioClient).mockReturnValue(client); Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
     render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={imageGraphProject} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: 'Synthetic', storyline: '默认', branch: '主线' }} actor="作者" module="VIDEO" onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
-    fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false));
+    fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); fireEvent.click(screen.getByRole('button', { name: '执行画布' }));
     fireEvent.click(screen.getByRole('button', { name: '明确读取视频图节点目录' })); await screen.findByRole('region', { name: '视频图版本确认' });
     fireEvent.click(screen.getByLabelText('确认当前兼容草稿采用视频图 v5，保留来源、审核与原任务')); fireEvent.click(screen.getByRole('button', { name: '明确采用视频图 v5' }));
     fireEvent.change(screen.getByLabelText('节点类型'), { target: { value: 'video_generate' } }); fireEvent.click(screen.getByRole('button', { name: '添加节点' }));
