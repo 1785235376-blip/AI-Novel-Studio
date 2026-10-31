@@ -2139,3 +2139,23 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | 3 | 293 | 8 | 293 | 0 |
 
 最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/align-0f2cea09/
+
+## [VERA-FE] 独立复审 0f2cea09..8b909a42（2026-10-31，未提交）
+
+**结论：通过（APPROVE）。** b37fc6ac 与 8b909a42 均到位；A7 修复前会变红；门禁最佳 adj 293。
+
+- **b37fc6ac（未截断图标 aria-hidden）**：Chrome CDP AX 树（zh/en × 短/默认/12 字边界/超长）上，未截断节点的图标 ◈ 不进名称，也不出现在 StaticText 子节点；标题文本仍可读（en 上 name=`New generated image`，zh 上 name 偶为空但 kids 有 `StaticText:新生成图片`）。截断分支仍只通过 `<title>` 暴露完整标题、可见截断串被 aria-hidden，不受影响。axe 0。
+  - **变异 4/4 杀死**：去掉未截断图标的 aria-hidden、把整段图标+标题都藏进 aria-hidden、回退到修复前写法 → 均被 untruncated 单测杀死；去掉截断分支 aria-hidden → 仅截断测试失败（未截断测试仍绿），说明两分支互不影响。
+- **8b909a42（NOVEL 收起侧栏不再溢出）**：en/zh × 1024/1280/1440，收起后 `workspace-inspector` 为 `display:none`、网格末列 0、scrollWidth=视口、无按钮画出右缘；展开时仍为 `200px + 主栏 + 312px`，再展开后列宽与展开态一致。收起后焦点留在 `.inspector-edge-toggle`，`aria-expanded=false`、入口可见可 Tab 回。narrowLayout 修复后 72 组合 0 违规。
+  - **CSS 对其它工作区**：新规则限定 `[data-module="NOVEL"]`。IMAGE/VIDEO/EDIT/AUDIO/ASSETS/CONTROL/PLUGIN 本就整栏 `display:none!important`。通用 `ui.css` 里已有 `.is-inspector-collapsed .workspace-inspector{display:none}`，本改只覆盖 NOVEL 里更高优先级的 `display:flex`，不影响其它模块。
+  - **修复前变红**：checkout 掉 `display:none` 后，narrow-prefix 在 NOVEL 上打出 12 处 A7；rail-mut 在 1024 收起态看到 `insDisp=flex` 且多个按钮 `r>1024`。
+- **A7 断言盲区**：只查 `main button, main a[href]` 的右缘（`r.right > innerWidth`）；不查左/上下缘；不查 main 外；不把 `visibility/display` 与「被祖先 overflow 裁切」等同（这是刻意的，才能抓住 aria-hidden/inert 栏里仍被绘出的按钮）。也不覆盖非 button/a 的可交互控件。当前 bug 恰好落在其命中面内。
+- **门禁**（基线 raw 298 / ISI 8；adj = raw − ISI + 8）：
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 295 | 10 | 293 | 0 |
+| 2 | 294 | 8 | 294 | 1（StudioTimelineCaptionStyle，单独重跑 3/3 通过，负载抖动）|
+| 3 | 297 | 10 | 295 | 2（StudioCanvasAudioTask、PortableProjectsPanel.assetRelations，单独重跑均 3/3 通过，负载抖动）|
+
+最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/align-8b909a42/（ax.json、rail.json、rail-prefix.json、rail-css-mut.json、narrow-fix.json、narrow-prefix.json、mut-b37.txt、full1-3.json、iso.txt、gate.out）
