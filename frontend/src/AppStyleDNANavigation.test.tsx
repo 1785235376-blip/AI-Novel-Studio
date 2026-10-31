@@ -9,6 +9,8 @@ import { drafts, conflicts, conflictResolutionDrafts } from './drafts';
 import { useStudio } from './store';
 import { generationRecovery } from './generationRecovery';
 vi.mock('./Editor', () => ({ ChapterEditor: ({ content, onChange }: any) => <textarea aria-label="Test chapter editor" value={content} onChange={event => onChange(event.target.value, doc(event.target.value))} /> }));
+// [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
 vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, sidebar, onModuleChange, onGlobalSearch }: any) => <><button onClick={() => onModuleChange('IMAGE')}>Switch image</button><button onClick={onGlobalSearch}>Global search</button>{sidebar}{main}</> }));
 vi.mock('./ui/ModuleWorkspaceRoutes', () => ({ ModuleWorkspaceRoutes: () => <p>Destination image module</p> }));
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));

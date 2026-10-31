@@ -22,6 +22,8 @@ vi.mock('./Editor', async importOriginal => ({ ...(await importOriginal<typeof i
   <output aria-label="Applied reading preferences">{JSON.stringify(writingPreferences)}</output>
   <output aria-label="Applied chapter anchor">{JSON.stringify(restoreAnchor)}</output>
 </> }));
+// [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
 vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, inspector, focusMode }: any) => <div data-testid="shell" data-focus={focusMode}>{sidebar}<main>{main}</main>{inspector}<footer>{status}</footer></div> }));
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGenerateVariants, onRetry, onCancel, onAccept, onReject, draft, variants, authorPreview }: any) => <>
   <button onClick={() => onGenerate('continue', '', '')}>Audit generate</button>

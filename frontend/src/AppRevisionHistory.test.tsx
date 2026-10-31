@@ -13,7 +13,9 @@ import { recoveryKey } from "./collaborationGuards";
 // Only unrelated shell chrome and the rich-text widget are replaced.
 vi.mock("./Editor", async importOriginal => ({ ...(await importOriginal<typeof import("./Editor")>()), ChapterEditor: ({ content, onChange }: any) =>
   <textarea aria-label="Test chapter editor" value={content} onChange={event => onChange(event.target.value, documentOf(event.target.value))} /> }));
-vi.mock("./ui/AppShell", () => ({ AppShell: ({ main, status }: any) => <><main>{main}</main><footer>{status}</footer></> }));
+// [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
+vi.mock("./ui/AppShell", () => ({ AppShell: ({ main, status, inspector }: any) => <><main>{main}</main><aside>{inspector}</aside><footer>{status}</footer></> }));
 vi.mock("./novel/AiWritingPanel", () => ({ AiWritingPanel: () => null }));
 vi.mock("./novel/SourcePrivacyControl", () => ({ SourcePrivacyControl: () => null }));
 vi.mock("./novel/ChapterTree", () => ({ ChapterTree: () => null }));

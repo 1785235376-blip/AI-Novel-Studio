@@ -11,6 +11,8 @@ import { StyleAnalysisPanel } from './experimental/StyleAnalysisPanel';
 // Real App navigation and panel unmount with the real Style panel. Only unrelated
 // chrome/rich text and the lazy workbench selection are replaced.
 vi.mock('./Editor', async original => ({ ...(await original<typeof import('./Editor')>()), ChapterEditor: ({ content }: any) => <textarea aria-label="Test chapter editor" readOnly value={content} /> }));
+// [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
 vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, inspector }: any) => <>{sidebar}<main>{main}</main><aside>{inspector}</aside><footer>{status}</footer></> }));
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));

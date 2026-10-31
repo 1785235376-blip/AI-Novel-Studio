@@ -58,3 +58,14 @@
 - 全量 `pnpm test`：**43 failed files / 154 failed tests / 13,374 passed / 6 skipped**（修复前 96 failed files / 792 failed tests / 12,724 passed）；
 - 剩余失败为既有产品/测试漂移（IndependentStudio storyboard/handoff、ComicPublication、AuditGenerationScope、API 错误码审计清单等），与本次分支合并和大小写修复均无关；前端全量尚未全绿。
 
+## 7. 第二轮修复（2026-10-31 同日）
+
+继续修复后剩余失败从 154 降到 126：
+
+- 恢复历史快照中缺失的 `tests/fixtures/v2_graph_note_numbers.json`（commit b1f16166 中存在，当前 main 缺失；`graphCanvasLargeNotes` 契约测试通过）。
+- `frontend/src/creative/client.ts` 的 `verifiedTextExport` 在 digest 前把跨 realm 的 `ArrayBuffer` 包装为本地 `Uint8Array`，修复 jsdom/Node 下 `SubtleCrypto.digest` 类型错误（Storyboard/Director sheet export 通过）。
+- `apiErrorWhitelist.test.ts`：未知站点按 `/` 归一化后与审计清单比较（Windows 扫描器输出 `\`），并补登两个已审计的通用 `exc.code` 站点；该文件只剩 1 个既有变异用例失败（B12 AudiobookError 模式定位）。
+- App 级生成测试：`NovelAssist` 现把完整 AI 面板放进抽屉；在 `AuditGenerationScope.test.tsx` 增加 mock 直接暴露 `ai`，**28/28 通过**；同类 mock 也补到 `AppWorkspaceResume`、`AppRevisionHistory`、`AppWritingGoalRecovery`、`AppStyleDNANavigation`、`AppProductionReceiptNavigation`、`AppStyleComparisonNavigation`（部分行为断言仍为既有漂移）。
+
+第二轮结果：`pnpm build` **PASS**；全量 `pnpm test` **39 failed files / 126 failed tests / 13,402 passed / 6 skipped**（本轮起点 43 / 154 / 13,374；最初 96 / 792 / 12,724）。剩余失败集中在 IndependentStudio storyboard/handoff 等既有产品/测试漂移，未在本轮清理。
+

@@ -49,10 +49,12 @@ const AUDITED_UNKNOWN = [
    "api.py::update_chapter::exc.code",
    "collaboration_admin.py::_error::code",
    "collaboration_api.py::_error::code",
+   "creative/asset_usage_request.py::_request::code",
    "creative/director_intent.py::project_shot_card::projected_camera['classification']['camera_motion']",
    "creative/director_intent.py::project_shot_card::projected_camera['classification']['composition']",
    "creative/director_intent.py::project_shot_card::projected_camera['classification']['lens']",
    "creative/prompt_authoring.py::public::self.code",
+   "creative/workspace.py::_persist_manual_import::exc.code",
    "experimental/director.py::camera_checks::**item",
    "experimental/interactive_export_contract.py::artifact_evidence::found",
    "experimental/interactive_godot_export.py::_analysis_issue::'GODOT_RUNTIME_ANALYSIS:' + str(issue.get('code', 'UNKNOWN'))[:90]",
@@ -77,7 +79,9 @@ function contractViolations(s: Scan, wl: ReadonlySet<string> = WL): string[] {
   // [HERMIA-FE-20261025 VERA-fbe029c4 §2] RuntimeErrorCode（ModelRuntimeError，jobs.py:770 为 str(exc)）永不进白名单。
   for (const c of s.enums.RuntimeErrorCode ?? []) if (wl.has(c)) v.push(`RuntimeErrorCode whitelisted: ${c}`);
   if (!(s.enums.RuntimeErrorCode ?? []).length) v.push("RuntimeErrorCode enum not found by scanner");
-  for (const u of s.unknown) if (!AUDITED_UNKNOWN.includes(u)) v.push(`unaudited unprovable-code site: ${u}`);
+  // Windows scanner emits backslash paths; audit entries are slash-normalized.
+  const canonical = (site: string) => site.replaceAll("\\", "/");
+  for (const u of s.unknown) if (!AUDITED_UNKNOWN.includes(canonical(u))) v.push(`unaudited unprovable-code site: ${u}`);
   return v;
 }
 
