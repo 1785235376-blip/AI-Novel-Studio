@@ -103,3 +103,12 @@
 ## 补充：孤儿音频历史目录的归属（2026-10-31 续）
 
 对账扫描 asset 元数据之外，还会对 `assets/.audio-history/<asset_id>` 中**未被当前项目元数据匹配**的目录做有界归属探测：只读取 `records/` 下第一个小体积不可变记录（≤256 KiB，拒绝 reparse/非普通文件/超限/不可解析），若其 `metadata.novel_id` 或 `_project_binding.novel_id` 等于本项目，则整目录按 `unattributed_files/unattributed_bytes` 聚合计数（不暴露路径/资产 id），reconcile/admission 的 UNKNOWN 判定会阻塞新增写入；其他项目目录不归属，无不可变记录（只有 blob）或内容歧义的目录不被任何项目认领，避免跨项目误报。对应测试 3 项，容量组回归 70 passed。
+
+## 补充：AssetLibraryService.create 全调用方统一接入（2026-10-31 续）
+
+`ENABLE_PROJECT_CAPACITY_ADMISSION` 开启时，容量 admission 从“仅 Studio 手工导入路由”下沉到共享资产 owner `AssetLibraryService.create`：所有经由该 owner 的原始资产写入（Studio 手工导入、模型 clay 参考、手工遮罩、视频参考帧、生产任务产物、prompt authoring、comic/portable/媒体/音频服务等 16 个调用点）都会先 reconcile 原始 owner 计量、拒绝 UNKNOWN、预留正文+元数据峰值，成功后按实际 `bin+json` 落盘字节 commit；失败先 reconcile 残渣再释放。手工导入路由自身已有 admission，通过内部参数 `_capacity_admitted=True` 避免双重计费。
+
+边界仍保留：非资产 owner 的项目文件、导出、共享文档、审批/调额竞争、启动自动对账门与真实 PG/崩溃窗口不在本批；flag 默认关闭，默认行为不变。
+
+测试：`tests/test_project_capacity_create_coverage.py` 5 项（直接 create 计量/幂等不重复计费/失败释放且无残留/超额写前拒绝/默认关闭不建账本）；容量组回归 **75 passed**。
+
