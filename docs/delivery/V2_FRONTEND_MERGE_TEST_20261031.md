@@ -133,3 +133,13 @@
 第七轮结果：全量 `pnpm test` **2 failed files / 8 failed tests / 13,523 passed / 6 skipped**（第六轮 13 / 29 / 13,498；最初 96 / 792 / 12,724）。
 剩余仅：`AppRevisionHistory`（6，当前 App 右栏历史入口/查询身份与测试 setup 不一致）与 `StudioProductionGraphEditor.director`（2，UNKNOWN 导航时序）。
 
+## 13. 第八轮修复：前端全量测试转绿（2026-10-31 同日）
+
+- `AppRevisionHistory.test.tsx`（23/23）：
+  - 当前历史入口是「专业布局」下的右栏链接，测试通过 mock `useWorkbenchLayout` 固定 pro 模式；补齐 `location.pathname`、`api.chapter` 与右栏 links；
+  - 直接渲染组件的用例保留“无历史按钮时直接进入”；App 级用例先点「版本历史」；
+  - AI Accept 后历史刷新用例按当前流程先进入历史面板。
+- `StudioProductionGraphEditor.director.additive.test.tsx`（5/5）：UNKNOWN 取消/返回后先切回 `执行画布` 再断言导演总控台恢复。
+
+最终全量 `pnpm test`：**1025 passed files / 1 skipped / 13,531 passed tests / 6 skipped / 0 failed**（最初 96 failed files / 792 failed tests）。前端单元/集成测试已全绿；这不等于真实浏览器 E2E、真实模型或打包桌面验收。
+
