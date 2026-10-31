@@ -60,3 +60,6 @@
 ### 能力补充汇总报告
 补充批次的完整清单、SHA、测试证据与剩余边界见 `docs/delivery/V2_CAPABILITY_SUPPLEMENT_REPORT_20261031.md`（PR #55–#64，main `94abff88` 起）。
 
+### 新增：ComfyUI 节点库只读桥接（后端）
+只读端点 `GET /api/projects/{nid}/studio/graphs/comfyui-node-library` 从已保存的 ComfyUI provider 导入 `/object_info` 节点元数据，形成 `studio-comfyui-node-library/1` 描述与 `studio-comfyui-node-compatibility/1` 兼容标记；不注册可执行节点、不执行 ComfyUI，执行映射标为 `NOT_IMPLEMENTED`。详见 `docs/delivery/COMFYUI_NODE_LIBRARY_BRIDGE_20261031.md`。
+

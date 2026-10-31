@@ -210,6 +210,18 @@ class CreativeGraphService:
         current()
         return result
 
+    def comfy_node_library(self, nid, scope, actor, guard=lambda: None, *, provider_id=None):
+        """Read-only ComfyUI /object_info metadata bridge; adds no executable Studio node."""
+        _, current = self._context(nid, scope, actor, guard)
+        from .comfy_node_library import ComfyNodeLibraryError, load_comfyui_node_library
+        try:
+            result = load_comfyui_node_library(provider_id=provider_id, guard=current)
+        except ComfyNodeLibraryError:
+            current()
+            raise
+        current()
+        return result
+
     def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False, include_local_subgraph=False, include_local_conditions=False):
         _, current = self._context(nid, scope, actor, guard)
         if include_local_conditions:

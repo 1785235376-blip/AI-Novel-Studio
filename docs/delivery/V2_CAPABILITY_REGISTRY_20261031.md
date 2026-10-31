@@ -16,3 +16,14 @@
 - 容量：已接入 `AssetLibraryService.create` 全调用方，但非资产写入口/启动对账门/审批竞争/真实 PG 仍未完成（`PARTIAL`，flag 默认关闭）。
 
 本注册表是**能力状态读模型**，不是验收通过证明；任何 `IMPLEMENTED_VERIFIED_SYNTHETIC` 都只代表指定 File/Windows/HTTP 合成环境证据。
+
+## 2026-10-31 补充：ComfyUI 节点库只读桥接
+
+registry 新增 `comfyui_node_library`（PARTIAL / HTTP_SYNTHETIC）：
+
+- 新增只读端点 `GET /api/projects/{nid}/studio/graphs/comfyui-node-library`，从已保存的 `api_style=comfyui` provider 读取 `/object_info`；
+- 输出标准化 `studio-comfyui-node-library/1` 节点描述（node class、category、inputs/outputs、choices、`studio_type_hints`），带严格边界与失败码；
+- `compatibility.execution = NOT_CONNECTED`：不注册可执行节点、不提交 workflow、不执行 ComfyUI；
+- limits：`node_metadata_only:NOT_EXECUTABLE`、`execution_mapping:NOT_IMPLEMENTED`、`real_comfyui_provider:NOT_RUN`、`node_ui_catalog_merge:NOT_CONNECTED`。
+- 设计/路线见 `docs/delivery/COMFYUI_NODE_LIBRARY_BRIDGE_20261031.md`，测试 `tests/test_comfyui_node_library.py`（14 passed）。
+
