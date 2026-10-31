@@ -2176,3 +2176,23 @@ ComfyCanvas 内部自己的文案已经双语。另外，新节点的 `title` �
 | 3 | 296 | 10 | 294 | 1（TaskCenter.receiptCompanion，单独重跑 3/3 通过，负载抖动）|
 
 最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/comfy-d87d6389/
+
+## [VERA-FE] 复审 comfy d87d6389..df462d55（2026-10-31，Vera 执行代理）
+
+结论：**通过**（APPROVE）。d87d 的 P2 已修复，上轮 5 个存活变异现在都能被杀死。另有 1 个 P3 和 1 个后续任务。
+
+- e1bc5ebd 焦点：在 en/zh × light/dark × IMAGE/VIDEO 共 8 个视图下，按 Esc 和按 Enter 加节点后，焦点都回到「＋ 节点」。点击画布空白处关闭菜单时，焦点留在被点的 svg 上，没有被拉回触发按钮。变异结果：去掉 focus、Enter 分支不调 closeMenu、Esc 改回 setMenu(null)、去掉 ref，这 4 个都被单测杀死。Hermia 的浏览器测试里 F0/F1 通过（45 行，0 失败）。
+  - 存活 1 个：把 pointerdown 里的 setMenu(null) 改成 closeMenu()，单测和 e8 浏览器测试都没有发现。原因是 mousedown 默认会在 pointerdown 之后把焦点设到 svg，最终效果和原代码相同，属于等价变异，风险低。如果想锁住，可以加一个 pointerdown 后断言 `document.activeElement !== add` 的单测。
+  - P3：鼠标点击菜单项加节点时，菜单卸载后焦点落到 body。add() 路径没有调用 closeMenu，这和 Enter 路径不一致。建议点击选项时也把焦点还给「＋ 节点」，或交给新节点。
+- 9c4105f5：E2、E6、E5、K4、K6 重做后全部被杀死（DualStack.en 的 splitter 测试 ×2，vera3p3 的 E5/K4/K6 测试）。
+- df462d55：en VIDEO 的上画布显示「Shot 1 · 雾港码头 / Shot 2 · 灯塔」，zh 下仍为「镜头 n · …」。localStorage 中存储的仍是「镜头 1 · 雾港码头」，存储值不变。三个 shot 正则变异（去掉占位替换、去掉前缀翻译、把正则整行注释掉）全部被 defaultNodeTitle.shot 测试杀死。
+- 判断 1（E5 存固定中文标签）：节点身份是 `t`（d.name），反序列化（comfyRegistry:235）在 title 缺失时回退为 `t`。投喂可否由 `picked.d.feedAs` 决定，按类型判断。title 只用于显示，投喂时会被复制到上画布节点。因此标签改名、用户重命名、导入、反序列化都**不会丢身份**，风险只在显示上：
+  - 中文标签以后改名：旧存档的 title 不再等于 nodeLabel(d,'zh-CN')，en 下会回落到 displayNodeTitle，可能显示中文。
+  - 用户重命名的标题恰好等于默认标签时，会被当成默认值翻译。可以接受。
+  - 建议记为后续任务，不阻塞本轮：存 `title` 时只在用户改过时存（或另加 `custom` 标记），显示时由 `t` 推导。
+- 判断 2：测试数从 13586 增到 13597，共多出 **11 条**，不是 2 条。按文件+名称去重后 13364→13375，同样是 +11，没有删除。11 条全部来自本轮新增的测试用例，没有哪个文件是从失败变为可加载（两轮都只有 1 个空文件，同为 LocalAiBrowserJourneyContracts）。
+  - 构成：shot ×2；splitter ×2（同一用例在 image/video 两个 describe 下各跑一次，属参数化）；P2 焦点 ×4（vera3 和 vera3p3 两个文件里有相同的 2 条，属重复，建议删去一份）；E5/K4/K6 ×3。
+- 复查：普通模式下只显示上画布（lower/split/dual 计数为 0）。亮色背景亮度 0.869，不是黑底。没有非 GET 请求。axe 菜单和双画布都是 0 个违规。zh/en × 1024/1440 × 普通/专业 × IMAGE/VIDEO 都不溢出。en 主区域没有汉字残留。
+- 门禁：见回报表，最好一轮 adj 293。非基线新增的 4 条单独重跑都是 3/3 通过（IndependentStudioGraph 那个文件在单跑时只有 2 条基线失败）。
+
+证据：/workspace/hr/vera-compare/comfy-df462d55/（e8*.json、hb.out、e5.json、mut2.txt、full1-3.json、iso.txt）
