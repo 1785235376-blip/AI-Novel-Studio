@@ -41,3 +41,35 @@ it('video canvas unsupported notices show no Chinese in en', () => {
   select('n1');
   expect(chinese(container)).toEqual([]);
 });
+// [HERMIA-FE-20261031 VERA-P2] caller-supplied zh canvas labels render English in en.
+it.each([['图片画布', 'Image canvas'], ['视频画布', 'Video canvas'], ['创作画布', 'Creation canvas'], ['执行画布', 'Execution canvas']])('label %s shows %s in en', (zh, en) => {
+  const {container} = render(<RebuildCanvas kind="image" scope={`en-l-${zh}`} label={zh} seed={{nodes: [], edges: []}} />);
+  expect(container.querySelector('.rcv-label')?.textContent).toBe(en);
+  expect(chinese(container)).toEqual([]);
+});
+// [HERMIA-FE-20261031 VERA-P3] zoom controls must not reuse 「放大」=Upscale (node type) for screen readers.
+it('zoom controls have zoom-specific English names in en and unchanged zh names', () => {
+  const a = render(<RebuildCanvas kind="image" scope="en-z" seed={{nodes: [], edges: []}} />);
+  const zoom = a.container.querySelector('.rcv-zoom')!;
+  const names = [zoom.getAttribute('aria-label'), ...[...zoom.querySelectorAll('button')].map(b => b.getAttribute('aria-label') ?? b.textContent)];
+  expect(names).toEqual(['Zoom', 'Zoom out', 'Zoom in', 'Fit to view']);
+  a.unmount();
+  act(() => setLocale('zh-CN'));
+  const b = render(<RebuildCanvas kind="image" scope="zh-z" seed={{nodes: [], edges: []}} />);
+  const zz = b.container.querySelector('.rcv-zoom')!;
+  expect([zz.getAttribute('aria-label'), ...[...zz.querySelectorAll('button')].map(x => x.getAttribute('aria-label') ?? x.textContent)]).toEqual(['缩放', '缩小', '放大', '适配']);
+});
+// [HERMIA-FE-20261031 VERA-P3] truncated SVG node title exposes the full text via <title>.
+it('truncated node title exposes full text via SVG <title>', () => {
+  const {container} = render(<RebuildCanvas kind="image" scope="en-t" seed={graph('image_generate')} />);
+  const ttl = container.querySelector('text.ttl')!;
+  expect(ttl.textContent).toContain('…');
+  expect(ttl.querySelector('title')?.textContent).toBe('New generated image');
+});
+// [HERMIA-FE-20261031 VERA-P3 r2] an untruncated title must not get a duplicate <title> (screen readers would read it twice).
+it('untruncated node title has no duplicate <title>', () => {
+  const {container} = render(<RebuildCanvas kind="image" scope="en-t2" seed={{nodes: [{id: 'n1', t: 'image_generate', x: 0, y: 0, title: 'Short', prompt: 'p'}], edges: []}} />);
+  const ttl = container.querySelector('text.ttl')!;
+  expect(ttl.textContent).not.toContain('…');
+  expect(ttl.querySelector('title')).toBeNull();
+});

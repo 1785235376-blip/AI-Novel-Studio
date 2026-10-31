@@ -3,7 +3,7 @@
    诚实（W-UX-09）：没有可写剪辑接口，时间线编排、入出点、静音/锁定只在本页本地，不保存；成片渲染（MP4）未接通，按钮置灰写原因。
    一页一主：模块头「导出成片…」。不改 EDIT 默认落地，不碰 N-UX-04。 */
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
+import { tz as i18nTz, useT } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {WithQuery} from '../primitives';
 import {ExportBody} from '../ExportMenu';
 import {NovelOrient, NovelModTabs} from '../novel/NovelOrient'; // [HERMIA-FE-20261022 R6] 补原型 44px 指引行
@@ -32,6 +32,7 @@ export function placeClip(clips: LocalClip[], h: EditHandoffItem, dur = 5): Loca
 export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handoffs: handoffsOverride}: {
   novelId: string; shellMode?: 'basic' | 'pro'; editable: false; onBackToVideo?: () => void; handoffs?: EditHandoffItem[];
 }) {
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom]
   const [view, setView] = useState<EditView>('tl');
   // [HERMIA-FE-20261022 U4] 普通：预览 + 三条基础轨（V1/A1/字幕）；专业：完整 V1–V3/A1–A2 + 检视器参数 + 快捷键提示。仍只读本地编排（editable={false}）。
   const isPro = shellMode === 'pro';
@@ -196,8 +197,8 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
         <button type="button" className="nv-btn" id="nleMarkIn" onClick={() => setMark(m => ({...m, in: playhead}))}>I 入点</button>
         <button type="button" className="nv-btn" id="nleMarkOut" onClick={() => setMark(m => ({...m, out: playhead}))}>O 出点</button>
         <button type="button" className="nv-btn" id="nleSnap" aria-pressed={snap} onClick={() => setSnap(s => !s)}>{snap ? '吸附开' : '吸附关'}</button>
-        <span className="nle-zoom"><button type="button" className="nv-btn" id="nleZoomOut" aria-label="缩小" onClick={() => setZoom(z => Math.max(25, z - 25))}>−</button>
-          <span className="zp" id="nleZoomPct">{zoom}%</span><button type="button" className="nv-btn" id="nleZoomIn" aria-label="放大" onClick={() => setZoom(z => Math.min(400, z + 25))}>＋</button></span>
+        <span className="nle-zoom"><button type="button" className="nv-btn" id="nleZoomOut" aria-label={tk('zoom.out')} onClick={() => setZoom(z => Math.max(25, z - 25))}>−</button>
+          <span className="zp" id="nleZoomPct">{zoom}%</span><button type="button" className="nv-btn" id="nleZoomIn" aria-label={tk('zoom.in')} onClick={() => setZoom(z => Math.min(400, z + 25))}>＋</button></span>
         <small style={{fontSize: 11, color: 'var(--color-text-muted)'}}>入 {mark.in == null ? '—' : fmtTc(mark.in)} · 出 {mark.out == null ? '—' : fmtTc(mark.out)} · 轨 {rows.length}</small>
         <button type="button" className="nv-btn nv-btn--primary" data-edit-primary="export" onClick={() => setView('export')}>{i18nTz('导出成片…')}</button>
         <button type="button" className="nv-btn" onClick={onBackToVideo}>{i18nTz('回视频改镜头')}</button>

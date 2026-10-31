@@ -9,7 +9,11 @@ export const DEFAULT_TITLE_EN: Readonly<Record<string, string>> = {
   镜头提示词: 'shot prompt', 导演备注: 'director note', 生成视频: 'generated video', 素材审核: 'media review', 送剪辑时间线: 'send to edit timeline',
 };
 export function displayNodeTitle(locale: Locale, title: string): string {
-  if (locale === 'zh-CN' || !title || !title.startsWith('新')) return title;
+  if (locale === 'zh-CN' || !title) return title;
+  // [VERA-3 OBS] VIDEO 种子「镜头 n · 内容」：只译 UI 模板前缀（及无内容时的「镜头 n」占位），剧本内容原样
+  const shot = /^镜头 (\d+) · ([\s\S]*)$/.exec(title);
+  if (shot) return `Shot ${shot[1]} · ${shot[2].replace(/^镜头 (\d+)$/, 'Shot $1')}`;
+  if (!title.startsWith('新')) return title;
   const en = Object.prototype.hasOwnProperty.call(DEFAULT_TITLE_EN, title.slice(1)) ? DEFAULT_TITLE_EN[title.slice(1)] : '';
   return en ? `New ${en}` : title;
 }

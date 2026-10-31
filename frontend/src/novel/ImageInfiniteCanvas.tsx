@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/primitives";
 import { api } from "../api";
+import { useT } from "../i18n"; // [HERMIA-FE-20261031 VERA-P3 zoom]
 import type {
   CanvasViewport,
   RefNode,
@@ -109,6 +110,7 @@ export function ImageInfiniteCanvas({
   canRedo,
   novelId,
 }: Props) {
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom]
   const [selected, setSelected] = useState<string[]>([]);
   const [marquee, setMarquee] = useState<{
     x: number;
@@ -221,17 +223,17 @@ export function ImageInfiniteCanvas({
         </Button>
         <Button
           variant="ghost"
-          aria-label="缩小画布"
+          aria-label={tk('zoom.canvasOut')}
           onClick={() => zoomBy(-0.15)}
         >
           <ZoomOut size={15} />
         </Button>
-        <output aria-label="画布缩放">
+        <output aria-label={tk('zoom.canvasLevel')}>
           {Math.round(viewport.zoom * 100)}%
         </output>
         <Button
           variant="ghost"
-          aria-label="放大画布"
+          aria-label={tk('zoom.canvasIn')}
           onClick={() => zoomBy(0.15)}
         >
           <ZoomIn size={15} />

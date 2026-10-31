@@ -1,6 +1,7 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { clipBoundaryNavigation } from './clipBoundaryNavigation';
 import { Button, StatusMessage } from '../ui/primitives';
+import { useT } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3 zoom]
 import { NLE_DEFAULT_VIEW_WIDTH_PX, rulerTicks, validateMarks, validateTimebase, validateWindow } from './timelineOps';
 import type { NleMarks, NleTimebase, NleViewWindow } from './timelineOpsTypes';
 import './timelineWorkspace.css';
@@ -23,6 +24,7 @@ export type TimelineRulerPanelProps = {
 };
 
 export function TimelineRulerPanel(props: TimelineRulerPanelProps) {
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom]
   const [draft, setDraft] = useState(() => String(Math.max(0, Math.round(props.playheadMs))));
   const hintId = useId(), composing = useRef<HTMLElement | null>(null), alive = useRef(true);
   const navigation = props.navigation ? clipBoundaryNavigation(props.navigation.timeline, props.playheadMs) : undefined;
@@ -79,8 +81,8 @@ export function TimelineRulerPanel(props: TimelineRulerPanelProps) {
       if (navigate(event.key === 'ArrowUp' ? 'PREVIOUS' : 'NEXT')) { event.preventDefault(); event.stopPropagation(); }
     }}>
     <header className="nle-ruler__bar">
-      <Button disabled={!props.editable} onClick={() => zoom(0.5)}>缩小</Button>
-      <Button disabled={!props.editable} onClick={() => zoom(2)}>放大</Button>
+      <Button disabled={!props.editable} onClick={() => zoom(0.5)}>{tk('zoom.out')}</Button>
+      <Button disabled={!props.editable} onClick={() => zoom(2)}>{tk('zoom.in')}</Button>
       <Button disabled={!props.editable} onClick={() => move(-ruler.range.windowMs)}>左移一屏</Button>
       <Button disabled={!props.editable} onClick={() => move(ruler.range.windowMs)}>右移一屏</Button>
       <Button disabled={!props.editable} onClick={() => props.onView({ startMs: 0, scale: fitted })}>显示全部</Button>
