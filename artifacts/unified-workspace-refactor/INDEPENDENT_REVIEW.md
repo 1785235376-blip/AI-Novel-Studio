@@ -2085,3 +2085,59 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | 3 | 295 | 10 | 293 | 0 |
 
 证据：/workspace/hr/vera-compare/align-5632fe65/（mut.txt, unit-green.txt, sdk-unchanged.txt, ttl-tests.txt, e4.json, ax.json, shots/e4-*, full1-3.json, iso-*.txt, PROGRESS.md）
+
+---
+
+## [VERA-FE] 独立复审：work/hermia-dualcanvas-comfy-20261031 63fec627..a14080c7（2026-10-31）
+
+**结论：通过（有条件）。** 无 P0/P1。下画布不发请求、不执行；标注诚实；类型检查和分隔条 a11y 都成立；门禁通过。遗留 1 个 P2（en 下双画布基本全是中文）和若干 P3，可以随后续提交修。
+
+证据：`/workspace/hr/vera-compare/comfy-a14080c7/`（e5.json / e6.json / mut.txt / registry-count.txt / hermia-browser.out / full{1,2,3}.json / shots/）。
+
+1. **模式门控**：通过。普通模式下 IMAGE 和 VIDEO 都检查过：下画布、分隔条、dual 页签、`[data-open-dual]`、comfy 画布全为 0。门控在 ImageRebuild 和 VideoRebuild 的 `view==='dual' && isPro`。专业模式下分隔条、最大化（×2）、互换（×2）都在，也都能用。
+2. **零非 GET**：通过。route 拦截下覆盖了以下操作，全部 0 个非 GET，也没有 pageerror：
+   - 加节点、合法连线和被拒连线
+   - 分隔条的键盘调整和鼠标拖动
+   - 互换、上下各自最大化和还原
+   - 「接入上画布」对话框打开再取消
+   - 范围：light/dark × IMAGE/VIDEO。
+3. **诚实标注**：通过。
+   - 徽标写「仅本机草稿 · 不会执行 · 未连接 ComfyUI」，title 说明后端没有执行/保存/代理接口。
+   - 节点上显示「N 个参数（草稿，不执行）」，节点内没有任何 input/select（参数确实不可编辑）。
+   - 双画布区里没有带「运行/执行/生成/Run/Queue」字样的按钮。
+   - 「接入上画布…」只对 PoemSeed 节点开放。选中 KSampler 时按钮禁用并有提示。对话框写明「复制一份，两边各改各的，不会联动」。
+4. **分隔条 a11y**：通过，另有 1 个 P2。
+   - 属性：role=separator、aria-orientation=horizontal、valuenow/min/max=60/20/80、valuetext、aria-controls（指向的 id 存在）、tabindex=0。
+   - 键盘：Tab 能到达。↓65、↑60、PgDn75、Home20、End80、Enter 复位到 60。
+   - 焦点可见：:focus-visible 时 outline 2px solid（亮主题 #0d6b74，暗主题 #4db8c4）。
+   - 键盘按下互换或最大化后，焦点留在原按钮上（aria-pressed=true），还原后仍是 BUTTON，没有掉到 BODY。
+   - axe（wcag2a/aa + best-practice）：双画布区 0 违规。打开添加节点菜单后有 **aria-required-children(critical) ×1 `.rcv-menu`**：role=menu 下直接放了搜索框和分组标题 div。**P2**：改成 role=dialog + listbox，或者把 input 移到 menu 外面。顺带一提，role=menu 也意味着要支持方向键导航，但现在没实现。
+5. **亮色无黑底**：通过。亮主题下下画布背景 rgb(238,240,242)，L=0.869；暗主题 rgb(13,15,19)，L=0.005。上下画布背景一致。截图在 shots/v/{light,dark}-*-dual-1440.png。Hermia 脚本测 1024/1440/1920 结果相同。
+6. **节点注册表**：通过，另有 1 个 P3。
+   - 数量：image 53、video 52，实际用到 11 类。`NODE_GROUPS` 定义 12 类，多出的 `other` 只给导入节点用。
+   - 反例：真实浏览器里从 LoadImage.IMAGE 拖到 VAEDecode.samples(LATENT)，被拒，边数为 0，状态显示「类型不匹配：IMAGE 不能接到 LATENT」。
+   - 整行命中：从输出行左端（离圆点约 90px）拖到输入行右端，EmptyLatentImage→VAEDecode 连上了，边数为 1。
+   - 变异 10 个，8 个变红：typesCompatible 恒真、去掉通配、去掉成环检查、Home 改成最大、withTopShare 忽略互换、去掉 aria-valuenow、互换无效、无身份也写 localStorage。
+   - **存活 2 个（P3，测试缺口）**：
+     - R4：删掉 `rect.hit` 整行命中区后单测全绿。jsdom 没有几何信息，这一层只有浏览器能验，而 Hermia 的脚本拖的是 bbox 中心，也覆盖不到。
+     - D1：把 `[data-feed-upper]` 的 `disabled={!feedable}` 改成 `!picked` 后全绿，说明「ComfyUI 节点不可接入上画布」没有测试锁住。
+   - 另外，注册表测试只断言 ≥40 个节点，没有锁定 53/52/11。
+7. **互换后尺寸跟画布走**：可以接受。拖到 72% 后互换，下画布移到上方，仍是 165px；上画布到下方，仍是 434px。valuenow 变成 28、valuetext 变成「上方 28%」，语义一致，title 也说明了只交换位置。分隔条的视觉位置会跳，属于预期行为，不判为问题。溢出：1024/1440 × zh/en × 普通/专业 × IMAGE/VIDEO 共 32 组，文档没有横向溢出，双画布区也没有元素超出视口。
+8. **Hermia 的 comfyDualCanvas.browser.mjs**：在我的端口 4651 上重跑，28 行，0 失败。注意这个脚本虽然 abort 了非 GET，但没有断言非 GET 计数为 0，第 2 项的零请求以我的 e5/e6 为准。
+9. **契约文档**：通过。标题写明「仅文档，未实现」，现状一节明确列出后端缺的 object_info 代理、保存、执行、状态，其余接口都标成「建议」。前端引用的 `parseObjectInfo` 和 `mergeImported` 确实存在。小提示：后端 model_center 内部已经在读 ComfyUI `/object_info`（discovery.py），可以写进文档供 KONG 复用。
+10. **门禁**：3 轮全部 adj 293 ≤ 297，非基线新失败为 0，不需要单独重跑。
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 294 | 9 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+**P2（i18n）**：en 下双画布区残留大量中文。DualStack 里的硬编码以及传给 ComfyCanvas 的 label/ariaLabel/emptyHint/badgeTitle 都没走 L()，例如：
+- 双画布、主线说明、收起下画布、接入上画布…、在下画布选一个节点…
+- 下画布 · 丰富创作（ComfyUI 风格节点）、下画布是空的也没关系…
+- 「接入上画布？」对话框
+- 分隔条的 aria-label 和 aria-valuetext「上方 60%」
+- 上下画布的 aria-label 等
+
+ComfyCanvas 内部自己的文案已经双语。另外，新节点的 `title` 固定按 zh-CN 存（`nodeLabel(d,'zh-CN')`），「已选：」后面显示的也是中文名。
