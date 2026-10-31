@@ -166,7 +166,7 @@ it('keeps the original editor busy during EPUB checks and survives its own owner
 
 it('downloads EPUB through the mounted IMAGE owner with the captured session and branch', async () => {
   const h = harness(), onBusy = vi.fn();
-  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
+  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', actor: { id: 'author', displayName: 'Author', workspaceId: 'w' }, scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
   await openBook(); await preflight(); ack(); fireEvent.click(download()); await screen.findByText('已校验并下载 EPUB 合成图片副本。');
   expect(h.posts()[1][1].headers).toMatchObject({ 'X-Session-Token': 'mounted-session', 'X-Branch-Id': 'mounted-branch' }); expect(saveOtioFile).toHaveBeenCalledOnce(); expect(onBusy).toHaveBeenLastCalledWith(false);
 });

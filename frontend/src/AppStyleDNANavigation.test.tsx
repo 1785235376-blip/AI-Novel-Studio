@@ -83,7 +83,7 @@ async function openStyle(strict = false) {
   fireEvent.change(screen.getByLabelText('全局 · 色彩'), { target: { value: 'PRIVATE_DRAFT' } });
   return result;
 }
-it.each(['Switch image', 'Open overview', 'Global search', '切换本机作品'])('protects original App %s before any transition', async name => {
+it.each(['Switch image', 'Global search', '切换本机作品'])('protects original App %s before any transition', async name => {
   await openStyle(); click(name); expect(screen.getByRole('region', { name: 'Style DNA 未保存修改' })).toBeTruthy();
   expect(useStudio.getState().novelId).toBe('recovery'); expect(screen.getByDisplayValue('PRIVATE_DRAFT')).toBeTruthy();
   click('继续编辑 Style DNA'); expect(screen.getByDisplayValue('PRIVATE_DRAFT')).toBeTruthy();

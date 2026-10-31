@@ -45,12 +45,12 @@ beforeEach(() => {
   } } as unknown as StudioClient; vi.mocked(studioClient).mockReturnValue(client);
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-function mount() { const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+function mount() { Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={imageGraphProject} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: 'Synthetic Production', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
 }
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const change = (name: string, value: string) => fireEvent.change(screen.getByLabelText(name), { target: { value } });
-async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); }
+async function enter() { fireEvent.click(await screen.findByRole('button', { name: '创作图' })); await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false)); fireEvent.click(screen.getByRole('button', { name: '执行画布' })); }
 async function production() { click('明确读取导演、分镜与视觉制作节点目录'); await screen.findByRole('region', { name: '图片图版本确认' });
   fireEvent.click(screen.getByLabelText('确认将当前兼容草稿采用为图片图 v4，保持原资产绑定与人工审核')); click('明确采用图片图 v4');
 }
@@ -112,7 +112,7 @@ it('requires an explicit original workspace navigation confirmation to abandon a
   const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
     create: vi.fn().mockRejectedValue(new Error('offline')), update: vi.fn(), export: vi.fn(), list: vi.fn() };
   vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
-  mount(); await enter(); click('打开导演总控台');
+  mount(); await enter(); fireEvent.click(await screen.findByRole('button', { name: '打开导演总控台' }));
   await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
   change('文档标题', '未知回执'); click('保存草稿'); await screen.findByText(/保存冲突或回执不确定/);
   click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
@@ -129,7 +129,7 @@ it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navi
     derive: vi.fn().mockRejectedValue(new Error('handoff offline')),
     export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
   vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
-  mount(); await enter(); click('打开导演总控台');
+  mount(); await enter(); fireEvent.click(await screen.findByRole('button', { name: '打开导演总控台' }));
   await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
   change('文档标题', '人工调度'); click('添加场景'); click('添加导演调度'); click('保存草稿');
   await screen.findByText(/导演原文档已保存/); click('核对导演原文档版本'); await screen.findByText(/交接来源/);

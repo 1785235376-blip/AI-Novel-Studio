@@ -55,6 +55,7 @@ async function open(name: RegExp = /Storyboard/) {
   fireEvent.click(stage(name)); await screen.findByLabelText('文档标题');
 }
 beforeEach(() => { server(); });
+beforeEach(() => { Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('Creative current document save-state ownership', () => {

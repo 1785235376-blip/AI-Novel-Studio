@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // Exercise the real host state at its original owner callbacks, without changing frozen tests.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { StoryboardWorkspacePanelProps } from '../storyboard/StoryboardWorkspacePanel';
 import type { CreativeDocument } from './types';
 import { newDocument, newScene, newShot } from './types';
@@ -19,6 +19,7 @@ vi.mock('./StoryboardProductionPanel', () => ({
     captured.production = props; return null;
   },
 }));
+beforeEach(() => { Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); captured.storyboard = undefined; captured.production = undefined; });
 
 const document = (version: number, text: string): CreativeDocument => ({
