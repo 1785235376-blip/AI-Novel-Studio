@@ -25,3 +25,8 @@
 .cfy-insp select{grid-column:1/-1;font-size:11.5px;padding:3px;background:var(--cv-input);color:var(--cv-ink);border:1px solid var(--stg-line-strong);border-radius:4px}
 .cfy-insp__note{color:var(--cv-ink-muted);font-size:10.5px}
 .cfy .cfy-edge--draft{pointer-events:none}
+.cfy-menu .cfy-opt{display:flex;align-items:center;gap:8px;color:var(--cv-ink);font-size:12.5px;padding:6px 8px;border-radius:5px;cursor:pointer}
+.cfy-menu .cfy-opt:hover,.cfy-menu .cfy-opt.is-active{background:var(--cv-hover)}
+.cfy-menu .cfy-opt.is-active{outline:1px solid var(--stg-line-strong)}
+.cfy-menu .cfy-opt i{width:8px;height:8px;border-radius:2px;flex:none}
+.cfy-menu .cfy-opt small{margin-left:auto;color:var(--cv-ink-muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}

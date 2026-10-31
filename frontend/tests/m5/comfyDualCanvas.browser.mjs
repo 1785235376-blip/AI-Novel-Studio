@@ -16,7 +16,7 @@ async function session(theme) {
   const ctx = await b.newContext({viewport: {width: 1366, height: 800}});
   await ctx.route('**/*', async rt => {
     const q = rt.request(), u = new URL(q.url());
-    if (!['GET', 'HEAD'].includes(q.method())) return rt.abort();
+    if (!['GET', 'HEAD'].includes(q.method())) { nonGet++; return rt.abort(); } // [P3] counted; must stay 0
     if (!u.pathname.startsWith('/api/')) return rt.continue();
     if (/\/chapters$/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(ch(P))});
     if (/^\/api\/chapters\/ch-001$/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(ch(P)[0])});
@@ -41,7 +41,8 @@ const skipGate = async p => { const l = p.getByRole('button', {name: '跳过，�
 // C4 maximize hides upper, restore shows both; C5 splitter keyboard moves aria-valuenow; T1 light: lower canvas bg not dark; dark: dark.
 const lum = `(c => { const m = c.match(/rgba?\\(([^)]+)\\)/); if (!m) return null; const [r, g, bb] = m[1].split(/[ ,/]+/).filter(Boolean).map(Number);
   const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bb); })`;
-const fails = [], rows = [];
+const fails = [], rows = []; let nonGet = 0;
+const AXE_FILE = process.env.AXE || '/workspace/hr/ux-20261030/axe/node_modules/axe-core/axe.min.js';
 for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
   const {ctx, p, errs} = await session(theme); await skipGate(p);
   for (let i = 0; i < 3; i++) { const t = p.getByRole('button', {name: '跳过', exact: true}); if (await t.count()) { await t.first().click().catch(() => {}); await p.waitForTimeout(300); } }
@@ -61,7 +62,25 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
     { await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(200);
       const n = await p.locator(`${LO} [data-add-node-menu] [data-node-type]`).count(); const g = await p.locator(`${LO} [data-add-node-menu] .grp--h`).count();
       if (n < 40 || g < 8) v.push(`C1 menu n=${n} groups=${g}`); rows.push({key: `${theme}|${mod}|menu`, n, g});
-      if (SHOTS) await p.screenshot({path: `${SHOTS}/${theme}-${mod}-menu-1440.png`}); await p.keyboard.press('Escape'); }
+      if (SHOTS) await p.screenshot({path: `${SHOTS}/${theme}-${mod}-menu-1440.png`});
+      // [P2-2] A1 axe on the open add-node menu: 0 violations of any impact
+      await p.addScriptTag({content: fs.readFileSync(AXE_FILE, 'utf8')});
+      const ax = await p.evaluate(async sel => (await axe.run(document.querySelector(sel), {resultTypes: ['violations']})).violations.map(x => `${x.id}(${x.impact}):${x.nodes.length}`), `${LO} [data-add-node-menu]`);
+      rows.push({key: `${theme}|${mod}|axe-menu`, violations: ax}); if (ax.length) v.push('A1 axe ' + ax.join(','));
+      await p.keyboard.press('Escape'); await p.waitForTimeout(100);
+      if (await p.locator(`${LO} [data-add-node-menu]`).count()) v.push('K0 Esc did not close menu');
+      // [P2-2] K1 keyboard: open, type, ArrowDown/ArrowUp, Enter adds the active option
+      await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(150);
+      const cb = p.locator(`${LO} [data-add-node-menu] [role=combobox]`);
+      if (!(await cb.count())) v.push('K1 no combobox'); else {
+        await cb.fill('ksampler'); await p.keyboard.press('ArrowDown'); await p.keyboard.press('ArrowDown'); await p.keyboard.press('ArrowUp');
+        const act = await cb.getAttribute('aria-activedescendant'); const actType = act ? await p.locator(`[id="${act}"]`).getAttribute('data-node-type') : null;
+        const before = await p.locator(`${LO} [data-node-class]`).count(); await p.keyboard.press('Enter'); await p.waitForTimeout(150);
+        const after = await p.locator(`${LO} [data-node-class]`).count();
+        if (actType !== 'KSampler' || after !== before + 1 || await p.locator(`${LO} [data-add-node-menu]`).count()) v.push(`K1 kbd act=${actType} ${before}->${after}`);
+        rows.push({key: `${theme}|${mod}|kbd`, actType, before, after});
+      }
+      await p.keyboard.press('Escape'); }
     await addNode('CheckpointLoaderSimple', 200); await addNode('KSampler', 600);
     const idOf = c => p.locator(`${LO} [data-node-class="${c}"]`).first().getAttribute('data-node-id');
     const ids = [await idOf('CheckpointLoaderSimple'), await idOf('KSampler')].filter(Boolean);
@@ -69,7 +88,13 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
       if (process.env.DBG) console.log('DBG', JSON.stringify(s), JSON.stringify(t), await p.evaluate(([x, y, x2, y2]) => [document.elementFromPoint(x, y)?.outerHTML.slice(0, 90).replace(/\n/g, ' '), document.elementFromPoint(x2, y2)?.outerHTML.slice(0, 90).replace(/\n/g, ' ')], [s.x + s.width / 2, s.y + s.height / 2, t.x + t.width / 2, t.y + t.height / 2]));
       await p.mouse.move(s.x + s.width / 2, s.y + s.height / 2); await p.mouse.down(); await p.mouse.move(t.x + t.width / 2, t.y + t.height / 2, {steps: 6}); await p.mouse.up(); await p.waitForTimeout(150); };
     const edges = () => p.locator(`${LO} .cfy-edge`).count();
-    if (ids.length >= 2) { await drag(`${ids[0]}:1`, `${ids[1]}:0`); const e0 = await edges(); await drag(`${ids[0]}:0`, `${ids[1]}:0`); const e1 = await edges();
+    // [P3] H1 the transparent rect.hit row is the drop target: a point at 80% of its width (far from the port dot) resolves to the same input port, and dropping there links
+    const dragHit = async (a, bsel) => { const s = await p.locator(`${LO} [data-out="${a}"]`).boundingBox(), hb = await p.locator(`${LO} [data-in="${bsel}"] rect.hit`).boundingBox();
+      const tx = hb.x + hb.width * 0.8, ty = hb.y + hb.height / 2;
+      const hit = await p.evaluate(([x, y, k]) => { const e = document.elementFromPoint(x, y); return {hit: !!e && e.matches('rect.hit'), port: e?.closest('[data-in]')?.getAttribute('data-in') === k}; }, [tx, ty, bsel]);
+      await p.mouse.move(s.x + s.width / 2, s.y + s.height / 2); await p.mouse.down(); await p.mouse.move(tx, ty, {steps: 6}); await p.mouse.up(); await p.waitForTimeout(150); return hit; };
+    if (ids.length >= 2) { await drag(`${ids[0]}:1`, `${ids[1]}:0`); const e0 = await edges(); const h = await dragHit(`${ids[0]}:0`, `${ids[1]}:0`); const e1 = await edges();
+      if (!h.hit || !h.port) v.push('H1 rect.hit not the drop target ' + JSON.stringify(h)); rows.push({key: `${theme}|${mod}|hit`, ...h});
       if (e0 !== 0 || e1 !== 1) { v.push(`C2 edges ${e0}->${e1} ids=${ids} st=${await p.locator(`${LO} [data-comfy-status]`).textContent()}`); if (SHOTS) await p.screenshot({path: `${SHOTS}/FAIL-${theme}-${mod}-link.png`}); } rows.push({key: `${theme}|${mod}|link`, e0, e1}); } else v.push('C2 nodes not added ' + ids.length);
     for (const w of [1024, 1440, 1920]) {
       await p.setViewportSize({width: w, height: 900}); await p.waitForTimeout(250);
@@ -100,6 +125,7 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
   await ctx.close();
 }
 await b.close();
+rows.push({key: 'nonGET', nonGet}); if (nonGet !== 0) fails.push(`N1 non-GET requests attempted: ${nonGet}`);
 if (process.env.OUT) fs.writeFileSync(process.env.OUT, JSON.stringify({rows, fails}, null, 1));
 console.log(JSON.stringify(rows)); console.log(`rows=${rows.length} fails=${fails.length}`); for (const f of fails) console.log(' ✗ ' + f);
 process.exit(fails.length ? 1 : 0);

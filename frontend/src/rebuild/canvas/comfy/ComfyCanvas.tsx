@@ -1,6 +1,6 @@
 // [HERMIA-FE-20261031 DUALCANVAS-COMFY] 下画布：ComfyUI 风格节点图（类型化端口 + 分类可搜索菜单）。
 // 只存本地结构/草稿：不执行、不连 ComfyUI、不调用模型、不发任何网络请求。
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useId, useMemo, useRef, useState} from 'react';
 import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, KeyboardEvent as RKE} from 'react';
 import {useLocale} from '../../../i18n';
 import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible,
@@ -54,7 +54,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   };
   const openMenu = (cx: number, cy: number, node?: string) => {
     const {lx, ly, wx, wy, W: rw, H: rh} = world(cx, cy);
-    setQ(''); setMenu({cx: Math.max(4, Math.min(lx, rw - 300)), cy: Math.max(4, Math.min(ly, rh - 360)), wx, wy, node});
+    setQ(''); setActive(0); setMenu({cx: Math.max(4, Math.min(lx, rw - 300)), cy: Math.max(4, Math.min(ly, rh - 360)), wx, wy, node});
   };
   const onContext = (e: RME) => { e.preventDefault(); openMenu(e.clientX, e.clientY, (e.target as Element).closest('[data-node-id]')?.getAttribute('data-node-id') ?? undefined); };
   const add = (d: NodeDef) => {
@@ -119,6 +119,18 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const results = useMemo(() => searchDefs(reg, q, locale), [reg, q, locale]);
   const grouped = useMemo(() => NODE_GROUPS.map(gr => [gr, results.filter(d => d.group === gr)] as const).filter(([, l]) => l.length), [results]);
   const selNode = sel ? nodeMap.get(sel) : undefined; const selDef = selNode ? def(selNode.t) : undefined;
+  const mid = useId().replace(/:/g, '');
+  const optId = (n: string) => `${mid}-o-${n.replace(/[^A-Za-z0-9_-]/g, '_')}`;
+  const flat = useMemo(() => grouped.flatMap(([, l]) => l), [grouped]);
+  const [active, setActive] = useState(0);
+  const activeDef = flat.length ? flat[Math.max(0, Math.min(active, flat.length - 1))] : undefined;
+  const onMenuKey = (e: RKE<HTMLInputElement>) => {
+    const last = flat.length - 1; if (last < 0 && e.key !== 'Escape') return;
+    const cur = Math.max(0, Math.min(active, last));
+    const nx = e.key === 'ArrowDown' ? Math.min(last, cur + 1) : e.key === 'ArrowUp' ? Math.max(0, cur - 1) : e.key === 'Home' ? 0 : e.key === 'End' ? last : null;
+    if (nx !== null) { e.preventDefault(); setActive(nx); document.getElementById(optId(flat[nx].name))?.scrollIntoView?.({block: 'nearest'}); return; }
+    if (e.key === 'Enter' && activeDef) { e.preventDefault(); add(activeDef); }
+  };
   const Gl = (gr: keyof typeof GROUP_LABEL) => (zh ? GROUP_LABEL[gr].zh : GROUP_LABEL[gr].en);
 
   return (
@@ -166,20 +178,25 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
       </svg>
       {!g.nodes.length ? <p className="rcv-empty">{emptyHint}<br />{L('右键空白处或点「＋ 节点」，按分类或搜索添加 ComfyUI 风格节点', 'Right-click or press "+ Node" to add ComfyUI-style nodes')}</p> : null}
       {menu ? (
-        <div className="rcv-menu cfy-menu" data-add-node-menu role="menu" aria-label={L('添加节点', 'Add node')} style={{left: menu.cx, top: menu.cy}}
+        // [HERMIA-FE-20261031 DUALCANVAS-COMFY P2-2] combobox + listbox（APG）：分组 role=group + aria-labelledby；↑↓ / Home / End 移动，Enter 添加，Esc 关闭。
+        <div className="rcv-menu cfy-menu" data-add-node-menu role="dialog" aria-label={L('添加节点', 'Add node')} style={{left: menu.cx, top: menu.cy}}
           onPointerDown={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); setMenu(null); } }}>
           <div className="grp">{L('添加到下画布（只是草稿结构，不会执行）', 'Add to lower canvas (draft only, never runs)')}</div>
-          <input type="search" autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder={L('搜索节点：名称 / 分类 / 端口类型', 'Search: name / category / port type')} aria-label={L('搜索节点', 'Search nodes')} />
-          <div className="lst">
-            {menu.node ? <button type="button" role="menuitem" data-node-delete onClick={() => del(menu.node!)}>{L('删除这个节点', 'Delete this node')}</button> : null}
-            {grouped.map(([gr, list]) => <div key={gr} role="group" aria-label={Gl(gr)} data-node-group={gr}>
-              <div className="grp grp--h">{Gl(gr)} <span>{list.length}</span></div>
-              {list.map(d => <button key={d.name} type="button" role="menuitem" data-node-type={d.name} onClick={() => add(d)}>
+          <input type="text" role="combobox" autoFocus value={q} onChange={e => { setQ(e.target.value); setActive(0); }}
+            aria-expanded="true" aria-controls={`${mid}-lb`} aria-autocomplete="list" aria-activedescendant={activeDef ? optId(activeDef.name) : undefined}
+            onKeyDown={onMenuKey}
+            placeholder={L('搜索节点：名称 / 分类 / 端口类型', 'Search: name / category / port type')} aria-label={L('搜索节点', 'Search nodes')} />
+          {menu.node ? <button type="button" data-node-delete onClick={() => del(menu.node!)}>{L('删除这个节点', 'Delete this node')}</button> : null}
+          <div className="lst" role="listbox" id={`${mid}-lb`} aria-label={L('节点', 'Nodes')}>
+            {grouped.map(([gr, list]) => <div key={gr} role="group" aria-labelledby={`${mid}-g-${gr}`} data-node-group={gr}>
+              <div className="grp grp--h" id={`${mid}-g-${gr}`} role="presentation">{Gl(gr)} <span aria-hidden="true">{list.length}</span></div>
+              {list.map(d => <div key={d.name} id={optId(d.name)} role="option" aria-selected={activeDef?.name === d.name} className={`cfy-opt${activeDef?.name === d.name ? ' is-active' : ''}`}
+                data-node-type={d.name} onClick={() => add(d)} onMouseEnter={() => setActive(flat.indexOf(d))}>
                 <i style={{background: d.source === 'poemseed' ? 'var(--color-accent-primary)' : portColor(d.outputs[0]?.type ?? d.inputs[0]?.type ?? '*')}} />
-                <span>{nodeLabel(d, locale)}</span>{zh && d.source !== 'poemseed' ? <small>{d.display_name}</small> : null}</button>)}
+                <span>{nodeLabel(d, locale)}</span>{zh && d.source !== 'poemseed' ? <small>{d.display_name}</small> : null}</div>)}
             </div>)}
-            {!results.length ? <p className="none">{L('没有匹配的节点', 'No matching node')}</p> : null}
           </div>
+          {!results.length ? <p className="none" role="status">{L('没有匹配的节点', 'No matching node')}</p> : null}
         </div>) : null}
       {selNode && selDef && selDef.inputs.length ? (
         <div className="cfy-insp" data-comfy-inspector aria-label={L('输入端口连线', 'Input links')} role="group">

@@ -27,7 +27,7 @@ describe('ComfyCanvas', () => {
     const menu = low().querySelector('[data-add-node-menu]') as HTMLElement;
     expect(menu.querySelectorAll('[data-node-type]').length).toBeGreaterThan(40);
     for (const t of ['KSampler', 'CheckpointLoaderSimple', 'ControlNetApply', 'SaveVideo', 'director_note']) expect(menu.querySelector(`[data-node-type=${t}]`)).not.toBeNull();
-    fireEvent.change(within(menu).getByRole('searchbox'), {target: {value: 'ksampler'}});
+    fireEvent.change(within(menu).getByRole('combobox'), {target: {value: 'ksampler'}});
     expect(menu.querySelector('[data-node-type=KSampler]')).not.toBeNull(); expect(menu.querySelector('[data-node-type=VAELoader]')).toBeNull();
   });
   it('compatible types link, mismatched types are refused', () => {
