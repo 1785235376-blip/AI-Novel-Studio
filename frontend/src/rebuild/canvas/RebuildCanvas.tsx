@@ -215,7 +215,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
           {g.nodes.map(n => { const ty = typeOf(kind, n.t); const c = ty?.color || '#888';
             return <g key={n.id} className="rcv-node" data-node-id={n.id} data-sel={sel === n.id} transform={`translate(${n.x},${n.y})`}>
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
-              <text className="ttl" x={16} y={24}>{(tl => tl.length > 12 ? <><title>{tl}</title><tspan aria-hidden="true">{ty?.icon} {tl.slice(0, 12) + '…'}</tspan></> : <>{ty?.icon} {tl}</>)(displayNodeTitle(locale, n.title))}</text>{/* [HERMIA-FE-20261031 VERA-P3] full title */}
+              <text className="ttl" x={16} y={24}>{(tl => tl.length > 12 ? <><title>{tl}</title><tspan aria-hidden="true">{ty?.icon} {tl.slice(0, 12) + '…'}</tspan></> : <><tspan aria-hidden="true">{ty?.icon}</tspan> {tl}</>)(displayNodeTitle(locale, n.title))}</text>{/* [HERMIA-FE-20261031 VERA-P3] full title */}
               <text className="sub" x={16} y={44}>{ty?.label ? z(ty.label) : n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">{z('本地')}</text>
               {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>{z('输入端口')}</title></circle> : null}
               {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>{z('输出端口（拖动连线）')}</title></circle> : null}

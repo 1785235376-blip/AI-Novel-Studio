@@ -82,3 +82,15 @@ it('truncated node title hides the visible truncated text from screen readers', 
   expect(ttl.querySelector('title')?.textContent).toBe('New generated image');
   expect(hidden?.querySelector('title')).toBeNull();
 });
+// [HERMIA-FE-20261031 VERA-P3 r4] untruncated: icon is aria-hidden too, consistent with truncated branch; title text stays readable.
+it('untruncated node title hides the icon from screen readers', () => {
+  act(() => setLocale('zh-CN'));
+  const {container} = render(<RebuildCanvas kind="image" scope="zh-t4" seed={graph('image_generate')} />);
+  const ttl = container.querySelector('text.ttl')!;
+  expect(ttl.querySelector('title')).toBeNull();
+  const hidden = ttl.querySelectorAll('[aria-hidden="true"]');
+  expect(hidden.length).toBe(1);
+  expect(hidden[0].textContent).toBe('◈');
+  expect(ttl.textContent).toContain('新生成图片');
+  expect(hidden[0].textContent).not.toContain('新生成图片');
+});
