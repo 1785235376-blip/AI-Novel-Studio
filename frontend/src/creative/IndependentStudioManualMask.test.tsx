@@ -36,8 +36,9 @@ beforeEach(async()=>{
   });vi.stubGlobal('fetch',fetcher);
 });
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();});
-function mount(){const leave=vi.fn(),query=new QueryClient({defaultOptions:{queries:{retry:false},mutations:{retry:false}}});const node=(requested='source')=> <QueryClientProvider client={query}><IndependentStudioWorkspace projectId={id} context={context} scope={{workspace:'本机',project:'遮罩项目',storyline:'默认',branch:'主线'}} actor="作者" module="IMAGE" requestedAssetId={requested} onModuleChange={leave} onProjectChoice={leave}/></QueryClientProvider>;return{...render(node()),leave,node};}
-async function start(){await screen.findByRole('button',{name:'核对来源并打开遮罩编辑'});fireEvent.click(screen.getByRole('button',{name:'核对来源并打开遮罩编辑'}));await screen.findByRole('application',{name:'二值蒙版绘图区'});fireEvent.click(screen.getByRole('button',{name:'应用精确矩形'}));fireEvent.click(screen.getByLabelText('确认将当前黑白像素保存为新遮罩资产'));}
+function mount(){
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });const leave=vi.fn(),query=new QueryClient({defaultOptions:{queries:{retry:false},mutations:{retry:false}}});const node=(requested='source')=> <QueryClientProvider client={query}><IndependentStudioWorkspace projectId={id} context={context} scope={{workspace:'本机',project:'遮罩项目',storyline:'默认',branch:'主线'}} actor="作者" module="IMAGE" requestedAssetId={requested} onModuleChange={leave} onProjectChoice={leave}/></QueryClientProvider>;return{...render(node()),leave,node};}
+async function start(){await waitFor(()=>expect(screen.queryByRole('button',{name:'素材工作区'})).toBeTruthy());fireEvent.click(screen.getByRole('button',{name:'素材工作区'}));await screen.findByRole('button',{name:'核对来源并打开遮罩编辑'});fireEvent.click(screen.getByRole('button',{name:'核对来源并打开遮罩编辑'}));await screen.findByRole('application',{name:'二值蒙版绘图区'});fireEvent.click(screen.getByRole('button',{name:'应用精确矩形'}));fireEvent.click(screen.getByLabelText('确认将当前黑白像素保存为新遮罩资产'));}
 function maskCalls(){return fetcher.mock.calls.filter(([url])=>url.endsWith('/mask'));}
 describe('manual mask in the original Image workspace',()=>{
   it('loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection',async()=>{

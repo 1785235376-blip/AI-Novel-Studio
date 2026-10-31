@@ -39,10 +39,16 @@ function props(patch: Partial<IndependentStudioProps> = {}): IndependentStudioPr
   return { projectId: id, context: { sessionToken: '' }, scope: { workspace: '本机作品', project: '独立项目', storyline: '默认故事线', branch: '主线' }, actor: '作者', module: 'IMAGE', onModuleChange: vi.fn(), onProjectChoice: vi.fn(), ...patch };
 }
 function mount(patch: Partial<IndependentStudioProps> = {}) {
+  // Current shell folds the inspector below 1280px; provenance lives in the inspector.
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={client}><IndependentStudioWorkspace {...props(patch)} /></QueryClientProvider>);
 }
-async function ready() { await waitFor(() => expect(screen.getByRole('button', { name: '上传资产' })).toBeTruthy()); }
+async function ready() {
+  // Current shell opens on START; asset flows live in 素材工作区.
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: '上传资产' })).toBeTruthy());
+}
 function upload(read: () => Promise<ArrayBuffer> = async () => new Uint8Array([1, 2, 3]).buffer) {
   const file = new File(['png'], 'reference.png', { type: 'image/png' });
   Object.defineProperty(file, 'arrayBuffer', { value: read });
@@ -69,7 +75,7 @@ describe('independent studio original owner integration', () => {
     const writes = fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET');
     expect(writes.map(([url]) => url)).toEqual([`${base}/assets`, `${base}/assets/image-1/lineage`]);
     expect(JSON.parse(writes[1][1].body)).toMatchObject({ expected_version: 1, origin: 'EXTERNAL_IMPORT', chapter_ids: [], parent_asset_ids: [], license: { label: 'UNSPECIFIED' } });
-    expect(screen.getAllByRole('tab')).toHaveLength(8);
+    expect(screen.getAllByRole('tab')).toHaveLength(6);
   });
 
   it('retains uploaded v1 after a declaration failure and retries only the declaration', async () => {
@@ -128,7 +134,7 @@ describe('independent studio original owner integration', () => {
     fireEvent.click(screen.getByRole('button', { name: '保存创作偏好' }));
     await screen.findByRole('alert');
     expect((screen.getByLabelText('图片设计') as HTMLInputElement).checked).toBe(true);
-    expect(screen.getAllByRole('tab')).toHaveLength(8);
+    expect(screen.getAllByRole('tab')).toHaveLength(6);
     fireEvent.click(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '小说' }));
     expect(leave).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));

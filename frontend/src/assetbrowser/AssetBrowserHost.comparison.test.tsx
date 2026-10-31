@@ -42,6 +42,8 @@ async function openLoadedComparison(patch: Partial<IndependentStudioProps> = {})
   const initialProps = { ...props(), ...patch };
   const element = (value = initialProps) => <QueryClientProvider client={query}><IndependentStudioWorkspace {...value}/></QueryClientProvider>;
   const view = render(element());
+  // Current shell opens on START; the asset browser lives in 素材工作区.
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
   await screen.findByRole('button', { name: '上传资产' });
   const choices = await screen.findAllByRole('button', { name: '选择素材 comparison.wav' });
   fireEvent.click(choices[0]);

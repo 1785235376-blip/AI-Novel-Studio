@@ -36,8 +36,11 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 async function mount() {
+  // Current shell folds the inspector below 1280px; provenance lives in the inspector.
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const leave = vi.fn(); const cache = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={cache}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '关联项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" requestedAssetId="source" onModuleChange={leave} onProjectChoice={vi.fn()} /></QueryClientProvider>);
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
   await screen.findByRole('region', { name: '独立资产来源' }); fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
   const option = await screen.findByRole('option', { name: 'target.png · v2' }) as HTMLOptionElement;
   return { leave, choose: () => fireEvent.change(screen.getByLabelText('关联目标'), { target: { value: option.value } }) };

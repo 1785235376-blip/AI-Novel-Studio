@@ -92,3 +92,19 @@
 
 第四轮结果：全量 `pnpm test` **110 failed tests / 13,418 passed / 6 skipped**（第三轮 115 / 13,413；最初 792 / 12,724）。剩余最大组仍为 IndependentStudio storyboard/handoff 与若干独立工作区交互。
 
+## 10. 第五轮修复：独立工作区测试对齐当前双画布 UI（2026-10-31 同日）
+
+当前独立工作区默认打开 `START`，素材/创作图/制作各为独立视图，右侧检查器在 <1280px 折叠。按该 UI 更新测试：
+
+- `IndependentStudioWorkspace.test.tsx`（8/8）：先进入 `素材工作区`，宽视口展开检查器，模块 tab 数 8→6。
+- `IndependentStudioWorkspace.comic.test.tsx`（12/12）：漫画入口在 `素材工作区` 内；comic-only 启动时允许无图操作直接进入。
+- `IndependentStudioRelationships.test.tsx`（5/5）：进入素材工作区 + 宽视口后读取 `独立资产来源`。
+- `IndependentStudioStoryboardHandoff.additive.test.tsx`（19/19）：素材工作区入口 + 宽视口。
+- `IndependentStudioGraphWorkspace.test.tsx`（9/9）、`.presentation.additive`（18/18）：宽视口 / 懒加载断言改为当前行为。
+- `IndependentStudioWorkspace.directorImage.additive.test.tsx`（2/2）：选择已保存图后先切 `执行画布`，再打开导演总控台。
+- `IndependentStudioSequentialImport.test.tsx`（2/2）、`IndependentStudioManualMask.test.tsx`（11/11）、`IndependentStudioReadFences.refresh.additive.test.tsx`（4/4）：素材工作区入口 + 宽视口。
+- `IndependentStudioHostExit.regression.test.tsx`（18/18）：当前设置按钮文案/菜单项调整。
+- `AssetBrowserHost.comparison.test.tsx`（6/7）：素材工作区入口；仅剩 1 个“凭证替换后旧预览是否立即移除”的既有行为差异。
+
+第五轮结果：全量 `pnpm test` **21 failed files / 54 failed tests / 13,474 passed / 6 skipped**（第四轮 35 / 110 / 13,418；最初 96 / 792 / 12,724）。
+

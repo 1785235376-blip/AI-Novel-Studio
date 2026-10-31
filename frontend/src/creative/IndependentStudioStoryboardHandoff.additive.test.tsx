@@ -39,6 +39,7 @@ function server(override?: Override) {
   }); vi.stubGlobal('fetch', calls);
 }
 function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const props: IndependentStudioProps = { projectId: id, context: { sessionToken: '' }, scope: { workspace: '本机作品', project: '独立项目', storyline: '默认故事线', branch: '主线' }, actor: '作者', module: 'IMAGE', onModuleChange: vi.fn(), onProjectChoice: vi.fn() };
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={client}><IndependentStudioWorkspace {...props} /></QueryClientProvider>);
@@ -46,7 +47,9 @@ function mount() {
 const button = (name: string) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const writes = () => calls.mock.calls.filter(([, init]) => init.method !== 'GET');
 async function chooseRoute() {
-  const view = mount(); await screen.findByRole('button', { name: '上传资产' });
+  const view = mount();
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
+  await screen.findByRole('button', { name: '上传资产' });
   fireEvent.click(await screen.findByRole('button', { name: '选择素材 handoff.png' }));
   fireEvent.click(await screen.findByRole('button', { name: '分镜模块' })); return view;
 }
