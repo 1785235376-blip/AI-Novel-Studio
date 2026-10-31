@@ -66,7 +66,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > maximum)) throw invalid();
     const bytes = await response.arrayBuffer();
     if (!bytes.byteLength || bytes.byteLength > maximum || signal?.aborted) throw invalid();
-    const actual = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))).map(value => value.toString(16).padStart(2, '0')).join('');
+    const actual = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new Uint8Array(bytes)))).map(value => value.toString(16).padStart(2, '0')).join('');
     if (actual !== hash || signal?.aborted) throw invalid();
     return { blob: new Blob([bytes], { type: mime }), filename: `creative-${exportName}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
   }

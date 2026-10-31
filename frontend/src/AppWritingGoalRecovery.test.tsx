@@ -7,7 +7,9 @@ import {api,type Chapter} from './api';
 import {useStudio} from './store';
 
 vi.mock('./Editor',async original=>({...await original<typeof import('./Editor')>(),ChapterEditor:({content,onChange}:any)=><textarea aria-label="Recovery editor" value={content} onChange={event=>onChange(event.target.value,{type:'doc',content:[{type:'paragraph',content:[{type:'text',text:event.target.value}]}]})}/>}));
-vi.mock('./ui/AppShell',()=>({AppShell:({main}:any)=><main>{main}</main>}));
+// [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai }: any) => <aside>{ai}</aside> }));
+vi.mock('./ui/AppShell',()=>({AppShell:({main,inspector}:any)=><><main>{main}</main><aside>{inspector}</aside></>}));
 vi.mock('./novel/AiWritingPanel',()=>({AiWritingPanel:()=>null}));
 vi.mock('./novel/SourcePrivacyControl',()=>({SourcePrivacyControl:()=>null}));
 vi.mock('./novel/ChapterTree',()=>({ChapterTree:()=>null}));

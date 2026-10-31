@@ -25,6 +25,8 @@ vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGene
   <output aria-label="Audit draft">{draft ? JSON.stringify(draft) : ''}</output>
   <output aria-label="Audit variants">{JSON.stringify(variants || [])}</output>
 </> }));
+// [HERMIA-FE-20261031] App now puts the AI panel in the NovelAssist drawer; keep the <aside> but render the real mocked ai directly so generation buttons stay reachable.
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
 vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: () => null }));

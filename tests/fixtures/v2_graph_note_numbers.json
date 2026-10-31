@@ -1,0 +1,80 @@
+[
+  {
+    "name": "0",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":0,\"y\":0}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":0.0,\"y\":0.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 202
+  },
+  {
+    "name": "negative zero",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":0,\"y\":0}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":0.0,\"y\":0.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 202
+  },
+  {
+    "name": "1",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":1,\"y\":-1}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":1.0,\"y\":-1.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 203
+  },
+  {
+    "name": "-1",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":-1,\"y\":1}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":-1.0,\"y\":1.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 203
+  },
+  {
+    "name": "100000",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":100000,\"y\":-100000}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":100000.0,\"y\":-100000.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 213
+  },
+  {
+    "name": "-100000",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":-100000,\"y\":100000}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":-100000.0,\"y\":100000.0},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 213
+  },
+  {
+    "name": "0.000001",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":0.000001,\"y\":-0.000001}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":1e-06,\"y\":-1e-06},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 207
+  },
+  {
+    "name": "1e-7",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":1e-7,\"y\":-1e-7}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":1e-07,\"y\":-1e-07},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 207
+  },
+  {
+    "name": "-1e-7",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":-1e-7,\"y\":1e-7}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":-1e-07,\"y\":1e-07},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 207
+  },
+  {
+    "name": "1e-20",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":1e-20,\"y\":-1e-20}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":1e-20,\"y\":-1e-20},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 207
+  },
+  {
+    "name": "5e-324",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":5e-324,\"y\":-5e-324}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":5e-324,\"y\":-5e-324},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 209
+  },
+  {
+    "name": "-5e-324",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":-5e-324,\"y\":5e-324}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":-5e-324,\"y\":5e-324},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 209
+  },
+  {
+    "name": "99999.99999999999",
+    "input_json": "{\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"nodes\":[],\"edges\":[],\"viewport\":{\"x\":0,\"y\":0,\"zoom\":1},\"presentation\":{\"notes\":[{\"id\":\"n\",\"text\":\"中文🎬\\\"\\\\\\n\",\"position\":{\"x\":99999.99999999999,\"y\":-99999.99999999999}}]}}",
+    "canonical_json": "{\"edges\":[],\"nodes\":[],\"presentation\":{\"notes\":[{\"id\":\"n\",\"position\":{\"x\":99999.99999999999,\"y\":-99999.99999999999},\"text\":\"中文🎬\\\"\\\\\\n\"}]},\"schema_version\":1,\"title\":\"中文🎬\\\"\\\\\\n\",\"viewport\":{\"x\":0.0,\"y\":0.0,\"zoom\":1.0}}",
+    "canonical_bytes": 231
+  }
+]
