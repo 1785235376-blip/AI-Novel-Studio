@@ -48,3 +48,6 @@
 ### 能力补充：本地 VIDEO 时间线渲染（REVIEW_MP4）
 新增 `tests/test_studio_video_timeline_local_render.py`：本机 FFmpeg 生成合成 MP4（红色画面 + 440Hz 音频）作为正式 video Asset，时间线 schema 2 单 VIDEO 轨（含 include_audio）经原 `timeline_save`/`timeline_export_preview`/`timeline_export` 渲染为 `REVIEW_MP4` 候选；FFprobe 校验 `mpeg4` 320x180、AAC 48kHz stereo、时长约 1s、哈希/正式资产字节一致、人工 review 后 APPROVED。**1 passed**，相关 media/timeline/video 组回归通过。registry `timeline_render_export` 证据增加该测试，limits 增加 `video_track_local_render:FILE_FFMPEG_VERIFIED`（真实模型视频/真实 NLE 仍 NOT_RUN）。
 
+### 能力补充：Provider usage-only attestation（价格未知）
+新增 `studio-provider-usage-attestation/1`：provider adapter 可只上报可信 usage（images/gpu_ms 等计数），不声明价格。job view 的 `studio-job-cost/1` 变为 `USAGE_ATTESTED`：`trusted=true`、usage/attested_at 可见、`actual_microusd/currency/pricing_version` 仍为 null、`decision_required=true`；若后续记录价格 attestation，则升级为 `ATTESTED` 并覆盖 usage-only 记录。错 job/request/provider/model、空 usage、负值等 fail closed；损坏/超限 sidecar 不升级。测试新增 2 项（usage-only 读取与价格升级、错绑/空 usage 拒绝）；cost attestation 文件 **5 passed**。
+
