@@ -32,3 +32,8 @@
 ### 能力补充：历史写入启动对账门
 音频历史的容量预留（双 flag）读取账本 `reconciled_at`，要求不早于当前进程启动；重启后旧账本 stale → `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`，必须先显式 reconcile（或由 admission 重新对账）。admission 路径每次写前 reconcile，不受影响。新增测试 1 项，音频历史容量文件 12 passed；registry 的容量限制同步更新为 `startup_reconcile_gate:IMPLEMENTED_FOR_HISTORY_WRITES_ONLY`。
 
+### 能力补充：Timeline 音频导出 PCM24 + WAVE_FORMAT_EXTENSIBLE 校验
+时间线音频导出新增封闭 `AUDIO_WAV_PCM24` 预设（48 kHz/双声道/24-bit PCM，bitexact WAV），与既有 `AUDIO_WAV_PCM16` 并存；同一多轨混音/静音/gain/审批/正式资产回读链。FFmpeg 对 24-bit WAV 输出 `WAVE_FORMAT_EXTENSIBLE`，因此原始 `media_files.inspect_media` 与时间线输出证明新增有界 PCM WAV 解析（接受 classic PCM=1 与 extensible PCM sub-format，校验 RIFF/ fmt /data 边界、通道/采样率/位宽/帧数），不再依赖 Python `wave` 对 extensible 格式的拒绝。
+
+测试：`tests/test_studio_timeline_audio_profiles.py` PCM16/PCM24 各多轨（440Hz+880Hz muted）真实 FFmpeg/FFprobe、字节数/编码/采样率/位宽/权限审批/正式资产读回 **2 passed**；相关 media/timeline/video 回归 11 passed/1 skipped（1 error 为 main 上同样存在的旧 fixture 预存错误）。
+
