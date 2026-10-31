@@ -3,10 +3,10 @@
 import {useCallback, useEffect, useId, useMemo, useRef, useState} from 'react';
 import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, KeyboardEvent as RKE} from 'react';
 import {useLocale} from '../../../i18n';
-import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, defaultWidgetParams, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible, widgetDefault,
+import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, defaultWidgetParams, isAssetWidget, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible, widgetDefault,
   type CfGraph, type CfNode, type NodeDef, type Registry, type WidgetDef, type WidgetPrimitive} from './comfyRegistry';
 import {sessionCanvasStore} from '../RebuildCanvas';
-import {dispatchLowerCanvasRun, downloadAssetBlob, fetchLowerCanvasRun, loadRemoteComfyGraph, preflightLowerCanvasRun, saveRemoteComfyGraph,
+import {dispatchLowerCanvasRun, downloadAssetBlob, fetchLowerCanvasRun, listProjectAssets, loadRemoteComfyGraph, preflightLowerCanvasRun, saveRemoteComfyGraph,
   type ComfyRemoteContext, type LowerCanvasRun, type RunAsset, type RunQuote} from './comfyRemote';
 
 /** 无身份时下画布的会话内存（类型化，不混入主画布 CvGraph）；随 sessionCanvasStore.clear() 一起清空。 */
@@ -45,6 +45,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const [runResult, setRunResult] = useState<LowerCanvasRun | null>(null);
   const [runMessage, setRunMessage] = useState('');
   const [runThumbs, setRunThumbs] = useState<Record<string, string>>({});
+  const [projectAssets, setProjectAssets] = useState<RunAsset[]>([]);
   const skipRemoteSave = useRef(true);
   const graphRef = useRef(g);
   const [sel, setSel] = useState<string | null>(null);
@@ -94,6 +95,15 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     });
     return () => { alive = false; ac.abort(); };
   }, [remote?.projectId, remote?.token, remote?.branchId, kind]);
+
+  useEffect(() => {
+    if (!remote || remoteState !== 'ready') { setProjectAssets([]); return; }
+    let alive = true; const ac = new AbortController();
+    listProjectAssets(remote, kind === 'video' ? 'video' : 'image', ac.signal).then(rows => {
+      if (alive) setProjectAssets(rows);
+    }).catch(() => { /* binding picker shows only the ComfyUI filename option */ });
+    return () => { alive = false; ac.abort(); };
+  }, [remote?.projectId, remote?.token, remote?.branchId, remoteState, kind]);
 
   useEffect(() => {
     if (!remote || remoteState !== 'ready') return;
@@ -163,6 +173,16 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     if (!sel) return;
     setG(x => ({...x, nodes: x.nodes.map(n => n.id === sel
       ? {...n, params: {...(n.params ?? {}), [name]: value}} : n)}));
+  };
+  const setAssetBinding = (widgetName: string, assetId: string) => {
+    if (!sel) return;
+    setG(x => ({...x, nodes: x.nodes.map(node => {
+      if (node.id !== sel) return node;
+      const bindings = {...(node.inputAssets ?? {})};
+      if (assetId) bindings[widgetName] = assetId; else delete bindings[widgetName];
+      const {inputAssets: _previous, ...rest} = node;
+      return Object.keys(bindings).length ? {...rest, inputAssets: bindings} : rest;
+    })}));
   };
   const widgetValue = (node: CfNode, widget: WidgetDef): WidgetPrimitive => {
     const value = node.params?.[widget.name];
@@ -372,6 +392,15 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
                     : <input type="number" data-widget-name={widget.name} value={String(value)}
                         min={widget.min} max={widget.max} step={widget.kind === 'INT' ? 1 : widget.step ?? 'any'}
                         onChange={e => commitNumber(widget, e.target.value)} />}
+                  {isAssetWidget(widget) ? <span className="cfy-assetbind">
+                    <select data-asset-binding={widget.name} value={selNode.inputAssets?.[widget.name] ?? ''}
+                      onChange={e => setAssetBinding(widget.name, e.target.value)}
+                      aria-label={L(`为 ${widget.name} 绑定 Studio 资产`, `Bind a Studio asset to ${widget.name}`)}>
+                      <option value="">{L('— 使用 ComfyUI 文件名 —', '— use ComfyUI filename —')}</option>
+                      {projectAssets.map(asset => <option key={asset.id} value={asset.id}>{asset.filename || asset.id}</option>)}
+                    </select>
+                    <small>{L('绑定后会先上传到 ComfyUI 输入目录', 'Bound assets are uploaded to ComfyUI input first')}</small>
+                  </span> : null}
                 </label>;
               })}
               <small className="cfy-insp__note">{L('仅草稿参数，不会执行', 'Draft parameters only; never runs')}</small>

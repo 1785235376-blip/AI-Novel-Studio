@@ -136,6 +136,28 @@ export function sanitizeWidgetParams(def: NodeDef | undefined, raw: unknown): Re
   return Object.keys(out).length ? out : undefined;
 }
 
+const ASSET_WIDGET_NAMES = new Set(['image', 'images', 'file', 'files', 'mask', 'video', 'image_path',
+  'filename', 'image_name', 'source_image', 'init_image', 'reference_image']);
+const ASSET_REF = /^[A-Za-z0-9_.:-]{1,240}$/;
+/** Widgets that name a provider-side input file can be bound to a Studio asset. */
+export function isAssetWidget(widget: WidgetDef): boolean {
+  if (widget.kind !== 'COMBO' && widget.kind !== 'STRING') return false;
+  return ASSET_WIDGET_NAMES.has(widget.name) || /_(?:image|mask|file)$/.test(widget.name);
+}
+
+/** Keep only bounded Studio asset bindings for known file-like widgets. */
+export function sanitizeInputAssets(def: NodeDef | undefined, raw: unknown): Record<string, string> | undefined {
+  if (!def || !raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const source = raw as Record<string, unknown>;
+  const out: Record<string, string> = {};
+  for (const widget of def.widgets) {
+    if (!isAssetWidget(widget)) continue;
+    const value = source[widget.name];
+    if (typeof value === 'string' && ASSET_REF.test(value)) out[widget.name] = value;
+  }
+  return Object.keys(out).length ? out : undefined;
+}
+
 export type ParseResult = {defs: NodeDef[]; errors: {name: string; reason: string}[]};
 /** Pure parser for a ComfyUI object_info JSON (frontend only; never fetched here). */
 export function parseObjectInfo(info: unknown, source: NodeDef['source'] = 'imported'): ParseResult {
@@ -283,7 +305,8 @@ export function searchDefs(reg: Registry, q: string, locale: string): NodeDef[] 
 }
 
 // ---- graph ---------------------------------------------------------------------------------------------------------
-export type CfNode = {id: string; t: string; x: number; y: number; title: string; params?: Record<string, WidgetPrimitive>};
+export type CfNode = {id: string; t: string; x: number; y: number; title: string;
+  params?: Record<string, WidgetPrimitive>; inputAssets?: Record<string, string>};
 /** a = source node, as = output slot; b = target node, bs = input slot (index into def.inputs). */
 export type CfEdge = {id: string; a: string; as: number; b: string; bs: number};
 export type CfGraph = {nodes: CfNode[]; edges: CfEdge[]};
@@ -313,9 +336,12 @@ export function sanitizeGraph(raw: unknown, reg: Registry): CfGraph {
   if (!r || !Array.isArray(r.nodes)) return {nodes: [], edges: []};
   const nodes = (r.nodes as CfNode[]).filter(n => n && typeof n.id === 'string' && typeof n.t === 'string')
     .map(n => {
-      const params = sanitizeWidgetParams(reg.byName.get(n.t), n.params);
+      const def = reg.byName.get(n.t);
+      const params = sanitizeWidgetParams(def, n.params);
+      const inputAssets = sanitizeInputAssets(def, n.inputAssets);
       return {id: n.id, t: n.t, x: Number(n.x) || 0, y: Number(n.y) || 0,
-        title: typeof n.title === 'string' ? n.title : n.t, ...(params ? {params} : {})};
+        title: typeof n.title === 'string' ? n.title : n.t, ...(params ? {params} : {}),
+        ...(inputAssets ? {inputAssets} : {})};
     });
   let g: CfGraph = {nodes, edges: []};
   for (const e of (Array.isArray(r.edges) ? r.edges : []) as Partial<CfEdge>[]) {

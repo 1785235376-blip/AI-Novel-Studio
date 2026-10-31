@@ -29,6 +29,9 @@ PROMPT_CONTRACT = "studio-lower-canvas-prompt/1"
 MAX_NODES = 400
 MAX_EDGES = 800
 MAX_PROMPT_BYTES = 1_000_000
+MAX_INPUT_ASSETS = 8
+MAX_INPUT_ASSET_BYTES = 16 * 1024 * 1024
+MAX_INPUT_ASSET_TOTAL_BYTES = 48 * 1024 * 1024
 QUOTE_TTL_SECONDS = 300
 RUNS_COLLECTION = "lower_canvas_runs_v1"
 QUOTES_COLLECTION = "lower_canvas_run_quotes_v1"
@@ -110,7 +113,71 @@ def _validate_param(kind: str, options: dict, value):
     return False
 
 
-def build_comfy_prompt(graph: dict, object_info: dict) -> dict:
+def _graph_bindings(graph: dict) -> list[tuple[str, str, str]]:
+    nodes = graph.get("nodes") if isinstance(graph, dict) else None
+    if not isinstance(nodes, list):
+        return []
+    bindings: list[tuple[str, str, str]] = []
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        raw = node.get("input_assets")
+        if raw is None:
+            continue
+        if not isinstance(raw, dict) or len(raw) > MAX_INPUT_ASSETS:
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_INVALID", status=400)
+        node_id = node.get("id")
+        for widget, asset_id in raw.items():
+            if (not isinstance(node_id, str) or not _NODE_ID.fullmatch(node_id)
+                    or not isinstance(widget, str) or not _PARAM_NAME.fullmatch(widget)
+                    or not isinstance(asset_id, str) or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,240}", asset_id)):
+                raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_INVALID", status=400)
+            bindings.append((node_id, widget, asset_id))
+    if len(bindings) > MAX_INPUT_ASSETS:
+        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_INVALID", status=400)
+    return bindings
+
+
+def _read_bound_asset(service, nid: str, scope: dict, asset_id: str) -> dict:
+    from contextlib import nullcontext
+    from ..media_files import inspect_image
+    context = service._asset_scope(nid, scope) if hasattr(service, "_asset_scope") else nullcontext()
+    try:
+        with context:
+            row = service.assets.get(asset_id, branch_id=scope.get("branch_id"))
+            data = service.assets.content(asset_id, branch_id=scope.get("branch_id"))
+    except (FileNotFoundError, ValueError):
+        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_NOT_FOUND", status=409) from None
+    if not isinstance(data, (bytes, bytearray)) or not data or len(data) > MAX_INPUT_ASSET_BYTES:
+        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_TOO_LARGE", status=409)
+    if row.get("kind") not in {None, "image"}:
+        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_MEDIA_INVALID", status=409)
+    data = bytes(data)
+    try:
+        measured = inspect_image(data)
+    except Exception:
+        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_MEDIA_INVALID", status=409) from None
+    return {"row": row, "data": data, "measured": measured,
+            "sha256": hashlib.sha256(data).hexdigest(), "size": len(data)}
+
+
+def _validate_input_assets(service, nid: str, scope: dict, graph: dict) -> dict:
+    bindings = _graph_bindings(graph)
+    total = 0
+    resources = []
+    for node_id, widget, asset_id in bindings:
+        resource = _read_bound_asset(service, nid, scope, asset_id)
+        total += resource["size"]
+        if total > MAX_INPUT_ASSET_TOTAL_BYTES:
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_TOO_LARGE", status=409)
+        resources.append({"node_id": node_id, "widget": widget, "asset_id": asset_id,
+                          "sha256": resource["sha256"], "size": resource["size"],
+                          "media_type": resource["measured"]["media_type"],
+                          "width": resource["measured"].get("width"), "height": resource["measured"].get("height")})
+    return {"count": len(resources), "resources": resources, "digest": _sha(resources)}
+
+
+def build_comfy_prompt(graph: dict, object_info: dict, *, asset_files: dict | None = None) -> dict:
     if not isinstance(graph, dict) or not isinstance(object_info, dict):
         raise LowerCanvasRunError("LOWER_CANVAS_GRAPH_INVALID", status=400)
     nodes = graph.get("nodes")
@@ -182,11 +249,19 @@ def build_comfy_prompt(graph: dict, object_info: dict) -> dict:
         for key in params:
             if not isinstance(key, str) or not _PARAM_NAME.fullmatch(key):
                 raise LowerCanvasRunError("LOWER_CANVAS_PARAM_NAME_INVALID", status=400)
+        node_bindings = node.get("input_assets") if isinstance(node.get("input_assets"), dict) else {}
+        for key in node_bindings:
+            if not isinstance(key, str) or not _PARAM_NAME.fullmatch(key):
+                raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_INVALID", status=400)
         widgets = {name: spec[0] for name, spec in required.items() if isinstance(spec, (list, tuple)) and spec and not _port_type(spec)}
         widgets.update({name: spec[0] for name, spec in optional.items() if isinstance(spec, (list, tuple)) and spec and not _port_type(spec)})
         unknown = set(params) - set(widgets)
         if unknown:
             raise LowerCanvasRunError("LOWER_CANVAS_PARAM_UNKNOWN", status=400, detail=",".join(sorted(unknown))[:200])
+        unknown_bindings = set(node_bindings) - set(widgets)
+        if unknown_bindings:
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_UNKNOWN", status=400,
+                                      detail=",".join(sorted(unknown_bindings))[:200])
         inputs: dict = {}
         port_index = 0
         for group_name, rows in (("required", required), ("optional", optional)):
@@ -214,7 +289,13 @@ def build_comfy_prompt(graph: dict, object_info: dict) -> dict:
                 kind, options = _widget_spec(spec)
                 if not kind:
                     raise LowerCanvasRunError("LOWER_CANVAS_INPUT_SPEC_INVALID", status=400, detail=f"{node_class}.{name}")
-                if name in params:
+                if name in node_bindings:
+                    if kind not in {"COMBO", "STRING"}:
+                        raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_WIDGET_INVALID", status=400,
+                                                  detail=f"{node_class}.{name}")
+                    placeholder = f"__studio_asset__{hashlib.sha256(str(node_bindings[name]).encode('utf-8')).hexdigest()[:16]}"
+                    inputs[name] = (asset_files or {}).get((node_id, name), placeholder)
+                elif name in params:
                     value = params[name]
                     if kind == "COMBO":
                         choices = spec[0] if isinstance(spec, (list, tuple)) and isinstance(spec[0], (list, tuple)) else None
@@ -264,6 +345,8 @@ def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind:
     version = int(row.get("version") or 0)
     if version != expected_version:
         raise LowerCanvasRunError("LOWER_CANVAS_VERSION_CONFLICT", status=409, detail=str(version))
+    graph = row.get("graph") if isinstance(row.get("graph"), dict) else {}
+    resources = _validate_input_assets(service, nid, scope, graph)
     configs = _provider_configs()
     pid, config, available = _select_provider(provider_id, configs)
     if config.get("local") is not True:
@@ -272,7 +355,7 @@ def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind:
         fetched = fetch_comfyui_object_info(provider_id=pid, transport_factory=transport_factory)
     except ComfyNodeLibraryError as exc:
         raise LowerCanvasRunError(exc.code, status=503 if exc.status >= 500 else 409, detail=exc.detail) from None
-    built = build_comfy_prompt(row.get("graph") or {}, fetched["payload"])
+    built = build_comfy_prompt(graph, fetched["payload"])
     expires_at = (datetime.now(timezone.utc) + timedelta(seconds=QUOTE_TTL_SECONDS)).isoformat()
     quote_core = {
         "contract": CONTRACT,
@@ -283,10 +366,13 @@ def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind:
         "node_count": built["node_count"],
         "edge_count": built["edge_count"],
         "output_nodes": built["output_nodes"],
+        "input_asset_count": resources["count"],
+        "input_asset_digest": resources["digest"],
     }
     quote_digest = _sha(quote_core)
     result = {
         **quote_core,
+        "input_asset_count": resources["count"],
         "expires_at": expires_at,
         "quote_id": "lcq_" + quote_digest[:24],
         "quote_digest": quote_digest,
@@ -497,6 +583,49 @@ def _default_asset_writer(service, nid: str, scope: dict, actor: str):
     return write
 
 
+_UPLOAD_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,239}$")
+
+
+def _upload_input_assets(service, nid: str, scope: dict, graph: dict, transport, endpoint: str,
+                         guard=lambda: None) -> dict:
+    asset_files: dict[tuple[str, str], str] = {}
+    total = 0
+    for node_id, widget, asset_id in _graph_bindings(graph):
+        resource = _read_bound_asset(service, nid, scope, asset_id)
+        total += resource["size"]
+        if total > MAX_INPUT_ASSET_TOTAL_BYTES:
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_TOO_LARGE", status=409)
+        measured = resource["measured"]
+        filename = f"studio-{resource['sha256'][:16]}.{measured['extension']}"
+        guard()
+        try:
+            response = transport.post(endpoint.rstrip("/") + "/upload/image",
+                files={"image": (filename, resource["data"], measured["media_type"])},
+                data={"type": "input", "overwrite": "false"}, timeout=30, dispatch_guard=guard)
+        except Exception as exc:
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_UPLOAD_FAILED", status=503,
+                                      detail=type(exc).__name__) from None
+        _check_response(response, "LOWER_CANVAS_INPUT_ASSET_UPLOAD_FAILED")
+        receipt = _response_json(response)
+        name = receipt.get("name") if isinstance(receipt, dict) else None
+        if (not isinstance(name, str) or not _UPLOAD_NAME.fullmatch(name) or ".." in name
+                or receipt.get("subfolder", "") not in {"", None}
+                or receipt.get("type", "input") != "input"):
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_UPLOAD_RECEIPT_INVALID", status=502)
+        asset_files[(node_id, widget)] = name
+    return asset_files
+
+
+def _apply_uploaded_assets(prompt: dict, asset_files: dict) -> dict:
+    for (node_id, widget), filename in asset_files.items():
+        node = prompt.get(node_id)
+        inputs = node.get("inputs") if isinstance(node, dict) else None
+        if not isinstance(inputs, dict):
+            raise LowerCanvasRunError("LOWER_CANVAS_INPUT_ASSET_UNKNOWN", status=400)
+        inputs[widget] = filename
+    return prompt
+
+
 def dispatch_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind: str, *,
                               expected_version: int, quote_id: str, quote_digest: str, provider_id: str | None,
                               transport_factory=None, asset_writer=None,
@@ -568,6 +697,9 @@ def dispatch_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind: 
         return public
     try:
         transport = (transport_factory or _transport_for_endpoint)(endpoint)
+        graph = _load_draft(service, nid, scope, kind).get("graph") or {}
+        asset_files = _upload_input_assets(service, nid, scope, graph, transport, endpoint, guard)
+        prompt = _apply_uploaded_assets(prompt, asset_files)
         result = execute_comfy_prompt(transport, endpoint, prompt, timeout_seconds=timeout_seconds,
                                       poll_interval=poll_interval, guard=guard)
         writer = asset_writer or _default_asset_writer(service, nid, scope, actor)

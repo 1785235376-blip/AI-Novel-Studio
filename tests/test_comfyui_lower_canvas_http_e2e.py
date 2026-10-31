@@ -22,7 +22,10 @@ from test_studio_asset_query import rig, shared_scope  # noqa: F401  (pytest fix
 pytestmark = pytest.mark.file_backend_only
 
 OBJECT_INFO = {
-    "MockOutput": {"input": {"required": {}}, "output": [], "output_node": True,
+    "LoadImage": {"input": {"required": {"image": [["server.png", "other.png"]]}},
+                  "output": ["IMAGE"], "output_name": ["IMAGE"], "category": "image",
+                  "display_name": "Load Image"},
+    "MockOutput": {"input": {"optional": {"images": ["IMAGE"]}}, "output": [], "output_node": True,
                    "category": "test", "display_name": "Mock Output"},
 }
 
@@ -37,6 +40,7 @@ class FakeComfyHandler(BaseHTTPRequestHandler):
     media_bytes = png_bytes()
     media_type = "image/png"
     prompts: list[dict] = []
+    uploads: list[dict] = []
 
     def log_message(self, *_args):
         pass
@@ -65,10 +69,14 @@ class FakeComfyHandler(BaseHTTPRequestHandler):
         self._json({"error": "not found"}, 404)
 
     def do_POST(self):
+        length = int(self.headers.get("Content-Length", "0"))
+        body = self.rfile.read(length)
+        if self.path == "/upload/image":
+            self.uploads.append({"length": len(body), "content_type": self.headers.get("Content-Type", "")})
+            return self._json({"name": "uploaded.png", "subfolder": "", "type": "input"})
         if self.path != "/prompt":
             return self._json({"error": "not found"}, 404)
-        length = int(self.headers.get("Content-Length", "0"))
-        payload = json.loads(self.rfile.read(length))
+        payload = json.loads(body)
         self.prompts.append(payload)
         prompt = payload.get("prompt")
         if not isinstance(prompt, dict) or prompt.get("node1", {}).get("class_type") != "MockOutput":
@@ -79,6 +87,7 @@ class FakeComfyHandler(BaseHTTPRequestHandler):
 @pytest.fixture
 def fake_comfy():
     FakeComfyHandler.prompts = []
+    FakeComfyHandler.uploads = []
     server = ThreadingHTTPServer(("127.0.0.1", 0), FakeComfyHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -109,6 +118,7 @@ def fake_comfy_video():
         media_bytes = mp4_bytes()
         media_type = "video/mp4"
     FakeComfyHandler.prompts = []
+    FakeComfyHandler.uploads = []
     server = ThreadingHTTPServer(("127.0.0.1", 0), VideoHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -208,3 +218,40 @@ def test_lower_canvas_video_result_is_written_and_downloadable(rig, monkeypatch,
     assert download.status_code == 200, download.text
     assert download.headers["content-type"].startswith("video/")
     assert len(download.content) > 100
+
+
+def test_lower_canvas_run_uploads_bound_studio_asset(rig, monkeypatch, tmp_path, fake_comfy):
+    import base64
+    from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+
+    scope, headers = shared_scope(rig)
+    grant_scope = AuthorizationScope(ScopeKind.PROJECT, "query-workspace", rig.nid)
+    rig.grants.assign_permission(PermissionAssignment("e2e-write-asset", "reader", "domain.write",
+        ModalityDomain.NOVEL, grant_scope, "fixture"))
+    with rig.workspace._asset_scope(rig.nid, scope):
+        asset = rig.workspace.assets.create(rig.nid, "studio-ref.png",
+            base64.b64encode(png_bytes()).decode("ascii"), "image/png", "image",
+            branch_id=scope["branch_id"])
+    path = tmp_path / "asset-providers.json"
+    path.write_text(json.dumps({"comfy": {"endpoint": fake_comfy, "api_style": "comfyui",
+        "enabled": True, "local": True, "default_model": "", "requires_credential": False}}), encoding="utf-8")
+    monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(path))
+    base = f"/api/projects/{rig.nid}/studio/lower-canvas/image"
+    draft = {"nodes": [
+        {"id": "load1", "t": "LoadImage", "x": 0, "y": 0, "title": "load", "input_assets": {"image": asset["id"]}},
+        {"id": "node1", "t": "MockOutput", "x": 200, "y": 0, "title": "out"}],
+      "edges": [{"id": "e1", "a": "load1", "as": 0, "b": "node1", "bs": 0}]}
+    assert rig.client.put(base, headers=headers, json={"expected_version": 0, "graph": draft}).status_code == 200
+    quote = rig.client.post(f"{base}/runs/preflight", headers=headers, json={"expected_version": 1})
+    assert quote.status_code == 200, quote.text
+    quote = quote.json()
+    assert quote["input_asset_count"] == 1
+    run = rig.client.post(f"{base}/runs", headers=headers, json={"expected_version": 1,
+        "quote_id": quote["quote_id"], "quote_digest": quote["quote_digest"]})
+    assert run.status_code == 200, run.text
+    run = run.json()
+    assert run["status"] == "COMPLETED", run
+    assert FakeComfyHandler.uploads and FakeComfyHandler.uploads[0]["length"] > 100
+    prompt = FakeComfyHandler.prompts[-1]["prompt"]
+    assert prompt["load1"]["inputs"]["image"] == "uploaded.png"
+    assert prompt["load1"]["class_type"] == "LoadImage"

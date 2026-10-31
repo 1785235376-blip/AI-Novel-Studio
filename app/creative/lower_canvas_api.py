@@ -30,6 +30,7 @@ class LowerCanvasNode(BaseModel):
     y: float
     title: str = Field(default="", max_length=MAX_TITLE)
     params: dict[str, str | int | float | bool] | None = None
+    input_assets: dict[str, str] | None = None
 
     @field_validator("id", "t", "title")
     @classmethod
@@ -67,6 +68,21 @@ class LowerCanvasNode(BaseModel):
                 raise ValueError("widget values must be scalar")
         if total > 12000:
             raise ValueError("widget parameter payload too large")
+        return value
+
+
+    @field_validator("input_assets")
+    @classmethod
+    def _bounded_input_assets(cls, value):
+        if value is None:
+            return None
+        if len(value) > 8:
+            raise ValueError("too many input asset bindings")
+        for key, asset_id in value.items():
+            if not isinstance(key, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,80}", key):
+                raise ValueError("invalid input asset binding name")
+            if (not isinstance(asset_id, str) or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,240}", asset_id)):
+                raise ValueError("invalid input asset id")
         return value
 
 

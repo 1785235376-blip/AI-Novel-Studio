@@ -82,6 +82,25 @@ def test_lower_canvas_widget_params_roundtrip(service):
     assert "params" not in plain["graph"]["nodes"][0]
 
 
+def test_lower_canvas_input_asset_bindings_roundtrip_and_bounds(service):
+    nid, sc = "novel-lower", scope()
+    graph_with_binding = graph(nodes=[
+        {"id": "n1", "t": "LoadImage", "x": 0, "y": 0, "title": "load",
+         "input_assets": {"image": "asset-123"}},
+    ], edges=[])
+    saved = save_lower_canvas(service, nid, sc, "a", "image",
+        LowerCanvasSave.model_validate({"expected_version": 0, "graph": graph_with_binding}))
+    assert saved["graph"]["nodes"][0]["input_assets"] == {"image": "asset-123"}
+    assert read_lower_canvas(service, nid, sc, "image")["graph"]["nodes"][0]["input_assets"] == {"image": "asset-123"}
+
+    for bad in ({"k" * 81: "asset-1"}, {"image": "bad/id"},
+                {f"image{i}": f"asset-{i}" for i in range(1, 10)}):
+        body = {"expected_version": 0, "graph": {"nodes": [
+            {"id": "n1", "t": "LoadImage", "x": 0, "y": 0, "title": "load", "input_assets": bad}], "edges": []}}
+        with pytest.raises(ValidationError):
+            LowerCanvasSave.model_validate(body)
+
+
 @pytest.mark.parametrize("params", [
     {"nested": {"a": 1}},
     {f"k{i}": i for i in range(65)},

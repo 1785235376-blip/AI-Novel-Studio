@@ -1,6 +1,6 @@
 // [HERMIA-FE-20261031 DUALCANVAS-COMFY PARAMS] Widget metadata + bounded param restoration.
 import {describe, expect, it} from 'vitest';
-import {defaultWidgetParams, parseObjectInfo, sanitizeWidgetParams} from './comfyRegistry';
+import {defaultWidgetParams, isAssetWidget, parseObjectInfo, sanitizeInputAssets, sanitizeWidgetParams} from './comfyRegistry';
 
 const info = {
   ParamsNode: {
@@ -54,5 +54,21 @@ describe('comfyWidgetParams', () => {
   it('keeps a bounded primitive map for unknown nodes so older/removed definitions do not crash', () => {
     expect(sanitizeWidgetParams(undefined, {seed: 1, enabled: true, text: 'x', nested: {bad: true}, long: 'x'.repeat(600)}))
       .toEqual({seed: 1, enabled: true, text: 'x'});
+  });
+
+
+  it('recognises file-like combo widgets and keeps bounded Studio asset bindings', () => {
+    const defs = parseObjectInfo({
+      LoadImage: {input: {required: {image: [['server-a.png', 'server-b.png']]}}, output: ['IMAGE']},
+      SaveImage: {input: {required: {images: ['IMAGE'], filename_prefix: ['STRING']}}, output: [], output_node: true},
+    }, 'imported').defs;
+    const load = defs.find(d => d.name === 'LoadImage')!;
+    const save = defs.find(d => d.name === 'SaveImage')!;
+    expect(isAssetWidget(load.widgets[0])).toBe(true);
+    expect(isAssetWidget(save.widgets.find(w => w.name === 'filename_prefix')!)).toBe(false);
+    expect(sanitizeInputAssets(load, {image: 'asset-1', unknown: 'drop'})).toEqual({image: 'asset-1'});
+    expect(sanitizeInputAssets(load, {image: 3})).toBeUndefined();
+    expect(sanitizeInputAssets(load, {image: 'x'.repeat(300)})).toBeUndefined();
+    expect(sanitizeInputAssets(save, {filename_prefix: 'asset-1'})).toBeUndefined();
   });
 });

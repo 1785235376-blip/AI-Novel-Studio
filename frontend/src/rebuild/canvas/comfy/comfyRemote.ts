@@ -43,7 +43,23 @@ function normalizeGraph(raw: unknown): CfGraph | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const value = raw as {nodes?: unknown; edges?: unknown};
   if (!Array.isArray(value.nodes) || !Array.isArray(value.edges)) return null;
-  return {nodes: value.nodes as CfGraph['nodes'], edges: value.edges as CfGraph['edges']};
+  const nodes = value.nodes.map(rawNode => {
+    if (!rawNode || typeof rawNode !== 'object' || Array.isArray(rawNode)) return rawNode as CfGraph['nodes'][number];
+    const node = rawNode as Record<string, unknown>;
+    const {input_assets: inputAssetsSnake, inputAssets: inputAssetsCamel, ...rest} = node;
+    const inputAssets = inputAssetsSnake ?? inputAssetsCamel;
+    return (inputAssets && typeof inputAssets === 'object' && !Array.isArray(inputAssets)
+      ? {...rest, inputAssets} : node) as CfGraph['nodes'][number];
+  });
+  return {nodes: nodes as CfGraph['nodes'], edges: value.edges as CfGraph['edges']};
+}
+
+/** Wire shape keeps the backend lower-canvas contract (snake_case input_assets). */
+function wireGraph(graph: CfGraph): Record<string, unknown> {
+  return {nodes: graph.nodes.map(node => {
+    const {inputAssets, ...rest} = node;
+    return inputAssets ? {...rest, input_assets: inputAssets} : rest;
+  }), edges: graph.edges};
 }
 
 /** GET /api/projects/{id}/studio/lower-canvas/{kind}. Empty/unavailable → version 0. */
@@ -70,7 +86,7 @@ export async function saveRemoteComfyGraph(kind: 'image' | 'video', remote: Comf
   const f = fetchImpl();
   if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
   const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/lower-canvas/${kind}`,
-    {method: 'PUT', headers: headers(remote, true), body: JSON.stringify({expected_version: expectedVersion, graph})});
+    {method: 'PUT', headers: headers(remote, true), body: JSON.stringify({expected_version: expectedVersion, graph: wireGraph(graph)})});
   if (response.status === 409) {
     const value = await parseJson(response) as {detail?: {current_version?: unknown}; current_version?: unknown} | null;
     const current = Number(value?.detail?.current_version ?? value?.current_version);
@@ -146,4 +162,30 @@ export async function downloadAssetBlob(remote: ComfyRemoteContext, assetId: str
   if (!blob.size || blob.size > 64 * 1024 * 1024) throw new Error('COMFY_ASSET_SIZE_INVALID');
   if (!/^(?:image\/(?:png|jpeg|webp)|video\/(?:mp4|webm|quicktime))$/.test(blob.type)) throw new Error('COMFY_ASSET_MEDIA_INVALID');
   return blob;
+}
+
+
+/** Project assets available as file-like ComfyUI inputs (bounded list). */
+export async function listProjectAssets(remote: ComfyRemoteContext, kind: 'image' | 'video' = 'image',
+                                        signal?: AbortSignal): Promise<RunAsset[]> {
+  const f = fetchImpl();
+  if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
+  const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/assets?kind=${kind}&limit=100`,
+    {method: 'GET', headers: headers(remote), signal, cache: 'no-store'});
+  if (!response.ok) throw new Error('COMFY_ASSETS_LIST_' + response.status);
+  const value = await parseJson(response) as {items?: unknown} | null;
+  const rows = value && Array.isArray(value.items) ? value.items : [];
+  const assets: RunAsset[] = [];
+  for (const row of rows.slice(0, 100)) {
+    if (!row || typeof row !== 'object') continue;
+    const item = row as Record<string, unknown>;
+    if (typeof item.id !== 'string' || !/^[A-Za-z0-9_.:-]{1,240}$/.test(item.id)) continue;
+    const assetKind = item.kind === 'video' ? 'video' : item.kind === 'image' ? 'image' : null;
+    if (!assetKind) continue;
+    assets.push({id: item.id, kind: assetKind,
+      filename: typeof item.filename === 'string' ? item.filename.slice(0, 240) : undefined,
+      media_type: typeof item.media_type === 'string' ? item.media_type.slice(0, 80) : undefined,
+      version: typeof item.version === 'number' ? item.version : undefined});
+  }
+  return assets;
 }
