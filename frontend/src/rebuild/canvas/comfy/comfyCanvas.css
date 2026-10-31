@@ -1,0 +1,26 @@
+/* [HERMIA-FE-20261031 DUALCANVAS-COMFY] 颜色全走主题 token（浅色下不是黑画布）；端口色 = ComfyUI 类型色 */
+.cfy .cfy-node{cursor:move}
+.cfy .cfy-node .box{fill:var(--cv-node);stroke:var(--stg-line-strong);stroke-width:1;filter:drop-shadow(0 4px 10px var(--cv-shadow))}
+.cfy .cfy-node .hd{fill:var(--cv-chip-2,var(--cv-chip));opacity:.9}
+.cfy .cfy-node[data-sel="true"] .box{stroke:var(--color-accent-primary);stroke-width:2.2}
+.cfy .cfy-node text{font:12px system-ui,"PingFang SC","Microsoft YaHei",sans-serif;fill:var(--cv-ink);pointer-events:none}
+.cfy .cfy-node text.ttl{font-weight:600}
+.cfy .cfy-node text.pl{font-size:11px;fill:var(--cv-ink-2,var(--cv-ink))}
+.cfy .cfy-node text.sub{fill:var(--cv-ink-muted);font-size:10.5px}
+.cfy .cfy-port{cursor:crosshair}
+.cfy .cfy-port[data-compatible="false"]{opacity:.3}
+.cfy .cfy-port[data-compatible="true"] circle{stroke-width:3}
+.cfy-edge{fill:none;stroke-width:2.2}
+.cfy-edge--draft{stroke-dasharray:6 4}
+.cfy-add{position:absolute;left:10px;top:36px;z-index:4;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--stg-line-strong);background:var(--cv-chip);color:var(--cv-ink);cursor:pointer}
+.cfy-add:hover,.cfy-add:focus-visible{border-color:var(--color-accent-primary);outline:none}
+.cfy-menu{width:300px;max-height:360px}
+.cfy-menu .grp--h{display:flex;justify-content:space-between;font-weight:600;color:var(--cv-ink-2,var(--cv-ink));border-top:1px solid var(--stg-line);margin-top:4px;padding-top:6px}
+.cfy-menu button small{margin-left:auto;color:var(--cv-ink-muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+.cfy-insp{position:absolute;right:10px;top:36px;z-index:4;width:250px;max-height:calc(100% - 90px);overflow:auto;display:flex;flex-direction:column;gap:5px;padding:8px;font-size:12px;
+  background:var(--cv-node);color:var(--cv-ink);border:1px solid var(--stg-line-strong);border-radius:8px;box-shadow:0 8px 24px var(--cv-shadow)}
+.cfy-insp label{display:grid;grid-template-columns:10px 1fr;align-items:center;gap:2px 6px}
+.cfy-insp label i{width:8px;height:8px;border-radius:50%}
+.cfy-insp label small{color:var(--cv-ink-muted);font-size:10px}
+.cfy-insp select{grid-column:1/-1;font-size:11.5px;padding:3px;background:var(--cv-input);color:var(--cv-ink);border:1px solid var(--stg-line-strong);border-radius:4px}
+.cfy-insp__note{color:var(--cv-ink-muted);font-size:10.5px}
