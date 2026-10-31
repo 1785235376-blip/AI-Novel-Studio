@@ -42,3 +42,19 @@
 ## 5. 证据（本地）
 
 `D:\PoemSeed\Validation\v2-final-test-20261031\`：`backend-capability-group-newenv.log`、`backend-core-sweep-newenv.log`、`backend-baseline-quota.log`、`frontend-install.log`、`frontend-tests.log`、`frontend-build.log`、`frontend-baseline-*.log`。
+
+## 6. 后续修复（2026-10-31 同日）
+
+已修复前端在 Windows 上的主要阻塞（工作分支 `fix/frontend-nsfw-case-collision-20261031`）：
+
+- **大小写模块冲突**：把 `frontend/src/ui/nsfw/NsfwMode.tsx` 重命名为 `nsfwModeControls.tsx`，同步更新 `AppShell.tsx` 导入；`NsfwMode.test.tsx` / `nsfwMode.ts` 逻辑模块保持原路径。
+- **Vitest 部分 mock 丢失导出**：12 个 App 级测试对 `./ui/FeatureLauncher` 的 `vi.mock` 改为 `importOriginal` 展开后覆盖组件，保留 `FEATURE_GROUPS` 导出（280 个 "No FEATURE_GROUPS export" 失败消失）。
+- **扫描器 Windows 兼容**：`apiErrorWhitelist.test.ts` 的 Python 扫描改为 `PYTHON` 环境变量优先、Windows 回退 `python`（原先硬编码 `python3`，Windows 无此别名）。
+
+修复后复测（同一隔离前端环境）：
+
+- `pnpm build`：**PASS**（修复前 TS1149/TS1261 大小写错误、TS2305 NsfwController 缺失均消失）；
+- `pnpm exec vitest run src/ui/nsfw/NsfwMode.test.tsx src/ui/AppShell.test.tsx`：**47 passed**；
+- 全量 `pnpm test`：**43 failed files / 154 failed tests / 13,374 passed / 6 skipped**（修复前 96 failed files / 792 failed tests / 12,724 passed）；
+- 剩余失败为既有产品/测试漂移（IndependentStudio storyboard/handoff、ComicPublication、AuditGenerationScope、API 错误码审计清单等），与本次分支合并和大小写修复均无关；前端全量尚未全绿。
+

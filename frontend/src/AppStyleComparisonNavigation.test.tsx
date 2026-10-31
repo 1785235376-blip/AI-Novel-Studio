@@ -15,7 +15,7 @@ vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, inspector 
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open style comparison</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open style comparison</button> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate, chapter }: any) => {
   const client = useMemo(() => experimentalClient('story', { sessionToken: '' }), []);
   return <StyleAnalysisPanel client={client} chapter={chapter} onNavigate={onNavigate} />;

@@ -15,7 +15,7 @@ vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar }: any) => 
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <><button onClick={() => onSelect('story')}>Open Story</button><button onClick={() => onSelect('history')}>Leave Story</button></> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <><button onClick={() => onSelect('story')}>Open Story</button><button onClick={() => onSelect('history')}>Leave Story</button></> }));
 vi.mock('./novel/StoryDatabase', async original => ({ ...(await original<typeof import('./novel/StoryDatabase')>()), TimelineEditor: ({ onOpenChapter }: any) => <>
   <button onClick={() => onOpenChapter('story:~source', navigation.signal)}>Open exact Story source</button>
   <button onClick={() => navigation.abort()}>Cancel source navigation</button>

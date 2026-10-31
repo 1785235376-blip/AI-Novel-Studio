@@ -29,7 +29,7 @@ vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGene
 </> }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate, requestedTask, requestedTab }: any) => <>
   <output aria-label="Exact original target">{JSON.stringify({ requestedTask, requestedTab })}</output>
   <button onClick={() => onNavigate({ kind: 'feature', id: 'proposal-1', feature: 'advanced_planning_v2', task_authority: 'planning_proposal' })}>Open original proposal</button>

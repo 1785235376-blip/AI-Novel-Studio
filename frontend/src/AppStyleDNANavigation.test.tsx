@@ -14,7 +14,7 @@ vi.mock('./ui/ModuleWorkspaceRoutes', () => ({ ModuleWorkspaceRoutes: () => <p>D
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <><button onClick={() => onSelect('experimental')}>Open style tools</button><button onClick={() => onSelect('overview')}>Open overview</button></> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <><button onClick={() => onSelect('experimental')}>Open style tools</button><button onClick={() => onSelect('overview')}>Open overview</button></> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', async () => {
  const { ExperimentalWorkbench } = await import('./experimental/ExperimentalWorkbench');
  return { DeferredExperimentalWorkbench: (props: any) => <><button onClick={() => props.onNavigate({ kind: 'generation', id: 'author-two', chapter_id: 'recovery:2', version: 10 })}>Open guarded job</button><ExperimentalWorkbench {...props} requestedTab={props.requestedTab || 'style_dna_v2'} /></> };

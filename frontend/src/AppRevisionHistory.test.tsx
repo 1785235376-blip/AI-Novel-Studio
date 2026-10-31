@@ -17,7 +17,7 @@ vi.mock("./ui/AppShell", () => ({ AppShell: ({ main, status }: any) => <><main>{
 vi.mock("./novel/AiWritingPanel", () => ({ AiWritingPanel: () => null }));
 vi.mock("./novel/SourcePrivacyControl", () => ({ SourcePrivacyControl: () => null }));
 vi.mock("./novel/ChapterTree", () => ({ ChapterTree: () => null }));
-vi.mock("./ui/FeatureLauncher", () => ({ FeatureLauncher: () => null }));
+vi.mock("./ui/FeatureLauncher", async importOriginal => ({ ...(await importOriginal<typeof import("./ui/FeatureLauncher")>()),  FeatureLauncher: () => null }));
 
 function documentOf(text: string) { return { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text }] }] }; }
 function chapterOf(version = 2, id = "novel-a:1", content = "SAVED CURRENT"): Chapter {

@@ -11,7 +11,7 @@ vi.mock('./ui/AppShell',()=>({AppShell:({main,status,sidebar}:any)=><>{sidebar}<
 vi.mock('./novel/AiWritingPanel',()=>({AiWritingPanel:()=>null}));
 vi.mock('./novel/SourcePrivacyControl',()=>({SourcePrivacyControl:()=>null}));
 vi.mock('./novel/ChapterTree',()=>({ChapterTree:()=>null}));
-vi.mock('./ui/FeatureLauncher',()=>({FeatureLauncher:({onSelect}:any)=><button onClick={()=>onSelect('experimental')}>Open tasks</button>}));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()), FeatureLauncher:({onSelect}:any)=><button onClick={()=>onSelect('experimental')}>Open tasks</button>}));
 vi.mock('./novel/AdaptationPanel',()=>({AdaptationPanel:(props:any)=><output aria-label="Exact adaptation request">{JSON.stringify(props)}</output>}));
 vi.mock('./experimental/DeferredExperimentalWorkbench',()=>({DeferredExperimentalWorkbench:({onNavigate}:any)=><>
   <button onClick={()=>onNavigate({kind:'feature',feature:'adaptation_lifecycle_v1',task_authority:'adaptation',novel_id:'adapt-nav',id:'task',parent_id:'proposal',version:7,signal:controller.signal})}>Open original adaptation</button>

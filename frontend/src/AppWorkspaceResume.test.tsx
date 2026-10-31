@@ -42,7 +42,7 @@ vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => nul
 vi.mock('./novel/EntryExperience', () => ({ EntryExperience: ({ initialToken, localHome, onOpenLocalSample }: any) => initialToken ? <div>Authorized project picker</div> : <>{localHome}<button onClick={() => onOpenLocalSample?.('recovery')}>Open confirmed isolated sample</button></> }));
 vi.mock('./novel/NovelImportPanel', () => ({ NovelImportPanel: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
 vi.mock('./experimental/WritingFocusPanel', async original => ({ ...(await original<typeof import('./experimental/WritingFocusPanel')>()), WritingReferenceRail: () => <aside aria-label="Original authority reference rail" /> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ novelId, context, workspaceSection, ...props }: any) => {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.actor?.id]);

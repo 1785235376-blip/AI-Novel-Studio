@@ -30,7 +30,7 @@ import {
 } from "./taskSummary";
 import { OnboardingTour, useOnboarding } from "./onboarding/OnboardingTour";
 import { requestOnboarding } from "./onboarding/onboarding";
-import { NsfwBadge, NsfwConfirm, NsfwMenuItem, useNsfwController, type NsfwController } from "./nsfw/NsfwMode";
+import { NsfwBadge, NsfwConfirm, NsfwMenuItem, useNsfwController, type NsfwController } from "./nsfw/nsfwModeControls";
 
 export type { StudioModule };
 export type ProjectNoun = "小说" | "项目";
