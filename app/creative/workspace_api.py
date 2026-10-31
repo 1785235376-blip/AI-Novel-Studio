@@ -831,6 +831,10 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         from .graph_api import create_creative_graph_router
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
             model_host_authority=model_host_authority, usage_production=production_service))
+
+    # Lower canvas (ComfyUI-style draft) storage; read/write only, no execution.
+    from .lower_canvas_api import create_lower_canvas_router
+    router.include_router(create_lower_canvas_router(service, invoke))
     return router
 
 

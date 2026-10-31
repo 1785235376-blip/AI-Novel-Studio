@@ -66,3 +66,6 @@
 ### 补充：ComfyUI 节点映射校验（后端）
 新增只读端点 `GET /api/projects/{nid}/studio/graphs/comfyui-node-mapping`，按封闭配方表校验已配置 ComfyUI provider 是否具备现有 Studio `image_generate`/`image_upscale` 适配器所需节点类；返回 `COMPATIBLE`/`MISSING_CLASSES`，并给节点库节点附加 `studio_mappings`。不执行任意 ComfyUI 图（`NOT_IMPLEMENTED`）。
 
+### 新增：ComfyUI 下画布后端接口（object_info 代理 + 草稿持久化）
+合并 Grok 双画布/ComfyUI 节点库前端后，后端新增 `GET /api/comfy/object_info`（原始 object_info 透传 + 白名单 + source_version/fetched_at + 503 comfy_unavailable）与 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}`（项目 scope、乐观版本、400/409 边界）。执行 run 接口未实现：前端节点参数尚不可编辑，需补 params 后再实现真实 ComfyUI prompt/报价/状态/资产回写。见 `docs/delivery/COMFY_LOWER_CANVAS_BACKEND_20261031.md`。
+
