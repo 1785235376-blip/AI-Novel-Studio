@@ -7,7 +7,7 @@
 | file_asset_create | UNAVAILABLE | ADMISSION_GUARDED_VIA_ASSET_CREATE | AssetLibraryService.create 全部 16+ 调用方统一 admission |
 | studio_manual_import | UNAVAILABLE | ADMISSION_GUARDED | 路由 admission + `_capacity_admitted=True` |
 | audio_history_commit | UNAVAILABLE | ADMISSION_GUARDED（双 flag） | 仅 capture/migration/restore 记录与 blob |
-| project_scope_document | NOT_CONNECTED | NOT_CONNECTED | experimental_v1 scope 文档仍由原 owner，未接入统一账本 |
+| project_scope_document | MEASURED_ONLY | MEASURED_ONLY | experimental_v1 scope 文档已按 novel_id 归属计量；其写入仍未接 admission |
 | export_outputs | NOT_CONNECTED | NOT_CONNECTED | 导出产物保留原配额 |
 | temporary_media | NOT_ACCOUNTED | NOT_ACCOUNTED | FFmpeg/临时暂存由 storage admission 限制，不计项目账本 |
 | shared_query_index | NOT_ACCOUNTED | NOT_ACCOUNTED | 共享派生索引/游标非项目所有 |

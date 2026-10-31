@@ -858,14 +858,18 @@ class IndependentWorkspaceService:
         from ..project_capacity import CapacityLedgerUnavailable, CapacityRefused
         from ..project_capacity_attribution import measure_assets
         from ..project_capacity_measurement import measure_roots
+        from ..project_capacity_scope_docs import measure_scope_documents
         data_root = Path(self.store.root)
         measurement = measure_roots([("project", data_root / "novels" / nid)])
         assets = measure_assets(self.assets.root, nid)
+        scope_docs = measure_scope_documents(data_root, nid)
         unknown = (measurement["unknown_count"] + assets["unknown_count"]
                    + assets["counters"]["unreadable_entries"]
                    + assets["counters"]["missing_content"]
-                   + assets["counters"]["unattributed_files"])
-        measured = measurement["logical_bytes"] + assets["logical_bytes"]
+                   + assets["counters"]["unattributed_files"]
+                   + scope_docs["unknown_count"])
+        measured = (measurement["logical_bytes"] + assets["logical_bytes"]
+                    + scope_docs["bytes"])
         ledger = self._capacity_ledger()
         try:
             with self.store.owner_lease(nid) as incarnation:
@@ -880,7 +884,9 @@ class IndependentWorkspaceService:
         return {"contract": "project-capacity-reconcile/1", "snapshot": snapshot,
                 "measurement": {"project_logical_bytes": measurement["logical_bytes"],
                                 "assets_logical_bytes": assets["logical_bytes"],
+                                "scope_documents_bytes": scope_docs["bytes"],
                                 "unknown_objects": unknown},
+                "scope_documents": scope_docs,
                 "allocated_storage_bytes": "UNKNOWN", "admission": "UNAVAILABLE",
                 "write_gate": "PROJECT_CAPACITY_WRITE_UNAVAILABLE"}
 
@@ -1128,11 +1134,14 @@ class IndependentWorkspaceService:
         from ..project_capacity import CapacityLedgerUnavailable, DEFAULT_LIMIT_BYTES, ProjectCapacityLedger
         from ..project_capacity_attribution import measure_assets
         from ..project_capacity_measurement import measure_roots
+        from ..project_capacity_scope_docs import measure_scope_documents
         data_root = Path(self.store.root)
         measurement = measure_roots([("project", data_root / "novels" / nid)])
         assets = measure_assets(self.assets.root, nid)
-        combined_bytes = measurement["logical_bytes"] + assets["logical_bytes"]
-        combined_unknown = measurement["unknown_count"] + assets["unknown_count"]
+        scope_docs = measure_scope_documents(data_root, nid)
+        combined_bytes = measurement["logical_bytes"] + assets["logical_bytes"] + scope_docs["bytes"]
+        combined_unknown = (measurement["unknown_count"] + assets["unknown_count"]
+                            + scope_docs["unknown_count"])
         ledger_path = data_root / "runtime" / "project-capacity.json"
         ledger = None
         ledger_state = "NOT_INITIALIZED"
@@ -1144,6 +1153,7 @@ class IndependentWorkspaceService:
                 ledger_state = "UNAVAILABLE"
         return {"contract": "project-capacity-diagnostics/1", "project_id": nid,
                 "measurement": measurement, "assets_attribution": assets,
+                "scope_documents": scope_docs,
                 "combined": {"logical_bytes": combined_bytes, "unknown_count": combined_unknown,
                              "complete": measurement["complete"] and assets["complete"],
                              "allocated_storage_bytes": "UNKNOWN"},

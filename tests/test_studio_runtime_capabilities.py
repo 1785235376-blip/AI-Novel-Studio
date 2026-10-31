@@ -50,8 +50,8 @@ DEFAULT_PROJECT_CAPACITY = {
         {'entry': 'audio_history_commit', 'status': 'UNAVAILABLE',
          'gate': 'ENABLE_AUDIO_ASSET_HISTORY+ENABLE_PROJECT_CAPACITY_ADMISSION',
          'note': 'capture/migration/restore records and blobs only'},
-        {'entry': 'project_scope_document', 'status': 'NOT_CONNECTED', 'gate': None,
-         'note': 'experimental_v1 scope documents are measured by the original owner, not this ledger'},
+        {'entry': 'project_scope_document', 'status': 'MEASURED_ONLY', 'gate': None,
+         'note': 'experimental_v1 scope documents are measured/attributed, but their writes are not yet admitted'},
         {'entry': 'export_outputs', 'status': 'NOT_CONNECTED', 'gate': None,
          'note': 'document/media export jobs keep their original quota'},
         {'entry': 'temporary_media', 'status': 'NOT_ACCOUNTED', 'gate': None,
@@ -120,7 +120,7 @@ def test_extended_capabilities_reflect_flag_boundaries_without_writes(rig):
         assert entries['file_asset_create'] == 'ADMISSION_GUARDED_VIA_ASSET_CREATE'
         assert entries['studio_manual_import'] == 'ADMISSION_GUARDED'
         assert entries['audio_history_commit'] == 'ADMISSION_GUARDED'
-        assert entries['project_scope_document'] == 'NOT_CONNECTED'
+        assert entries['project_scope_document'] == 'MEASURED_ONLY'
         assert entries['temporary_media'] == 'NOT_ACCOUNTED'
         assert snapshot(rig.root) == before
     finally:

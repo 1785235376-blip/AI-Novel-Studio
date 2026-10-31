@@ -116,3 +116,7 @@
 
 `AssetLibraryService` 在模块导入时记录进程启动时间。音频历史写入的容量预留（双 flag）在读取账本 `reconciled_at` 时要求它**不早于本进程启动**，否则返回 `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`——重启后旧进程留下的“已对账”账本不能直接用于新的历史写入；必须先显式 reconcile（或由 admission 写入重新对账）。这对“启动后先对账再准许新增写入”的合同补上了历史写入这一路径；admission 路径本来每次写前 reconcile，天然满足。进程内 reconcile 之后的写入不受影响；系统时间回退按 fail-closed 处理。
 
+## 补充：项目 scope 文档计量归属（2026-10-31 续）
+
+`experimental_v1/<scope-key>.json` 是项目拥有的 canonical scope 文档，但不在 `novels/<nid>` 根内。新增 `app/project_capacity_scope_docs.py` 做**只读、有界**归属：扫描 experimental_v1、每个 ≤8 MiB、最多 20k 文件/20s，解析顶层 `novel_id`，仅归属等于当前项目的文件（同物理对象去重）；其他项目/损坏/超限/超时分别计数，超限/超时计入 UNKNOWN 并阻塞 reservation。该计量已接入 capacity diagnostics、显式 reconcile、`CapacityAdmission.measure`；写入 admission 仍不覆盖 scope 文档本身（`write_entries` 标为 `MEASURED_ONLY`）。测试 4 项；容量组回归 **94 passed**。
+

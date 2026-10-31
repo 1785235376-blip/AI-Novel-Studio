@@ -53,7 +53,7 @@
 - `file_asset_create`：`ADMISSION_GUARDED_VIA_ASSET_CREATE`（flag 开）/`UNAVAILABLE`（默认），覆盖 `AssetLibraryService.create` 全部 16+ 调用方；
 - `studio_manual_import`：`ADMISSION_GUARDED`/`UNAVAILABLE`；
 - `audio_history_commit`：双 flag 时 `ADMISSION_GUARDED`（仅记录/blob）；
-- `project_scope_document`、`export_outputs`：`NOT_CONNECTED`（仍由原 owner/配额管理）；
+- `project_scope_document`：`MEASURED_ONLY`（experimental_v1 文档已归属计量，写入仍未接 admission）；`export_outputs`：`NOT_CONNECTED`；
 - `temporary_media`、`shared_query_index`：`NOT_ACCOUNTED`；
 - `limit_adjustment`：`MANAGEMENT_ONLY`（lease+CAS+audit，不计量）。
 该矩阵只读、确定性、不写盘；默认 flag 关闭时所有 admission 项显示 `UNAVAILABLE`，避免把能力合同误读为已开启。

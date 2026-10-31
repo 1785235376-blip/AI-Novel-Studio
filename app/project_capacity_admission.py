@@ -29,6 +29,7 @@ from .project_capacity import (
 )
 from .project_capacity_attribution import measure_assets
 from .project_capacity_measurement import measure_roots
+from .project_capacity_scope_docs import measure_scope_documents
 
 METADATA_PEAK_BYTES = 1024 * 1024
 DEFAULT_TTL_SECONDS = 900
@@ -46,11 +47,12 @@ def _is_reparse(info: Any) -> bool:
     return bool(getattr(info, "st_file_attributes", 0) & _FILE_ATTRIBUTE_REPARSE_POINT) or stat.S_ISLNK(info.st_mode)
 
 
-def unproven_objects(measurement: dict, assets: dict) -> int:
+def unproven_objects(measurement: dict, assets: dict, scope_docs: dict | None = None) -> int:
     counters = assets["counters"]
     return (measurement["unknown_count"] + assets["unknown_count"]
             + counters["unreadable_entries"] + counters["missing_content"]
-            + counters["unattributed_files"])
+            + counters["unattributed_files"]
+            + (scope_docs["unknown_count"] if scope_docs is not None else 0))
 
 
 class CapacityAdmission:
@@ -76,9 +78,11 @@ class CapacityAdmission:
     def measure(self) -> dict:
         measurement = measure_roots([("project", self.project_root)])
         assets = measure_assets(self.assets_root, self.project_id)
-        unknown = unproven_objects(measurement, assets)
-        return {"measurement": measurement, "assets": assets, "unknown_objects": unknown,
-                "logical_bytes": measurement["logical_bytes"] + assets["logical_bytes"]}
+        scope_docs = measure_scope_documents(self.project_root.parent.parent, self.project_id)
+        unknown = unproven_objects(measurement, assets, scope_docs)
+        return {"measurement": measurement, "assets": assets, "scope_documents": scope_docs,
+                "unknown_objects": unknown,
+                "logical_bytes": measurement["logical_bytes"] + assets["logical_bytes"] + scope_docs["bytes"]}
 
     def _reconcile(self) -> dict:
         measured = self.measure()

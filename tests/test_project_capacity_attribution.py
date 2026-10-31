@@ -120,7 +120,9 @@ def test_capacity_diagnostics_combines_project_root_and_asset_attribution(audio_
     assert attribution["logical_bytes"] == expected_assets["logical_bytes"]
     assert attribution["complete"] is True
     assert result["combined"]["logical_bytes"] == (
-        result["measurement"]["logical_bytes"] + attribution["logical_bytes"])
+        result["measurement"]["logical_bytes"] + attribution["logical_bytes"]
+        + result["scope_documents"]["bytes"])
+    assert result["scope_documents"]["complete"] is True
     assert result["combined"]["unknown_count"] == 0
     assert result["combined"]["allocated_storage_bytes"] == "UNKNOWN"
     assert "other-secret-project" not in response.text

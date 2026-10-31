@@ -38,7 +38,8 @@ class AudioAssetHistoryCapability(StrictContract):
 class CapacityWriteCoverage(StrictContract):
     entry: str
     status: Literal["ADMISSION_GUARDED", "ADMISSION_GUARDED_VIA_ASSET_CREATE",
-                    "NOT_CONNECTED", "NOT_ACCOUNTED", "MANAGEMENT_ONLY", "UNAVAILABLE"]
+                    "MEASURED_ONLY", "NOT_CONNECTED", "NOT_ACCOUNTED",
+                    "MANAGEMENT_ONLY", "UNAVAILABLE"]
     gate: str | None = None
     note: str | None = None
 
@@ -56,8 +57,8 @@ def capacity_write_coverage(*, admission: bool, history: bool) -> tuple[Capacity
             status="ADMISSION_GUARDED" if (admission and history) else "UNAVAILABLE",
             gate="ENABLE_AUDIO_ASSET_HISTORY+ENABLE_PROJECT_CAPACITY_ADMISSION",
             note="capture/migration/restore records and blobs only"),
-        CapacityWriteCoverage(entry="project_scope_document", status="NOT_CONNECTED",
-            note="experimental_v1 scope documents are measured by the original owner, not this ledger"),
+        CapacityWriteCoverage(entry="project_scope_document", status="MEASURED_ONLY",
+            note="experimental_v1 scope documents are measured/attributed, but their writes are not yet admitted"),
         CapacityWriteCoverage(entry="export_outputs", status="NOT_CONNECTED",
             note="document/media export jobs keep their original quota"),
         CapacityWriteCoverage(entry="temporary_media", status="NOT_ACCOUNTED",
@@ -206,7 +207,7 @@ def build_capability_registry(*, settings) -> CapabilityRegistry:
             gate="ENABLE_PROJECT_CAPACITY_ADMISSION",
             evidence=("tests/test_project_capacity_ledger.py", "tests/test_project_capacity_create_coverage.py",
                       "tests/test_project_capacity_admission_manual_import.py"),
-            limits=("non_asset_project_writers:NOT_CONNECTED",
+            limits=("non_asset_project_writers:MEASURED_ONLY_PROJECT_SCOPE_DOCUMENTS",
                     "write_coverage:ADMISSION_GUARDED_ASSET_CREATE_ONLY",
                     "startup_reconcile_gate:IMPLEMENTED_FOR_HISTORY_WRITES_ONLY",
                     "approval_revocation_races:NOT_VERIFIED", "real_postgres:NOT_RUN")),
