@@ -2034,3 +2034,145 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - 观察项：RebuildCanvas「所选图片节点参数」在 en 下仍有中文；Prompt 工作台在 en 下是中文。
 - 门禁（adj = raw − ISI + 8，基线 297）：run1 295/10/293，run2 296/8/296，run3 293/8/293。最好一轮 293 ≤ 297，通过。run2 有 3 个非基线失败（director.additive、InteractiveStoryPanel.removal、TaskCenter receiptCompanion），单独重跑后均通过，判为 flaky。run1 与变异时段重叠，但 panel/defaultNodeTitle 用例在 run1 中没有失败，未受污染。
 - 证据：/workspace/hr/vera-compare/align-e14713dc/
+
+## [VERA-FE] 复审 e14713dc..a83df9ce（06de27e7、e0b4094a、26451eda、a83df9ce）
+
+**结论：PASS（有条件）**：未发现阻断问题。下面 P2 两项建议下一轮修。
+
+- 06de27e7：en 下显示 "New generated image" / "New generated video"。只翻译「新+NODE_TYPES 标签」；「风格」「生成图片」「新灯塔」这类用户标题原样显示。存储和请求体都没有经过翻译，仍是中文（沿用上轮拦截结论，本提交只改显示函数）。变异：让用户标题走 translateZh，或把 'generated image' 改回 'generate image'，相应用例都会变红。
+- e0b4094a：Playwright 运行时用语言开关切换（zh→en、en→zh），正式节点说明行和 SVG 节点标题都会即时重渲染。变异：渲染时改回 getLocale()，源码检查用例变红；但行为用例仍是绿的，因为组件仍调用 useLocale() 触发重渲染。也就是说只有源码检查能守住这一点。
+- 26451eda / a83df9ce：en 下右键菜单、端口、状态行、所选节点参数面板和 Prompt 工作台在 1024 和 1440 两个宽度下都没有汉字，没有检测到溢出，axe（wcag2a/aa）0 违规。zh 文案完整，没有退化。
+  - P2：`.rcv-label` 原样渲染调用方传入的 label（「图片画布」「视频画布」「创作画布」「执行画布」），所以 en 下画布左上角仍显示中文。
+  - P2：Prompt 接口返回 403 时，en 下错误提示仍是「当前会话无权访问此内容。请重新核对身份和分支。」。该文案来自 creative/client.ts 和 studioClient.ts，没有翻译。PromptWorkspace 的 denied EmptyState 这次没有通过 Playwright 走到。
+  - P3：IndependentStudioWorkspace:955 的 detail「私人预览已关闭。…」和 rough.734 文本不同，en 下仍会显示中文（代码检查结论）。
+  - P3：缩放「＋」按钮的 aria-label 在 en 下是 "Upscale"：「放大」和节点类型名撞车了，读屏软件会读错。
+  - P3：SVG 节点标题在 en 下被截成 "New generate…"，长英文读不全。
+- pat.rough 改名：全仓没有遗留的、带 {var} 却未加 pat. 前缀的 rough 键。20 条 pat.rough 用数字代入后，en 全部命中模板且无汉字；zh 原样不变。组件里的 zh 拼接结果和改动前一致。en 下数字按千分位格式化（例如 65,536），属于预期。
+- PromptWorkspace：在 e14713dc 和 a83df9ce 上，"edits the body without saving" 都失败，说明这个用例在改动前就已失败。loadingOwner 和 CanvasCandidateReview.independent 两个版本各单独跑 10 次，失败都是 0/10，也没有出现在门禁失败里，判断既不是回归也不是 flaky。
+- 门禁（adj = raw − ISI + 8，基线 297）：run1 293/8/293，run2 295/10/293，run3 294/9/293。最好一轮 293 ≤ 297，按规则 (a) 通过；三轮都没有非基线新增失败。门禁在全部变异结束后才启动，两者没有重叠。
+- 证据：/workspace/hr/vera-compare/align-a83df9ce/
+
+## [VERA-FE] 独立复审：a83df9ce..5632fe65（2026-10-31）
+
+**结论：通过。** a83 那轮的 P2/P3 问题全部修复，每项修复都已用变异测试证明能被测试抓到。新发现一个 P3（SVG `<title>` 和可见文字会被读屏读两遍），不阻塞合入。
+
+- **c5b24cf3 画布标签**：`.rcv-label` 改为渲染 `z(label)`，rough.926–928 补齐。
+  - en 显示 Image canvas，zh 仍为「图片画布」。
+  - 变异 M1（去掉 z()）：4 个用例变红。
+- **1b8e3da0 SDK 403 在显示层翻译**：
+  - 用路由拦截 /studio/prompts 返回 403 实测：en 下 Prompt 工作台内无中文；zh 下原句「当前会话无权访问此内容。请重新核对身份和分支。」不变。
+  - client.ts 和 studioClient.ts 在 a83..5632 之间 diff 为 0 行，原串仍在。
+  - 变异 M2（删 rough.929）：library 和 detail 两个用例变红。
+- **184036c9 第 955 行**：rough.935 加上 deniedEn 测试。变异 M3（删 rough.935）变红。浏览器里触发不到这个 denied 状态，以单测为证。
+- **faedcb77 缩放按钮**：
+  - en：aria-label 为 Zoom / Zoom out / Zoom in，Fit to view 是按钮文字，不再出现 Upscale。
+  - zh：缩放 / 缩小 / 放大 / 适配，不变。
+  - 变异 M4（改回 z('放大')）变红。
+  - 其余 4 个没改的组件只记作已知项。
+- **7645e7b6 SVG `<title>`**：
+  - hover 能看到完整标题。变异 M5（去掉 title）变红。
+  - textContent 的副作用：全仓 grep 出 41 个相关测试文件，3 轮门禁里全部通过。但 m3s1.test.tsx:82 的 `.ttl` `textContent.toContain(...)` 现在会被 title 满足，断言实际变弱了，建议改成只断言可见 tspan 或 title。
+  - axe：0 违规。
+  - **P3 读两遍**：Chrome 无障碍树里 text.ttl 的名称取自 title，子节点又有可见的 StaticText。zh 下标题没被截断，会读成「新生成图片 ◈ 新生成图片」。建议给可见部分加 aria-hidden，或者把 title 移到 g 上。
+- **5632fe65 getLocale 行为测试**：我自己做的变异 M6（渲染改回 getLocale()）让 getLocaleRevert 的 2 个用例变红，上一轮的缺口已补上。
+- **1024/1440 双语扫描**：画布和 Prompt 工作台在 en 下 0 个中文、0 溢出、axe 0。zh 无回归。运行时切换语言后，节点行和标题双向都正确。主导航里残留的中文是已知项。
+- **门禁**：3 轮的非基线新增都是 0。单独重复跑：PendingCanonReviewPanel 新旧版本都是 10/10；PluginResourceDetail.additive 新版本 10/10，旧版本 a83 9/10（1 次 writing_presets 断言失败，属于旧版本的偶发失败）。
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 295 | 10 | 293 | 0 |
+
+证据：/workspace/hr/vera-compare/align-5632fe65/（mut.txt, unit-green.txt, sdk-unchanged.txt, ttl-tests.txt, e4.json, ax.json, shots/e4-*, full1-3.json, iso-*.txt, PROGRESS.md）
+
+---
+
+## [VERA-FE] 独立复审：work/hermia-dualcanvas-comfy-20261031 63fec627..a14080c7（2026-10-31）
+
+**结论：通过（有条件）。** 无 P0/P1。下画布不发请求、不执行；标注诚实；类型检查和分隔条 a11y 都成立；门禁通过。遗留 1 个 P2（en 下双画布基本全是中文）和若干 P3，可以随后续提交修。
+
+证据：`/workspace/hr/vera-compare/comfy-a14080c7/`（e5.json / e6.json / mut.txt / registry-count.txt / hermia-browser.out / full{1,2,3}.json / shots/）。
+
+1. **模式门控**：通过。普通模式下 IMAGE 和 VIDEO 都检查过：下画布、分隔条、dual 页签、`[data-open-dual]`、comfy 画布全为 0。门控在 ImageRebuild 和 VideoRebuild 的 `view==='dual' && isPro`。专业模式下分隔条、最大化（×2）、互换（×2）都在，也都能用。
+2. **零非 GET**：通过。route 拦截下覆盖了以下操作，全部 0 个非 GET，也没有 pageerror：
+   - 加节点、合法连线和被拒连线
+   - 分隔条的键盘调整和鼠标拖动
+   - 互换、上下各自最大化和还原
+   - 「接入上画布」对话框打开再取消
+   - 范围：light/dark × IMAGE/VIDEO。
+3. **诚实标注**：通过。
+   - 徽标写「仅本机草稿 · 不会执行 · 未连接 ComfyUI」，title 说明后端没有执行/保存/代理接口。
+   - 节点上显示「N 个参数（草稿，不执行）」，节点内没有任何 input/select（参数确实不可编辑）。
+   - 双画布区里没有带「运行/执行/生成/Run/Queue」字样的按钮。
+   - 「接入上画布…」只对 PoemSeed 节点开放。选中 KSampler 时按钮禁用并有提示。对话框写明「复制一份，两边各改各的，不会联动」。
+4. **分隔条 a11y**：通过，另有 1 个 P2。
+   - 属性：role=separator、aria-orientation=horizontal、valuenow/min/max=60/20/80、valuetext、aria-controls（指向的 id 存在）、tabindex=0。
+   - 键盘：Tab 能到达。↓65、↑60、PgDn75、Home20、End80、Enter 复位到 60。
+   - 焦点可见：:focus-visible 时 outline 2px solid（亮主题 #0d6b74，暗主题 #4db8c4）。
+   - 键盘按下互换或最大化后，焦点留在原按钮上（aria-pressed=true），还原后仍是 BUTTON，没有掉到 BODY。
+   - axe（wcag2a/aa + best-practice）：双画布区 0 违规。打开添加节点菜单后有 **aria-required-children(critical) ×1 `.rcv-menu`**：role=menu 下直接放了搜索框和分组标题 div。**P2**：改成 role=dialog + listbox，或者把 input 移到 menu 外面。顺带一提，role=menu 也意味着要支持方向键导航，但现在没实现。
+5. **亮色无黑底**：通过。亮主题下下画布背景 rgb(238,240,242)，L=0.869；暗主题 rgb(13,15,19)，L=0.005。上下画布背景一致。截图在 shots/v/{light,dark}-*-dual-1440.png。Hermia 脚本测 1024/1440/1920 结果相同。
+6. **节点注册表**：通过，另有 1 个 P3。
+   - 数量：image 53、video 52，实际用到 11 类。`NODE_GROUPS` 定义 12 类，多出的 `other` 只给导入节点用。
+   - 反例：真实浏览器里从 LoadImage.IMAGE 拖到 VAEDecode.samples(LATENT)，被拒，边数为 0，状态显示「类型不匹配：IMAGE 不能接到 LATENT」。
+   - 整行命中：从输出行左端（离圆点约 90px）拖到输入行右端，EmptyLatentImage→VAEDecode 连上了，边数为 1。
+   - 变异 10 个，8 个变红：typesCompatible 恒真、去掉通配、去掉成环检查、Home 改成最大、withTopShare 忽略互换、去掉 aria-valuenow、互换无效、无身份也写 localStorage。
+   - **存活 2 个（P3，测试缺口）**：
+     - R4：删掉 `rect.hit` 整行命中区后单测全绿。jsdom 没有几何信息，这一层只有浏览器能验，而 Hermia 的脚本拖的是 bbox 中心，也覆盖不到。
+     - D1：把 `[data-feed-upper]` 的 `disabled={!feedable}` 改成 `!picked` 后全绿，说明「ComfyUI 节点不可接入上画布」没有测试锁住。
+   - 另外，注册表测试只断言 ≥40 个节点，没有锁定 53/52/11。
+7. **互换后尺寸跟画布走**：可以接受。拖到 72% 后互换，下画布移到上方，仍是 165px；上画布到下方，仍是 434px。valuenow 变成 28、valuetext 变成「上方 28%」，语义一致，title 也说明了只交换位置。分隔条的视觉位置会跳，属于预期行为，不判为问题。溢出：1024/1440 × zh/en × 普通/专业 × IMAGE/VIDEO 共 32 组，文档没有横向溢出，双画布区也没有元素超出视口。
+8. **Hermia 的 comfyDualCanvas.browser.mjs**：在我的端口 4651 上重跑，28 行，0 失败。注意这个脚本虽然 abort 了非 GET，但没有断言非 GET 计数为 0，第 2 项的零请求以我的 e5/e6 为准。
+9. **契约文档**：通过。标题写明「仅文档，未实现」，现状一节明确列出后端缺的 object_info 代理、保存、执行、状态，其余接口都标成「建议」。前端引用的 `parseObjectInfo` 和 `mergeImported` 确实存在。小提示：后端 model_center 内部已经在读 ComfyUI `/object_info`（discovery.py），可以写进文档供 KONG 复用。
+10. **门禁**：3 轮全部 adj 293 ≤ 297，非基线新失败为 0，不需要单独重跑。
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 294 | 9 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+**P2（i18n）**：en 下双画布区残留大量中文。DualStack 里的硬编码以及传给 ComfyCanvas 的 label/ariaLabel/emptyHint/badgeTitle 都没走 L()，例如：
+- 双画布、主线说明、收起下画布、接入上画布…、在下画布选一个节点…
+- 下画布 · 丰富创作（ComfyUI 风格节点）、下画布是空的也没关系…
+- 「接入上画布？」对话框
+- 分隔条的 aria-label 和 aria-valuetext「上方 60%」
+- 上下画布的 aria-label 等
+
+ComfyCanvas 内部自己的文案已经双语。另外，新节点的 `title` 固定按 zh-CN 存（`nodeLabel(d,'zh-CN')`），「已选：」后面显示的也是中文名。
+
+## [VERA-FE] 独立复审 hermia-dualcanvas-comfy a14080c7..d87d6389（2026-10-31，未提交）
+
+**结论：有条件通过。1 条 P2（菜单关闭后焦点没有回到触发按钮），若干 P3（变异存活）。上轮的 P2 aria-required-children、P2 en 汉字泄漏、P3 R4/D1 均已关闭。**
+
+- **efa61bd0 i18n**：在 en × light/dark × IMAGE/VIDEO 下加节点、选中、打开确认框，`.dstk` 和对话框的文本以及 aria-label/title/placeholder/aria-valuetext 中汉字为 0。显示为「Selected: Reference image」；分隔条为 "Resize canvases…" / "top 60%"；确认框为 "Send to main canvas?"。zh 文案与改前逐条一致，没有退化。
+  - 存储：新节点的 title 一律存中文注册名（例如 ["K 采样器","参考图"]），显示时再按 locale 翻译，用户改过的标题原样显示。存储与语言无关，设计合理。
+  - P3：上画布 VIDEO 的种子节点 "镜头 1 · 雾港码头" 在 en 下前缀没有翻译。来自种子数据，不在本区间。
+- **c605ab27 combobox/listbox**：四个视图（light/dark × IMAGE/VIDEO）下，Hermia 的浏览器断言 41 行 0 失败。我自己的 axe（wcag2a/aa + best-practice）在菜单和整个 .dstk 上，en/zh 共 8 种组合全部为 0。
+  - 打开菜单时焦点在 combobox。Home/End/↓ 时 aria-activedescendant 指向正确、aria-selected 同步。搜索 "vae" 后剩 7 项，active 重置到第一项。无匹配时选项为 0、activedescendant 被移除、role=status 播报，此时按 Enter 不做任何事。Esc 关闭菜单；Enter 添加节点。
+  - **P2：Esc 关闭或 Enter 添加后，焦点落到 body，没有回到「＋ 节点」触发按钮。** 8 种组合全部如此，见 e7.json 中的 esc.focusTrigger=false。
+  - 浏览器断言的变异：rect.hit 宽度改为 0 → H1 和 C2 变红；pointer-events:none → 变红；注入一个 POST → N1 变红。
+- **d87d6389**：D1 变异（feedable 改成 picked）已被 DualStack.feedable.test 杀死。节点数锁定为 53/52、11 个分类加 other 桶。核实 app/model_center/discovery.py:586 是 `stats = get('/system_stats'); info = get('/object_info')`，与文档一致。
+- **单测变异**：13 项，杀死 8 项，存活 5 项（P3）：
+  - E2：分隔条 aria-valuetext 硬编码中文。
+  - E6：分隔条 aria-label 硬编码中文。en 单测没有覆盖分隔条属性，浏览器扫描能抓到。
+  - E5：存储 title 改成随 locale 存。存储语义没有被锁定。
+  - K4：ArrowDown 不前进。单测和浏览器断言都杀不死，因为 ksampler 过滤后 ↓↓↑ 仍然停在第一项。
+  - K6：过滤时不重置 active。
+  - 详见 mut.txt 和 bmut.txt。
+- **复确认**：
+  - 普通模式只显示上画布，没有 lower/splitter/dual 入口。
+  - 亮色下画布亮度 0.869，不是黑底；暗色 0.005。
+  - 非 GET 请求为 0。
+  - 诚实标注仍在：「仅本机草稿 · 不会执行 · 未连接 ComfyUI」，参数显示「（草稿，不执行）」，没有运行类按钮。
+- **溢出**：zh/en × 1024/1440 × 普通/专业 × IMAGE/VIDEO，没有文档级溢出，也没有元素越界（e5.json）。
+- **门禁**（基线 raw 298 / ISI 8）：
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 296 | 10 | 294 | 1（TaskCenter.receiptCompanion，单独重跑 3/3 通过，负载抖动）|
+
+最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/comfy-d87d6389/

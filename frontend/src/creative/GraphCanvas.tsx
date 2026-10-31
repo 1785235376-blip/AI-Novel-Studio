@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { Hand, MousePointer2, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import { Badge, Button } from '../ui/primitives';
+import { useT } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3 zoom]
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphPosition, StudioGraphViewPreferences } from './studioGraphTypes';
 import {
@@ -79,6 +80,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
   onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onAssetDrop, onInsertionInteraction, protectedNodeIds = [],
   removalDefinitions = [], removalOwner, removalDisabled = false, isRemovalCurrent,
   connectionNodeIds = [], interactionKey, scopeLabel, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom]
   const blocked = readonly || busy;
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
@@ -453,9 +455,9 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         <Button type="button" variant="ghost" aria-label="选择节点" aria-pressed={tool === 'select'} disabled={busy} onClick={() => { cancelGesture(); setTool('select'); }}><MousePointer2 size={16} /></Button>
         <Button type="button" variant="ghost" aria-label="平移画布" aria-pressed={tool === 'pan'} disabled={blocked} onClick={() => { cancelGesture(); setTool('pan'); }}><Hand size={16} /></Button>
       </div>
-      <Button type="button" variant="ghost" aria-label="缩小节点图" disabled={blocked || visible.viewport.zoom <= GRAPH_MIN_ZOOM} onClick={() => zoomBy(1 / 1.2)}><ZoomOut size={16} /></Button>
-      <output aria-label="节点图缩放">{Math.round(visible.viewport.zoom * 100)}%</output>
-      <Button type="button" variant="ghost" aria-label="放大节点图" disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
+      <Button type="button" variant="ghost" aria-label={tk('zoom.graphOut')} disabled={blocked || visible.viewport.zoom <= GRAPH_MIN_ZOOM} onClick={() => zoomBy(1 / 1.2)}><ZoomOut size={16} /></Button>
+      <output aria-label={tk('zoom.graphLevel')}>{Math.round(visible.viewport.zoom * 100)}%</output>
+      <Button type="button" variant="ghost" aria-label={tk('zoom.graphIn')} disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
       {(() => {
         const budget = graphDisplayExecCounts(definition.nodes, removalDefinitions.length ? removalDefinitions : nodeDefinitions, renderedNodes.length);
         return <span className="graph-canvas__count" role="status" data-budget-split="true" data-display-nodes={budget.display} data-frame-nodes={budget.frame} data-executable-nodes={budget.executable}>

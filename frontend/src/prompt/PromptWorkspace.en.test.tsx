@@ -8,6 +8,7 @@ import { afterEach, beforeEach, expect, it } from 'vitest';
 import { setLocale } from '../i18n';
 import { PromptWorkspace } from './PromptWorkspace';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
+import { ApiError } from '../api';
 
 const raw = (name: string) => readFileSync(resolve(process.cwd(), 'src', 'prompt', '__fixtures__', name), 'utf-8');
 const fixture = (name: string): unknown => JSON.parse(raw(name)) as unknown;
@@ -71,5 +72,19 @@ it('read-only (not writable) family view is English', async () => {
   fireEvent.click((await screen.findAllByRole('button', { name: /IMAGE/ }))[0]);
   await waitFor(() => { if (!container.querySelector('textarea')) throw new Error('no editor'); });
   await act(async () => {});
+  expect(chinese(container)).toEqual([]);
+});
+// [HERMIA-FE-20261031 VERA-P2] 403 from the SDK (creative/client.ts, studioClient.ts message) is shown in English; code untouched.
+it.each(['library', 'detail'])('403 SDK denial (%s read) is English', async which => {
+  const base = transport();
+  const t: StudioGraphTransport = { async json<T>(url: string, method = 'GET'): Promise<T> {
+    if (which === 'library' ? url.endsWith('/prompts') : url.includes('/prompts/'))
+      throw new ApiError({ status: 403, code: 'FORBIDDEN', message: '当前会话无权访问此内容。请重新核对身份和分支。' });
+    return base.json<T>(url, method);
+  } };
+  const { container } = view(t);
+  if (which === 'detail') fireEvent.click((await screen.findAllByRole('button', { name: /IMAGE/ }))[0]);
+  await waitFor(() => expect(container.textContent).toMatch(/not authori[sz]ed|no access|cannot access/i));
+  expect(container.textContent).not.toContain('当前会话无权访问此内容');
   expect(chinese(container)).toEqual([]);
 });

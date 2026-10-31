@@ -79,7 +79,9 @@ describe('M3-s1 dual canvas ↔ inspector', () => {
     fireEvent.click(within(insp()).getByRole('button', {name: '保存'}));
     await waitFor(() => expect(screen.getByTestId('uw-node-msg').textContent).toBe('已保存到本机草稿（未同步服务端）'));
     expect(JSON.parse(localStorage.getItem(canvasStorageKey('image', 'n1'))!).nodes.find((n: CvNode) => n.id === 'c1').title).toBe('雾港封面·夜');
-    await waitFor(() => expect(document.querySelector('[data-node-id=c1] .ttl')!.textContent).toContain('雾港封面·夜'));
+    // [HERMIA-FE-20261031 VERA-P3 r2] visible text only — a <title> child must not satisfy this.
+    const visibleTtl = () => { const el = document.querySelector('[data-node-id=c1] .ttl')!.cloneNode(true) as Element; el.querySelectorAll('title').forEach(t => t.remove()); return el.textContent; };
+    await waitFor(() => expect(visibleTtl()).toContain('雾港封面·夜'));
     expect(insp().dataset.nodeId).toBe('c1');
     expect(localStorage.getItem(canvasStorageKey('video', 'n1'))).toBe(vidRaw);
     expect(badCalls(before)).toEqual([]);

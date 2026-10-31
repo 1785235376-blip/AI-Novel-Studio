@@ -7,7 +7,7 @@ import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNod
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
-import {useLocale, useTz} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
+import {useLocale, useT, useTz} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 import {displayNodeTitle} from '../../i18n/defaultNodeTitle';
 
 export type CanvasKind = 'image' | 'video';
@@ -69,6 +69,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
   storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
   onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
   const locale = useLocale(); // [HERMIA-FE-20261031 VERA-EN]
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom] keyed: 「放大」 must not resolve to Upscale
   const z = useTz();
   const key = storageKey ?? canvasStorageKey(kind, scope);
   const palette = typesProp ?? NODE_TYPES[kind];
@@ -203,7 +204,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
   return (
     <div data-rcv-wrap="" style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto', alignSelf: 'stretch', flex: '1 1 auto', width: '100%', minWidth: 0}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
-      {label ? <span className="rcv-label">{label}</span> : null}
+      {label ? <span className="rcv-label">{z(label)}</span> : null}
       <span className="rcv-local" title={z(badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢')}>{z(badge ?? '仅本机草稿 · 未同步服务端')}</span>
       <svg ref={svgRef} className="rcv-svg" role="application" aria-label={z(ariaLabel ?? (kind === 'image' ? '图片无限画布' : '视频无限画布'))} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel}
@@ -214,7 +215,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
           {g.nodes.map(n => { const ty = typeOf(kind, n.t); const c = ty?.color || '#888';
             return <g key={n.id} className="rcv-node" data-node-id={n.id} data-sel={sel === n.id} transform={`translate(${n.x},${n.y})`}>
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
-              <text className="ttl" x={16} y={24}>{ty?.icon} {(tl => tl.length > 12 ? tl.slice(0, 12) + '…' : tl)(displayNodeTitle(locale, n.title))}</text>
+              <text className="ttl" x={16} y={24}>{(tl => tl.length > 12 ? <><title>{tl}</title>{ty?.icon} {tl.slice(0, 12) + '…'}</> : <>{ty?.icon} {tl}</>)(displayNodeTitle(locale, n.title))}</text>{/* [HERMIA-FE-20261031 VERA-P3] full title */}
               <text className="sub" x={16} y={44}>{ty?.label ? z(ty.label) : n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">{z('本地')}</text>
               {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>{z('输入端口')}</title></circle> : null}
               {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>{z('输出端口（拖动连线）')}</title></circle> : null}
@@ -222,9 +223,9 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
         </g>
       </svg>
       {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{z(emptyHint)}<br /></> : null}{z('在空白处右键添加节点 · 滚轮缩放 · 拖动空白平移')}</p> : null}
-      <div className="rcv-zoom" aria-label={z('缩放')}>
-        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label={z('缩小')}>−</button><span>{Math.round(vp.k * 100)}%</span>
-        <button type="button" onClick={() => zoom(1.2)} aria-label={z('放大')}>＋</button><button type="button" onClick={fit}>{z('适配')}</button>
+      <div className="rcv-zoom" aria-label={tk('zoom.group')}>
+        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label={tk('zoom.out')}>−</button><span>{Math.round(vp.k * 100)}%</span>
+        <button type="button" onClick={() => zoom(1.2)} aria-label={tk('zoom.in')}>＋</button><button type="button" onClick={fit}>{tk('zoom.fit')}</button>
       </div>
       <div className="rcv-status">{z('节点')} {g.nodes.length} · {z('连线')} {g.edges.length} · {z('只改图结构，不触发生成')}</div>
       {menu ? <div className="rcv-menu" role="menu" data-add-node-menu="rebuild" style={{left: menu.cx, top: menu.cy}} onPointerDown={e => e.stopPropagation()}>
