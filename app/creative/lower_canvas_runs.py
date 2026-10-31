@@ -469,8 +469,14 @@ def _default_asset_writer(service, nid: str, scope: dict, actor: str):
             raise LowerCanvasRunError("LOWER_CANVAS_ASSET_OWNER_MISSING", status=503)
         from ..media_files import inspect_image
         measured = inspect_image(image["content"])
-        row = service.assets.create(nid, image["filename"], base64.b64encode(image["content"]).decode("ascii"),
-            measured["media_type"], "image", branch_id=scope.get("branch_id"), owner_actor_id=actor)
+        # Project/branch-scoped generated result. Do not set an owner-only marker:
+        # the regular project asset/detail/download routes are actor-agnostic.
+        # The writer must run inside the workspace asset scope so the recorded
+        # _project_binding matches the project route's active binding.
+        scope_context = service._asset_scope(nid, scope) if hasattr(service, "_asset_scope") else nullcontext()
+        with scope_context:
+            row = service.assets.create(nid, image["filename"], base64.b64encode(image["content"]).decode("ascii"),
+                measured["media_type"], "image", branch_id=scope.get("branch_id"))
         return {"id": row["id"], "version": row.get("version", 1),
                 "filename": row.get("filename", image["filename"]),
                 "media_type": row.get("media_type", measured["media_type"]),

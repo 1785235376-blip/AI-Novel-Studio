@@ -21,7 +21,7 @@ describe('comfyRemote', () => {
         category: 'custom', display_name: 'Custom X'},
     }, {headers: {'x-comfy-source-version': 'abcd1234'}}));
     vi.stubGlobal('fetch', fetchMock);
-    const result = await fetchImportedObjectInfo();
+    const result = await fetchImportedObjectInfo({projectId: 'novel-a', token: 'session-a'});
     expect(fetchMock).toHaveBeenCalledWith('/api/comfy/object_info', expect.objectContaining({method: 'GET', cache: 'no-store'}));
     expect(result?.sourceVersion).toBe('abcd1234');
     expect(result?.defs.find(d => d.name === 'CustomNodeX')).toMatchObject({source: 'imported', outputs: [{type: 'IMAGE'}]});
@@ -29,7 +29,7 @@ describe('comfyRemote', () => {
 
   it('keeps the built-in registry when the ComfyUI provider is unavailable', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => fakeResponse({detail: {code: 'comfy_unavailable'}}, {status: 503})));
-    expect(await fetchImportedObjectInfo()).toBeNull();
+    expect(await fetchImportedObjectInfo({projectId: 'novel-a', token: 'session-a'})).toBeNull();
   });
 
   it('loads a project lower canvas with branch/session headers', async () => {

@@ -92,3 +92,14 @@
 - 运行结果只读/显式采用，不自动接入上画布；上画布仍是本地草稿结构，未执行。
 - 测试：`ComfyCanvas.run.test.tsx` 覆盖下载缩略图、点击接入、上画布节点 asset 字段。
 
+## 7. HTTP 级集成验收（loopback fake ComfyUI，本批新增）
+
+- `tests/test_comfyui_lower_canvas_http_e2e.py` 启动 127.0.0.1 假 ComfyUI HTTP server，走真实 mounted app/TestClient：
+  - `/api/comfy/object_info`（需可信会话）→ PUT 下画布草稿 → preflight → run dispatch → GET run → 下载 asset；
+  - 真实配置 provider transport、真实 `/prompt` `/history` `/view`、真实资产写入/读取；
+  - 修复 middleare 准入：lower-canvas GET/PUT/POST runs、`/api/comfy/object_info`、`/studio/assets` 列表加入 allowlist；
+  - 修复 run 资产必须在 workspace asset scope 内创建（带 `_project_binding`），普通项目 asset 路由才能读到；
+  - 修复全局 object_info 导入携带 session/branch headers。
+- 结果：HTTP E2E 1 passed；与 preflight/dispatch/lower-canvas/registry 合并组 37 passed。
+- 仍非真实 ComfyUI 模型：fake server 只返回固定 PNG；真实 provider/GPU 执行 NOT_RUN。
+

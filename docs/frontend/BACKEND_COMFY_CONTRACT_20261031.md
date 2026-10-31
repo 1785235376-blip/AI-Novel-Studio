@@ -39,7 +39,7 @@
 3. `POST .../lower-canvas/{kind}/runs` 与 `GET .../runs/{run_id}`：Convert to ComfyUI prompt、报价确认、执行状态、产物写资产库。阻塞点：前端节点参数尚不可编辑，CfGraph 没有 widget 值；需要前端补 params 后再实现真实执行与费用合同。当前后端不提供任何虚假执行/价格/状态接口。
 4. 节点参数编辑（本批新增）：下画布选中节点后可编辑 INT/FLOAT/STRING/BOOLEAN/COMBO widget，值写入 `CfNode.params` 并随草稿持久化/同步；后端接受有界 params；仍未执行任何节点。
 5. 前端 wiring 已接入（上一批）：
-   - 真实账号/作品身份（`resolveWorkspaceIdentity().kind === 'real'`）时，`DualStack` 拉取 `GET /api/comfy/object_info`，用 `parseObjectInfo` + `mergeImported` 合并到节点库；503 时保留内置节点库；
+   - 真实账号/作品身份（`resolveWorkspaceIdentity().kind === 'real'`）时，`DualStack` 携带 `X-Session-Token`/`X-Branch-Id` 拉取 `GET /api/comfy/object_info`，用 `parseObjectInfo` + `mergeImported` 合并到节点库；503 时保留内置节点库；
    - 下画布草稿通过 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}` 同步，携带 `X-Session-Token` / `X-Branch-Id`，使用 `expected_version` CAS；
    - 无身份仍保持 session-only（内存），不发任何请求；本地 localStorage 仍保留离线缓存；
    - 云端冲突/不可用时保留本机草稿并在状态栏标注，不覆盖；

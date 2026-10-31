@@ -87,3 +87,6 @@
 ### ComfyUI 下画布：结果缩略图 + 接入上画布
 运行完成后按资产下载接口读取有界缩略图；用户可点「接入上画布」，在上画布创建带 assetId/SHA/version 的 image_reference 快照节点（不建立实时 ComfyUI 链接、不自动执行）。测试覆盖预览与接入字段。
 
+### ComfyUI 下画布：loopback HTTP 端到端验收
+新增 mounted app + 127.0.0.1 fake ComfyUI HTTP server 集成测试：object_info→草稿→preflight→run dispatch→asset download 全链路通过。同步修复 middleare 准入（lower-canvas/runs、object_info、assets 列表）、run 资产 project binding、前端 object_info 携带 session/branch headers。测试合并组 37 passed；真实 ComfyUI/GPU 仍 NOT_RUN。
+

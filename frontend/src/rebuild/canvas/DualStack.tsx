@@ -48,7 +48,7 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
   useEffect(() => {
     if (!remote) return;
     const ac = new AbortController(); let alive = true;
-    fetchImportedObjectInfo(ac.signal).then(imported => {
+    fetchImportedObjectInfo(remote, ac.signal).then(imported => {
       if (alive && imported?.defs.length) setRegistry(prev => mergeImported(prev, imported.defs));
     }).catch(() => { /* keep the built-in registry */ });
     return () => { alive = false; ac.abort(); };
