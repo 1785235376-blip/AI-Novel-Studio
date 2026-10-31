@@ -6,7 +6,8 @@ import {useLocale} from '../../../i18n';
 import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, defaultWidgetParams, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible, widgetDefault,
   type CfGraph, type CfNode, type NodeDef, type Registry, type WidgetDef, type WidgetPrimitive} from './comfyRegistry';
 import {sessionCanvasStore} from '../RebuildCanvas';
-import {loadRemoteComfyGraph, saveRemoteComfyGraph, type ComfyRemoteContext} from './comfyRemote';
+import {dispatchLowerCanvasRun, fetchLowerCanvasRun, loadRemoteComfyGraph, preflightLowerCanvasRun, saveRemoteComfyGraph,
+  type ComfyRemoteContext, type LowerCanvasRun, type RunQuote} from './comfyRemote';
 
 /** 无身份时下画布的会话内存（类型化，不混入主画布 CvGraph）；随 sessionCanvasStore.clear() 一起清空。 */
 const COMFY_SESSION = new Map<string, unknown>();
@@ -38,6 +39,10 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const [remoteState, setRemoteState] = useState<'off' | 'loading' | 'ready' | 'unavailable' | 'conflict'>(remote ? 'loading' : 'off');
   const [remoteNote, setRemoteNote] = useState('');
   const remoteVersion = useRef(0);
+  const [runPhase, setRunPhase] = useState<'idle' | 'saving' | 'quoted' | 'running' | 'done' | 'error'>('idle');
+  const [runQuote, setRunQuote] = useState<RunQuote | null>(null);
+  const [runResult, setRunResult] = useState<LowerCanvasRun | null>(null);
+  const [runMessage, setRunMessage] = useState('');
   const skipRemoteSave = useRef(true);
   const graphRef = useRef(g);
   const [sel, setSel] = useState<string | null>(null);
@@ -156,6 +161,50 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     if (widget.max != null && value > widget.max) return;
     setWidgetParam(widget.name, value);
   };
+
+  // [HERMIA-FE-20261031 DUALCANVAS-COMFY RUN] Quote → explicit confirmation → local ComfyUI run.
+  // No automatic retry, no cloud provider, and no execution when the draft is not saved/ready.
+  const beginRun = async () => {
+    if (!remote || runPhase === 'saving' || runPhase === 'running') return;
+    setRunPhase('saving'); setRunMessage(L('正在保存草稿…', 'Saving draft…'));
+    setRunQuote(null); setRunResult(null);
+    try {
+      const saved = await saveRemoteComfyGraph(kind, remote, remoteVersion.current, graphRef.current);
+      if (!saved.ok) {
+        setRunPhase('error');
+        setRunMessage(L(`草稿版本冲突（当前 v${saved.currentVersion}），请刷新后再运行。`,
+          `Draft version conflict (current v${saved.currentVersion}); refresh before running.`));
+        return;
+      }
+      remoteVersion.current = saved.version;
+      const quote = await preflightLowerCanvasRun(remote, kind, saved.version);
+      setRunQuote(quote); setRunPhase('quoted'); setRunMessage('');
+    } catch {
+      setRunPhase('error');
+      setRunMessage(L('无法预检运行：本地 ComfyUI/provider 不可用，或草稿不合法。',
+        'Run preflight failed: local ComfyUI/provider unavailable or draft invalid.'));
+    }
+  };
+  const confirmRun = async () => {
+    if (!remote || !runQuote) return;
+    setRunPhase('running'); setRunMessage(L('本地 ComfyUI 正在执行…', 'Running on local ComfyUI…'));
+    try {
+      let result = await dispatchLowerCanvasRun(remote, kind, runQuote);
+      for (let attempt = 0; attempt < 60 && result.status === 'RUNNING'; attempt += 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        result = await fetchLowerCanvasRun(remote, kind, result.id);
+      }
+      setRunResult(result);
+      setRunPhase(result.status === 'COMPLETED' ? 'done' : 'error');
+      setRunMessage(result.status === 'COMPLETED'
+        ? L(`运行完成，写入 ${result.assets.length} 个资产`, `Run completed; ${result.assets.length} assets written`)
+        : L(`运行失败：${result.error?.code ?? 'UNKNOWN'}`, `Run failed: ${result.error?.code ?? 'UNKNOWN'}`));
+    } catch {
+      setRunPhase('error');
+      setRunMessage(L('运行请求失败，未自动重试。', 'Run request failed; no automatic retry.'));
+    }
+  };
+  const closeRun = () => { setRunPhase('idle'); setRunQuote(null); setRunResult(null); setRunMessage(''); };
 
   const onDown = (e: RPE) => {
     const el = e.target as Element;
@@ -321,6 +370,32 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
           })}
           <small className="cfy-insp__note">{L('只列出类型匹配的输出', 'Only type-compatible outputs are listed')}</small>
         </div>) : null}
+      {remote ? <div className="cfy-runbar">
+        <button type="button" className="nv-btn cfy-runbtn" data-comfy-run
+          disabled={remoteState !== 'ready' || runPhase === 'saving' || runPhase === 'running'}
+          title={L('仅本地 ComfyUI，需确认报价', 'Local ComfyUI only; quote confirmation required')}
+          onClick={beginRun}>{L('运行…', 'Run…')}</button>
+        {runMessage ? <span className="cfy-runmsg" role="status" data-comfy-run-status>{runMessage}</span> : null}
+      </div> : null}
+      {runPhase === 'quoted' && runQuote ? <div className="cfy-runpanel" data-comfy-run-quote role="dialog"
+        aria-label={L('运行报价', 'Run quote')}>
+        <b>{L('运行报价', 'Run quote')}</b>
+        <p>{L(`本地 ComfyUI · ${runQuote.node_count} 节点 · ${runQuote.edge_count} 连线`,
+          `Local ComfyUI · ${runQuote.node_count} nodes · ${runQuote.edge_count} links`)}</p>
+        <p>{L(`费用：0 ${runQuote.price.currency}（本地） · 请在 5 分钟内确认`,
+          `Price: 0 ${runQuote.price.currency} (local) · confirm within 5 minutes`)}</p>
+        <div className="cfy-runpanel__actions">
+          <button type="button" data-run-confirm onClick={confirmRun}>{L('确认运行', 'Confirm run')}</button>
+          <button type="button" data-run-cancel onClick={closeRun}>{L('取消', 'Cancel')}</button>
+        </div>
+      </div> : null}
+      {(runPhase === 'done' || runPhase === 'error') ? <div className="cfy-runpanel" data-comfy-run-result
+        data-run-status={runResult?.status ?? 'ERROR'} role="status">
+        <b>{runPhase === 'done' ? L('运行完成', 'Run completed') : L('运行未完成', 'Run not completed')}</b>
+        <p>{runMessage}</p>
+        {runResult?.assets.length ? <p data-run-assets>{runResult.assets.map(a => a.id).slice(0, 8).join(', ')}</p> : null}
+        <div className="cfy-runpanel__actions"><button type="button" onClick={closeRun}>{L('关闭', 'Close')}</button></div>
+      </div> : null}
       <div className="rcv-zoom"><button type="button" aria-label={L('缩小画布', 'Zoom out')} onClick={() => zoom(1 / 1.15)}>－</button><span>{Math.round(vp.k * 100)}%</span>
         <button type="button" aria-label={L('放大画布', 'Zoom in')} onClick={() => zoom(1.15)}>＋</button></div>
       <div className="rcv-status" role="status" data-comfy-status data-comfy-remote={remoteState}>{msg || remoteNote || L(`节点 ${g.nodes.length} · 连线 ${g.edges.length} · 不会执行`, `${g.nodes.length} nodes · ${g.edges.length} links · never runs`)}</div>

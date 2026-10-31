@@ -37,3 +37,15 @@
 .cfy-menu .cfy-opt.is-active{outline:1px solid var(--stg-line-strong)}
 .cfy-menu .cfy-opt i{width:8px;height:8px;border-radius:2px;flex:none}
 .cfy-menu .cfy-opt small{margin-left:auto;color:var(--cv-ink-muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+
+/* [HERMIA-FE-20261031 DUALCANVAS-COMFY RUN] Quote/confirm/result surfaces. */
+.cfy-runbar{position:absolute;left:10px;bottom:42px;z-index:5;display:flex;align-items:center;gap:6px;max-width:calc(100% - 20px)}
+.cfy-runbtn{font-size:11.5px;padding:3px 10px}
+.cfy-runbtn:disabled{opacity:.55;cursor:not-allowed}
+.cfy-runmsg{font-size:10.5px;color:var(--cv-ink-muted);background:var(--cv-chip-2);border:1px solid var(--stg-line);border-radius:6px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cfy-runpanel{position:absolute;right:10px;bottom:42px;z-index:6;width:280px;display:flex;flex-direction:column;gap:4px;padding:9px;font-size:12px;background:var(--cv-node);color:var(--cv-ink);border:1px solid var(--stg-line-strong);border-radius:8px;box-shadow:0 8px 24px var(--cv-shadow)}
+.cfy-runpanel p{margin:0;color:var(--cv-ink-muted);font-size:11px;line-height:1.45}
+.cfy-runpanel [data-run-assets]{word-break:break-all;color:var(--cv-ink-2)}
+.cfy-runpanel__actions{display:flex;gap:6px;margin-top:2px}
+.cfy-runpanel__actions button{font-size:11.5px;padding:3px 10px;border-radius:5px;border:1px solid var(--stg-line-strong);background:var(--cv-input);color:var(--cv-ink);cursor:pointer}
+.cfy-runpanel__actions button:hover{background:var(--cv-hover)}

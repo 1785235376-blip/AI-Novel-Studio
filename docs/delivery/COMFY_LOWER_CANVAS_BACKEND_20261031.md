@@ -76,3 +76,12 @@
 
 测试：`tests/test_lower_canvas_runs_dispatch.py` 4 passed（成功/资产、失败无伪资产、stale quote、路由注册）；合并 run/preflight/lower-canvas/registry 组 36 passed。
 
+## 5. 前端执行/确认 UI（本批新增）
+
+- 下画布底部新增「运行…」按钮；仅真实身份且云端草稿 ready 时可用；
+- 点击后先 flush 当前草稿 `PUT lower-canvas`，再 `POST .../runs/preflight`；
+- 报价面板显示本地 ComfyUI、节点/连线数、0 标价、5 分钟确认窗口；必须点「确认运行」才 `POST .../runs`；
+- 完成/失败面板显示 bounded error 或 asset ids；不自动重试；
+- 草稿保存冲突/云端不可用时按钮禁用或提示，不伪造运行结果。
+- 测试：`ComfyCanvas.run.test.tsx` 2 passed（报价确认、dispatch body、assets、ready gate）。
+
