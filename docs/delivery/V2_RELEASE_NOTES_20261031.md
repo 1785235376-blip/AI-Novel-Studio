@@ -54,3 +54,6 @@
 ### 能力补充：容量写入覆盖矩阵（machine-readable）
 `studio-runtime-capabilities/1` 的 `project_capacity.write_entries` 新增逐入口覆盖状态：asset create（全部调用方）/手工导入/音频历史写入的 admission 状态随 flag 变化；项目 scope 文档、导出输出标记 `NOT_CONNECTED`；临时媒体、共享查询索引标记 `NOT_ACCOUNTED`；调额标记 `MANAGEMENT_ONLY`。runtime capability 测试扩展为默认/flag 开两组断言，18 passed；registry 容量 limits 增加 `write_coverage:ADMISSION_GUARDED_ASSET_CREATE_ONLY`。
 
+### 能力补充：项目 scope 文档容量归属（MEASURED_ONLY）
+新增 `project_capacity_scope_docs.py`：对 `experimental_v1/*.json` 做有界、只读 `novel_id` 归属计量，接入 capacity diagnostics/reconcile/admission 基线；其他项目、损坏、超限（>8 MiB）或超时分别计数，超限/超时计 UNKNOWN 并阻塞新 reservation。容量写入覆盖矩阵将 `project_scope_document` 从 `NOT_CONNECTED` 提升为 `MEASURED_ONLY`（写入仍未接 admission）。测试 4 项；容量组回归 94 passed。
+
