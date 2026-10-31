@@ -1527,5 +1527,7 @@ export const zhCN = {
   'rough.943': '新手模式', // [HERMIA-FE-20261031 VERA-EN]
   'rough.944': '专业模式', // [HERMIA-FE-20261031 VERA-EN]
   'rough.945': '新手模式与专业模式共用同一份项目、素材、任务与图谱数据；切换只改变界面呈现，不会转换、复制或删除任何内容。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.946': '资产检查面板', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.947': '公开版本不提供此功能', // [HERMIA-FE-20261031 VERA-EN]
 } as const;
 export type MessageKey = keyof typeof zhCN;

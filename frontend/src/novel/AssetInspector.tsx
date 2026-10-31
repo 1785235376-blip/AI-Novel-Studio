@@ -2,7 +2,7 @@ import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared for
 import { useEffect, useState, type ReactNode } from "react";
 import { Download, File, Image, Music2, Video } from "lucide-react";
 import { ApiError, api, apiErrorView, type Asset } from "../api";
-import { t as i18nT } from "../i18n"; // [HERMIA-FE-20261025 VERA-620963bf P2]
+import { t as i18nT, useTz } from "../i18n"; // [HERMIA-FE-20261025 VERA-620963bf P2]
 import { Button, EmptyState, StatusMessage } from "../ui/primitives";
 import "./AssetInspector.css";
 import { VisualReferencePanel } from "./VisualReferencePanel";
@@ -19,6 +19,7 @@ const assetIcon = (mediaType: string) =>
   mediaType.startsWith("audio/") ? <Music2 aria-hidden="true" /> : <File aria-hidden="true" />;
 
 export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra, showReferences = true }: { asset?: Asset; novelId?: string; downloadAsset?: (asset: Asset) => Promise<Blob>; isCurrent?: () => boolean; extra?: ReactNode; showReferences?: boolean }) {
+  const inspTz = useTz(); // [HERMIA-FE-20261031 VERA-P3 r3]
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -56,8 +57,8 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
       setTechnical(view.technical);
     }
   }
-  if (!asset) return <section className="asset-inspector" aria-label="资产检查面板"><div className="workspace-inspector__eyebrow">Inspector</div><EmptyState title="未选择资产" detail={novelId ? "从资产网格选择一个项目以查看真实预览和元数据。" : "请先打开小说项目。"}/></section>;
-  return <section className="asset-inspector" aria-label="资产检查面板">
+  if (!asset) return <section className="asset-inspector" aria-label={inspTz('资产检查面板')}><div className="workspace-inspector__eyebrow">Inspector</div><EmptyState title="未选择资产" detail={novelId ? "从资产网格选择一个项目以查看真实预览和元数据。" : "请先打开小说项目。"}/></section>;
+  return <section className="asset-inspector" aria-label={inspTz('资产检查面板')}>
     <div className="workspace-inspector__eyebrow">Asset Inspector</div>
     <header>{assetIcon(asset.media_type)}<div><strong title={asset.filename}>{asset.filename}</strong><span>{asset.kind} · {asset.media_type}</span></div></header>
     <div className="asset-inspector__preview" aria-busy={loading}>

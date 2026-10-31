@@ -1536,4 +1536,6 @@ export const en: Record<MessageKey, string> = {
   'rough.943': 'Beginner mode', // [HERMIA-FE-20261031 VERA-EN]
   'rough.944': 'Professional mode', // [HERMIA-FE-20261031 VERA-EN]
   'rough.945': 'Beginner and Professional modes share the same project, assets, tasks and graph data; switching only changes the interface and never converts, copies or deletes anything.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.946': 'Asset inspector', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.947': 'Not available in the public edition', // [HERMIA-FE-20261031 VERA-EN]
 };
