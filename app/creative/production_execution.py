@@ -67,6 +67,49 @@ class ProductionExecutionService:
         self.timeline_waveform = TimelineWaveform(self)
         self.workspace.creative.configure_storyboard_production(self)
 
+    def _cost_attestation_store(self):
+        if getattr(self, "_cost_store", None) is None:
+            from .provider_cost_attestation import ProviderCostAttestationStore
+            self._cost_store = ProviderCostAttestationStore(self.store.root)
+        return self._cost_store
+
+    def _view(self, row, owner):
+        view = self.view(row, owner)
+        try:
+            attestation = self._cost_attestation_store().load(owner, str(row.get("id")))
+        except (ValueError, OSError):
+            return view
+        if attestation is None:
+            return view
+        from .provider_cost_attestation import attested_cost, validate_binding
+        try:
+            validate_binding(attestation, view, owner)
+        except ValueError:
+            return view
+        view["cost"] = attested_cost(attestation)
+        return view
+
+    def record_cost_attestation(self, nid, scope, actor, owner, jid, value, guard):
+        """Server-only adapter hook: bind trusted usage/cost to one exact job.
+
+        No HTTP route exposes this. The public cost remains UNKNOWN until an
+        in-process provider adapter records an attestation for the completed job.
+        """
+        if not callable(guard) or not isinstance(actor, str) or not actor:
+            raise ValueError("STUDIO_COST_ATTESTATION_AUTHORITY_REQUIRED")
+        from .provider_cost_attestation import (ProviderCostAttestation, RECEIPT_CONTRACT,
+            validate_binding)
+        body = ProviderCostAttestation.model_validate(value)
+        row, _ = self._row(nid, scope, actor, owner, jid, guard)
+        job = self.view(row, owner)
+        validate_binding(body, job, owner)
+        guard()
+        self._cost_attestation_store().write(body)
+        guard()
+        return {"contract": RECEIPT_CONTRACT, "job_id": body.job_id, "owner": body.owner,
+                "actual_microusd": body.actual_microusd, "currency": body.currency,
+                "trusted": True}
+
     def configure_comic(self, comic):
         from .comic_image_generation import ComicImageGeneration
         self.comic_images = ComicImageGeneration(self, comic)
@@ -113,7 +156,7 @@ class ProductionExecutionService:
         row = self.video_owner.queue_studio(nid, scope.get("branch_id"), actor,
             context["execution_recipe"]["timeline"], context=context, guard=guard,
             export_profile=context["export_profile"])
-        return self.view(row, "timeline")
+        return self._view(row, "timeline")
 
     @staticmethod
     def _capacity(state):
@@ -845,7 +888,7 @@ class ProductionExecutionService:
                 context, guard, self._source_guard(nid, scope, guard))
             owner = "audio"
         guard()
-        return self.view(row, owner)
+        return self._view(row, owner)
 
     def _row(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         context = self._base(nid, scope, actor, guard)
@@ -918,7 +961,7 @@ class ProductionExecutionService:
 
     def get(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         row, _ = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
-        return self.view(row, owner)
+        return self._view(row, owner)
 
     def observe_image_node_target(self, nid, scope, actor, jid, value, guard):
         from .canvas_image_node_target_observation import observe
@@ -974,7 +1017,7 @@ class ProductionExecutionService:
         # Reading it grants no execution; original action guards still apply.
         self._canvas_image_node_target(nid, scope, actor, target, context, guard)
         guard()
-        return self.view(row, 'image')
+        return self._view(row, 'image')
 
     def list(self, nid, scope, actor, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None,
              query: StudioProductionQuery | None = None):
@@ -990,13 +1033,13 @@ class ProductionExecutionService:
             return True
         for row in self._image(actor).list_studio(nid, scope.get("branch_id"), actor, context, guard):
             if not admitted(row): continue
-            rows.append(self.view(row, "image"))
+            rows.append(self._view(row, "image"))
         for row in self._audio(scope, actor).list(nid, context, guard):
             if not admitted(row): continue
-            rows.append(self.view(row, "audio"))
+            rows.append(self._view(row, "audio"))
         for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
             if not admitted(row): continue
-            rows.append(self.view(row, "timeline" if row.get("kind") == "STUDIO_TIMELINE" else "video"))
+            rows.append(self._view(row, "timeline" if row.get("kind") == "STUDIO_TIMELINE" else "video"))
         # Preserve all original owner validation and binding admission before
         # filters or totals. A filter/page never conceals a corrupt tail receipt
         # or bypasses an owner's complete-list limit. This is not an I/O index.
@@ -1017,7 +1060,7 @@ class ProductionExecutionService:
     def candidate(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='candidate')
-        candidate = self.view(row, owner)["output_candidate"]
+        candidate = self._view(row, owner)["output_candidate"]
         if candidate is None: raise FileNotFoundError(jid)
         if owner == "timeline":
             # Read the original queue first, then fence the saved timeline,
@@ -1064,7 +1107,7 @@ class ProductionExecutionService:
             with self.workspace._asset_scope(nid, scope):
                 if row["status"] == "APPROVED":
                     meta = self.workspace.assets.get(candidate["id"], branch_id=scope.get("branch_id"), actor_id=actor)
-                    approved = self.view(row, owner)["approved_asset_version"]
+                    approved = self._view(row, owner)["approved_asset_version"]
                     provenance = self._approved_media_provenance(row, owner, actor)
                     if (approved != candidate["version"] + 1 or meta.get("version") != approved
                             or meta.get("_owner_actor_id") is not None or meta.get("deleted_at")
@@ -1087,7 +1130,7 @@ class ProductionExecutionService:
         latest, latest_context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         if (latest["version"] != row["version"] or latest["status"] != row["status"] or latest_context != context
                 or latest["request_digest"] != row["request_digest"] or latest.get("receipt_digest") != row.get("receipt_digest")
-                or self.view(latest, owner)["output_candidate"] != candidate):
+                or self._view(latest, owner)["output_candidate"] != candidate):
             raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
         guard()
         return result, data
@@ -1119,7 +1162,7 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='cancel')
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
-            raise CapabilityVersionConflict(self.view(row, owner))
+            raise CapabilityVersionConflict(self._view(row, owner))
         if owner == "video":
             # Publication and human promotion use these same original leases.
             # Cancellation can fence out-of-lease inspection/transport without
@@ -1141,14 +1184,14 @@ class ProductionExecutionService:
                 row = self.video_owner.cancel_studio(nid, scope.get("branch_id"), actor, jid,
                     action.expected_version, action.expected_request_digest, context=context, guard=guard)
         guard()
-        return self.view(row, owner)
+        return self._view(row, owner)
 
 
     def reconcile(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None, benchmark_binding=None, batch_binding=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='reconcile')
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
-            raise CapabilityVersionConflict(self.view(row, owner))
+            raise CapabilityVersionConflict(self._view(row, owner))
         if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: guard = self._cutout_guard(guard)
         branch = scope.get("branch_id")
         recover = lambda captured: self._recover_media_candidate(nid, scope, actor, captured, context, guard,
@@ -1174,7 +1217,7 @@ class ProductionExecutionService:
                 recover_candidate=lambda captured: self._recover_timeline_candidate(nid, scope, actor, captured, context, guard,
                     graph_source_guard=graph_source_guard), recover_review=recover_review)
         guard()
-        return self.view(row, owner)
+        return self._view(row, owner)
 
 
 
@@ -1331,7 +1374,7 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='review')
         if row["request_digest"] != action.expected_request_digest:
-            raise CapabilityVersionConflict(self.view(row, owner))
+            raise CapabilityVersionConflict(self._view(row, owner))
         self._canvas_image_node_current(nid,scope,actor,context,guard)
         if owner == "timeline":
             with self.video_owner.studio_review_phase(jid):
@@ -1358,19 +1401,19 @@ class ProductionExecutionService:
         else:
             return self._review_video(nid, scope, actor, jid, row, context, action, guard, sources, promote)
         guard()
-        return self.view(row, owner)
+        return self._view(row, owner)
 
 
     def _review_video(self, nid, scope, actor, jid, captured, context, action, guard, sources, promote):
         with self.video.review_phase(jid):
             row = self.video.get(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
             if row["version"] != captured["version"] or row["request_digest"] != action.expected_request_digest:
-                raise CapabilityVersionConflict(self.view(row, "video"))
+                raise CapabilityVersionConflict(self._view(row, "video"))
             candidate = row.get("output_candidate")
             if candidate is None or candidate["digest"] != action.reviewed_output_digest:
                 raise StaleSourceError("STUDIO_REVIEW_OUTPUT_CHANGED")
             if row["version"] != action.expected_version:
-                raise CapabilityVersionConflict(self.view(row, "video"))
+                raise CapabilityVersionConflict(self._view(row, "video"))
             if row["status"] not in {"AWAITING_REVIEW", "SUCCEEDED", "REVIEWING", "APPROVED"}:
                 raise ValueError("STUDIO_PRODUCTION_JOB_NOT_REVIEWABLE")
             for source in context["sources"]: sources(source)
@@ -1394,7 +1437,7 @@ class ProductionExecutionService:
                         if hashlib.sha256(data).hexdigest() != candidate["digest"] or len(data) != meta["size"]:
                             raise StaleSourceError("STUDIO_CANDIDATE_BYTES_CHANGED")
                 guard()
-                return self.view(row, "video")
+                return self._view(row, "video")
             if row["status"] != "REVIEWING":
                 row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, row["version"],
                     lambda current: current.update(status="REVIEWING"), context=context)
@@ -1423,7 +1466,7 @@ class ProductionExecutionService:
             row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version,
                 lambda current: current.update(status="APPROVED", review_state="ORIGINAL_OWNER_REVIEWED", approved_asset_version=asset["version"]), context=context)
             guard()
-            return self.view(row, "video")
+            return self._view(row, "video")
 
     def _review_timeline(self, nid, scope, actor, jid, captured, context, action, guard, *, graph_source_guard=None):
         """Reserve and promote against one fixed original source/asset phase.
@@ -1448,7 +1491,7 @@ class ProductionExecutionService:
             self._timeline_sources_current(nid, scope, timeline["timeline"], guard)
             row = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
             if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest:
-                raise CapabilityVersionConflict(self.view(row, "timeline"))
+                raise CapabilityVersionConflict(self._view(row, "timeline"))
             if row["version"] != captured["version"] or row.get("output_candidate") != captured.get("output_candidate"):
                 raise StaleSourceError("STUDIO_CANDIDATE_JOB_CHANGED")
             candidate = row.get("output_candidate")
@@ -1478,7 +1521,7 @@ class ProductionExecutionService:
                 if not already_promoted or row.get("approved_asset_version") != meta["version"]:
                     raise StaleSourceError("STUDIO_CANDIDATE_APPROVAL_CHANGED")
                 guard()
-                return self.view(row, "timeline")
+                return self._view(row, "timeline")
             previous_status = row["status"]
             if previous_status != "REVIEWING":
                 guard()
@@ -1516,7 +1559,7 @@ class ProductionExecutionService:
             row = self.video_owner._studio_mutate(nid, scope.get("branch_id"), actor, jid, reviewed_version,
                 lambda current: current.update(status="APPROVED", review_state="ORIGINAL_OWNER_REVIEWED", approved_asset_version=asset["version"]), context=context)
             guard()
-            return self.view(row, "timeline")
+            return self._view(row, "timeline")
 
     def timeline_list(self, nid, scope, actor, guard):
         self._base(nid, scope, actor, guard)
@@ -1759,7 +1802,7 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='execute')
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
-            raise CapabilityVersionConflict(self.view(row, owner))
+            raise CapabilityVersionConflict(self._view(row, owner))
         if owner == "timeline":
             if context.get("graph_binding") is None:
                 raise ValueError("STUDIO_TIMELINE_ALREADY_RENDERED_EXPLICITLY")
@@ -1776,7 +1819,7 @@ class ProductionExecutionService:
                 # fence Graph before/after reads; publication takes raw first.
                 source_guard=self._source_guard(nid, scope, guard), publish=publish,
                 inspect_source=self._source_guard(nid, scope, guard))
-            return self.view(rendered, owner)
+            return self._view(rendered, owner)
         # _row has already verified original owner/scope/incarnation, immutable
         # request bytes and any measured receipt. Only this server-loaded path
         # retains explicit continuation of accepted pre-versioned MP3 jobs.
@@ -1852,7 +1895,7 @@ class ProductionExecutionService:
             row = self._audio(scope, actor).execute(nid, jid, action.expected_version, context, execution_guard, source_guard, resolve, publish, before_send,
                 inspect_source=source_guard)
         guard()
-        return self.view(row, owner)
+        return self._view(row, owner)
 
 
     def refresh_video(self, nid, scope, actor, jid, action, guard, *, graph_binding=None, graph_guard=None, graph_source_guard=None, benchmark_binding=None):
@@ -1871,7 +1914,7 @@ class ProductionExecutionService:
         row = self.video.refresh(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard,
             source_guard=self._source_guard(nid, scope, guard), resolve=resolve, publish=publish,
             inspect_source=self._source_guard(nid, scope, guard))
-        return self.view(row, "video")
+        return self._view(row, "video")
 
     def timeline_usage_directory(self, nid, scope, actor, guard):
         from .asset_usage_paging import directory
@@ -2111,7 +2154,7 @@ class ProductionExecutionService:
         rendered = self.video_owner.create_studio(nid, scope.get("branch_id"), actor, preview["execution_recipe"]["timeline"],
             context=context, guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish,
             export_profile=preview["export_profile"], inspect_source=self._source_guard(nid, scope, guard))
-        return self.view(rendered, "timeline")
+        return self._view(rendered, "timeline")
 
     def timeline_render(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import studio_sources
@@ -2144,4 +2187,4 @@ class ProductionExecutionService:
         rendered = self.video_owner.create_studio(nid, scope.get("branch_id"), actor, row["timeline"], context=context,
             guard=current, source_guard=self._source_guard(nid, scope, guard), publish=publish,
             inspect_source=self._source_guard(nid, scope, guard))
-        return self.view(rendered, "timeline")
+        return self._view(rendered, "timeline")

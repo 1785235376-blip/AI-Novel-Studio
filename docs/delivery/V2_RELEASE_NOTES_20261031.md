@@ -40,3 +40,8 @@
 ### 能力补充：Graph 三级媒体链与第三级 UNKNOWN 栅栏
 新增 `tests/test_graph_multinode_media_chain.py`：三级 IMAGE 图（t2i → review → i2i → review → i2i → review），验证每级下游 preview 的 source snapshot digest 等于上一级已审核正式资产 digest、下游 provider 实际收到上一级正式落盘字节、最终正式资产 digest/字节可回读；第三级 provider 在 dispatch 后失败时 job 保持 UNKNOWN、不得重复 execute、无法生成第三级/review_c 输出，取消后仍不产生；图组回归 **19 passed**。registry `graph_multi_node_recovery` 证据增加该测试，limits 增加 `multi_level_media_chain:FILE_SYNTHETIC_VERIFIED`（真实模型/PG/完整未知恢复仍 NOT_RUN/NOT_VERIFIED）。
 
+### 能力补充：Provider cost/usage attestation（服务端适配器合同）
+新增 `app/creative/provider_cost_attestation.py`：真实 provider adapter 可在进程内为**一个已完成且精确绑定的 Studio 生产 job**记录 `studio-provider-cost-attestation/1`（job_id/owner/request_digest/provider/model/currency/actual_microusd/usage/pricing_version/source/attested_at 严格校验）。记录写入 runtime sidecar，`ProductionExecutionService._view` 读取并再次校验 job 绑定后，把 `studio-job-cost/1` 从 `UNKNOWN` 提升为 `ATTESTED`（trusted/actual/usage/pricing_version）；默认无 attestation 时仍为 UNKNOWN，损坏/超限/错绑 sidecar 一律回退 UNKNOWN。无 HTTP 写路由，只有原进程内 adapter 可记录，避免客户端伪造成本。
+
+测试 `tests/test_provider_cost_attestation.py`：3 项（可信绑定/默认 UNKNOWN、错 request/provider/负金额/非法 source 拒绝且无 sidecar、损坏/超限/孤儿 sidecar 不冒充可信成本）；production/cost 组回归 **80 passed / 1 xfailed**。registry `studio_task_cost` 证据/limits 更新（real provider adapter 仍未接入；真实验收 NOT_RUN）。
+
