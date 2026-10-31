@@ -2196,3 +2196,22 @@ ComfyCanvas 内部自己的文案已经双语。另外，新节点的 `title` �
 - 门禁：见回报表，最好一轮 adj 293。非基线新增的 4 条单独重跑都是 3/3 通过（IndependentStudioGraph 那个文件在单跑时只有 2 条基线失败）。
 
 证据：/workspace/hr/vera-compare/comfy-df462d55/（e8*.json、hb.out、e5.json、mut2.txt、full1-3.json、iso.txt）
+
+## [VERA-FE] 复审 comfy df462d55..ed9f4e24（2026-10-31，Vera 执行代理）
+
+结论：**通过**（APPROVE）。上轮 P3（鼠标点选项加节点后焦点落 body）已由 ed9f4e24 修复：`add()` 改为走 `closeMenu()`。
+
+- **ed9f4e24 焦点**：en/zh × light/dark × IMAGE/VIDEO 中，7/8 视图确认鼠标点选项后焦点回到「＋ 节点」；Esc / Enter 路径同样回到触发按钮（未回退）。点外部关菜单时焦点留在 svg，不抢到触发按钮。axe 菜单/双画布 0；无非 GET。Hermia 浏览器 49 行 0 失败（含 F2）。`en|light|IMAGE` 首轮超时（找不到 lower 的 add，与上轮相同偶发），同组合在 dark 与 Hermia light|IMAGE 上均通过，判为负载/时机抖动。
+  - **变异**：`add()` 改回 `setMenu(null)`（M1）→ 单测 P3 与浏览器 F2（light IMAGE/VIDEO）均红；`closeMenu` 不去 focus（M2）、Esc 改 `setMenu(null)`（M4）、去掉 `ref`（M5）均被杀。去掉 Enter 后多余的 `closeMenu()`（M3）存活且测试全绿——因 `add()` 已 closeMenu，属等价冗余，Esc/Enter 行为不回退。
+- **复查**：普通模式只上画布（lower/split/dual=0）；亮色 body lum≈0.896、画布 0.869，非黑底；无非 GET。
+- **门禁**（基线 raw 298 / ISI 8；adj = raw − ISI + 8）：
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 294 | 8 | 294 | 1（CanvasImageNodeTargetObservation，单独重跑 3/3 通过，负载抖动）|
+
+最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/comfy-ed9f4e24/（e9.json、e5.json、hb.out、hb-mut.out、mut.txt、full1-3.json、iso.txt、gate.out）
+
+附：align 未提交的 8b909a42 审查段与已提交的 0cbccea3 逐行一致，本轮未改 align。
