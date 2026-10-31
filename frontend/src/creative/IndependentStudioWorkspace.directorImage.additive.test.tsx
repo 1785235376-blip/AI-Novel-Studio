@@ -55,13 +55,16 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); expect(unexpected).toEqual([]); });
 async function enter() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const onOpenBroker = vi.fn(), client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId="project" context={{ sessionToken: '' }}
     scope={{ workspace: 'Local', project: 'Image workflow project', storyline: 'Default', branch: 'Main' }} actor="Author" module="IMAGE"
     onModuleChange={vi.fn()} onProjectChoice={vi.fn()} onOpenBroker={onOpenBroker} /></QueryClientProvider>);
   await waitFor(() => expect((screen.getByRole('button', { name: '创作图' }) as HTMLButtonElement).disabled).toBe(false)); click('创作图');
-  await screen.findByRole('option', { name: /Saved original graph/ }); change('已保存创作图', graph.id);
-  await waitFor(() => expect(value('创作图标题')).toBe(graph.definition.title)); click('打开导演总控台');
+  await waitFor(() => expect((screen.getByLabelText('已保存创作图') as HTMLSelectElement).options.length).toBeGreaterThan(1)); change('已保存创作图', graph.id);
+  await waitFor(() => expect(value('创作图标题')).toBe(graph.definition.title));
+  click('执行画布');
+  click('打开导演总控台');
   await waitFor(() => expect((screen.getByLabelText('文档标题').closest('fieldset') as HTMLFieldSetElement).disabled).toBe(false));
   click('读取导演原文档目录'); await screen.findByRole('option', { name: /原导演 · v2/ }); change('总控台原导演文档', 'director'); click('读取所选导演原文档');
   fireEvent.click(await screen.findByRole('button', { name: '打开图像导演审核' })); await screen.findByRole('option', { name: /现有 VISION 注册/ }); change('图像理解目标场景', 'scene');

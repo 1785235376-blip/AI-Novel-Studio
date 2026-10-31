@@ -31,6 +31,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const leave = vi.fn(); const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '读取保护项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" requestedAssetId="source" onModuleChange={leave} onProjectChoice={vi.fn()} /></QueryClientProvider>);
   return leave;
@@ -40,7 +41,7 @@ function deferredRead() { let finish!: (value: ReturnType<typeof reply>) => void
 describe('independent asset read fences and truthful capability labels', () => {
 
   it.each(['same-version', 'failed'] as const)('keeps refresh inputs visible until %s read settles, then retires the old relationship view', async outcome => {
-    mount(); await screen.findByRole('region', { name: '独立资产来源' });
+    mount(); fireEvent.click(await screen.findByRole('button', { name: '素材工作区' })); await screen.findByRole('region', { name: '独立资产来源' });
     fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
     await screen.findByText('当前没有可选引用；可以保持独立创作。');
     const finish = deferredRead(); fireEvent.click(screen.getByRole('button', { name: '重新读取当前资产' }));
@@ -55,7 +56,7 @@ describe('independent asset read fences and truthful capability labels', () => {
   });
 
   it.each([401, 403])('removes the retained refresh form when the original asset read returns %s', async status => {
-    mount(); await screen.findByRole('region', { name: '独立资产来源' });
+    mount(); fireEvent.click(await screen.findByRole('button', { name: '素材工作区' })); await screen.findByRole('region', { name: '独立资产来源' });
     fireEvent.click(screen.getByRole('button', { name: '可选资产关联' }));
     await screen.findByText('当前没有可选引用；可以保持独立创作。');
     const finish = deferredRead(); fireEvent.click(screen.getByRole('button', { name: '重新读取当前资产' }));

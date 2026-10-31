@@ -55,6 +55,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const leave = vi.fn(), query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const mounted = render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '独立图项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" onModuleChange={leave} onProjectChoice={leave} /></QueryClientProvider>);
   return { ...mounted, leave };

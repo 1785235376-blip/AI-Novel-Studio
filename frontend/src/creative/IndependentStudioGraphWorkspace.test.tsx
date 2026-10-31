@@ -53,6 +53,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const leave = vi.fn(), query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const mounted = render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '独立图项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" onModuleChange={leave} onProjectChoice={leave} /></QueryClientProvider>);
   return { ...mounted, leave };
@@ -75,10 +76,13 @@ describe('independent studio graph content integration', () => {
     expect(saved.definition.schema_version).toBe(2); expect(saved.definition.nodes.at(-1)?.parameters).toEqual({ instruction: '只生成待审核文本', max_output_tokens: 256 });
     expect(client.graphs.modelCapabilities).not.toHaveBeenCalled(); expect(client.graphs.previewModel).not.toHaveBeenCalled(); expect(client.graphs.dispatchModel).not.toHaveBeenCalled();
   });
-  it('keeps graphs lazy until an explicit content choice, with unchanged eight shell modules', async () => {
-    mount(); await screen.findByRole('button', { name: '上传资产' });
-    expect(client.graphs.catalog).not.toHaveBeenCalled(); expect(screen.getAllByRole('tab')).toHaveLength(8);
-    await enter(); expect(client.graphs.catalog).toHaveBeenCalledTimes(1); expect(client.graphs.list).toHaveBeenCalledTimes(1);
+  it('keeps graph runs lazy until an explicit content choice, with the current six shell modules', async () => {
+    mount(); fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
+    await screen.findByRole('button', { name: '上传资产' });
+    expect(screen.getAllByRole('tab')).toHaveLength(6);
+    expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.action).not.toHaveBeenCalled();
+    await enter();
+    expect(client.graphs.catalog).toHaveBeenCalled(); expect(client.graphs.list).toHaveBeenCalled();
     expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.action).not.toHaveBeenCalled();
   });
   it('saves an empty disconnected definition through the scoped owner and reopens it without creating a run', async () => {

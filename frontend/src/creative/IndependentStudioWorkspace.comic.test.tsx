@@ -44,7 +44,15 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetcher);
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+async function enterAssets() {
+  // Comic-only boot (generic workspace denied) renders the comic entry without graph actions.
+  await waitFor(() => expect(screen.queryByRole('button', { name: '素材工作区' })
+    || screen.queryByRole('button', { name: '打开漫画制作' })).toBeTruthy());
+  const assets = screen.queryByRole('button', { name: '素材工作区' });
+  if (assets) fireEvent.click(assets);
+}
 async function open() {
+  await enterAssets();
   fireEvent.click(await screen.findByRole('button', { name: '打开漫画制作' }));
   await waitFor(() => expect((screen.getByRole('button', { name: '新建空白漫画页' }) as HTMLButtonElement).disabled).toBe(false));
 }
@@ -68,7 +76,7 @@ it('Image subview creates a source-free page, edits a bubble, saves and reopens 
   expect(fetcher.mock.calls.filter(([url]) => url.startsWith(comics)).every(([, init]) => (init.headers as Record<string, string>)['X-Session-Token'] === 'original-host')).toBe(true);
 });
 it('denied Comic scope is explicit and does not look like an empty project', async () => {
-  denied = true; mount();
+  denied = true; mount(); await enterAssets();
   fireEvent.click(await screen.findByRole('button', { name: '打开漫画制作' }));
   await screen.findByText(/当前身份或分支没有漫画访问权限/);
   expect(screen.queryByRole('button', { name: '新建空白漫画页' })).toBeNull();

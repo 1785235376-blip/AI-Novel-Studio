@@ -34,6 +34,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 function mount() {
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '连续导入项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
 }
@@ -42,6 +43,7 @@ function upload(filename: string) {
   fireEvent.change(screen.getByLabelText('选择要上传的资产文件'), { target: { files: [file] } });
 }
 async function ready() {
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
   await waitFor(() => expect((screen.getByLabelText('选择要上传的资产文件') as HTMLInputElement).disabled).toBe(false));
   expect((screen.getByRole('button', { name: '上传资产' }) as HTMLButtonElement).disabled).toBe(false);
 }
