@@ -7,6 +7,8 @@
 //  A3 empty-state buttons stay inside their workspace container
 //  A4 ≤1100: left rail (.mw-left/.vid-rail) hidden AND a narrow-nav alternative entry is visible for IMAGE/ASSETS/VIDEO
 //  A5 1181–1280 zh: Ctrl K hint visible (P3)
+//  A6 [HERMIA-FE-20261030 VERA-MF] NSFW badge on: settings still in viewport (A1) and a visible search label is not ellipsis-truncated
+//  Header-fit sweep: NSFW=off,on WS=1024,1280,1366,1440,1441,1460,1500,1540,1600,1680,1720,1800,1920 MODS=NOVEL
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
 const req = createRequire(import.meta.url);
@@ -14,6 +16,7 @@ const {chromium} = req('playwright-core');
 const {createBackend} = await import(new URL('./mockBackend.mjs', import.meta.url));
 const BASE = process.env.BASE || 'http://127.0.0.1:4799/';
 const WS = (process.env.WS || '1024,1100,1101,1180,1200,1201,1240,1268,1280,1366').split(',').map(Number);
+const NSFW = (process.env.NSFW || 'off').split(',');
 const MODS = (process.env.MODS || 'NOVEL,IMAGE,VIDEO,AUDIO,EDIT,ASSETS').split(',');
 const SHOTS = process.env.SHOTS; if (SHOTS) fs.mkdirSync(SHOTS, {recursive: true});
 const AXE = process.env.AXE ? fs.readFileSync(process.env.AXE, 'utf8') : null;
@@ -56,11 +59,16 @@ const probe = p => p.evaluate((process_hdr) => {
   const narrowNav = [...document.querySelectorAll('[data-narrow-nav]')].filter(vis);
   const kbd = document.querySelector('.global-search>kbd'); const kbdVis = !!kbd && vis(kbd) && kbd.getBoundingClientRect().width > 2;
   const hdrKids = process_hdr ? [...hdr.children].map(e => { const r = e.getBoundingClientRect(); return `${String(e.className).slice(0, 24)}:${Math.round(r.width)}`; }).join(' ') : '';
+  const sp = document.querySelector('.global-search>span');
+  if (sp && vis(sp) && sp.getBoundingClientRect().width > 2 && sp.scrollWidth > sp.clientWidth + 1) out.push(`A6 search label truncated ${sp.scrollWidth}/${sp.clientWidth}`);
   return {out, rails: rails.length, narrowNav: narrowNav.length, kbdVis, hdrKids};
 }, !!process.env.HDR);
 const fails = [], rows = []; let combos = 0;
-for (const loc of ['zh-CN', 'en']) for (const mode of ['normal', 'pro']) {
-  const {ctx, p} = await session(loc); await skipGate(p);
+const skipTour = async p => { const t = p.locator('[data-onboarding-skip]'); if (await t.count()) { await t.first().click().catch(() => {}); await p.waitForTimeout(300); } };
+const nsfwOn = async p => { await p.setViewportSize({width: 1920, height: 800}); await skipTour(p); await p.locator('[data-settings-trigger]').first().click(); await p.waitForSelector('[role=menu]'); await p.locator('[data-nsfw-toggle]').click(); await p.waitForSelector('[data-testid=nsfw-dialog]'); await p.locator('[data-nsfw-ack]').check(); await p.locator('[data-nsfw-confirm]').click(); await p.waitForSelector('[data-nsfw-badge]'); await p.keyboard.press('Escape'); await p.waitForTimeout(300); };
+for (const nsfw of NSFW) for (const loc of ['zh-CN', 'en']) for (const mode of ['normal', 'pro']) {
+  const {ctx, p} = await session(loc); await skipTour(p); await skipGate(p); await skipTour(p);
+  if (nsfw === 'on') await nsfwOn(p);
   if (mode === 'pro') { await p.locator('.shell-mode-toggle button').nth(1).click().catch(() => {}); await p.waitForTimeout(500); }
   for (const id of MODS) {
     await p.setViewportSize({width: 1366, height: 800});
@@ -68,11 +76,11 @@ for (const loc of ['zh-CN', 'en']) for (const mode of ['normal', 'pro']) {
     for (const w of WS) {
       await p.setViewportSize({width: w, height: 800}); await p.waitForTimeout(120);
       const r = await probe(p); combos++;
-      const v = [...r.out];
+      const v = r.out.filter(x => nsfw === 'on' || !x.startsWith('A6')); const notes = r.out.filter(x => nsfw === 'off' && x.startsWith('A6'));
       if (w <= 1100 && ['IMAGE', 'VIDEO', 'AUDIO', 'ASSETS'].includes(id) && r.rails) v.push('A4 left rail still visible');
       if (w <= 1100 && ['IMAGE', 'VIDEO', 'ASSETS'].includes(id) && !r.narrowNav) v.push('A4 no narrow-nav alternative entry');
-      if (w >= 1181 && w <= 1280 && loc === 'zh-CN' && !r.kbdVis) v.push('A5 Ctrl K hint hidden');
-      const key = `${loc}|${mode}|${w}|${id}`; rows.push({key, ...r, v}); if (process.env.HDR) console.log(key, r.hdrKids);
+      if (nsfw === 'off' && w >= 1181 && w <= 1280 && loc === 'zh-CN' && !r.kbdVis) v.push('A5 Ctrl K hint hidden');
+      const key = `${nsfw}|${loc}|${mode}|${w}|${id}`; rows.push({key, ...r, v, notes}); if (notes.length) console.log('NOTE(pre-existing, NSFW off) ' + key + ' :: ' + notes.join('; ')); if (process.env.HDR) console.log(key, r.hdrKids);
       if (v.length) fails.push(key + ' :: ' + v.join('; '));
       if (SHOTS && (w === 1024 || w === 1201 || w === 1268)) await p.screenshot({path: `${SHOTS}/${loc}-${mode}-${w}-${id}.png`});
       if (AXE && (w === 1024 || w === 1366)) { await p.addScriptTag({content: AXE}); const ax = await p.evaluate(async () => (await axe.run(document, {resultTypes: ['violations']})).violations.filter(x => ['serious', 'critical'].includes(x.impact)).map(x => x.id + ':' + x.nodes.length)); if (ax.length) fails.push(key + ' :: AXE ' + ax.join(',')); }

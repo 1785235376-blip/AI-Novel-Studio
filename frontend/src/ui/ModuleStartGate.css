@@ -4,8 +4,10 @@
   inset: 0;
   z-index: calc(var(--z-dialog, 100) + 20);
   display: flex;
-  align-items: center;
+  align-items: safe center; /* [HERMIA-FE-20261030 VERA-P3] 375 宽时内容超高仍可滚动到「跳过」 */
   justify-content: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-6, 24px);
   background: radial-gradient(
     ellipse at 50% 30%,

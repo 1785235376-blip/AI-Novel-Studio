@@ -133,6 +133,11 @@
   --stg-ruler: #1e232b;
   --stg-tl: #232830;
   --stg-tools: #2a303a;
+  /* [HERMIA-FE-20261030 B3] EditNleShell 监视器渐变 / 片段色（深色保持原值） */
+  --stg-mon-tint: #1a1a22;
+  --stg-mon-tint-src: #12141c;
+  --stg-clip: #c9d8f5;
+  --stg-clip-line: #8eaee6;
   --stg-track: #1a1e26;
   --stg-gap: #000;
   --cv-port-in: #8a93a5;
@@ -237,6 +242,11 @@
   --stg-ruler: #eceef2;
   --stg-tl: #f4f5f7;
   --stg-tools: #e6e9ee;
+  /* [HERMIA-FE-20261030 B3] 浅色：监视器渐变改为浅灰，不再混入近黑 */
+  --stg-mon-tint: #e3e6ec;
+  --stg-mon-tint-src: #d9dde5;
+  --stg-clip: #c9d8f5;
+  --stg-clip-line: #6f93d6;
   --stg-track: #ffffff;
   --stg-gap: #d5d9e0;
   --cv-port-in: #8e97a6;

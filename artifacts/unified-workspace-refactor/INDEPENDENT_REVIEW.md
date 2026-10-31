@@ -1796,3 +1796,230 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | ImageQueuePanel.execute.independent | flaky（超时），不是回归 |
 
 所有临时 worktree（old/pre/mut/be）已删除。
+
+## [VERA-FE] 独立复核 work/hermia-nsfw-entry-20261030 @299a738c（tree 9d7f2e51，起点 fe4f5541）— 2026-10-30
+
+**结论：MUST-FIX**（1 个 P1：NSFW 徽标开启后顶栏溢出，设置入口不可达）。其余 B1/B2/A 的核心行为均通过。证据：/workspace/hr/vera-compare/nsfw-299a738c/
+
+### 门禁（vitest 全量 ×3，forks，maxWorkers 3；adj = raw − ISI + 8，基线 raw 298 / adj 297）
+- run1 raw 293 / ISI 8 / adj 293；run2 raw 296 / ISI 10 / adj 294（多出 1 条 u1.purge.host，已知 flaky）；run3 raw 295 / ISI 10 / adj 293。
+- 规则 (a)(b) 均 ≤297 → **PASS**。LocalAiBrowserJourneyContracts ENOENT 为基线失败。
+- 注：17:10 左右 box 重启，/tmp 与共享 node_modules 丢失；我重装了 node22，并在 vera-nsfw 内用相同 package-lock 执行 npm ci 后，重跑了 run2/run3。
+
+### 逐项
+- **B1 ConfirmDialog / DualStack 浏览器验证（dd.json）**：打开时焦点在“确认”，Tab 在两个按钮间循环，Esc 和确认后焦点都回到 [data-feed-upper]，axe 0，非 GET 请求 0 → 修复了 dualcanvas 的 P2。PASS
+- **B2 M2/M8 变异**：M2（feedToUpper 复用下层节点 id）→ 2/4 红；M8（basic 模式也挂载 DualStack）→ 2/4 红；干净代码 4/4 绿。VIDEO 树 `aria-pressed` 选中样式已覆盖（imageRebuild.css:19）。PASS
+- **A NSFW 存储**：
+  - 会话模式：LS、SS、IDB、cookie 的写入均为 0，网络非 GET 0；reload 后徽标消失。
+  - 持久模式（u-a）：只写 `poemseed.nsfwmode.v1::u-a::…` 一个 key，值为 {"v":1,"on":true}，没有其他写入。
+  - 文案如实说明“后端未接入：不会改变生成、模型或导出”。前端不发送 content_policy（后端 app/creative/content_policy.py 存在但未被调用）。PASS
+- **A NSFW 对话框**：初始焦点在“取消”；勾选确认前，“确认”按钮禁用；Tab 和 Shift+Tab 不会跳出对话框；Esc 可以关闭；axe 0。
+- **M4 浏览器反例**（m4-*.json）：HEAD 上 G 通过，C1/C2/C3 都被拒绝。
+  - 只去掉 pin 检查（client:157 + assertSavedImageNode 中的 pin 行）后，C3 → ACCEPTED，证明 pin 层真实生效。
+  - 再去掉 card≡origin 检查（M4c），C1 仍然被拒绝：有其他层兜底，属于纵深防御。
+  - 再去掉 reference_states 检查（M4d），C2 → ACCEPTED，证明该层生效。
+  - 所有用例都满足 pending 在 release 之前。变异 diff 见 m4-mutant.diff。PASS
+- **B3 EditNleShell token**：dark 主题 axe 0。light 主题对比度不足：toolbar 按钮 2.17，clip li / code 1.25。基线 fe4f5541 结果相同，即未修复；但 EditNleShell 已退役（EDIT 实际渲染 EditRebuild）。截图：v-nle-dark.png、v-nle-light.png。
+- **B4（en，仅观察）**：EDIT 中仍有“剪辑 · 多轨时间线、播放、入点、出点、吸附开、入、出、轨 3”共 8 处中文残留（基线约 37 处）。
+
+### 问题
+- **P1** 开启 NSFW 后，徽标把顶栏挤出边界（v.json，对照 base.json 中 8 种组合均为 0 溢出）。
+  - 1366 普通 en：1371/1366，“Open settings”按钮被截断。
+  - 1024 pro en：1070/1024，“EN”被截断，设置按钮位于 1042–1070，鼠标不可达。
+  - 1366 zh：全局搜索被压到 130/95。
+  - 建议：徽标在窄宽度下收为图标或省略文字，或让顶栏可换行，保证设置按钮可达。
+- **P2** NSFW 对话框经 Esc 或确认关闭后，焦点落在 BODY（触发它的菜单项已卸载）。建议回到 [data-settings-trigger]。
+- **P3** B3 的 light 主题对比度未修复（死代码，可延后）；B4 残留中文为观察项。
+
+未提交、未推送、未改业务代码。
+
+## [VERA-FE] 增量复审 299a738c..e91806e4（tree f490b544）
+
+**结论：PASS（P1/P2 已修复，变异均转红）；遗留 2 个 P3，不阻塞。**
+
+- 前置：1360e578 中落地的上轮 [VERA-FE] 段与我本地未提交稿逐字一致（VERBATIM）。增量另含未提及的 c62987e7（仅测试类型收窄，无断言改动）。
+- 顶栏：1440/1439/1366/1280/1024 × normal/pro × zh/en × 徽章开/关 共 40 组，sw==cw 全部成立，按钮全部可达、无裁切；.global-header axe 0 违规。紧凑徽章 <1440 宽 56(zh)/49(en)，可访问名在 AX 树中为 status「成人内容（NSFW）模式已开启 · 仅界面偏好，后端未接入」+ button「关闭 NSFW 模式」。变异：仅删紧凑媒体查询 → 1366 normal en 1371/1366、1024 pro en 1070/1024 溢出（红）；整体回退 CSS 同样转红。（Hermia 提交说明写 1437→1366，与实测 1371 不符，建议更正。）
+- 130/95 复核（299a738c）：复现。测的是 BUTTON.global-search 内的标签 SPAN 的 scrollWidth/clientWidth（span 带 text-overflow:ellipsis），按钮本身 178/178。即"搜索标签被省略号截断"，并非顶栏溢出——原结论成立，措辞据此精确化。
+- P2：Esc/取消/确认/键盘 Esc 后焦点均回到 [data-settings-trigger]；变异（focus 调用改 void 0）四项均落到 BODY，vitest src/ui/nsfw 18/18 → 3 失败，已还原。
+- 夜色酒红主题：六个工作区 + 顶栏 + 菜单 + DualStack 弹窗，暗色 axe 全 0；144 个 token 中暗色改 83、亮色改 77，7 个状态色 token 未变；关闭后 notRestored=[]、data-nsfw=null。会话模式零写入（LS/SS/cookie/IDB 无变化，non-GET 0），重载后恢复；持久模式仅写 poemseed.nsfwmode.v1::u-a::… 一个键。
+- 门禁（3 次全量）：raw 294/293/294，ISI 8，adj 294/293/294，规则 (a)(b) 均 ≤297 通过；新增失败仅 u1.purge.host（已知 flaky，单独重跑 1/1 通过）；LocalAiBrowserJourneyContracts ENOENT 为基线。
+
+**问题清单**
+1. P3：zh、NSFW 开、1366–1440 时搜索标签省略：1366 为 130/65，1439/1440 为 130/73（关时 175/175；299a738c 时 130/95）。
+2. P3：亮色+NSFW 开，NOVEL `.nv-badge--ok` 对比度 4.42（#166534 on #d2caca）< 4.5，关时通过；两次复现。状态色未变，是背景变了。
+
+证据：/workspace/hr/vera-compare/nsfw-e91806e4/
+
+## [VERA-FE] d6b291ab 可用性 + 首次引导复审（e91806e4..d6b291ab，tree 62cd41ba）
+
+**结论：MUST-FIX（1 项）**。问题是 a431b951 引入的英文顶栏溢出。其余各项通过，另有若干 P3。
+
+- 9fddf086：上一轮审查段逐字一致（17 行）。
+- ISI：Hermia final-gate3 中 ISI=10，全部来自 IndependentStudioIdentity，adj 293，她的说法成立。我上一轮的 ISI 8 是 gate.py 按每次 JSON 逐条实数的，不是假设值。wt-dci 当前就在 d6b291ab。
+- **a431b951（P3-1）**：e91806e4 在 1920、NSFW 开时确实截断，zh 130/95、en 171/95；1440 时 en 也截断，我上一轮把范围少报成只有 zh。HEAD 上 zh 全宽显示完整，≤1440 时标签视觉隐藏。
+  - **回归（MUST-FIX）**：en、NSFW 开时，设置按钮被挤出视口右侧，按钮被裁掉。
+    - 1441–1500 普通模式：header 1531/vw，设置按钮右缘 1531。
+    - 1441–1500 专业模式：1505。
+    - 1540–1600 专业模式：1681。
+    - 1680/1720 专业模式：1734。
+    - 1800 和 1920 正常；zh 全部正常。
+  - 变异：反向应用 a431b951 后，溢出消失（设置按钮右缘 1444/1584/1704），截断恢复。证据见 mut/m-P31.out 和 shots/head-edge3-1460-n-en.png。
+- **d6b291ab（P3-2）**：改动其实只作用于 `[data-theme=light][data-nsfw=on]`，不是全局。
+  - 暗色和亮色+NSFW 关时，成功色仍是 #3dd68c / #166534，未变。
+  - 该 token 共 18 处使用（徽章、保存状态、diff、音轨、时间线标记、交付/画布边框等）。
+  - #14532d 在三种亮色酒红底和 16%/14% 混色上算得 5.8–8.8，都 ≥4.5。
+  - axe 色彩对比：六个模块 + 顶栏 + 菜单 + DualStack 弹窗，在暗/亮 × NSFW 开/关下全部为 0。e91806e4 在亮色+开时有 1 处（.nv-badge--ok 4.42）。
+  - 变异：去掉该行后复现这 1 处违规。
+  - 注释里写的"4.42"指实际合成背景 #d2caca，与 token 名义底色不同，不影响结论。
+- **AUDIT_ZH 修复（浏览器 + 变异）**：每项反向应用后都按预期变红，结论如下。
+  - H1：横幅显示作品/章节。变异后变回"还没有打开作品"。
+  - M1：非小说模块显示"小说：未命名作品"。变异后变回四段完整路径。
+  - M4：原始 id 命中为 0。变异后 ax 命中 2、文本命中 1。
+  - M5：aside 有名称，landmark-unique 为 0。变异后名称变为 ∅，并出现 landmark-unique×1。
+  - M2：rail 显示"三步做视频"。变异后变回"三层工作区"。
+  - M3：title 和 aria-describedby 正常。变异后两者都为空。
+  - L1：标题为"AI 上下文预览"。变异后变回英文。
+  - 注：95511d4f 的 i18n 部分因后续提交改过同一文件，无法反向应用，所以只反向了 AppShell.tsx。
+- **首次引导**
+  - 768/1024/1366/1920 × zh/en × 普通/专业（1366 另测亮色）：普通 5 步、专业 6 步。卡片都在视口内，焦点在卡片内，Tab 在卡片内循环，背景点击不穿透，axe 0，non-GET 0。
+  - Esc、点击跳过、Shift+Tab→跳过都能关闭，焦点回到模块页签；从设置重放时焦点回到设置按钮。
+  - 缺 .status-bar：该步居中显示，无报错。缺模块切换器或全部目标：不崩溃。
+  - 变异：去掉 Esc 处理或初始聚焦后，引导关不掉，tour.mjs 被挡住而失败，按预期变红。
+  - 375：起始门是 fixed 且不能滚动，"跳过"按钮位于 770–805，超出 740 高的视口，鼠标点不到，所以引导不会自动出现。e91806e4 同样如此，属既有问题，不是本增量引入。键盘聚焦后按 Enter 可跳过，之后引导正常显示（卡片 23–363）。
+  - 存储
+    - 真实用户：只写 LS `poemseed.onboarding.v1::u-a`，值为 {"v":1,"seen":true}。切换页签和重载都不再弹出；清掉该键后再次显示；v2 坏值时会显示，且不覆盖原值；全部清空后起始门回来。
+    - 会话模式 / NSFW 会话模式：零写入，提示"仅本次会话"，重载后再次显示，没有破坏零写规则。
+    - NSFW 持久模式：写引导键和 nsfwmode 键，符合预期。
+- **回归**
+  - 顶栏 40 组合（1440/1439/1366/1280/1024）：sw==cw，bad 0，axe 0，non-GET 0。
+  - P2 弹窗焦点：4/4 通过。
+  - 夜色酒红：关闭后 notRestored=[]、data-nsfw=null。亮色唯一的状态色变化就是 success。
+  - NSFW 会话零写入：LS/SS/cookie/IDB 都没有变化；持久模式只写 1 个键。
+- **门禁（3 次全量，vera-ux@d6b291ab）**：raw 293/293/293，ISI 8，adj 293/293/293。规则 (a)(b) 都 ≤297，通过。三次都没有新增失败；LocalAiBrowserJourneyContracts ENOENT 是基线问题。
+
+**问题清单**
+1. MUST-FIX：en、NSFW 开、视口约 1441–1720 时，设置按钮被挤出视口（a431b951 的 `flex:none` 使搜索按钮不再收缩）。建议在 >1440 时允许搜索收缩（min-width:0 + flex 1 1 auto），或把隐藏标签的断点放宽到 en 实际需要的宽度。
+2. P3（M3 引入）："参考叠看"在禁用时显示"关"，但 aria-pressed="true"，读屏会读成按下状态，与文字矛盾。建议改成 aria-pressed={!!cur && refOverlay}。
+3. P3：M4 误伤真实名字，Ann-Marie、li_wei 都显示成"本机作者"（looksLikeRawId 规则过宽）。
+4. P3：en 下 M2/M3 文案和 IMAGE 第三个 aside"图片生成"仍为中文（i18nTz 没有英文条目）。
+5. P3：缺少模块切换器时，引导关闭后焦点落到 BODY。
+6. P3（既有）：375 宽时起始门"跳过"按钮在视口外且不能滚动。
+
+证据：/workspace/hr/vera-compare/ux-d6b291ab/（tour.json、audit-head.json、theme/、shots/、mut/、full1-3.json/log、full-status.txt）
+
+## [VERA-FE] 第 4 轮 · 62f7684f（d6b291ab..62f7684f，tree 5839b22d）前端复核
+
+**结论：PASS（附 P3）。** 上轮的 MUST-FIX（en + NSFW 开，1441–1720 宽时设置按钮被挤出视口）已修复，变异验证会变红；d3d9ee0f 的 5 项 P3 均已修复，各自变异都会变红，但有两处残留（见问题列表）。
+
+- 137af294：我的上轮复审段落逐字一致（56 行）。依赖没有变化。
+- **顶栏全扫**：16 个宽度（1024–1920）× 普通/专业 × 中/英 × NSFW 开/关，共 128 个组合。全部满足 header sw==cw，所有按钮的右缘都在视口内、命中测试通过（bad=[]）。
+  - 搜索标签：cw=1 是有意视觉隐藏（保留可访问名），不算截断。
+  - 真正截断的只有 1540 / 专业 / en / 关 一个组合（171→155px）。d6b291ab 和 e91806e4 上同样存在，是既有问题，与 NSFW 无关，定级 P3。
+  - en + 开在 ≤1800 时标签隐藏，1801 时完整显示且不溢出。
+- **变异**：反向应用 62f7684f 的 nsfwMode.css 后，1441 普通/专业、1540 专业、1720 专业（en 开）共 4 个组合变红，设置按钮右缘分别到 1441/1505/1540/1734。
+- **d3d9ee0f 逐项（浏览器 + 变异）**
+  - aria-pressed：按钮禁用时为 false；变异后为 true。✔
+  - M4：Ann-Marie、li_wei、王小明显示真名；u-a、usr-7f3a、u-m5 显示"本机作者"。变异后 Ann-Marie/li_wei 被当作原始 id。✔
+  - en 词条：参考叠看、禁用原因 title、IMAGE 右栏标题 "Image generation"、VIDEO 三步说明均为英文；变异后变回中文。✔
+  - 引导焦点：切换器和设置按钮都被移除时焦点落到 MAIN.workspace-body，变异后为 BODY。✔
+  - 375 起始门：跳过按钮初始在视口外（top 860，视口高 480/560/740），起始门可以滚动，鼠标点击成功；变异后 overflow 为 visible、点击超时。✔
+- **回归**
+  - 引导 tour：fails 0。
+  - 对话框焦点 p2：4/4 通过。
+  - axe：暗/亮两套主题 × 6 个模块 + 顶栏/菜单/对话框均为 0 违规。
+  - token 关闭后全部恢复。
+  - NSFW 会话模式不写存储；持久模式只写自己的那个 key。
+- **后端对齐（只读）**
+  - CONTRACT_DIFF 与代码一致。
+  - c479995f（requires_source_read）+ 5eec654b（提交前复核资产）修复了 image-node-result 的 403。
+  - 前端请求体 8 个字段与 CanvasImageNodeResult 完全一致；重放时 version 不变，也能通过前端校验。
+  - capture.json 中 /api 与 /api/v1 均为 200，重放 version=2。
+  - effective_content_policy / model_content_policy_support 在 content_policy.py 之外没有调用方。
+  - 实测 API：NOT_RUN（未起隔离实例，未碰 8000）。
+- IMAGE 回填 / 重开浏览器链路的前端独立验证：NOT_RUN。
+- **门禁（vera-align，3 轮）**
+  - raw 294/293/293，ISI 各 8 条，adj 294/293/293，满足 ≤297。
+  - 唯一不在基线里的失败是 run1 的 u1.purge.host（已知 flaky），单独重跑通过。
+  - Hermia 的 299/295/293（跑在 wt-dci 54fa28d0，frontend/src 与 62f7684f 相同）：run1 多出的 6 条中，4 条在已知 flaky 名单内（creative×2、PortableProjectsPanel.assetRelations、u1.purge.host）。另外 2 条 ImageJobExecute.file-api、PromptWorkspace.receiptReopen 是超时或负载下找不到元素，我的 3 轮里都通过，单独重跑也通过，判为负载 flaky。按规则 (a)/(b) 均 PASS。
+
+问题列表：
+1. P3（既有）：1540 / 专业 / en / NSFW 关时搜索标签被截断 16px。
+2. P3（残留）：切换器只是 display:none（节点还在）时，引导关闭后焦点仍落到 BODY。兜底逻辑只处理节点不存在的情况，可改为过滤不可见元素。
+3. P3（残留）：en 下 IMAGE aside 的 aria-label 仍是"图片生成"；VIDEO 栏的"这里排镜头…"、meta "卡片 · 参考素材 · 连线"仍为中文；专业模式的三层说明也是中文。
+
+证据：/workspace/hr/vera-compare/align-62f7684f/（top/、p3/、theme/、full1-3.json/log、full-status.txt、iso.log）
+
+## [VERA-FE] 第 5 轮：62f7684f..66f2f989 增量复审
+
+**结论：有条件通过（无 P0/P1）。** 路由改动是有意的行为变化，失败数没有退化；有一个 P2，是 App 级测试缺失。
+
+1. **路由回归**
+   - 隔离重跑 10×2，结果见 iso/。62 和 66 上 ISI 都确定性失败 8 条，名称和消息逐条一致。
+   - flaky 次数相近：delayed local file 62 上 3/10、66 上 2/10；newly mounted owner 两边都是 2/10。
+   - LEGACY 项目从资产送入工作室，19 条 GET 请求序列完全一致，没有 nonget。
+   - NEUTRAL 项目的 IMAGE 现在落到图片页，是有意改动，但只有纯单测覆盖。
+   - revert 01dd8918 后，浏览器能看出差异；App 级测试失败数与 revert 前相同（基线里的 8 条），所以覆盖不到这条路由。→ **P2**
+2. **确认入口**
+   - 实际门控条件是 overview 返回 200 且 entry_kind===LEGACY。overview 返回 422 时只显示通用错误，不出现入口。代码也没有区分本地和远程。→ P3，描述与实现不符
+   - 取消和 Esc 都没有写请求，焦点回到入口按钮；axe 0 违规。
+   - 确认之后焦点落到 BODY（P3）；en 下整段仍是中文（P3）；弹窗文案「下次直接进入工作室」对 IMAGE 已不准确（P3）。
+3. **stage4**（只读）
+   - REAL_API_PLUS_MOCK_PROVIDER，activation 1 次，reopen 时没有写请求。
+   - auto_exec_posts 实际统计的是全部 execute 请求，命名有误（P3）。
+4. **P3-2 / P3-3**
+   - P3-2：switcher 隐藏时焦点落到 BUTTON；revert e134e833 后又落回 BODY，mutation 被检出。
+   - P3-3：目标字符串已英文化；revert 66f2f989 后中文回来，mutation 被检出。其余大面积中文属于既有问题。
+   - s375 加 NOSKIP 复核通过。
+5. **回归**
+   - 顶栏宽度与第 4 轮相同，只有既有的 1540 pro en 截断。
+   - theme：0 对比度违规，token 无变化；tour：fails 0。
+   - NSFW 存储没有单独复测，标 NOT_RUN。
+6. **门禁**：见下方报告。
+
+## [VERA-FE] 独立复审：66f2f989..252848a7（Hermia 对 66f2 复审意见的修复）
+
+**结论：PASS**（无 P0/P1/P2；66f2 的 P2 与 P3 a–e 均已关闭，并逐项做了变异证明）
+
+证据目录：`/workspace/hr/vera-compare/align-252848a7/`（PROGRESS.md、unit-green.txt、mut-01dd.txt、mut-p3-on-66f2.txt、act.mjs、act252.json(en)、act252zh.json(zh)、shots/、full1-3.json/log、iso/、iso-compare.txt）
+
+### 逐提交核对
+- **3e3d68a8**：把我在 vera-align 未提交的 66f2 审查段与这个提交的 diff 逐行比对，内容完全一致（my-66f2-review.diff 与 3e3d.diff 对比）。
+- **c01844db（关闭 P2）**：AppImageActivatedRoute.test.tsx 跑 3 条，全部通过。回退 01dd8918 的 App.tsx 改动后，"lands the neutral IMAGE default on the formal image page" 变红（1 失败 / 2 通过）；恢复后 3 条全部通过。变异证明成立。
+- **76dc92f6（关闭 P3 a–d）**
+  - a：注释和提示文案现在写的是"概览返回 200 且 entry_kind==='LEGACY'；不区分本地/远程；概览失败（包括 422）只显示通用错误"，和实际代码一致。提示里不再出现"服务端提示"。
+  - b（Playwright 用 route 拦截，zh 和 en 都跑了）：
+    - 确认成功后，焦点落在 `P[data-studio-activation=done][role=status]`，即"已启用独立工作室…"那段结果提示；
+    - activate 返回 403 时，焦点回到"启用独立工作室…"入口按钮；
+    - 取消时焦点也回到入口按钮；
+    - 三种情况焦点都没有落在 BODY。
+    - 弹窗初始焦点在"取消"，Tab 不会跳出弹窗。
+    - 接口序列只有预期的 GET studio /（POST activate）/ GET studio，没有其他非 GET 请求。
+  - c：en 下入口、弹窗（标题、两段正文、按钮）和正式生产区的静态文案都已经是英文。
+  - d：弹窗现在说"图片仍在当前图片页里使用正式节点；视频、音频、剪辑和资产页会改用工作室界面"，和 01dd8918 的路由行为一致。
+  - axe：弹窗 0 违规；确认、失败、取消之后的正式区块也是 0 违规。
+  - RebuildFormalImageNode.p3.test.tsx：在 252848a7 上 6 条全部通过；把同一个文件放到 66f2f989 的代码上跑，6 条全部失败（变异证明成立，临时文件已删除）。src/rebuild/image 目录下 17 个文件、341 条测试全部通过。
+- **252848a7（关闭 P3e）**：全仓（不含 node_modules 和本审查文档）已经搜不到 auto_exec_posts。改动只涉及计数字段名和日志字段名，计数条件仍是 `POST /execute`，语义没变。
+
+### 门禁（每轮 adj = raw − 当轮 ISI + 8；基线 raw298/adj297）
+| 轮次 | raw | ISI | adj | 非基线新增（ISI 以外） |
+|---|---|---|---|---|
+| run1 | 293 | 8 | 293 | 0 |
+| run2 | 293 | 8 | 293 | 0 |
+| run3 | 295 | 10 | 293 | 0 |
+
+按规则(a)三轮最好 293 ≤ 297，通过，不需要用规则(b)的重试。三轮都只有基线里的 LocalAiBrowserJourneyContracts ENOENT 套件错误。
+
+另外，旧 66f2f989 的门禁 run3 已经跑完：raw 294，ISI 8，adj 294。非基线新增只有 1 条 receiptCompanion（已知 flaky）。所以 66f2 的三轮最终是 296/297/294，原 PASS 结论不变。
+
+### ISI 多出的 2 条（Hermia 第 2 轮 ISI=10）
+在 66f2f989（vera-align-b66 worktree）和 252848a7 上，各单独跑 IndependentStudioIdentity.regression.test.tsx 10 次：
+- 8 条确定性失败在两个版本上完全相同，10 次都失败。
+- 另外 2 条会间歇出现："admits a newly mounted owner after the old instance was pe…" 和 "cannot submit a delayed local file after the project retur…"。252848a7 上 10 次里出现 2 次，66f2f989 上 10 次里出现 3 次，所以每轮 ISI 是 8 或 10。
+- 我的门禁 run3 多出来的 2 条正好也是这两条。
+
+结论：这 2 条是 ISI 原有的 flaky，不是回归。另外，这次 diff 没有改动 ISI 相关代码。
+
+### 观察项（不算失败）
+- en 下错误提示仍是中文，例如 403 时显示"当前会话无权访问此内容。请重新核对身份和分支。"
+- StudioMediaExecutionPanel 仍是中文。
+- en 下正式区块里新建节点的默认标题"新生成图片"是中文。这是数据层的默认名，不属于本次修改范围。

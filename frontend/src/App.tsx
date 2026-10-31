@@ -48,12 +48,14 @@ import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
 import { t as i18nT, tz, useLocale, formatNumber } from "./i18n"; // [HERMIA-FE-20261025 I18N P1] string-only: status bar / desk labels
 import { selectedScopeLabels } from "./ui/scopeLabels";
+import { orientWhat } from "./rebuild/novel/NovelOrient"; // [HERMIA-UX-20261030 H1]
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { EMPTY_EDITOR_SELECTION, shouldRestoreNovelWriteOnEnter } from "./ui/moduleSwitchIsolation";
 import { ModuleStartGate, markModuleStartGateDismissed, shouldOpenModuleStartGate } from "./ui/ModuleStartGate"; // [HERMIA-FE-20261022] H-UX-START-01
 import { CreativeWorkspace } from "./creative/CreativeWorkspace";
 import { BlankProjectEntry } from './creative/BlankProjectEntry';
 import { IndependentStudioWorkspace, isManualStudioModule } from './creative/IndependentStudioWorkspace';
+import { routesToIndependentStudio } from './creative/independentStudioRoute';
 import { createStudioProject, studioClient } from './creative/studioClient';
 import { WorkflowPanel } from './novel/WorkflowPanel';
 import { ImageQueuePanel } from './novel/ImageQueuePanel';
@@ -1463,7 +1465,8 @@ function LegacyApp() {
     />
   ) : null;
   // [HERMIA-FE-20261022 R2] 图片页按原型重做：中性项目进图片也走新图片页；只有从资产显式送来素材时才进旧的独立创作工作台。
-  if (independentStudios && isManualStudioModule(studioModule) && (currentStudioRequest || (neutralStudio && studioModule !== 'IMAGE'))) return <>{moduleStartGate}{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={currentStudioRequest ? requestedStudioAsset : undefined} onModuleChange={navigateStudioModule} onOpenBroker={experimentalFlags.data?.features['experimental.model_broker_v2'] === true ? () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(false); setExperimentalTab('model_broker_v2'); setPanel('experimental'); } }) : undefined} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); requestedStudioEntry.current = undefined; studioEntryApplied.current = { ...studioEntryApplied.current, identity: '' }; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
+  // [HERMIA-FE-20261031 ACT] 激活后自动进入 IMAGE 也走图片页（正式节点流程）；只有显式送来素材才进独立工作台。
+  if (isManualStudioModule(studioModule) && routesToIndependentStudio({ independentStudios, neutralStudio, currentStudioRequest, requestedAssetId: requestedStudioAsset, module: studioModule })) return <>{moduleStartGate}{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={currentStudioRequest ? requestedStudioAsset : undefined} onModuleChange={navigateStudioModule} onOpenBroker={experimentalFlags.data?.features['experimental.model_broker_v2'] === true ? () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(false); setExperimentalTab('model_broker_v2'); setPanel('experimental'); } }) : undefined} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); requestedStudioEntry.current = undefined; studioEntryApplied.current = { ...studioEntryApplied.current, identity: '' }; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
   if (studioModule !== "NOVEL") return <>{moduleStartGate}{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} shellMode={shellMode} onShellModeChange={applyShellMode} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
@@ -2145,7 +2148,7 @@ function LegacyApp() {
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
           banner={studioModule === 'NOVEL' ? <NovelOrient
-            what={novels.data?.find(n => n.id === s.novelId)?.title ? `《${novels.data?.find(n => n.id === s.novelId)?.title}》${chapter.data ? ` · 第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : ''}` : '还没有打开作品'}
+            what={orientWhat(novels.data?.find(n => n.id === s.novelId)?.title, s.novelId, chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : undefined)}
             can="写作台改章 · AI 生成先成候选、你采用后才进正文 · 设定需审核才进正典"
             effect={`${novelSaveLocation.replace('保存位置：', '自动保存到')}；采用候选不会覆盖已批准设定`}
           /> : undefined}

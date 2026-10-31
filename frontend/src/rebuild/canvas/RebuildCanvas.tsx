@@ -7,6 +7,8 @@ import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNod
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
+import {useLocale} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
+import {displayNodeTitle} from '../../i18n/defaultNodeTitle';
 
 export type CanvasKind = 'image' | 'video';
 export type NodeType = {id: StudioGraphDefinitionId; label: string; color: string; icon: string; ins: boolean; outs: boolean};
@@ -66,6 +68,7 @@ export function RebuildCanvas(props: RebuildCanvasProps) {
 function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed,
   storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
   onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
+  const locale = useLocale(); // [HERMIA-FE-20261031 VERA-EN]
   const key = storageKey ?? canvasStorageKey(kind, scope);
   const palette = typesProp ?? NODE_TYPES[kind];
   const typeOf = (_k: CanvasKind, t: string) => palette.find(x => x.id === t) ?? NODE_TYPES[_k].find(x => x.id === t);
@@ -210,7 +213,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
           {g.nodes.map(n => { const ty = typeOf(kind, n.t); const c = ty?.color || '#888';
             return <g key={n.id} className="rcv-node" data-node-id={n.id} data-sel={sel === n.id} transform={`translate(${n.x},${n.y})`}>
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
-              <text className="ttl" x={16} y={24}>{ty?.icon} {n.title.length > 12 ? n.title.slice(0, 12) + '…' : n.title}</text>
+              <text className="ttl" x={16} y={24}>{ty?.icon} {(tl => tl.length > 12 ? tl.slice(0, 12) + '…' : tl)(displayNodeTitle(locale, n.title))}</text>
               <text className="sub" x={16} y={44}>{ty?.label || n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">本地</text>
               {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>输入端口</title></circle> : null}
               {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>输出端口（拖动连线）</title></circle> : null}
@@ -237,7 +240,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
       </div> : null}
     </div>
     {imageTaskNode ? <Panel title="所选图片节点参数" aria-label="所选图片节点参数" style={{flexShrink: 0}}>
-      <p>节点：{imageTaskNode.title}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
+      <p>节点：{displayNodeTitle(locale, imageTaskNode.title)}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
       <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
         onChange={event => { const prompt = event.target.value; promptRevisions.current.set(imageTaskNode.id, (promptRevisions.current.get(imageTaskNode.id) || 0) + 1); setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
       <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {

@@ -54,8 +54,11 @@ describe('approved optional ContextBar project noun', () => {
 
   it.each(STUDIO_MODULES.map(row => row.id))('keeps the legacy default through AppShell for %s', module => {
     const { host, root } = mount();
-    act(() => root.render(<AppShell {...shellProps} module={module} />));
+    // [HERMIA-UX-20261030 M1] full scope path is pro-only; basic shows just the work
+    act(() => root.render(<AppShell {...shellProps} module={module} shellMode="pro" />));
     expect(host.querySelector('.context-bar')?.textContent).toBe('创作空间：创作空间/小说：现有小说/故事线：主线/创作分支：当前草稿');
+    act(() => root.render(<AppShell {...shellProps} module={module} />));
+    expect(host.querySelector('.context-bar')?.textContent).toBe('小说：现有小说');
     expect([...host.querySelectorAll('[data-module-tab]')].map(tab => tab.getAttribute('data-module-tab')))
       .toEqual(['NOVEL', 'IMAGE', 'VIDEO', 'AUDIO', 'EDIT', 'ASSETS']);
   });
@@ -78,8 +81,10 @@ describe('approved optional ContextBar project noun', () => {
     act(() => root.render(<AppShell {...shellProps} module="NOVEL" scope={{ ...scope, project: '小说 B' }} />));
     expect(host.querySelector('.context-bar')?.textContent).toContain('小说：小说 B');
     expect(host.textContent).not.toContain('空白创作 A');
-    act(() => root.render(<AppShell {...shellProps} module="ASSETS" scope={{ workspace: '', project: '', storyline: '', branch: '' }} projectNoun="项目" />));
+    act(() => root.render(<AppShell {...shellProps} module="ASSETS" scope={{ workspace: '', project: '', storyline: '', branch: '' }} projectNoun="项目" shellMode="pro" />));
     expect(host.querySelector('.context-bar')?.textContent).toBe('创作空间：未选择/项目：未选择/故事线：未选择/创作分支：未选择');
+    act(() => root.render(<AppShell {...shellProps} module="ASSETS" scope={{ workspace: '', project: '', storyline: '', branch: '' }} projectNoun="项目" />));
+    expect(host.querySelector('.context-bar')?.textContent).toBe('项目：未选择');
     expect(host.textContent).not.toContain('小说 B');
   });
 });

@@ -1,0 +1,17 @@
+/* [HERMIA-UX-20261030 ONBOARD] 全部用主题 token：浅色 / 深色 / NSFW 夜色酒红自动跟随 */
+.onboarding{position:fixed;inset:0;z-index:1200;pointer-events:none}
+.onboarding__dim{position:fixed;inset:0;background:var(--color-overlay,rgba(0,0,0,.45));pointer-events:auto}
+.onboarding__spot{position:fixed;border-radius:10px;box-shadow:0 0 0 2px var(--color-accent-primary),0 0 0 9999px var(--color-overlay,rgba(0,0,0,.45));transition:top .18s,left .18s,width .18s,height .18s;pointer-events:none}
+.onboarding::before{content:"";position:fixed;inset:0;pointer-events:auto}
+.onboarding__card{position:fixed;box-sizing:border-box;pointer-events:auto;background:var(--color-bg-elevated);color:var(--color-text-primary);border:1px solid var(--color-border-strong);border-radius:12px;padding:14px 16px 12px;box-shadow:0 12px 32px rgba(0,0,0,.28);font-size:13px;line-height:1.6;white-space:normal;overflow-wrap:anywhere;text-align:left}
+.onboarding__count{margin:0 0 2px;font-size:12px;color:var(--color-text-secondary)}
+.onboarding__title{margin:0 0 6px;font-size:15px;font-weight:650;color:var(--color-text-primary)}
+.onboarding__body{margin:0;color:var(--color-text-primary)}
+.onboarding__note{margin:8px 0 0;font-size:12px;color:var(--color-text-secondary)}
+.onboarding__actions{display:flex;align-items:center;gap:8px;margin-top:12px}
+.onboarding__spacer{flex:1}
+.onboarding__actions button{font:inherit;font-size:13px;border-radius:8px;padding:5px 12px;cursor:pointer;border:1px solid var(--color-border-default);background:var(--color-bg-surface);color:var(--color-text-primary)}
+.onboarding__actions .onboarding__skip{border-color:transparent;background:transparent;color:var(--color-text-secondary);padding-left:4px}
+.onboarding__actions .onboarding__next{background:var(--color-accent-primary);border-color:var(--color-accent-primary);color:var(--color-text-inverse);font-weight:600}
+.onboarding__actions button:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.onboarding__spot{transition:none}}
