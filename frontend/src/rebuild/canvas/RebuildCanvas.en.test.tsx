@@ -66,3 +66,10 @@ it('truncated node title exposes full text via SVG <title>', () => {
   expect(ttl.textContent).toContain('…');
   expect(ttl.querySelector('title')?.textContent).toBe('New generated image');
 });
+// [HERMIA-FE-20261031 VERA-P3 r2] an untruncated title must not get a duplicate <title> (screen readers would read it twice).
+it('untruncated node title has no duplicate <title>', () => {
+  const {container} = render(<RebuildCanvas kind="image" scope="en-t2" seed={{nodes: [{id: 'n1', t: 'image_generate', x: 0, y: 0, title: 'Short', prompt: 'p'}], edges: []}} />);
+  const ttl = container.querySelector('text.ttl')!;
+  expect(ttl.textContent).not.toContain('…');
+  expect(ttl.querySelector('title')).toBeNull();
+});
