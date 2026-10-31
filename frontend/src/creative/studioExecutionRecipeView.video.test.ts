@@ -12,9 +12,15 @@ it('explains only the actual single-clip Timeline mapping and preserves executio
   {name:'video_bitrate_kbps',type:'INT',source:null,component:null,recordedValue:400},{name:'audio_bitrate_kbps',type:'INT',source:null,component:null,recordedValue:96},
   {name:'crf',type:'INT',source:null,component:null,recordedValue:23}]);
  expect(result.steps[0].outputs).toEqual(['VIDEO_H264_MP4']);expect(result.notes.join(' ')).toContain('配方不含逐步骤执行回执');
- expect(result.notes.join(' ')).toContain('不保留源音轨');expect(JSON.stringify(input)).toBe(before);
+ expect(result.notes.join(' ')).toContain('无源音轨拒绝执行');expect(JSON.stringify(input)).toBe(before);
 });
-it.each(['include_audio','extra clip','different size','different profile','string range','invalid pin'])('does not explain unsupported video mapping: %s',mode=>{
+it('explains explicit include_audio as the supported first-source-audio mapping',()=>{
+ const recipe:any=structuredClone(native.preview.execution_recipe);recipe.timeline.tracks[0].clips[0].include_audio=true;
+ const result=view(recipe);
+ expect(result.visibility).toBe('visible');expect(result.steps).toHaveLength(1);
+ expect(result.steps[0].title).toContain('源音轨');expect(result.steps[0].inputs.find(i=>i.name==='include_audio')?.recordedValue).toBe(true);
+});
+it.each(['extra clip','different size','different profile','string range','invalid pin'])('does not explain unsupported video mapping: %s',mode=>{
  const recipe:any=structuredClone(native.preview.execution_recipe),clip=recipe.timeline.tracks[0].clips[0];
  if(mode==='include_audio')clip.include_audio=true;if(mode==='extra clip')recipe.timeline.tracks[0].clips.push(structuredClone(clip));
  if(mode==='different size')recipe.timeline.width=1280;if(mode==='different profile')recipe.export_profile.preset='DELIVERY_MP4';

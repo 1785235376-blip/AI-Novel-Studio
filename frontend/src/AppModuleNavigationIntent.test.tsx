@@ -61,14 +61,16 @@ function selected(name: string) {
   }
   const module = name === '工作流' ? 'WORKFLOW' : 'CONTROL';
   expect(vi.mocked(shell.AppShell).mock.calls.at(-1)![0].module).toBe(module);
-  // These destinations live outside the six primary tabs. Only inspect the
-  // current menu item; clicking a destination would manufacture a new intent.
-  const settings = screen.getByRole('button', { name: '打开设置（AI 主控与插件）' });
-  fireEvent.click(settings);
-  const current = within(screen.getByRole('menu', { name: '设置与溢出工作区' }))
-    .getByRole('menuitem', { name: `${name === '主控' ? 'AI 主控' : name} ${module}` });
-  expect(current.getAttribute('aria-current')).toBe('page');
-  fireEvent.click(settings);
+  // Current basic shell: settings keeps only AI 主控; WORKFLOW is command-palette-only
+  // (the overflow trigger is pro/module-active only), so the AppShell module prop above is
+  // the authoritative current-route assertion for workflow.
+  if (name === '工作流') return;
+  const trigger = screen.getByRole('button', { name: /^打开设置/ });
+  fireEvent.click(trigger);
+  const surface = within(screen.getByRole('menu', { name: '设置与溢出工作区' }))
+    .getByRole('menuitem', { name: 'AI 主控' });
+  expect(surface.getAttribute('aria-current')).toBe('page');
+  fireEvent.click(trigger);
 }
 async function request(index = 0) { await waitFor(() => expect(held.length).toBeGreaterThan(index)); return held[index]; }
 async function release(row: HeldOverview, settleCurrent = true, value = overview(row.project)) {
