@@ -57,3 +57,6 @@
 ### 能力补充：项目 scope 文档容量归属（MEASURED_ONLY）
 新增 `project_capacity_scope_docs.py`：对 `experimental_v1/*.json` 做有界、只读 `novel_id` 归属计量，接入 capacity diagnostics/reconcile/admission 基线；其他项目、损坏、超限（>8 MiB）或超时分别计数，超限/超时计 UNKNOWN 并阻塞新 reservation。容量写入覆盖矩阵将 `project_scope_document` 从 `NOT_CONNECTED` 提升为 `MEASURED_ONLY`（写入仍未接 admission）。测试 4 项；容量组回归 94 passed。
 
+### 能力补充汇总报告
+补充批次的完整清单、SHA、测试证据与剩余边界见 `docs/delivery/V2_CAPABILITY_SUPPLEMENT_REPORT_20261031.md`（PR #55–#64，main `94abff88` 起）。
+
