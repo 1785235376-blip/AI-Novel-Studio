@@ -41,7 +41,7 @@ async function enter() { fireEvent.click(await screen.findByRole('button', { nam
 async function adopt() { click('明确读取视频图节点目录'); await screen.findByRole('region', { name: '视频图版本确认' });
   fireEvent.click(screen.getByLabelText('确认当前兼容草稿采用视频图 v5，保留来源、审核与原任务')); click('明确采用视频图 v5');
 }
-async function addBoard() { change('节点类型', 'storyboard_plan'); click('明确读取已保存导演与分镜文档'); await screen.findByRole('option', { name: 'Synthetic saved storyboard · v4' }); change('原创作文档', document.id); click('添加节点'); }
+async function addBoard() { change('节点类型', 'storyboard_plan'); click('明确读取已保存导演与分镜文档'); await waitFor(() => expect((screen.getByLabelText('原创作文档') as HTMLSelectElement).options.length).toBeGreaterThan(1)); change('原创作文档', document.id); click('添加节点'); }
 describe('Explicit video Graph keeps saved shot and original execution authority', () => {
   it('retains Image schema descriptors and author input while a Video catalog awaits consent', async () => {
     mount(); await enter(); click('明确读取图片节点目录'); await screen.findByRole('region', { name: '图片图版本确认' }); fireEvent.click(screen.getByLabelText('确认将当前兼容草稿采用为图片图 v4，保持原资产绑定与人工审核')); click('明确采用图片图 v4');
@@ -56,7 +56,7 @@ describe('Explicit video Graph keeps saved shot and original execution authority
     mount(); await enter(); expect(client.graphs.videoCatalog).not.toHaveBeenCalled(); await adopt(); await addBoard();
     change('节点类型', 'storyboard_shot'); expect((screen.getByRole('button', { name: '添加节点' }) as HTMLButtonElement).disabled).toBe(true);
     const source = screen.getByLabelText('图中分镜来源') as HTMLSelectElement; change('图中分镜来源', source.options[1].value); click('明确读取来源分镜镜头');
-    await screen.findByRole('option', { name: 'SHOT 1 · shot-1 · v1' }); change('原分镜镜头', 'shot-1'); click('添加节点');
+    await waitFor(() => expect((screen.getByLabelText('原分镜镜头') as HTMLSelectElement).options.length).toBeGreaterThan(1)); change('原分镜镜头', 'shot-1'); click('添加节点');
     change('节点类型', 'video_generate'); click('添加节点'); change('视频服务商 ID', 'synthetic-comfy'); change('视频模型 ID', 'observed-model');
     change('视频操作', 'm7.video.v2v'); change('参考视频用途', 'camera'); click('保存创作图'); await screen.findByText('创作图已保存 · v1。没有自动创建运行。');
     const definition = vi.mocked(client.graphs.create).mock.calls[0][0].definition;

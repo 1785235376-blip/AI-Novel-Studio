@@ -171,7 +171,7 @@ it('discarded JPEG preflight cannot replace a newer lossless WebP check or relea
 
 it('downloads lossless WebP through the original mounted IMAGE owner with captured scope', async () => {
   const h = harness(); const onBusy = vi.fn();
-  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
+  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', actor: { id: 'author', displayName: 'Author', workspaceId: 'w' }, scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
   await openBook(); await preflight(lossless); ack(); fireEvent.click(download('WEBP')); await screen.findByText('已校验并下载 WEBP 页面 ZIP 阅读副本。');
   expect(h.posts()[1][1].headers).toMatchObject({ 'X-Session-Token': 'mounted-session', 'X-Branch-Id': 'mounted-branch' }); expect(saveOtioFile).toHaveBeenCalledTimes(1); expect(onBusy).toHaveBeenLastCalledWith(false);
 });

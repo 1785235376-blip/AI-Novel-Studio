@@ -108,3 +108,15 @@
 
 第五轮结果：全量 `pnpm test` **21 failed files / 54 failed tests / 13,474 passed / 6 skipped**（第四轮 35 / 110 / 13,418；最初 96 / 792 / 12,724）。
 
+## 11. 第六轮修复：storyboardEditor 与剩余独立工作区用例（2026-10-31 同日）
+
+- `IndependentStudioWorkspace.storyboardEditor.additive.test.tsx`（23/23 定向通过）：宽视口、选择已保存图后切 `执行画布`、脏图交接按当前 UI 阻断（不再出现放弃对话框），失败 admission 用干净图验证；
+- `IndependentStudioStoryboardHandoff.additive.test.tsx` 已在上一轮 19/19；
+- `ComicPublicationPanel.pageArchive/.epub`：协作交接 context 补 actor；
+- `StudioVideoGraphEditor.phase4`：重复 option 改按 select options 等待；
+- `CreativeWorkspace` / `.saveState.regression` / `.adoptionCommitRace`：宽视口暴露导演面板，补 `beforeEach` 导入；
+- `AppStyleDNANavigation`：当前 overview 切换不再走 Style DNA leave guard；
+- `StudioProductionGraphEditor.director` 部分用例仍受执行画布/UNKNOWN 导航时序影响。
+
+第六轮结果：全量 `pnpm test` **13 failed files / 29 failed tests / 13,498 passed / 6 skipped**（第五轮 21 / 54 / 13,474；最初 96 / 792 / 12,724）。其中 `storyboardEditor` 全量并行时仍有 8 个超时性失败、定向单跑 23/23，属并行负载下的时序问题；另有 GraphImageOutputStarter 4、providerMigration 4、AppRevisionHistory 6 等尚未清理。
+

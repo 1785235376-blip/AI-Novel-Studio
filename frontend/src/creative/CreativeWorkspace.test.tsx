@@ -34,6 +34,7 @@ const tab = (name: RegExp) => within(screen.getByRole('tablist', { name: '创作
 async function ready() { await waitFor(() => expect(screen.queryByText('正在核对创作文档与权限…')).toBeNull()); }
 async function screenplay() { await ready(); fireEvent.click(tab(/Screenplay/)); await screen.findByLabelText('文档标题'); }
 beforeEach(() => { server(); });
+beforeEach(() => { Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true }); });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('creative workspace protected manuscript and request boundaries', () => {

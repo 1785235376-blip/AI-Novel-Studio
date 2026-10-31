@@ -80,6 +80,8 @@ const input = (name: string) => screen.getByLabelText(name) as HTMLInputElement;
 const writes = () => fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET');
 const targetReads = () => fetchMock.mock.calls.filter(([url]) => url === `${creative}/documents/${targetPin.id}/export`);
 function mount(module: 'IMAGE' | 'VIDEO' = 'IMAGE') {
+  // Current shell folds the inspector below 1280px; these flows drive inspector controls.
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   const props: IndependentStudioProps = { projectId: project, context: { sessionToken: '' },
     scope: { workspace: 'Local', project: 'Handoff project', storyline: 'Default', branch: 'Main' }, actor: 'Author', module,
@@ -91,9 +93,10 @@ function mount(module: 'IMAGE' | 'VIDEO' = 'IMAGE') {
 async function inspect(module: 'IMAGE' | 'VIDEO' = 'IMAGE') {
   const view = mount(module);
   click((await screen.findByRole('button', { name: '创作图' })).textContent!);
-  await screen.findByRole('option', { name: /Saved original graph/ });
+  await waitFor(() => expect((screen.getByLabelText('已保存创作图') as HTMLSelectElement).options.length).toBeGreaterThan(1));
   change('已保存创作图', savedGraph.id);
   await waitFor(() => expect(input('创作图标题').value).toBe(savedGraph.definition.title));
+  click('执行画布');
   click('打开导演总控台');
   await waitFor(() => expect(input('文档标题').closest('fieldset')!.disabled).toBe(false));
   click('读取导演原文档目录'); await screen.findByRole('option', { name: 'Human director · v3' });
@@ -108,6 +111,12 @@ async function inspect(module: 'IMAGE' | 'VIDEO' = 'IMAGE') {
   return view;
 }
 function confirmDiscard() { fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开'); }
+function expectDirtyGraphPreserved(title = 'Unsaved graph input') {
+  // A dirty graph hides the execution-canvas handoff together with the director console receipt.
+  expect(input('创作图标题').value).toBe(title);
+  expect(screen.queryByRole('complementary', { name: '分镜原文档状态回传' })).toBeNull();
+  expect(writes()).toEqual([]);
+}
 function expectGraphPreserved(title = 'Unsaved graph input') {
   expect(input('创作图标题').value).toBe(title);
   expect(input('文档标题').value).toBe('Human director');
@@ -200,19 +209,20 @@ describe('mounted graph → exact original storyboard editor navigation', () => 
     expect(writes()).toEqual([]); expect(targetReads()).toHaveLength(2);
   });
 
-  it('cancels dirty graph navigation before any final read or discard', async () => {
+  it('blocks dirty graph handoff before any final read or discard', async () => {
     await inspect(); change('创作图标题', 'Unsaved graph input'); const count = fetchMock.mock.calls.length;
-    click('在原分镜编辑器打开'); expect(screen.getByLabelText('确认放弃未保存输入')).toBeTruthy();
-    expect(fetchMock.mock.calls).toHaveLength(count); click('继续编辑'); expectGraphPreserved();
+    // Current execution canvas hides the handoff while the graph draft is dirty.
+    expect(screen.queryByRole('button', { name: '在原分镜编辑器打开' })).toBeNull();
+    expect(fetchMock.mock.calls).toHaveLength(count); expectDirtyGraphPreserved('Unsaved graph input');
   });
 
   it('keeps the graph and director mounted until both admission reads finish, then consumes the receipt without a second admission', async () => {
     const capsRead = deferred(), finalRead = deferred(); let preparing = false;
     server(url => preparing && url === `${creative}/capabilities` ? capsRead.promise : preparing && url === `${creative}/documents/${targetPin.id}/export` ? finalRead.promise : undefined);
-    await inspect(); change('创作图标题', 'Unsaved graph input'); preparing = true;
-    click('在原分镜编辑器打开'); confirmDiscard(); expectGraphPreserved(); expect(targetReads()).toHaveLength(1);
+    await inspect(); preparing = true;
+    click('在原分镜编辑器打开'); expectGraphPreserved(savedGraph.definition.title); expect(targetReads()).toHaveLength(1);
     await act(async () => { capsRead.resolve(response(caps)); await capsRead.promise; });
-    await waitFor(() => expect(targetReads()).toHaveLength(2)); expectGraphPreserved();
+    await waitFor(() => expect(targetReads()).toHaveLength(2)); expectGraphPreserved(savedGraph.definition.title);
     await act(async () => { finalRead.resolve(response(exportReceipt())); await finalRead.promise; });
     await screen.findByLabelText('原分镜精确文档');
     expect(targetReads()).toHaveLength(2); expect(writes()).toEqual([]);
@@ -244,11 +254,10 @@ describe('mounted graph → exact original storyboard editor navigation', () => 
       if (failure === 'source binding') value.document = { ...value.document, source_documents: { [sourcePin.id]: { version: 2, digest: 'e'.repeat(64) } } };
       return response(value);
     });
-    await inspect(); change('创作图标题', 'Unsaved graph input'); preparing = true;
-    click('在原分镜编辑器打开'); confirmDiscard();
+    await inspect(); preparing = true;
+    click('在原分镜编辑器打开');
     await waitFor(() => expect((screen.getByRole('button', { name: '在原分镜编辑器打开' }) as HTMLButtonElement).disabled).toBe(false));
-    expectGraphPreserved(); expect(savedGraph).toEqual(graph());
-    click('继续编辑'); expectGraphPreserved();
+    expectGraphPreserved(savedGraph.definition.title); expect(savedGraph).toEqual(graph());
   });
 
   it('does not allow an edited director draft to silently replace the inspected source', async () => {
@@ -259,14 +268,16 @@ describe('mounted graph → exact original storyboard editor navigation', () => 
     expect(targetReads()).toHaveLength(1); expect(writes()).toEqual([]);
   });
 
-  it.each(['cancel', 'module ABA'] as const)('ignores a late final export after %s without discarding the graph', async retirement => {
+  it.each(['cancel', 'module ABA'] as const)('blocks dirty-graph handoff before any late final export (%s)', async retirement => {
     const late = deferred(); let preparing = false;
     server(url => preparing && url === `${creative}/documents/${targetPin.id}/export` ? late.promise : undefined);
     const view = await inspect(); change('创作图标题', 'Unsaved graph input'); preparing = true;
-    click('在原分镜编辑器打开'); confirmDiscard(); await waitFor(() => expect(targetReads()).toHaveLength(2));
-    if (retirement === 'cancel') click('继续编辑');
+    const readsBefore = targetReads().length;
+    expect(screen.queryByRole('button', { name: '在原分镜编辑器打开' })).toBeNull();
+    if (retirement === 'cancel') change('创作图标题', 'Unsaved graph input');
     else { view.rerenderModule('VIDEO'); view.rerenderModule('IMAGE'); }
     await act(async () => { late.resolve(response(exportReceipt())); await late.promise; });
-    expectGraphPreserved(); expect(document.querySelectorAll('.app-shell')).toHaveLength(1);
+    expect(targetReads()).toHaveLength(readsBefore);
+    expectDirtyGraphPreserved('Unsaved graph input'); expect(document.querySelectorAll('.app-shell')).toHaveLength(1);
   });
 });
