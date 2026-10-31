@@ -29,3 +29,12 @@
 - `tests/test_comfy_lower_canvas_api.py`：10 passed（storage roundtrip/CAS/边界、proxy 白名单/headers/meta/503、路由挂载）；
 - `tests/test_comfyui_node_library.py`：18 passed；
 - 前端 merge 后 build PASS（Grok 分支合入 main）。
+
+## 前端 wiring（2026-10-31）
+
+- `DualStack` 仅在完整真实身份（actor + collaboration scope）下启用后端同步；无身份保持 session-only，不发送请求。
+- `GET /api/comfy/object_info` → `parseObjectInfo(..., 'imported')` → `mergeImported`；PoemSeed 节点不被覆盖，503 时保留内置节点库。
+- `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}`：首次加载云端草稿；本地已有草稿时本地优先并同步；`expected_version` CAS；409 冲突/不可用时保留本机草稿并显示状态，不覆盖服务端。
+- 徽标：「云端草稿 · 不会执行 · 节点库只读」；仍未执行、不报价、不写资产。
+- 测试：`comfyRemote.test.ts` 6 passed；`DualStack.remote.test.tsx` 1 passed；真实浏览器 mock：imported node=1、lowerWrites=4、nonGet=0、fails=0。
+

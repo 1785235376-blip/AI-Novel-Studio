@@ -13,11 +13,29 @@ const ch = P => [{id: 'ch-001', novel_id: P, number: 1, title: '第一章', cont
 const plays = [{id: 'sp1', shot_status: 'DRAFT', shots: [{id: 'x1', shot_size: '近景', description: '雾港码头'}, {id: 'x2', shot_size: '远景', description: '灯塔'}, {id: 'x3', shot_size: '特写', description: '煤油灯'}]}];
 async function session(theme) {
   const be = createBackend(), P = be.d.P;
+  const lower = new Map(); // [WIRING] fake project lower-canvas rows (mock only)
+  const imported = {M5ImportedNode: {input: {required: {}}, output: ['IMAGE'], category: 'custom', display_name: 'M5 Imported Node'}};
   const ctx = await b.newContext({viewport: {width: 1366, height: 800}});
   await ctx.route('**/*', async rt => {
     const q = rt.request(), u = new URL(q.url());
+    const lowerMatch = u.pathname.match(/\/studio\/lower-canvas\/(image|video)$/);
+    // [WIRING] the lower-canvas draft API is the one permitted write; everything else stays blocked.
+    if (q.method() === 'PUT' && lowerMatch) {
+      lowerWrites++;
+      const kind = lowerMatch[1];
+      const body = JSON.parse(q.postData() || '{}');
+      const version = (lower.get(kind)?.version || 0) + 1;
+      lower.set(kind, {version, graph: body.graph});
+      return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify({kind, version, graph: body.graph})});
+    }
     if (!['GET', 'HEAD'].includes(q.method())) { nonGet++; return rt.abort(); } // [P3] counted; must stay 0
     if (!u.pathname.startsWith('/api/')) return rt.continue();
+    if (u.pathname === '/api/comfy/object_info') return rt.fulfill({status: 200, contentType: 'application/json',
+      headers: {'X-Comfy-Source-Version': 'm5-mock-source'},
+      body: JSON.stringify(imported)});
+    if (lowerMatch) { const kind = lowerMatch[1];
+      return rt.fulfill({status: 200, contentType: 'application/json',
+        body: JSON.stringify({kind, version: lower.get(kind)?.version || 0, graph: lower.get(kind)?.graph || {nodes: [], edges: []}})}); }
     if (/\/chapters$/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(ch(P))});
     if (/^\/api\/chapters\/ch-001$/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(ch(P)[0])});
     if (/screenplays/.test(u.pathname)) return rt.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(plays)});
@@ -36,12 +54,12 @@ async function session(theme) {
 const skipGate = async p => { const l = p.getByRole('button', {name: '跳过，直接进入小说写作', exact: true}).first(); if (await l.count()) { await l.click().catch(() => {}); await p.waitForTimeout(500); } };
 
 // [HERMIA-FE-20261031 DUALCANVAS-COMFY] Real-browser: lower ComfyUI-style canvas + splitter/max/swap, 1024/1440/1920 × light/dark, pro mode.
-// Read-only MOCK (non-GET aborted, /api GETs from mockBackend.mjs). Never calls a model or ComfyUI.
+// MOCK: node-library import + lower-canvas draft PUT are fake; every other non-GET is aborted. Never calls a model or ComfyUI.
 // C1 lower menu has >40 node types in >=8 groups; C2 MODEL link ok, CLIP→MODEL refused; C3 swap puts lower above, semantics kept;
 // C4 maximize hides upper, restore shows both; C5 splitter keyboard moves aria-valuenow; T1 light: lower canvas bg not dark; dark: dark.
 const lum = `(c => { const m = c.match(/rgba?\\(([^)]+)\\)/); if (!m) return null; const [r, g, bb] = m[1].split(/[ ,/]+/).filter(Boolean).map(Number);
   const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bb); })`;
-const fails = [], rows = []; let nonGet = 0;
+const fails = [], rows = []; let nonGet = 0; let lowerWrites = 0;
 const AXE_FILE = process.env.AXE || '/workspace/hr/ux-20261030/axe/node_modules/axe-core/axe.min.js';
 for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
   const {ctx, p, errs} = await session(theme); await skipGate(p);
@@ -61,7 +79,10 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
     // C1 menu
     { await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(200);
       const n = await p.locator(`${LO} [data-add-node-menu] [data-node-type]`).count(); const g = await p.locator(`${LO} [data-add-node-menu] .grp--h`).count();
-      if (n < 40 || g < 8) v.push(`C1 menu n=${n} groups=${g}`); rows.push({key: `${theme}|${mod}|menu`, n, g});
+      const importedCount = await p.locator(`${LO} [data-add-node-menu] [data-node-type="M5ImportedNode"]`).count();
+      if (n < 40 || g < 8) v.push(`C1 menu n=${n} groups=${g}`);
+      if (!importedCount) v.push('C1 imported object_info node missing');
+      rows.push({key: `${theme}|${mod}|menu`, n, g, importedCount});
       if (SHOTS) await p.screenshot({path: `${SHOTS}/${theme}-${mod}-menu-1440.png`});
       // [P2-2] A1 axe on the open add-node menu: 0 violations of any impact
       await p.addScriptTag({content: fs.readFileSync(AXE_FILE, 'utf8')});
@@ -141,7 +162,7 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
   await ctx.close();
 }
 await b.close();
-rows.push({key: 'nonGET', nonGet}); if (nonGet !== 0) fails.push(`N1 non-GET requests attempted: ${nonGet}`);
+rows.push({key: 'nonGET', nonGet, lowerWrites}); if (nonGet !== 0) fails.push(`N1 non-GET requests attempted: ${nonGet}`); if (lowerWrites < 1) fails.push('N2 lower-canvas draft was never persisted');
 if (process.env.OUT) fs.writeFileSync(process.env.OUT, JSON.stringify({rows, fails}, null, 1));
 console.log(JSON.stringify(rows)); console.log(`rows=${rows.length} fails=${fails.length}`); for (const f of fails) console.log(' ✗ ' + f);
 process.exit(fails.length ? 1 : 0);

@@ -69,3 +69,6 @@
 ### 新增：ComfyUI 下画布后端接口（object_info 代理 + 草稿持久化）
 合并 Grok 双画布/ComfyUI 节点库前端后，后端新增 `GET /api/comfy/object_info`（原始 object_info 透传 + 白名单 + source_version/fetched_at + 503 comfy_unavailable）与 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}`（项目 scope、乐观版本、400/409 边界）。执行 run 接口未实现：前端节点参数尚不可编辑，需补 params 后再实现真实 ComfyUI prompt/报价/状态/资产回写。见 `docs/delivery/COMFY_LOWER_CANVAS_BACKEND_20261031.md`。
 
+### 前端 wiring：自定义下画布接入真实节点库与项目草稿
+`DualStack` 在真实身份下调用 `GET /api/comfy/object_info` 合并只读节点库，并通过 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}` 同步下画布草稿（CAS、冲突保留本机、503 保留内置节点）；无身份仍 session-only。徽标改为「云端草稿 · 不会执行 · 节点库只读」。测试 `comfyRemote.test.ts` 6 + `DualStack.remote.test.tsx` 1；浏览器 mock importedCount=1/lowerWrites=4/nonGet=0。
+

@@ -167,7 +167,7 @@ def build_capability_registry(*, settings) -> CapabilityRegistry:
             status="PARTIAL", verification="HTTP_SYNTHETIC",
             evidence=("tests/test_comfy_lower_canvas_api.py", "tests/test_comfyui_node_library.py"),
             limits=("object_info_proxy:HTTP_SYNTHETIC", "lower_canvas_storage:FILE_SYNTHETIC_VERIFIED",
-                    "execution:NOT_IMPLEMENTED", "frontend_wiring:NOT_CONNECTED",
+                    "execution:NOT_IMPLEMENTED", "frontend_wiring:CONNECTED_SYNTHETIC",
                     "real_comfyui_provider:NOT_RUN")),
         CapabilityItem(id="comfyui_node_library", title="ComfyUI 节点库只读导入/兼容映射",
             status="PARTIAL", verification="HTTP_SYNTHETIC",

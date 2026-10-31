@@ -6,6 +6,7 @@ import {useLocale} from '../../../i18n';
 import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible,
   type CfGraph, type CfNode, type NodeDef, type Registry} from './comfyRegistry';
 import {sessionCanvasStore} from '../RebuildCanvas';
+import {loadRemoteComfyGraph, saveRemoteComfyGraph, type ComfyRemoteContext} from './comfyRemote';
 
 /** 无身份时下画布的会话内存（类型化，不混入主画布 CvGraph）；随 sessionCanvasStore.clear() 一起清空。 */
 const COMFY_SESSION = new Map<string, unknown>();
@@ -19,7 +20,7 @@ export const nodeHeight = (d?: NodeDef) => HEAD + Math.max(1, d ? Math.max(d.inp
 let seq = 0; const uid = () => `cf${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 type Props = {kind: 'image' | 'video'; storageKey: string; persist: 'local' | 'session'; label: string; ariaLabel: string; badge: string; badgeTitle?: string;
-  emptyHint?: string; onSelect?: (n: CfNode | null, def: NodeDef | null) => void; registry?: Registry};
+  emptyHint?: string; onSelect?: (n: CfNode | null, def: NodeDef | null) => void; registry?: Registry; remote?: ComfyRemoteContext};
 
 function load(key: string, persist: 'local' | 'session', reg: Registry): CfGraph {
   let raw: unknown = null;
@@ -28,12 +29,17 @@ function load(key: string, persist: 'local' | 'session', reg: Registry): CfGraph
   return sanitizeGraph(raw, reg);
 }
 
-export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge, badgeTitle, emptyHint, onSelect, registry}: Props) {
+export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge, badgeTitle, emptyHint, onSelect, registry, remote}: Props) {
   const locale = useLocale(); const zh = locale.startsWith('zh');
   const L = (z: string, e: string) => (zh ? z : e);
   const reg = registry ?? defaultRegistry(kind);
   const [g, setG] = useState<CfGraph>(() => load(storageKey, persist, reg));
   const [vp, setVp] = useState({x: 30, y: 30, k: 1});
+  const [remoteState, setRemoteState] = useState<'off' | 'loading' | 'ready' | 'unavailable' | 'conflict'>(remote ? 'loading' : 'off');
+  const [remoteNote, setRemoteNote] = useState('');
+  const remoteVersion = useRef(0);
+  const skipRemoteSave = useRef(true);
+  const graphRef = useRef(g);
   const [sel, setSel] = useState<string | null>(null);
   const [menu, setMenu] = useState<null | {cx: number; cy: number; wx: number; wy: number; node?: string}>(null);
   const [q, setQ] = useState('');
@@ -49,6 +55,59 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     if (persist === 'session') sessionComfyStore.set(storageKey, g);
     else { try { localStorage.setItem(storageKey, JSON.stringify(g)); } catch { /* ignore */ } }
   }, [g, storageKey, persist]);
+
+  useEffect(() => { graphRef.current = g; }, [g]);
+  // [HERMIA-FE-20261031 DUALCANVAS-COMFY WIRING] Real identity → load/save the lower canvas draft
+  // through the project API. No identity keeps the old session-memory path and makes no request.
+  useEffect(() => {
+    if (!remote) { setRemoteState('off'); setRemoteNote(''); return; }
+    const ac = new AbortController(); let alive = true;
+    setRemoteState('loading'); setRemoteNote(L('读取云端草稿…', 'Loading cloud draft…'));
+    loadRemoteComfyGraph(kind, remote, ac.signal).then(loaded => {
+      if (!alive) return;
+      remoteVersion.current = loaded.version;
+      const local = graphRef.current;
+      const localEmpty = !local.nodes.length && !local.edges.length;
+      if (!loaded.version && localEmpty) {
+        skipRemoteSave.current = true;
+      } else if (!localEmpty) {
+        // Keep the local draft (user data wins) and sync it against the loaded version.
+        skipRemoteSave.current = false;
+        setRemoteNote(L('本机草稿将同步到云端', 'Local draft will sync to the cloud'));
+      } else {
+        skipRemoteSave.current = true;
+        setG(sanitizeGraph(loaded.graph, reg));
+        setRemoteNote(L('已读取云端草稿', 'Cloud draft loaded'));
+      }
+      setRemoteState('ready');
+    }).catch(() => {
+      if (!alive) return;
+      setRemoteState('unavailable');
+      setRemoteNote(L('云端草稿不可用，保留本机草稿', 'Cloud draft unavailable; local draft kept'));
+    });
+    return () => { alive = false; ac.abort(); };
+  }, [remote?.projectId, remote?.token, remote?.branchId, kind]);
+
+  useEffect(() => {
+    if (!remote || remoteState !== 'ready') return;
+    if (skipRemoteSave.current) { skipRemoteSave.current = false; return; }
+    const timer = setTimeout(() => {
+      saveRemoteComfyGraph(kind, remote, remoteVersion.current, graphRef.current).then(result => {
+        if (result.ok) {
+          remoteVersion.current = result.version;
+          setRemoteNote(L(`云端草稿已保存 v${result.version}`, `Cloud draft saved v${result.version}`));
+        } else {
+          setRemoteState('conflict');
+          setRemoteNote(L(`云端版本冲突（当前 v${result.currentVersion}），本机草稿未覆盖`,
+            `Cloud version conflict (current v${result.currentVersion}); local draft not overwritten`));
+        }
+      }).catch(() => {
+        setRemoteState('unavailable');
+        setRemoteNote(L('云端保存失败，保留本机草稿', 'Cloud save failed; local draft kept'));
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [g, remote, remoteState, kind]);
   useEffect(() => { const n = g.nodes.find(x => x.id === sel) ?? null; onSelect?.(n, n ? def(n.t) ?? null : null); }, [sel, g.nodes, onSelect, def]);
 
   const world = (cx: number, cy: number) => {
@@ -218,7 +277,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
         </div>) : null}
       <div className="rcv-zoom"><button type="button" aria-label={L('缩小画布', 'Zoom out')} onClick={() => zoom(1 / 1.15)}>－</button><span>{Math.round(vp.k * 100)}%</span>
         <button type="button" aria-label={L('放大画布', 'Zoom in')} onClick={() => zoom(1.15)}>＋</button></div>
-      <div className="rcv-status" role="status" data-comfy-status>{msg || L(`节点 ${g.nodes.length} · 连线 ${g.edges.length} · 不会执行`, `${g.nodes.length} nodes · ${g.edges.length} links · never runs`)}</div>
+      <div className="rcv-status" role="status" data-comfy-status data-comfy-remote={remoteState}>{msg || remoteNote || L(`节点 ${g.nodes.length} · 连线 ${g.edges.length} · 不会执行`, `${g.nodes.length} nodes · ${g.edges.length} links · never runs`)}</div>
     </div>
   );
 }
