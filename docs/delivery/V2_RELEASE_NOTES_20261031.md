@@ -75,3 +75,6 @@
 ### ComfyUI 下画布：节点参数（widget）编辑与持久化
 下画布节点参数现在可编辑：INT/FLOAT/STRING/BOOLEAN/COMBO 控件，初始值来自 object_info/default/choices。参数写入 CfNode.params，随草稿保存在 localStorage/session store 并同步到 backend lower-canvas；后端对 params 做有界标量校验（旧草稿无 params 保持兼容）。仍未执行节点；runs/报价/状态/产物回写仍待实现。
 
+### ComfyUI 下画布：run preflight / quote（后端）
+新增只读 preflight 接口：`POST /api/projects/{id}/studio/lower-canvas/{kind}/runs/preflight`。按已保存草稿版本 + 本地 ComfyUI `/object_info` 将 CfGraph+params 转为 ComfyUI prompt 并校验端口/槽位/类型/参数/环/输出节点，返回零计费报价与确认要求；不提交 `/prompt`、不轮询、不写资产（execution=NOT_DISPATCHED，dispatch=NOT_IMPLEMENTED）。测试 12 passed。
+

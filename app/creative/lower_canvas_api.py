@@ -85,6 +85,12 @@ class LowerCanvasGraph(BaseModel):
     edges: list[LowerCanvasEdge] = Field(default_factory=list)
 
 
+class LowerCanvasRunPreflight(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_version: int = Field(ge=0, le=1_000_000)
+    provider_id: str | None = Field(default=None, max_length=80)
+
+
 class LowerCanvasSave(BaseModel):
     model_config = ConfigDict(extra="forbid")
     expected_version: int = Field(ge=0, le=1_000_000)
@@ -192,5 +198,28 @@ def create_lower_canvas_router(service, invoke):
         except LowerCanvasVersionConflict as exc:
             raise HTTPException(409, {"code": "LOWER_CANVAS_VERSION_CONFLICT",
                 "current_version": exc.current_version}) from None
+
+    @router.post("/projects/{nid}/studio/lower-canvas/{kind}/runs/preflight")
+    def lower_canvas_run_preflight(nid: str, kind: str, body: LowerCanvasRunPreflight,
+                                   x_session_token: str | None = Header(None),
+                                   x_branch_id: str | None = Header(None)):
+        from .lower_canvas_runs import LowerCanvasRunError, preflight_lower_canvas_run
+        try:
+            return _invoke(nid, x_session_token, x_branch_id, "domain.read",
+                lambda actor, scope, guard: preflight_lower_canvas_run(
+                    service, nid, scope, actor, kind, expected_version=body.expected_version,
+                    provider_id=body.provider_id))
+        except LowerCanvasRunError as exc:
+            # Literal codes keep the frontend error-code scanner auditable; the
+            # detailed bounded reason remains available in `reason`.
+            if exc.code == "LOWER_CANVAS_VERSION_CONFLICT":
+                payload = {"code": "LOWER_CANVAS_VERSION_CONFLICT"}
+                try: payload["current_version"] = int(exc.detail)
+                except ValueError: pass
+                raise HTTPException(409, payload) from None
+            if exc.code == "LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED":
+                raise HTTPException(409, {"code": "LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED"}) from None
+            raise HTTPException(exc.status, {"code": "LOWER_CANVAS_RUN_PREFLIGHT_REJECTED",
+                "reason": exc.code}) from None
 
     return router
