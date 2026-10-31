@@ -6,7 +6,7 @@
 
 V0.1 数据与 Agent 架构保留。V0.2 增加 Runtime Registry、Mock/Ollama Streaming、完整 `/api`、Generation Job/SSE/Draft Accept；V0.3 增加 React + TypeScript + Vite + TipTap 三栏 Writer UI。当前机器未发现 Docker、Ollama 或 Cloud Key，真实 Runtime 仍为 PARTIAL。
 
-V2.0.0 已完成 V2 后端收尾与前后端对齐合并：main 同时包含能力补齐/安全硬化（PR #51）、全分支后端收尾（PR #52）与前端/UX/i18n 对齐（PR #53），版本号已更新为 V2.0.0。**真实验收（真实 PostgreSQL、真实浏览器、真实模型/GPU、Windows 打包桌面、hosted CI、外部 NLE）尚未执行**，详见 [V2 release notes](docs/delivery/V2_RELEASE_NOTES_20261031.md) 与 [后端最终报告](docs/delivery/BACKEND_FINALIZE_FINAL_REPORT_20261031.md)；本版本号不冒充产品验收 PASS。
+V2.0.0 已完成 V2 后端收尾与前后端对齐合并：main 同时包含能力补齐/安全硬化（PR #51）、全分支后端收尾（PR #52）与前端/UX/i18n 对齐（PR #53），版本号已更新为 V2.0.0。**真实验收（真实 PostgreSQL、真实浏览器、真实模型/GPU、Windows 打包桌面、hosted CI、外部 NLE）尚未执行**，详见 [V2 release notes](docs/delivery/V2_RELEASE_NOTES_20261031.md)、[V2 能力补充报告](docs/delivery/V2_CAPABILITY_SUPPLEMENT_REPORT_20261031.md) 与 [后端最终报告](docs/delivery/BACKEND_FINALIZE_FINAL_REPORT_20261031.md)；本版本号不冒充产品验收 PASS。
 
 V1.0 Windows DesktopHost 正在开发验收中，尚未发布。当前已有内部验收 ZIP/EXE 快照（不是公共发行物）；已完成项、前端预留窗口和未完成项见 [`docs/v1_implementation_status.md`](docs/v1_implementation_status.md)，验收矩阵见 [`docs/acceptance_report_20260822.md`](docs/acceptance_report_20260822.md)。
 
