@@ -59,3 +59,10 @@ it('zoom controls have zoom-specific English names in en and unchanged zh names'
   const zz = b.container.querySelector('.rcv-zoom')!;
   expect([zz.getAttribute('aria-label'), ...[...zz.querySelectorAll('button')].map(x => x.getAttribute('aria-label') ?? x.textContent)]).toEqual(['缩放', '缩小', '放大', '适配']);
 });
+// [HERMIA-FE-20261031 VERA-P3] truncated SVG node title exposes the full text via <title>.
+it('truncated node title exposes full text via SVG <title>', () => {
+  const {container} = render(<RebuildCanvas kind="image" scope="en-t" seed={graph('image_generate')} />);
+  const ttl = container.querySelector('text.ttl')!;
+  expect(ttl.textContent).toContain('…');
+  expect(ttl.querySelector('title')?.textContent).toBe('New generated image');
+});
