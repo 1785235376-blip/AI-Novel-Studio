@@ -93,3 +93,6 @@
 ### ComfyUI 下画布：视频结果链
 `/view` MP4/WebM/MOV 现可识别为视频结果；图片≤16 MiB、视频≤64 MiB、总≤256 MiB；视频经 ffmpeg 真实解码后以 kind=video 写资产库，run 返回 extension/duration；前端显示视频预览，视频暂不支持接入上画布。HTTP E2E 用真实 ffmpeg 生成的 MP4 验证。
 
+### ComfyUI 下画布：Studio 资产作为输入
+节点 file-like widget 可绑定 Studio 图片资产；绑定写入 lower-canvas `input_assets`。preflight 校验/解码资产并把资源 digest 纳入 quote；dispatch 上传到 ComfyUI `/upload/image`，校验回执后替换 prompt 文件名。仅本地 ComfyUI、≤8 个输入、≤16 MiB/个/48 MiB 总。HTTP E2E 覆盖真实上传→prompt→run。
+

@@ -111,3 +111,12 @@
 - 前端资产下载允许视频 MIME，结果面板用 `<video controls>` 展示；视频结果暂不显示「接入上画布」（上画布尚无正式视频资产消费合同）；
 - 测试：HTTP E2E 用真实 ffmpeg 生成 2×2 MP4，经 fake `/view` → 资产写库 → 下载为 video/mp4（3 passed）；dispatch 单测覆盖视频 kind（5 passed）。
 
+## 9. Studio 资产作为 ComfyUI 输入（本批新增）
+
+- 节点可携带 `input_assets: {widget_name: studio_asset_id}`（≤8 个，有界 id），持久化在 lower-canvas 草稿；
+- 前端参数检查器对 file-like widget（`image`/`file`/`mask`/`video`/`*_image`）显示「绑定 Studio 资产」下拉，资产通过 `GET /studio/assets` 读取；
+- preflight：读取并真实解码绑定资产（只允许图片，≤16 MiB，总≤48 MiB），prompt 用稳定 placeholder，quote digest 包含输入资源 digest；
+- dispatch：上传资产到 ComfyUI `/upload/image`，校验 receipt name/subfolder/type，再把 prompt 中 placeholder 替换为真实文件名后提交；
+- 上传仍仅限本地 ComfyUI provider；文件名使用 `studio-<sha16>.<ext>`，不暴露本地路径；
+- 测试：HTTP E2E 绑定资产 → `/upload/image` → prompt image=uploaded.png → run 完成；前端 assetBinding 测试验证绑定随草稿 PUT。
+
