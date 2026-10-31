@@ -41,3 +41,9 @@ it('video canvas unsupported notices show no Chinese in en', () => {
   select('n1');
   expect(chinese(container)).toEqual([]);
 });
+// [HERMIA-FE-20261031 VERA-P2] caller-supplied zh canvas labels render English in en.
+it.each([['图片画布', 'Image canvas'], ['视频画布', 'Video canvas'], ['创作画布', 'Creation canvas'], ['执行画布', 'Execution canvas']])('label %s shows %s in en', (zh, en) => {
+  const {container} = render(<RebuildCanvas kind="image" scope={`en-l-${zh}`} label={zh} seed={{nodes: [], edges: []}} />);
+  expect(container.querySelector('.rcv-label')?.textContent).toBe(en);
+  expect(chinese(container)).toEqual([]);
+});

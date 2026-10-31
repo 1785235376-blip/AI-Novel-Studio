@@ -1497,5 +1497,8 @@ export const zhCN = {
   'rough.923': '服务器已保存的是提交时的内容；此后的改动仍未保存。', // [HERMIA-FE-20261031 VERA-EN]
   'rough.924': '已重新基准到服务器上的最新修订。请核对后再次保存。', // [HERMIA-FE-20261031 VERA-EN]
   'rough.925': '上一次提交的结果尚未核对（页面曾在你保存时离开）。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.926': '视频画布', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.927': '创作画布', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.928': '执行画布', // [HERMIA-FE-20261031 VERA-EN]
 } as const;
 export type MessageKey = keyof typeof zhCN;

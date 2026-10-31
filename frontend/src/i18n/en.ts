@@ -1506,4 +1506,7 @@ export const en: Record<MessageKey, string> = {
   'rough.923': 'The server saved the content as submitted; later edits are still unsaved.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.924': 'Rebased onto the latest server revision. Check and save again.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.925': 'The last submit result is unverified (the page was left while saving).', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.926': 'Video canvas', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.927': 'Creation canvas', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.928': 'Execution canvas', // [HERMIA-FE-20261031 VERA-EN]
 };
