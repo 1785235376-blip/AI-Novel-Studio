@@ -11,7 +11,7 @@
 1. `GET /api/comfy/object_info` → 原样透传 ComfyUI `/object_info`（可按白名单过滤节点），带 `source_version`、`fetched_at`。前端已有 `parseObjectInfo(info, 'imported')` + `mergeImported()`，可直接合并（PoemSeed 自有节点不会被覆盖）。
    - 错误：ComfyUI 未连接 → 503 `{code:'comfy_unavailable'}`；前端保持内置节点库。
 2. `GET/PUT /api/projects/{id}/lower-canvas/{kind}`（kind=image|video），按 user/project/project_instance 作用域，乐观并发 `version`；body = 前端 `CfGraph {nodes:[{id,t,x,y,title}], edges:[{id,a,as,b,bs}]}`。
-3. `POST /api/projects/{id}/lower-canvas/{kind}/runs/preflight`（本批已实现）→ 校验草稿版本并转换成 ComfyUI API prompt，返回 quote（本地 ComfyUI 零计费、需确认、5 分钟过期）；仍不 dispatch。`POST .../runs` / `GET .../runs/{run_id}` 的 dispatch、状态轮询、产物写资产仍待实现，前端在此之前**不显示**执行按钮/价格/状态。
+3. `POST .../runs/preflight` + `POST .../runs` + `GET .../runs/{run_id}`（本批已实现）→ preflight 生成 quote；dispatch 校验 quote 后同步执行本地 ComfyUI（/prompt → /history → /view），结果写入资产库，run 记录可读。仍不自动重试、不支持云端 ComfyUI；前端执行/确认 UI 尚待接入。
 4. 产物图片存储：结果写入资产库（复用现有 assets），返回 asset_id，前端用「接入上画布」作为参考图快照。
 
 ## 数据约定

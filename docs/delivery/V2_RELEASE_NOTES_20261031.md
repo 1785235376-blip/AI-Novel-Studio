@@ -78,3 +78,6 @@
 ### ComfyUI 下画布：run preflight / quote（后端）
 新增只读 preflight 接口：`POST /api/projects/{id}/studio/lower-canvas/{kind}/runs/preflight`。按已保存草稿版本 + 本地 ComfyUI `/object_info` 将 CfGraph+params 转为 ComfyUI prompt 并校验端口/槽位/类型/参数/环/输出节点，返回零计费报价与确认要求；不提交 `/prompt`、不轮询、不写资产（execution=NOT_DISPATCHED，dispatch=NOT_IMPLEMENTED）。测试 12 passed。
 
+### ComfyUI 下画布：run dispatch / 状态 / 资产回写（后端）
+`POST .../runs` 现在会在 quote 校验后同步执行本地 ComfyUI：一次 `/prompt`、有界 `/history` 轮询、有界 `/view` 下载，结果经 32 张/16 MiB/64 MiB 边界检查后写入资产库；run 记录含 COMPLETED/FAILED/RUNNING，失败不伪造资产。`GET .../runs/{run_id}` 可读。quote 持久化并一次性消费；同 quote 幂等。仍不支持云端 ComfyUI、自动重试；前端执行 UI 未接。测试 4 passed（合并组 36）。
+

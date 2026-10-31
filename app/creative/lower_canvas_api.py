@@ -85,6 +85,14 @@ class LowerCanvasGraph(BaseModel):
     edges: list[LowerCanvasEdge] = Field(default_factory=list)
 
 
+class LowerCanvasRunDispatch(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_version: int = Field(ge=0, le=1_000_000)
+    quote_id: str = Field(pattern=r"^lcq_[a-f0-9]{24}$")
+    quote_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    provider_id: str | None = Field(default=None, max_length=80)
+
+
 class LowerCanvasRunPreflight(BaseModel):
     model_config = ConfigDict(extra="forbid")
     expected_version: int = Field(ge=0, le=1_000_000)
@@ -205,7 +213,9 @@ def create_lower_canvas_router(service, invoke):
                                    x_branch_id: str | None = Header(None)):
         from .lower_canvas_runs import LowerCanvasRunError, preflight_lower_canvas_run
         try:
-            return _invoke(nid, x_session_token, x_branch_id, "domain.read",
+            # Issuing a server-side, one-use quote is an authoritative write; the
+            # prompt itself is validated read-only.
+            return _invoke(nid, x_session_token, x_branch_id, "domain.write",
                 lambda actor, scope, guard: preflight_lower_canvas_run(
                     service, nid, scope, actor, kind, expected_version=body.expected_version,
                     provider_id=body.provider_id))
@@ -221,5 +231,42 @@ def create_lower_canvas_router(service, invoke):
                 raise HTTPException(409, {"code": "LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED"}) from None
             raise HTTPException(exc.status, {"code": "LOWER_CANVAS_RUN_PREFLIGHT_REJECTED",
                 "reason": exc.code}) from None
+
+    @router.post("/projects/{nid}/studio/lower-canvas/{kind}/runs")
+    def lower_canvas_run_dispatch(nid: str, kind: str, body: LowerCanvasRunDispatch,
+                                  x_session_token: str | None = Header(None),
+                                  x_branch_id: str | None = Header(None)):
+        from .lower_canvas_runs import LowerCanvasRunError, dispatch_lower_canvas_run
+        try:
+            return _invoke(nid, x_session_token, x_branch_id, "domain.write",
+                lambda actor, scope, guard: dispatch_lower_canvas_run(
+                    service, nid, scope, actor, kind, expected_version=body.expected_version,
+                    quote_id=body.quote_id, quote_digest=body.quote_digest,
+                    provider_id=body.provider_id, guard=guard))
+        except LowerCanvasRunError as exc:
+            if exc.code == "LOWER_CANVAS_VERSION_CONFLICT":
+                payload = {"code": "LOWER_CANVAS_VERSION_CONFLICT"}
+                try: payload["current_version"] = int(exc.detail)
+                except ValueError: pass
+                raise HTTPException(409, payload) from None
+            if exc.code == "LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED":
+                raise HTTPException(409, {"code": "LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED"}) from None
+            if exc.code == "LOWER_CANVAS_RUN_QUOTE_STALE":
+                raise HTTPException(409, {"code": "LOWER_CANVAS_RUN_QUOTE_STALE"}) from None
+            if exc.code == "LOWER_CANVAS_RUN_QUOTE_INVALID":
+                raise HTTPException(400, {"code": "LOWER_CANVAS_RUN_QUOTE_INVALID"}) from None
+            raise HTTPException(exc.status, {"code": "LOWER_CANVAS_RUN_DISPATCH_REJECTED",
+                "reason": exc.code}) from None
+
+    @router.get("/projects/{nid}/studio/lower-canvas/{kind}/runs/{run_id}")
+    def lower_canvas_run_get(nid: str, kind: str, run_id: str,
+                             x_session_token: str | None = Header(None),
+                             x_branch_id: str | None = Header(None)):
+        from .lower_canvas_runs import LowerCanvasRunError, get_lower_canvas_run
+        try:
+            return _invoke(nid, x_session_token, x_branch_id, "domain.read",
+                lambda actor, scope, guard: get_lower_canvas_run(service, nid, scope, kind, run_id))
+        except LowerCanvasRunError:
+            raise HTTPException(404, {"code": "LOWER_CANVAS_RUN_NOT_FOUND"}) from None
 
     return router

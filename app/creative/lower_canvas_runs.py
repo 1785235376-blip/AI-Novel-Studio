@@ -9,10 +9,13 @@ separate, later contract.
 from __future__ import annotations
 
 import hashlib
+import base64
 import json
 import math
 import re
+import time
 from datetime import datetime, timedelta, timezone
+from urllib.parse import quote
 
 from .comfy_node_library import (
     ComfyNodeLibraryError,
@@ -27,6 +30,11 @@ MAX_NODES = 400
 MAX_EDGES = 800
 MAX_PROMPT_BYTES = 1_000_000
 QUOTE_TTL_SECONDS = 300
+RUNS_COLLECTION = "lower_canvas_runs_v1"
+QUOTES_COLLECTION = "lower_canvas_run_quotes_v1"
+IMAGE_MAX_BYTES = 16 * 1024 * 1024
+RUN_MAX_OUTPUT_BYTES = 64 * 1024 * 1024
+RUN_MAX_IMAGES = 32
 PORT_WIDGET_KINDS = {"INT", "FLOAT", "STRING", "BOOLEAN"}
 _NODE_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
 _PARAM_NAME = re.compile(r"^[A-Za-z0-9_.-]{1,80}$")
@@ -248,7 +256,8 @@ def _load_draft(service, nid: str, scope: dict, kind: str) -> dict:
 
 def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind: str,
                                *, expected_version: int, provider_id: str | None,
-                               transport_factory=None) -> dict:
+                               transport_factory=None, include_prompt: bool = False,
+                               store_quote: bool = True) -> dict:
     from .comfy_node_library import ComfyNodeLibraryError
     row = _load_draft(service, nid, scope, kind)
     version = int(row.get("version") or 0)
@@ -273,11 +282,11 @@ def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind:
         "node_count": built["node_count"],
         "edge_count": built["edge_count"],
         "output_nodes": built["output_nodes"],
-        "expires_at": expires_at,
     }
     quote_digest = _sha(quote_core)
-    return {
+    result = {
         **quote_core,
+        "expires_at": expires_at,
         "quote_id": "lcq_" + quote_digest[:24],
         "quote_digest": quote_digest,
         "provider_local": True,
@@ -289,3 +298,277 @@ def preflight_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind:
         "limits": {"nodes": MAX_NODES, "edges": MAX_EDGES, "prompt_bytes": MAX_PROMPT_BYTES,
                    "quote_ttl_seconds": QUOTE_TTL_SECONDS},
     }
+    if store_quote:
+        now = datetime.now(timezone.utc)
+        if datetime.fromisoformat(expires_at) <= now:
+            raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_INVALID", status=400)
+        with service.store.transaction(nid, scope) as document:
+            quotes = document["collections"].setdefault(QUOTES_COLLECTION, {})
+            quotes[result["quote_id"]] = {
+                "id": result["quote_id"], "kind": kind, "quote_digest": quote_digest,
+                "draft_version": version, "provider_id": pid,
+                "created_at": now.isoformat(), "expires_at": expires_at, "consumed_at": None,
+            }
+    if include_prompt:
+        # Internal-only fields for the synchronous local dispatch path; never
+        # serialized by the preflight HTTP route.
+        result["_prompt"] = built["prompt"]
+        result["_prompt_digest"] = built["prompt_digest"]
+        result["_endpoint"] = fetched.get("endpoint", "")
+    return result
+
+
+def _run_id(quote_digest: str) -> str:
+    return "lcr_" + hashlib.sha256(quote_digest.encode("utf-8")).hexdigest()[:24]
+
+
+def _public_run(row: dict) -> dict:
+    return {
+        "contract": "studio-lower-canvas-run/1",
+        "id": row["id"],
+        "kind": row["kind"],
+        "status": row["status"],
+        "draft_version": row["draft_version"],
+        "quote_digest": row["quote_digest"],
+        "provider_id": row["provider_id"],
+        "node_count": row["node_count"],
+        "edge_count": row["edge_count"],
+        "output_nodes": list(row["output_nodes"]),
+        "prompt_digest": row["prompt_digest"],
+        "assets": list(row.get("assets") or []),
+        "error": row.get("error"),
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"],
+        "execution": "SYNCHRONOUS_LOCAL_COMFYUI",
+    }
+
+
+def _media_type(data: bytes) -> str:
+    if data.startswith(b"\x89PNG\r\n\x1a\n"): return "image/png"
+    if data.startswith(b"\xff\xd8\xff"): return "image/jpeg"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP": return "image/webp"
+    raise LowerCanvasRunError("LOWER_CANVAS_RESULT_MEDIA_INVALID", status=502)
+
+
+def _response_json(response):
+    try:
+        return response.json()
+    except Exception:
+        raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_RESPONSE_INVALID", status=502) from None
+
+
+def _response_status(response) -> int:
+    try:
+        return int(response.status_code)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _check_response(response, code: str) -> None:
+    status = _response_status(response)
+    if status < 200 or status >= 300:
+        raise LowerCanvasRunError(code, status=502, detail=f"HTTP {status}")
+
+
+def execute_comfy_prompt(transport, endpoint: str, prompt: dict, *, guard=lambda: None,
+                         timeout_seconds: int = 120, poll_interval: float = 1.0,
+                         sleep=time.sleep) -> dict:
+    """Submit one already validated prompt to a local ComfyUI and fetch its images.
+
+    Synchronous and bounded: one /prompt, bounded /history polling, then a bounded
+    /view download per output image. No retries and no silent retry on timeout.
+    """
+    endpoint = endpoint.rstrip("/")
+    if not endpoint:
+        raise LowerCanvasRunError("LOWER_CANVAS_PROVIDER_ENDPOINT_MISSING", status=409)
+    guard()
+    try:
+        response = transport.post(endpoint + "/prompt", json={"prompt": prompt}, timeout=30,
+                                  dispatch_guard=guard)
+    except Exception as exc:
+        raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_UNAVAILABLE", status=503,
+                                  detail=type(exc).__name__) from None
+    _check_response(response, "LOWER_CANVAS_COMFYUI_PROMPT_REJECTED")
+    payload = _response_json(response)
+    prompt_id = payload.get("prompt_id") if isinstance(payload, dict) else None
+    if not isinstance(prompt_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,240}", prompt_id):
+        raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_PROMPT_ID_INVALID", status=502)
+    deadline = time.monotonic() + max(1, int(timeout_seconds))
+    outputs = None
+    while time.monotonic() < deadline:
+        guard()
+        try:
+            history = transport.get(endpoint + "/history/" + quote(prompt_id, safe=""),
+                                    timeout=10, dispatch_guard=guard)
+        except Exception as exc:
+            raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_UNAVAILABLE", status=503,
+                                      detail=type(exc).__name__) from None
+        _check_response(history, "LOWER_CANVAS_COMFYUI_HISTORY_FAILED")
+        body = _response_json(history)
+        entry = body.get(prompt_id) if isinstance(body, dict) else None
+        if not isinstance(entry, dict):
+            sleep(poll_interval); continue
+        status = entry.get("status") if isinstance(entry.get("status"), dict) else {}
+        state = str(status.get("status_str") or "").lower()
+        if state in {"error", "failed"}:
+            raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_EXECUTION_FAILED", status=502)
+        candidate = entry.get("outputs")
+        if isinstance(candidate, dict) and candidate:
+            outputs = candidate
+            break
+        if state in {"success", "completed"}:
+            break
+        sleep(poll_interval)
+    if not isinstance(outputs, dict) or not outputs:
+        raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_TIMEOUT", status=504)
+    images: list[dict] = []
+    total_bytes = 0
+    for node_output in outputs.values():
+        if len(images) >= RUN_MAX_IMAGES:
+            raise LowerCanvasRunError("LOWER_CANVAS_RESULT_TOO_MANY", status=502)
+        rows = node_output.get("images") if isinstance(node_output, dict) else None
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if len(images) >= RUN_MAX_IMAGES:
+                raise LowerCanvasRunError("LOWER_CANVAS_RESULT_TOO_MANY", status=502)
+            if not isinstance(row, dict): continue
+            filename, subfolder = row.get("filename"), row.get("subfolder") or ""
+            kind = row.get("type") or "output"
+            if (not isinstance(filename, str) or not filename or len(filename) > 255
+                    or "/" in filename or "\\" in filename or any(ord(c) < 32 for c in filename)
+                    or not isinstance(subfolder, str) or len(subfolder) > 255 or ".." in subfolder
+                    or kind not in {"output", "temp"}):
+                raise LowerCanvasRunError("LOWER_CANVAS_RESULT_REFERENCE_INVALID", status=502)
+            guard()
+            try:
+                view = transport.get(endpoint + "/view", params={"filename": filename, "subfolder": subfolder,
+                                      "type": kind}, timeout=30, dispatch_guard=guard)
+            except Exception as exc:
+                raise LowerCanvasRunError("LOWER_CANVAS_COMFYUI_UNAVAILABLE", status=503,
+                                          detail=type(exc).__name__) from None
+            _check_response(view, "LOWER_CANVAS_RESULT_DOWNLOAD_FAILED")
+            content = getattr(view, "content", b"")
+            if not isinstance(content, (bytes, bytearray)) or not content:
+                raise LowerCanvasRunError("LOWER_CANVAS_RESULT_BYTES_INVALID", status=502)
+            content = bytes(content)
+            if len(content) > IMAGE_MAX_BYTES or total_bytes + len(content) > RUN_MAX_OUTPUT_BYTES:
+                raise LowerCanvasRunError("LOWER_CANVAS_RESULT_TOO_LARGE", status=502)
+            total_bytes += len(content)
+            images.append({"filename": filename, "media_type": _media_type(content),
+                           "sha256": hashlib.sha256(content).hexdigest(), "size": len(content),
+                           "content": content})
+    if not images:
+        raise LowerCanvasRunError("LOWER_CANVAS_RESULT_EMPTY", status=502)
+    return {"prompt_id": prompt_id, "images": images}
+
+
+def _default_asset_writer(service, nid: str, scope: dict, actor: str):
+    def write(image: dict) -> dict:
+        if not hasattr(service, "assets"):
+            raise LowerCanvasRunError("LOWER_CANVAS_ASSET_OWNER_MISSING", status=503)
+        from ..media_files import inspect_image
+        measured = inspect_image(image["content"])
+        row = service.assets.create(nid, image["filename"], base64.b64encode(image["content"]).decode("ascii"),
+            measured["media_type"], "image", branch_id=scope.get("branch_id"), owner_actor_id=actor)
+        return {"id": row["id"], "filename": row.get("filename", image["filename"]),
+                "media_type": row.get("media_type", measured["media_type"]),
+                "sha256": row.get("sha256", image["sha256"]), "size": row.get("size", image["size"]),
+                "width": measured.get("width"), "height": measured.get("height")}
+    return write
+
+
+def dispatch_lower_canvas_run(service, nid: str, scope: dict, actor: str, kind: str, *,
+                              expected_version: int, quote_id: str, quote_digest: str, provider_id: str | None,
+                              transport_factory=None, asset_writer=None,
+                              timeout_seconds: int = 120, poll_interval: float = 1.0,
+                              guard=lambda: None) -> dict:
+    """Synchronously execute one previously quoted local ComfyUI draft.
+
+    One quote digest starts at most one run. The run row is persisted before the
+    provider call; assets are written through the existing asset owner only after
+    bounded result validation. Any provider/asset failure yields a FAILED run with
+    a bounded code, never a fabricated success.
+    """
+    if not isinstance(quote_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", quote_digest):
+        raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_INVALID", status=400)
+    if not isinstance(quote_id, str) or not re.fullmatch(r"lcq_[a-f0-9]{24}", quote_id):
+        raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_INVALID", status=400)
+    now_dt = datetime.now(timezone.utc).isoformat()
+    with service.store.transaction(nid, scope) as document:
+        rows = document["collections"].setdefault(RUNS_COLLECTION, {})
+        for row in rows.values():
+            if isinstance(row, dict) and row.get("quote_digest") == quote_digest:
+                return _public_run(row)
+        quotes = document["collections"].setdefault(QUOTES_COLLECTION, {})
+        stored_quote = quotes.get(quote_id)
+        if (not isinstance(stored_quote, dict) or stored_quote.get("quote_digest") != quote_digest
+                or stored_quote.get("kind") != kind or stored_quote.get("consumed_at") is not None):
+            raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_STALE", status=409)
+        try:
+            expired = datetime.fromisoformat(str(stored_quote["expires_at"])) <= datetime.now(timezone.utc)
+        except (KeyError, ValueError):
+            raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_STALE", status=409) from None
+        if expired:
+            raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_EXPIRED", status=409)
+        stored_quote["consumed_at"] = now_dt
+    quote = preflight_lower_canvas_run(service, nid, scope, actor, kind,
+        expected_version=expected_version, provider_id=provider_id,
+        transport_factory=transport_factory, include_prompt=True, store_quote=False)
+    if quote["quote_digest"] != quote_digest:
+        raise LowerCanvasRunError("LOWER_CANVAS_RUN_QUOTE_STALE", status=409)
+    prompt = quote.pop("_prompt")
+    endpoint = str(quote.pop("_endpoint") or "")
+    run_id = _run_id(quote_digest)
+    now = datetime.now(timezone.utc).isoformat()
+    guard()
+    with service.store.transaction(nid, scope) as document:
+        rows = document["collections"].setdefault(RUNS_COLLECTION, {})
+        for row in rows.values():
+            if isinstance(row, dict) and row.get("quote_digest") == quote_digest:
+                return _public_run(row)
+        row = {
+            "id": run_id, "kind": kind, "status": "RUNNING", "draft_version": expected_version,
+            "quote_digest": quote_digest, "provider_id": quote["provider_id"],
+            "node_count": quote["node_count"], "edge_count": quote["edge_count"],
+            "output_nodes": list(quote["output_nodes"]), "prompt_digest": quote["prompt_digest"],
+            "assets": [], "error": None, "created_at": now, "updated_at": now,
+        }
+        rows[run_id] = row
+        guard()
+    def finish(status: str, assets=None, error=None):
+        guard()
+        with service.store.transaction(nid, scope) as document:
+            current = document["collections"].setdefault(RUNS_COLLECTION, {}).get(run_id)
+            if not isinstance(current, dict):
+                raise LowerCanvasRunError("LOWER_CANVAS_RUN_NOT_FOUND", status=404)
+            current.update(status=status, assets=list(assets or []), error=error,
+                           updated_at=datetime.now(timezone.utc).isoformat())
+            public = _public_run(current)
+            guard()
+        return public
+    try:
+        transport = (transport_factory or _transport_for_endpoint)(endpoint)
+        result = execute_comfy_prompt(transport, endpoint, prompt, timeout_seconds=timeout_seconds,
+                                      poll_interval=poll_interval, guard=guard)
+        writer = asset_writer or _default_asset_writer(service, nid, scope, actor)
+        assets = [writer(image) for image in result["images"]]
+        return finish("COMPLETED", assets=assets)
+    except LowerCanvasRunError as exc:
+        return finish("FAILED", error={"code": exc.code, "status": exc.status})
+    except Exception as exc:
+        return finish("FAILED", error={"code": "LOWER_CANVAS_RUN_FAILED", "reason": type(exc).__name__})
+
+
+def _transport_for_endpoint(endpoint: str):
+    from .comfy_node_library import _transport_for
+    return _transport_for(endpoint)
+
+
+def get_lower_canvas_run(service, nid: str, scope: dict, kind: str, run_id: str) -> dict:
+    document = service.store.read(nid, scope)
+    rows = document.get("collections", {}).get(RUNS_COLLECTION, {})
+    row = rows.get(run_id) if isinstance(rows, dict) else None
+    if not isinstance(row, dict) or row.get("kind") != kind:
+        raise LowerCanvasRunError("LOWER_CANVAS_RUN_NOT_FOUND", status=404)
+    return _public_run(row)
