@@ -15,3 +15,7 @@
 
 ## 边界
 真实 provider 价格/用量上报、真实 PostgreSQL/浏览器/模型验收仍 NOT_RUN；价格由 provider adapter 声明，不是平台自行推导。
+
+## 补充：usage-only attestation（2026-10-31 续）
+当 adapter 只知道用量、不知道价格时，可记录 `studio-provider-usage-attestation/1`（无金额/币种/价格版本字段）。读取结果 `studio-job-cost/1.state=USAGE_ATTESTED`：`trusted=true`、usage/attested_at 呈现，`actual_microusd/currency/pricing_version` 为 null，`decision_required=true`；后续有价格 attestation 时升级为 `ATTESTED`。绑定/权限/损坏 sidecar 语义与价格 attestation 相同。
+

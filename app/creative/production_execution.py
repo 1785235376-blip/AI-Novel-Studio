@@ -75,18 +75,29 @@ class ProductionExecutionService:
 
     def _view(self, row, owner):
         view = self.view(row, owner)
+        job_id = str(row.get("id"))
         try:
-            attestation = self._cost_attestation_store().load(owner, str(row.get("id")))
+            store = self._cost_attestation_store()
+            attestation = store.load(owner, job_id)
+            usage = None if attestation is not None else store.load_usage(owner, job_id)
         except (ValueError, OSError):
             return view
-        if attestation is None:
+        if attestation is not None:
+            from .provider_cost_attestation import attested_cost, validate_binding
+            try:
+                validate_binding(attestation, view, owner)
+            except ValueError:
+                return view
+            view["cost"] = attested_cost(attestation)
             return view
-        from .provider_cost_attestation import attested_cost, validate_binding
-        try:
-            validate_binding(attestation, view, owner)
-        except ValueError:
+        if usage is not None:
+            from .provider_cost_attestation import attested_usage_cost, validate_usage_binding
+            try:
+                validate_usage_binding(usage, view, owner)
+            except ValueError:
+                return view
+            view["cost"] = attested_usage_cost(usage)
             return view
-        view["cost"] = attested_cost(attestation)
         return view
 
     def record_cost_attestation(self, nid, scope, actor, owner, jid, value, guard):
@@ -109,6 +120,22 @@ class ProductionExecutionService:
         return {"contract": RECEIPT_CONTRACT, "job_id": body.job_id, "owner": body.owner,
                 "actual_microusd": body.actual_microusd, "currency": body.currency,
                 "trusted": True}
+
+    def record_usage_attestation(self, nid, scope, actor, owner, jid, value, guard):
+        """Server-only adapter hook for trusted usage when no price is known."""
+        if not callable(guard) or not isinstance(actor, str) or not actor:
+            raise ValueError("STUDIO_USAGE_ATTESTATION_AUTHORITY_REQUIRED")
+        from .provider_cost_attestation import (ProviderUsageAttestation, USAGE_CONTRACT,
+            validate_usage_binding)
+        body = ProviderUsageAttestation.model_validate(value)
+        row, _ = self._row(nid, scope, actor, owner, jid, guard)
+        job = self.view(row, owner)
+        validate_usage_binding(body, job, owner)
+        guard()
+        self._cost_attestation_store().write_usage(body)
+        guard()
+        return {"contract": USAGE_CONTRACT, "job_id": body.job_id, "owner": body.owner,
+                "trusted": True, "pricing": "UNKNOWN"}
 
     def configure_comic(self, comic):
         from .comic_image_generation import ComicImageGeneration

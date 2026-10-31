@@ -113,3 +113,62 @@ def test_corrupt_or_orphan_sidecar_never_claims_trusted_cost(studio):
     other_path.parent.mkdir(parents=True, exist_ok=True)
     other_path.write_text("{}", encoding="utf-8")
     assert view(e, row)["cost"]["state"] == "UNKNOWN"
+
+
+def usage_attestation(row, **overrides):
+    provider = row["provider"]
+    value = {
+        "contract": "studio-provider-usage-attestation/1",
+        "job_id": row["id"],
+        "owner": "image",
+        "request_digest": row["request_digest"],
+        "provider_id": provider["provider_id"],
+        "model_id": provider["model_id"],
+        "usage": [{"name": "images", "value": 2}, {"name": "gpu_ms", "value": 900}],
+        "source": "PROVIDER_ADAPTER",
+        "attested_at": datetime.now(timezone.utc).isoformat(),
+    }
+    value.update(overrides)
+    return value
+
+
+def test_usage_only_attestation_keeps_price_unknown(studio):
+    e = studio
+    row = create_job(e)
+    receipt = e.production.record_usage_attestation(
+        e.nid, e.scope, e.actor, "image", row["id"], usage_attestation(row), lambda: None)
+    assert receipt["contract"] == "studio-provider-usage-attestation/1"
+    assert receipt["trusted"] is True and receipt["pricing"] == "UNKNOWN"
+    cost = view(e, row)["cost"]
+    assert cost["state"] == "USAGE_ATTESTED" and cost["trusted"] is True
+    assert cost["currency"] is None and cost["actual_microusd"] is None
+    assert cost["estimated_microusd"] is None and cost["accounted_microusd"] is None
+    assert cost["linkage"] == "PROVIDER_ADAPTER"
+    assert cost["reason"] == "PROVIDER_USAGE_ATTESTED_PRICING_UNKNOWN"
+    assert cost["decision_required"] is True
+    assert {entry["name"]: entry["value"] for entry in cost["usage"]} == {"images": 2, "gpu_ms": 900}
+    assert cost["pricing_version"] is None
+    # A priced attestation supersedes the usage-only record.
+    e.production.record_cost_attestation(
+        e.nid, e.scope, e.actor, "image", row["id"], attestation(row), lambda: None)
+    priced = view(e, row)["cost"]
+    assert priced["state"] == "ATTESTED" and priced["actual_microusd"] == 12345
+
+
+def test_usage_attestation_mismatches_are_rejected(studio):
+    e = studio
+    row = create_job(e)
+    with pytest.raises(ValueError, match="STUDIO_USAGE_ATTESTATION_REQUEST_MISMATCH"):
+        e.production.record_usage_attestation(
+            e.nid, e.scope, e.actor, "image", row["id"],
+            usage_attestation(row, request_digest="b" * 64), lambda: None)
+    with pytest.raises(ValueError, match="STUDIO_USAGE_ATTESTATION_PROVIDER_MISMATCH"):
+        e.production.record_usage_attestation(
+            e.nid, e.scope, e.actor, "image", row["id"],
+            usage_attestation(row, provider_id="other-provider"), lambda: None)
+    with pytest.raises(ValueError, match="STUDIO_USAGE_ATTESTATION_USAGE_REQUIRED"):
+        e.production.record_usage_attestation(
+            e.nid, e.scope, e.actor, "image", row["id"],
+            usage_attestation(row, usage=[]), lambda: None)
+    assert view(e, row)["cost"]["state"] == "UNKNOWN"
+
