@@ -37,6 +37,12 @@ describe.each(['image', 'video'] as const)('DualStack en (%s)', kind => {
     expect(chinese(document.querySelector('[data-canvas-layer=upper] .rcv-label')!.parentElement!.querySelector('[role=application]')!.parentElement!.querySelector('.rcv-label')!)).toEqual([]);
     expect(document.querySelector('[data-canvas-layer=upper] [role=application]')!.getAttribute('aria-label')).not.toMatch(HAN);
   });
+  it('splitter aria-label / aria-valuetext are the en strings (VERA-3 E2/E6)', () => {
+    render(<DualStack kind={kind} scope="n1" />);
+    const sp = document.querySelector('[data-dual-splitter]')!;
+    expect(sp.getAttribute('aria-label')).toBe('Resize canvases (arrows / PageUp / PageDown / Home / End, Enter resets)');
+    expect(sp.getAttribute('aria-valuetext')).toBe(`top ${sp.getAttribute('aria-valuenow')}%`);
+  });
   it('selected node (new default title shown translated), feed hint and confirm dialog have no Chinese', () => {
     render(<DualStack kind={kind} scope="n1" />);
     add('KSampler');

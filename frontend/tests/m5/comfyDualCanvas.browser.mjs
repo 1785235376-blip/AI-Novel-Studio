@@ -71,6 +71,18 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
       if (await p.locator(`${LO} [data-add-node-menu]`).count()) v.push('K0 Esc did not close menu');
       // [VERA-3 P2] F0 focus returns to「＋ 节点」after Esc
       if (!(await p.evaluate(() => document.activeElement?.hasAttribute('data-comfy-add') ?? false))) v.push('F0 focus not on add button after Esc');
+      // [VERA-3 P3 K4/K6] multi-result filter: ↓↓↑ ends on option[1]; changing the filter resets to option[0]
+      await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(150);
+      { const cb2 = p.locator(`${LO} [data-add-node-menu] [role=combobox]`); await cb2.fill('vae'); await p.waitForTimeout(50);
+        const oid = async i => p.locator(`${LO} [data-add-node-menu] [role=option]`).nth(i).getAttribute('id');
+        const nOpt = await p.locator(`${LO} [data-add-node-menu] [role=option]`).count();
+        await p.keyboard.press('ArrowDown'); await p.keyboard.press('ArrowDown'); await p.keyboard.press('ArrowUp');
+        const a1 = await cb2.getAttribute('aria-activedescendant'), o0 = await oid(0), o1 = await oid(1);
+        if (nOpt < 3 || a1 !== o1 || a1 === o0) v.push(`K4 vae n=${nOpt} act=${a1} o1=${o1}`);
+        await cb2.fill('va'); await p.waitForTimeout(50); const a2 = await cb2.getAttribute('aria-activedescendant'), f0 = await oid(0);
+        if (a2 !== f0) v.push(`K6 reset act=${a2} first=${f0}`);
+        rows.push({key: `${theme}|${mod}|k4k6`, nOpt, a1, o1, a2, f0});
+        await p.keyboard.press('Escape'); await p.waitForTimeout(100); }
       // [P2-2] K1 keyboard: open, type, ArrowDown/ArrowUp, Enter adds the active option
       await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(150);
       const cb = p.locator(`${LO} [data-add-node-menu] [role=combobox]`);
