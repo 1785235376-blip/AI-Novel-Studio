@@ -379,6 +379,48 @@ class AssetLibraryService:
             raise
         self._audio_history_capacity_settle(capacity, failed=False)
 
+    def _capacity_create_begin(self, novel_id: str, incoming_bytes: int, binding, owner_actor_id: str | None, operation: str):
+        """Flag-gated project-capacity admission for any AssetLibraryService.create caller.
+
+        The manual-import route already owns an admission session and passes
+        ``_capacity_admitted=True``; every other original asset writer is now
+        reconciled/reserved here instead of bypassing the unified ledger.
+        """
+        from ..config import settings
+        if not settings.enable_project_capacity_admission:
+            return None
+        from ..project_capacity import ProjectCapacityLedger
+        from ..project_capacity_admission import CapacityAdmission, CapacityAdmissionRefused
+        incarnation = binding.get("incarnation") if isinstance(binding, dict) else None
+        actor = owner_actor_id if isinstance(owner_actor_id, str) and owner_actor_id else "asset-owner"
+        admission = CapacityAdmission(
+            ProjectCapacityLedger(Path(self.root).parent / "runtime" / "project-capacity.json"),
+            project_id=novel_id, project_root=Path(self.root).parent / "novels" / novel_id,
+            assets_root=self.root, actor_id=actor, incarnation=incarnation, operation=operation)
+        try:
+            reservation = admission.begin(incoming_bytes)
+        except CapacityAdmissionRefused as exc:
+            raise ValueError(exc.code) from None
+        return {"admission": admission, "reservation": reservation}
+
+    @staticmethod
+    def _capacity_create_settle(context, *, failed: bool) -> None:
+        if context is None:
+            return
+        admission = context["admission"]
+        reservation_id = context["reservation"]["reservation_id"]
+        if failed:
+            admission.reconcile_and_release(reservation_id)
+            return
+        try:
+            landed = admission.landed_bytes(context["asset_id"])
+            admission.commit(reservation_id, landed)
+        except Exception:
+            # The asset is already committed by the original owner. Never hide
+            # that fact; reconcile the authoritative bytes and surface failure.
+            admission.reconcile()
+            raise
+
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
@@ -388,7 +430,8 @@ class AssetLibraryService:
                _initial_prompt_write: dict | None = None,
                _initial_model_reference: dict | None = None, _model_reference_expected_retry_id: str | None = None,
                _initial_video_reference: dict | None = None, _video_reference_expected_retry_id: str | None = None,
-               _initial_comic_ora: dict | None = None, _initial_comic_page: dict | None = None):
+               _initial_comic_ora: dict | None = None, _initial_comic_page: dict | None = None,
+               _capacity_admitted: bool = False):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -685,6 +728,11 @@ class AssetLibraryService:
                     if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                     if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                     return existing
+            capacity = None if _capacity_admitted else self._capacity_create_begin(
+                novel_id, len(data), binding, owner_actor_id,
+                "asset.create." + str(kind or "file")[:32])
+            if capacity is not None:
+                capacity["asset_id"] = None
             asset_id = (identity['_comic_page_origin']['asset_id'] if _initial_comic_page is not None else
                         identity['_comic_ora_origin']['asset_id'] if _initial_comic_ora is not None else str(uuid.uuid4()))
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
@@ -695,6 +743,8 @@ class AssetLibraryService:
                 meta["parameters"] = {"asset_lineage_v2": manual_lineage}
             if model_lineage is not None: meta["parameters"] = {"asset_lineage_v2": model_lineage}
             if video_lineage is not None: meta["parameters"] = {"asset_lineage_v2": video_lineage}
+            if capacity is not None:
+                capacity["asset_id"] = asset_id
             target = self._bin_path(asset_id)
             fd, temporary = tempfile.mkstemp(dir=self.root, prefix=asset_id + ".", suffix=".tmp")
             try:
@@ -717,10 +767,12 @@ class AssetLibraryService:
                 # through the idempotency key and must retain its original bytes.
                 if not self._meta_path(asset_id).exists() and not comic_orphan_verified:
                     target.unlink(missing_ok=True)
+                self._capacity_create_settle(capacity, failed=True)
                 raise
             finally:
                 if os.path.exists(temporary):
                     os.unlink(temporary)
+            self._capacity_create_settle(capacity, failed=False)
             return meta
 
     @staticmethod

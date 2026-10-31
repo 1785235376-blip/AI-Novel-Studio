@@ -605,7 +605,8 @@ class IndependentWorkspaceService:
                     self.storage_admission.require(1)
             try:
                 row = self.assets.create(nid, body.filename, body.content_base64, media_type, body.kind,
-                    body.idempotency_key, branch_id=scope.get("branch_id"), required_features=(FLAG,), guard=before_commit)
+                    body.idempotency_key, branch_id=scope.get("branch_id"), required_features=(FLAG,), guard=before_commit,
+                    _capacity_admitted=True)
             except OSError as exc:
                 if admission is not None and admission_reservation is not None:
                     # Charge any landed residue before retiring the reservation.

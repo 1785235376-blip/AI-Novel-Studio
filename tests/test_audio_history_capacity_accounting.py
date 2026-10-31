@@ -40,7 +40,8 @@ def create_audio(e, filename="cap-history.wav"):
     with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
         return e.rig.assets.create(e.rig.nid, filename, base64.b64encode(e.content).decode(),
                                    "audio/wav", "audio",
-                                   required_features=("narrative_production_v2",))
+                                   required_features=("narrative_production_v2",),
+                                   _capacity_admitted=True)  # this suite isolates history-write accounting
 
 
 def ledger_path(e):
