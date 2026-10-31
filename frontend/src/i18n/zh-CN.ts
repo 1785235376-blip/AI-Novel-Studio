@@ -1511,5 +1511,8 @@ export const zhCN = {
   'zoom.out': '缩小', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.in': '放大', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.fit': '适配', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphOut': '缩小节点图', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphLevel': '节点图缩放', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphIn': '放大节点图', // [HERMIA-FE-20261031 VERA-P3 zoom]
 } as const;
 export type MessageKey = keyof typeof zhCN;

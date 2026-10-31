@@ -1520,4 +1520,7 @@ export const en: Record<MessageKey, string> = {
   'zoom.out': 'Zoom out', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.in': 'Zoom in', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.fit': 'Fit to view', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphOut': 'Zoom out graph', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphLevel': 'Graph zoom', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.graphIn': 'Zoom in graph', // [HERMIA-FE-20261031 VERA-P3 zoom]
 };
