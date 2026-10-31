@@ -112,12 +112,14 @@ it('requires an explicit original workspace navigation confirmation to abandon a
   const source = { capabilities: vi.fn().mockResolvedValue({ enabled: true, can_mutate: true, modes: ['DIRECTOR'] }),
     create: vi.fn().mockRejectedValue(new Error('offline')), update: vi.fn(), export: vi.fn(), list: vi.fn() };
   vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
-  mount(); await enter(); fireEvent.click(await screen.findByRole('button', { name: '打开导演总控台' }));
+  mount(); await enter(); fireEvent.click(screen.getByText('打开导演总控台'));
   await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
   change('文档标题', '未知回执'); click('保存草稿'); await screen.findByText(/保存冲突或回执不确定/);
   click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
   expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
+  const executionAfterCreate = screen.queryByRole('button', { name: '执行画布' });
+  if (executionAfterCreate) fireEvent.click(executionAfterCreate);
   await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.create).toHaveBeenCalledTimes(1);
 });
 
@@ -129,7 +131,7 @@ it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navi
     derive: vi.fn().mockRejectedValue(new Error('handoff offline')),
     export: vi.fn(async () => ({ document: authored, document_digest: document.digest, format: '', boundary: '' })) };
   vi.mocked(creativeClient).mockReturnValue(source as unknown as ReturnType<typeof creativeClient>);
-  mount(); await enter(); fireEvent.click(await screen.findByRole('button', { name: '打开导演总控台' }));
+  mount(); await enter(); fireEvent.click(screen.getByText('打开导演总控台'));
   await waitFor(() => expect((screen.getByLabelText('文档标题') as HTMLInputElement).closest('fieldset')!.disabled).toBe(false));
   change('文档标题', '人工调度'); click('添加场景'); click('添加导演调度'); click('保存草稿');
   await screen.findByText(/导演原文档已保存/); click('核对导演原文档版本'); await screen.findByText(/交接来源/);
@@ -142,6 +144,8 @@ it('keeps an UNKNOWN storyboard handoff pending through cancelled workspace navi
   click('返回项目列表'); await screen.findByText(/放弃只移除本地草稿，不代表远端写入失败/);
   expect((screen.getByRole('button', { name: '确认离开' }) as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); click('确认离开');
+  const executionAfterHandoff = screen.queryByRole('button', { name: '执行画布' });
+  if (executionAfterHandoff) fireEvent.click(executionAfterHandoff);
   await screen.findByRole('button', { name: '打开导演总控台' }); expect(source.derive).toHaveBeenCalledTimes(1);
   expect(client.graphs.createRun).not.toHaveBeenCalled(); expect(client.graphs.dispatchMedia).not.toHaveBeenCalled();
 });

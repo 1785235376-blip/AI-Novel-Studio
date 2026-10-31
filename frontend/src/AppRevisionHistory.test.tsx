@@ -14,11 +14,18 @@ import { recoveryKey } from "./collaborationGuards";
 vi.mock("./Editor", async importOriginal => ({ ...(await importOriginal<typeof import("./Editor")>()), ChapterEditor: ({ content, onChange }: any) =>
   <textarea aria-label="Test chapter editor" value={content} onChange={event => onChange(event.target.value, documentOf(event.target.value))} /> }));
 // [HERMIA-FE-20261031] App renders the AI panel inside the NovelAssist drawer; expose the mocked ai in tests.
-vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras }: any) => <aside>{ai}{extras}</aside> }));
+vi.mock('./rebuild/novel/NovelAssist', () => ({ NovelAssist: ({ ai, extras, links }: any) => <aside>{ai}{extras}{links?.map((link: any) => <button key={link.id} onClick={link.onClick}>{link.label}</button>)}</aside> }));
 vi.mock("./ui/AppShell", () => ({ AppShell: ({ main, status, inspector }: any) => <><main>{main}</main><aside>{inspector}</aside><footer>{status}</footer></> }));
 vi.mock("./novel/AiWritingPanel", () => ({ AiWritingPanel: () => null }));
 vi.mock("./novel/SourcePrivacyControl", () => ({ SourcePrivacyControl: () => null }));
 vi.mock("./novel/ChapterTree", () => ({ ChapterTree: () => null }));
+// Current App gates the history link behind professional layout; exercise that layout deterministically.
+vi.mock("./workbench/useWorkbenchLayout", async importOriginal => {
+  const actual = await importOriginal<typeof import("./workbench/useWorkbenchLayout")>();
+  const layout = {schemaVersion: 2, mode: "pro" as const, placements: [], maximized: null};
+  return {...actual, useWorkbenchLayout: () => ({layout, mode: "pro" as const,
+    setMode: vi.fn(), toggleMode: vi.fn(), persist: vi.fn()})};
+});
 vi.mock("./ui/FeatureLauncher", async importOriginal => ({ ...(await importOriginal<typeof import("./ui/FeatureLauncher")>()),  FeatureLauncher: () => null }));
 
 function documentOf(text: string) { return { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text }] }] }; }
@@ -43,10 +50,13 @@ function client() {
 function wrap(query: QueryClient, children: React.ReactNode) { return <QueryClientProvider client={query}>{children}</QueryClientProvider>; }
 beforeEach(() => {
   localStorage.clear();
+  localStorage.setItem('poemseed.workbench.layout.v2::local-author::novel-a::file', JSON.stringify({
+    schemaVersion: 2, mode: 'pro', placements: [], maximized: null }));
   useStudio.getState().setCollaboration("");
   useStudio.setState({ novelId: "novel-a", chapterId: "novel-a:1", textModel: null });
   reload.mockClear();
-  vi.stubGlobal("location", { reload });
+  vi.spyOn(api, "chapter").mockResolvedValue(chapterOf());
+  vi.stubGlobal("location", { reload, pathname: "/" });
 });
 afterEach(() => { cleanup(); clients.splice(0).forEach(value => value.clear()); vi.restoreAllMocks(); vi.unstubAllGlobals(); localStorage.clear(); });
 
@@ -110,6 +120,8 @@ it("discards old selected-revision details after switching projects", async () =
 });
 
 async function confirmRestore() {
+  const historyLink = screen.queryAllByRole("button", { name: "版本历史" });
+  if (historyLink.length) fireEvent.click(historyLink[0]);
   fireEvent.click(await screen.findByRole("button", { name: /版本 1/ }));
   fireEvent.click(await screen.findByRole("button", { name: "预览并恢复此版本" }));
   fireEvent.click(screen.getByRole("button", { name: "恢复此版本" }));
@@ -225,6 +237,7 @@ it("actual App refreshes mounted history after chapter cache advances on AI Acce
   const query = appClient();
   vi.mocked(api.legacyHistory).mockResolvedValueOnce([revision(1)]).mockResolvedValue([revision(2, "PRE AI VERSION TWO"), revision(1)]);
   render(wrap(query, <App />));
+  fireEvent.click((await screen.findAllByRole("button", { name: "版本历史" }))[0]);
   await screen.findByRole("button", { name: /版本 1/ });
   act(() => { query.setQueryData(["chapter", "file", "novel-a:1"], chapterOf(3, "novel-a:1", "ACCEPTED AI VERSION")); });
   fireEvent.click(await screen.findByRole("button", { name: /版本 2/ }));
