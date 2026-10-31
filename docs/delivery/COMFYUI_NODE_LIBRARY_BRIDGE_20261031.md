@@ -80,3 +80,25 @@ Studio 画布的节点库是**封闭的可执行目录**（`_DEFINITIONS`、sche
 3. **UI 集成（未连接）**：画布节点面板增加“ComfyUI 外部节点”只读分组；不可拖入执行画布，直到第 2 步映射完成。
 
 真实 ComfyUI provider、真实自定义节点、真实执行均 **NOT_RUN**；本功能仅提供可审计的节点库元数据，不代表可执行扩展市场。
+
+## 第二阶段：受控映射校验（`studio-comfyui-node-mapping/1`）
+
+新增只读端点：
+
+```http
+GET /api/projects/{nid}/studio/graphs/comfyui-node-mapping?provider_id=...&mapping_id=...
+```
+
+映射表是**封闭的**，直接从现有固定 ComfyUI 图片配方派生（`studio_image_provider_recipes.RECIPES`）：
+
+| mapping_id | Studio definition | 现有执行适配器 | ComfyUI 必需类 |
+|---|---|---|---|
+| `studio.comfy-sd-checkpoint-v1.existing-adapter` | `image_generate` | EXISTING_PROVIDER_RECIPE | CheckpointLoaderSimple, KSampler, EmptyLatentImage, CLIPTextEncode, VAEDecode, SaveImage |
+| `studio.comfy-flux1-v1.existing-adapter` | `image_generate` | EXISTING_PROVIDER_RECIPE | UNETLoader, DualCLIPLoader, VAELoader, FluxGuidance, KSampler, EmptySD3LatentImage, CLIPTextEncode, VAEDecode, SaveImage |
+| `studio.comfy-qwen-image-v1.existing-adapter` | `image_generate` | EXISTING_PROVIDER_RECIPE | UNETLoader, CLIPLoader, VAELoader, ModelSamplingAuraFlow, KSampler, EmptySD3LatentImage, CLIPTextEncode, VAEDecode, SaveImage |
+| `studio.comfy-upscale-model-v1.existing-adapter` | `image_upscale` | EXISTING_PROVIDER_RECIPE | UpscaleModelLoader, ImageUpscaleWithModel, ImageScale, LoadImage, SaveImage |
+
+响应按 provider 的 `/object_info` 检查必需类是否存在，状态为 `COMPATIBLE` 或 `MISSING_CLASSES`；`mapping_id` 可过滤单个映射。节点库响应同时为每个节点附加 `studio_mappings`，列出引用该节点的映射。
+
+**执行边界**：`compatibility.execution = EXISTING_STUDIO_ADAPTER_ONLY`、`executable_graph_passthrough=false`。本批只做映射校验，**不执行 ComfyUI 图**；实际生成仍走既有 Studio image/upscale provider recipe（权限、审核、成本、失败恢复合同不变）。任意 ComfyUI 图执行标为 `NOT_IMPLEMENTED`。
+

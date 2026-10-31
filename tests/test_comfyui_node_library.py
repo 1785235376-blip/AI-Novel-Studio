@@ -5,6 +5,8 @@ import json
 
 import pytest
 
+from app.creative.comfy_node_mapping import (mapping_definitions, node_mapping_index,
+    validate_node_mappings, ComfyNodeMappingError)
 from app.creative.comfy_node_library import (
     MAX_INPUTS_PER_NODE,
     MAX_OUTPUTS_PER_NODE,
@@ -237,3 +239,90 @@ def test_graph_router_registers_read_only_comfy_node_library_path():
     assert any(path.endswith("/studio/graphs/comfyui-node-library") and methods == frozenset({"GET"})
                for path, methods in routes)
 
+
+def _all_recipe_classes():
+    from app.services.studio_image_provider_recipes import RECIPES
+    classes = []
+    for recipe in RECIPES:
+        for node in recipe["required_nodes"]:
+            if node not in classes:
+                classes.append(node)
+    return classes
+
+
+def _object_info_for(classes):
+    return {node: {"input": {}, "output": ["IMAGE"], "category": "test",
+                   "display_name": node} for node in classes}
+
+
+def test_mapping_table_is_closed_and_derived_from_existing_recipes():
+    from app.services.studio_image_provider_recipes import RECIPES
+
+    definitions = mapping_definitions()
+    assert len(definitions) == len(RECIPES)
+    by_recipe = {row["id"]: row for row in RECIPES}
+    for mapping in definitions:
+        recipe = by_recipe[mapping["recipe_id"]]
+        assert mapping["comfyui_required_classes"] == tuple(recipe["required_nodes"])
+        assert mapping["studio_execution"] == "EXISTING_PROVIDER_RECIPE"
+        assert mapping["executable_graph_passthrough"] is False
+        assert mapping["studio_definition_id"] in {"image_generate", "image_upscale"}
+    index = node_mapping_index()
+    assert index["KSampler"] and all(mid.startswith("studio.comfy-") for mid in index["KSampler"])
+    assert index["LoadImage"]  # upscale recipe owns the upload class
+
+
+def test_mapping_validation_compatible_missing_and_unknown(tmp_path, monkeypatch):
+    configure_comfy(tmp_path, monkeypatch)
+    classes = _all_recipe_classes()
+    transport = FakeTransport(FakeResponse(_object_info_for(classes)))
+    library = load_comfyui_node_library(transport_factory=lambda endpoint: transport)
+    result = validate_node_mappings(library)
+    assert result["contract"] == "studio-comfyui-node-mapping/1"
+    assert result["mapping_count"] == 4
+    assert {row["status"] for row in result["mappings"]} == {"COMPATIBLE"}
+    assert all(row["executable_graph_passthrough"] is False for row in result["mappings"])
+    assert result["compatibility"]["execution"] == "EXISTING_STUDIO_ADAPTER_ONLY"
+
+    missing = load_comfyui_node_library(transport_factory=lambda endpoint: FakeTransport(
+        FakeResponse(_object_info_for([node for node in classes if node != "KSampler"]))))
+    result = validate_node_mappings(missing)
+    by_id = {row["mapping_id"]: row for row in result["mappings"]}
+    assert by_id["studio.comfy-sd-checkpoint-v1.existing-adapter"]["status"] == "MISSING_CLASSES"
+    assert "KSampler" in by_id["studio.comfy-sd-checkpoint-v1.existing-adapter"]["missing_classes"]
+    assert by_id["studio.comfy-upscale-model-v1.existing-adapter"]["status"] == "COMPATIBLE"
+
+    one = validate_node_mappings(library, mapping_id="studio.comfy-upscale-model-v1.existing-adapter")
+    assert one["mapping_count"] == 1
+    assert one["mappings"][0]["studio_definition_id"] == "image_upscale"
+
+    with pytest.raises(ComfyNodeMappingError) as unknown:
+        validate_node_mappings(library, mapping_id="studio.not-a-mapping")
+    assert unknown.value.code == "COMFYUI_NODE_MAPPING_UNKNOWN"
+
+
+def test_node_library_annotates_closed_mapping_ids(tmp_path, monkeypatch):
+    configure_comfy(tmp_path, monkeypatch)
+    transport = FakeTransport(FakeResponse(_object_info_for(["KSampler", "SaveImage", "UnknownNode"])))
+    library = load_comfyui_node_library(transport_factory=lambda endpoint: transport)
+    assert library["mapping_contract"] == "studio-comfyui-node-mapping/1"
+    assert library["mapping_execution"] == "EXISTING_STUDIO_ADAPTER_ONLY"
+    nodes = {node["node_class"]: node for node in library["nodes"]}
+    assert nodes["KSampler"]["studio_mappings"]
+    assert all(mid.startswith("studio.comfy-") for mid in nodes["KSampler"]["studio_mappings"])
+    assert nodes["UnknownNode"]["studio_mappings"] == []
+
+
+def test_graph_router_registers_comfy_mapping_path():
+    from app.creative.graph_api import create_creative_graph_router
+    from types import SimpleNamespace
+
+    class DummyService:
+        GRAPHS = "graphs"
+        workspace = SimpleNamespace(lineage=SimpleNamespace(change_impact=None))
+
+    router = create_creative_graph_router(DummyService(), lambda *args, **kwargs: None)
+    routes = {(route.path, frozenset(getattr(route, "methods", ()) or ()))
+              for route in router.routes if getattr(route, "path", None)}
+    assert any(path.endswith("/studio/graphs/comfyui-node-mapping") and methods == frozenset({"GET"})
+               for path, methods in routes)

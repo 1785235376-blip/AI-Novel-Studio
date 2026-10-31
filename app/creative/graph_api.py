@@ -329,6 +329,24 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                           include_local_subgraph=include_local_subgraph, include_local_conditions=include_local_conditions), request,
                           model_input=include_image or include_production or include_video)
 
+    def raise_comfy_failure(exc):
+        from .comfy_node_library import ComfyNodeLibraryError
+        from .comfy_node_mapping import ComfyNodeMappingError
+        code = getattr(exc, "code", "")
+        if code == "COMFYUI_PROVIDER_NOT_CONFIGURED":
+            raise HTTPException(409, {"code": "COMFYUI_PROVIDER_NOT_CONFIGURED"}) from None
+        if code == "COMFYUI_PROVIDER_DISABLED":
+            raise HTTPException(409, {"code": "COMFYUI_PROVIDER_DISABLED"}) from None
+        if code == "COMFYUI_ENDPOINT_REJECTED":
+            raise HTTPException(409, {"code": "COMFYUI_ENDPOINT_REJECTED"}) from None
+        if code == "COMFYUI_NODE_MAPPING_UNKNOWN":
+            raise HTTPException(409, {"code": "COMFYUI_NODE_MAPPING_UNKNOWN"}) from None
+        if code == "COMFYUI_NODE_LIBRARY_TOO_LARGE":
+            raise HTTPException(502, {"code": "COMFYUI_NODE_LIBRARY_TOO_LARGE"}) from None
+        if code in {"COMFYUI_NODE_LIBRARY_INVALID", "COMFYUI_NODE_LIBRARY_LIMIT_INVALID"}:
+            raise HTTPException(502, {"code": "COMFYUI_NODE_LIBRARY_INVALID"}) from None
+        raise HTTPException(503, {"code": "COMFYUI_NODE_LIBRARY_UNAVAILABLE"}) from None
+
     @router.get("/projects/{nid}/studio/graphs/comfyui-node-library")
     def comfy_node_library(nid: str, request: Request, provider_id: str | None = None,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -338,18 +356,20 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 lambda actor, scope, guard: service.comfy_node_library(
                     nid, scope, actor, guard, provider_id=provider_id), request)
         except ComfyNodeLibraryError as exc:
-            # Literal codes keep the frontend error-code scanner auditable.
-            if exc.code == "COMFYUI_PROVIDER_NOT_CONFIGURED":
-                raise HTTPException(409, {"code": "COMFYUI_PROVIDER_NOT_CONFIGURED"}) from None
-            if exc.code == "COMFYUI_PROVIDER_DISABLED":
-                raise HTTPException(409, {"code": "COMFYUI_PROVIDER_DISABLED"}) from None
-            if exc.code == "COMFYUI_ENDPOINT_REJECTED":
-                raise HTTPException(409, {"code": "COMFYUI_ENDPOINT_REJECTED"}) from None
-            if exc.code == "COMFYUI_NODE_LIBRARY_TOO_LARGE":
-                raise HTTPException(502, {"code": "COMFYUI_NODE_LIBRARY_TOO_LARGE"}) from None
-            if exc.code in {"COMFYUI_NODE_LIBRARY_INVALID", "COMFYUI_NODE_LIBRARY_LIMIT_INVALID"}:
-                raise HTTPException(502, {"code": "COMFYUI_NODE_LIBRARY_INVALID"}) from None
-            raise HTTPException(503, {"code": "COMFYUI_NODE_LIBRARY_UNAVAILABLE"}) from None
+            raise_comfy_failure(exc)
+
+    @router.get("/projects/{nid}/studio/graphs/comfyui-node-mapping")
+    def comfy_node_mapping(nid: str, request: Request, provider_id: str | None = None,
+                mapping_id: str | None = None,
+                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        from .comfy_node_library import ComfyNodeLibraryError
+        from .comfy_node_mapping import ComfyNodeMappingError
+        try:
+            return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
+                lambda actor, scope, guard: service.comfy_node_mapping(
+                    nid, scope, actor, guard, provider_id=provider_id, mapping_id=mapping_id), request)
+        except (ComfyNodeLibraryError, ComfyNodeMappingError) as exc:
+            raise_comfy_failure(exc)
 
     @router.get("/projects/{nid}/studio/graphs/planning-documents")
     def planning_documents(nid: str, request: Request,

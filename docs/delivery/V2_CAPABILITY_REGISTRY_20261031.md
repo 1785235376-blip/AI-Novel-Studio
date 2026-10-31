@@ -27,3 +27,5 @@ registry 新增 `comfyui_node_library`（PARTIAL / HTTP_SYNTHETIC）：
 - limits：`node_metadata_only:NOT_EXECUTABLE`、`execution_mapping:NOT_IMPLEMENTED`、`real_comfyui_provider:NOT_RUN`、`node_ui_catalog_merge:NOT_CONNECTED`。
 - 设计/路线见 `docs/delivery/COMFYUI_NODE_LIBRARY_BRIDGE_20261031.md`，测试 `tests/test_comfyui_node_library.py`（14 passed）。
 
+补充映射阶段：新增 `GET /api/projects/{nid}/studio/graphs/comfyui-node-mapping`，按封闭配方表校验 ComfyUI provider 是否具备现有 Studio image_generate/image_upscale 适配器所需节点类；`execution_mapping:EXISTING_RECIPE_PREFLIGHT_ONLY`、`arbitrary_node_graph_execution:NOT_IMPLEMENTED`。测试 `tests/test_comfyui_node_library.py` 18 passed。
+
