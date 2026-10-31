@@ -16,13 +16,14 @@
 - `kind ∈ {image, video}`；通过原 studio invoker 做 `domain.read/domain.write` authority 校验；
 - 存储于项目实验文档 collection `lower_canvas_v1`，image/video 各自一行：
   `{id, kind, version, graph, updated_at, updated_by}`；
+- 节点可携带 `params`（widget 值）：仅 string/int/float/bool；最多 64 个 key、key≤80、字符串≤4096、总值≤12000；嵌套/超界/控制字符拒绝；无 params 的旧节点保持无该字段；
 - `GET` 无草稿返回 `version=0` 空图；`PUT` 需 `expected_version`，CAS 冲突返回 409 `{code:"LOWER_CANVAS_VERSION_CONFLICT", current_version}`；
 - graph 校验：节点 ≤400、连线 ≤800、序列化 ≤1 MB、节点/边 id 唯一、端点存在、无自环；错误返回 400 字面 code；
 - 响应始终带 `execution:"NOT_IMPLEMENTED"`；本接口不执行、不报价、不写资产。
 
 ## 未实现：run/execution
 
-`POST .../runs`、`GET .../runs/{run_id}` 未提供。前端 CfGraph 当前只有节点结构（参数不可编辑，无 widget 值），无法构造可执行的 ComfyUI prompt；需前端补齐 params 后，在现有 provider recipe 授权/审核/成本/失败恢复合同上另行实现。不返回虚假 run_id、价格或状态。
+`POST .../runs`、`GET .../runs/{run_id}` 未提供。前端已支持节点 widget 参数编辑并随草稿持久化/同步；但 CfGraph → ComfyUI API prompt 的映射、报价确认、状态轮询和产物回写仍需按现有 provider recipe 授权/审核/成本/失败恢复合同实现。不返回虚假 run_id、价格或状态。
 
 ## 验证
 
@@ -38,3 +39,9 @@
 - 徽标：「云端草稿 · 不会执行 · 节点库只读」；仍未执行、不报价、不写资产。
 - 测试：`comfyRemote.test.ts` 6 passed；`DualStack.remote.test.tsx` 1 passed；真实浏览器 mock：imported node=1、lowerWrites=4、nonGet=0、fails=0。
 
+
+## 节点参数（widget）
+
+- 前端下画布选中节点后显示参数编辑器（INT/FLOAT/STRING/BOOLEAN/COMBO），初始值来自 object_info default/choices；
+- 参数写入 `CfNode.params`，随 node/edge 草稿一起保存到 localStorage、session store 和后端 `lower-canvas`；
+- 后端 `LowerCanvasNode.params` 有界校验后原样返回；无参数的旧草稿保持兼容。

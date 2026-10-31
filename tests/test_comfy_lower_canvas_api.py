@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from app.creative.comfy_node_library import ComfyNodeLibraryError
 from app.creative.lower_canvas_api import (
@@ -61,6 +62,38 @@ def test_lower_canvas_roundtrip_preserves_aliases_and_versions(service):
 
     # image and video are independent rows.
     assert read_lower_canvas(service, nid, sc, "video")["version"] == 0
+
+
+def test_lower_canvas_widget_params_roundtrip(service):
+    nid, sc = "novel-lower", scope()
+    with_params = graph(nodes=[
+        {"id": "n1", "t": "KSampler", "x": 10, "y": 20, "title": "Sample",
+         "params": {"seed": 42, "steps": 20, "cfg": 7.5, "enabled": True, "sampler_name": "euler"}},
+    ], edges=[])
+    saved = save_lower_canvas(service, nid, sc, "local-author", "image",
+        LowerCanvasSave.model_validate({"expected_version": 0, "graph": with_params}))
+    assert saved["graph"]["nodes"][0]["params"] == {
+        "seed": 42, "steps": 20, "cfg": 7.5, "enabled": True, "sampler_name": "euler"}
+    assert read_lower_canvas(service, nid, sc, "image")["graph"]["nodes"][0]["params"] == saved["graph"]["nodes"][0]["params"]
+    # A node without params stays byte-shape compatible (no params key fabricated).
+    plain = save_lower_canvas(service, nid, sc, "local-author", "image",
+        LowerCanvasSave.model_validate({"expected_version": 1, "graph": graph(nodes=[
+            {"id": "n1", "t": "KSampler", "x": 0, "y": 0, "title": "plain"}], edges=[])}))
+    assert "params" not in plain["graph"]["nodes"][0]
+
+
+@pytest.mark.parametrize("params", [
+    {"nested": {"a": 1}},
+    {f"k{i}": i for i in range(65)},
+    {"text": "x" * 5000},
+    {"text": "bad\x01control"},
+    {"too_big_int": 2**60},
+])
+def test_lower_canvas_rejects_unbounded_or_nested_params(params):
+    body = {"expected_version": 0, "graph": {"nodes": [
+        {"id": "n1", "t": "KSampler", "x": 0, "y": 0, "title": "n", "params": params}], "edges": []}}
+    with pytest.raises(ValidationError):
+        LowerCanvasSave.model_validate(body)
 
 
 def test_lower_canvas_optimistic_conflict(service):

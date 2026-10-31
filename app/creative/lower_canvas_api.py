@@ -7,6 +7,8 @@ Execution endpoints are a separate, later contract.
 """
 from __future__ import annotations
 
+import math
+import re
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Header, HTTPException
@@ -27,12 +29,44 @@ class LowerCanvasNode(BaseModel):
     x: float
     y: float
     title: str = Field(default="", max_length=MAX_TITLE)
+    params: dict[str, str | int | float | bool] | None = None
 
     @field_validator("id", "t", "title")
     @classmethod
     def _no_control(cls, value: str) -> str:
         if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
             raise ValueError("control characters are not allowed")
+        return value
+
+    @field_validator("params")
+    @classmethod
+    def _bounded_params(cls, value):
+        if value is None:
+            return None
+        if len(value) > 64:
+            raise ValueError("too many widget parameters")
+        total = 0
+        for key, item in value.items():
+            if not isinstance(key, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,80}", key):
+                raise ValueError("invalid widget parameter name")
+            if isinstance(item, bool):
+                total += 5
+            elif isinstance(item, int):
+                if abs(item) > 2**53:
+                    raise ValueError("widget integer out of range")
+                total += len(str(item))
+            elif isinstance(item, float):
+                if not math.isfinite(item) or abs(item) > 1e15:
+                    raise ValueError("widget float out of range")
+                total += len(str(item))
+            elif isinstance(item, str):
+                if len(item) > 4096 or any(ord(ch) < 32 and ch not in "\n\t" for ch in item):
+                    raise ValueError("widget string out of range")
+                total += len(item)
+            else:
+                raise ValueError("widget values must be scalar")
+        if total > 12000:
+            raise ValueError("widget parameter payload too large")
         return value
 
 
@@ -84,7 +118,7 @@ def _graph_payload(graph: LowerCanvasGraph) -> dict:
             raise HTTPException(400, {"code": "LOWER_CANVAS_EDGE_ENDPOINT_MISSING"})
         if edge.a == edge.b:
             raise HTTPException(400, {"code": "LOWER_CANVAS_EDGE_SELF_LOOP"})
-    payload = graph.model_dump(by_alias=True)
+    payload = graph.model_dump(by_alias=True, exclude_none=True)
     import json
     if len(json.dumps(payload, ensure_ascii=False).encode("utf-8")) > MAX_GRAPH_BYTES:
         raise HTTPException(400, {"code": "LOWER_CANVAS_GRAPH_TOO_LARGE"})

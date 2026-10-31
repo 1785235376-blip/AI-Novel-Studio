@@ -72,3 +72,6 @@
 ### 前端 wiring：自定义下画布接入真实节点库与项目草稿
 `DualStack` 在真实身份下调用 `GET /api/comfy/object_info` 合并只读节点库，并通过 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}` 同步下画布草稿（CAS、冲突保留本机、503 保留内置节点）；无身份仍 session-only。徽标改为「云端草稿 · 不会执行 · 节点库只读」。测试 `comfyRemote.test.ts` 6 + `DualStack.remote.test.tsx` 1；浏览器 mock importedCount=1/lowerWrites=4/nonGet=0。
 
+### ComfyUI 下画布：节点参数（widget）编辑与持久化
+下画布节点参数现在可编辑：INT/FLOAT/STRING/BOOLEAN/COMBO 控件，初始值来自 object_info/default/choices。参数写入 CfNode.params，随草稿保存在 localStorage/session store 并同步到 backend lower-canvas；后端对 params 做有界标量校验（旧草稿无 params 保持兼容）。仍未执行节点；runs/报价/状态/产物回写仍待实现。
+

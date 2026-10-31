@@ -15,7 +15,11 @@ export type ComfyObjectInfoEntry = {
 export type ComfyObjectInfo = Record<string, ComfyObjectInfoEntry>;
 
 export type PortDef = {name: string; type: string; optional?: boolean};
-export type WidgetDef = {name: string; kind: 'INT' | 'FLOAT' | 'STRING' | 'BOOLEAN' | 'COMBO'; optional?: boolean};
+export type WidgetPrimitive = string | number | boolean;
+export type WidgetDef = {
+  name: string; kind: 'INT' | 'FLOAT' | 'STRING' | 'BOOLEAN' | 'COMBO'; optional?: boolean;
+  choices?: string[]; default?: WidgetPrimitive; min?: number; max?: number; step?: number; multiline?: boolean;
+};
 export type NodeDef = {
   name: string; display_name: string; category: string; group: NodeGroup; inputs: PortDef[]; widgets: WidgetDef[]; outputs: PortDef[];
   output_node: boolean; source: 'builtin' | 'poemseed' | 'imported'; zh?: string; description?: string;
@@ -63,6 +67,75 @@ export function groupOf(category: string): NodeGroup {
   return (NODE_GROUPS as readonly string[]).includes(head) && head !== 'poemseed' && head !== 'other' ? head : 'other';
 }
 
+function boundedNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+function makeWidget(name: string, kind: WidgetDef['kind'], optional: boolean | undefined, opts: Record<string, unknown>): WidgetDef {
+  const widget: WidgetDef = {name, kind, optional};
+  if (kind === 'INT' || kind === 'FLOAT') {
+    const min = boundedNumber(opts.min), max = boundedNumber(opts.max), step = boundedNumber(opts.step);
+    const fallback = boundedNumber(opts.default);
+    if (min != null) widget.min = min;
+    if (max != null) widget.max = max;
+    if (step != null && step > 0) widget.step = step;
+    if (fallback != null && (kind === 'FLOAT' || Number.isSafeInteger(fallback))) widget.default = fallback;
+  } else if (kind === 'STRING') {
+    if (typeof opts.default === 'string') widget.default = opts.default.slice(0, 4096);
+    widget.multiline = opts.multiline === true;
+  } else if (kind === 'BOOLEAN') {
+    if (typeof opts.default === 'boolean') widget.default = opts.default;
+  }
+  return widget;
+}
+
+/** Built-in fallback value for one widget (ComfyUI widgets always carry a value). */
+export function widgetDefault(widget: WidgetDef): WidgetPrimitive {
+  if (widget.default !== undefined) return widget.default;
+  if (widget.kind === 'BOOLEAN') return false;
+  if (widget.kind === 'INT' || widget.kind === 'FLOAT') return widget.min ?? 0;
+  if (widget.kind === 'COMBO') return widget.choices?.[0] ?? '';
+  return '';
+}
+
+/** Initial params for a newly-added node. Unknown widgets are omitted. */
+export function defaultWidgetParams(def: NodeDef | undefined): Record<string, WidgetPrimitive> | undefined {
+  if (!def?.widgets.length) return undefined;
+  const params: Record<string, WidgetPrimitive> = {};
+  for (const widget of def.widgets) params[widget.name] = widgetDefault(widget);
+  return params;
+}
+
+function validWidgetValue(widget: WidgetDef, value: unknown): WidgetPrimitive | undefined {
+  if (widget.kind === 'BOOLEAN') return typeof value === 'boolean' ? value : undefined;
+  if (widget.kind === 'INT') return typeof value === 'number' && Number.isSafeInteger(value) ? value : undefined;
+  if (widget.kind === 'FLOAT') return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+  if (widget.kind === 'STRING') return typeof value === 'string' ? value.slice(0, 4096) : undefined;
+  if (widget.kind === 'COMBO') return typeof value === 'string' ? value.slice(0, 240) : undefined;
+  return undefined;
+}
+
+/** Restore only known widget params with their expected primitive types; bounded strings. */
+export function sanitizeWidgetParams(def: NodeDef | undefined, raw: unknown): Record<string, WidgetPrimitive> | undefined {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const source = raw as Record<string, unknown>;
+  const out: Record<string, WidgetPrimitive> = {};
+  if (def) {
+    for (const widget of def.widgets) {
+      if (!(widget.name in source)) continue;
+      const value = validWidgetValue(widget, source[widget.name]);
+      if (value !== undefined) out[widget.name] = value;
+    }
+  } else {
+    // Unknown/removed node definitions: keep only a small primitive map, bounded.
+    for (const [key, value] of Object.entries(source).slice(0, 64)) {
+      if (!/^[A-Za-z0-9_.-]{1,80}$/.test(key)) continue;
+      if (typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value)) ||
+          (typeof value === 'string' && value.length <= 512)) out[key] = value;
+    }
+  }
+  return Object.keys(out).length ? out : undefined;
+}
+
 export type ParseResult = {defs: NodeDef[]; errors: {name: string; reason: string}[]};
 /** Pure parser for a ComfyUI object_info JSON (frontend only; never fetched here). */
 export function parseObjectInfo(info: unknown, source: NodeDef['source'] = 'imported'): ParseResult {
@@ -80,9 +153,16 @@ export function parseObjectInfo(info: unknown, source: NodeDef['source'] = 'impo
       if (typeof rec !== 'object') { bad = 'bad_input'; break; }
       for (const [inName, spec] of Object.entries(rec)) {
         const t = Array.isArray(spec) ? spec[0] : undefined;
-        if (Array.isArray(t)) widgets.push({name: inName, kind: 'COMBO', optional: opt || undefined});
-        else if (typeof t === 'string' && WIDGET_KINDS.has(t)) widgets.push({name: inName, kind: t as WidgetDef['kind'], optional: opt || undefined});
-        else if (typeof t === 'string' && t) inputs.push({name: inName, type: t, optional: opt || undefined});
+        const opts = Array.isArray(spec) && spec[1] && typeof spec[1] === 'object' && !Array.isArray(spec[1])
+          ? spec[1] as Record<string, unknown> : {};
+        if (Array.isArray(t)) {
+          const choices = t.filter((choice): choice is string => typeof choice === 'string')
+            .slice(0, 256).map(choice => choice.slice(0, 240));
+          widgets.push({name: inName, kind: 'COMBO', optional: opt || undefined,
+            choices, ...(typeof opts.default === 'string' ? {default: opts.default.slice(0, 240)} : {})});
+        } else if (typeof t === 'string' && WIDGET_KINDS.has(t)) {
+          widgets.push(makeWidget(inName, t as WidgetDef['kind'], opt || undefined, opts));
+        } else if (typeof t === 'string' && t) inputs.push({name: inName, type: t, optional: opt || undefined});
         else { bad = `bad_input_spec:${inName}`; break; }
       }
       if (bad) break;
@@ -203,7 +283,7 @@ export function searchDefs(reg: Registry, q: string, locale: string): NodeDef[] 
 }
 
 // ---- graph ---------------------------------------------------------------------------------------------------------
-export type CfNode = {id: string; t: string; x: number; y: number; title: string};
+export type CfNode = {id: string; t: string; x: number; y: number; title: string; params?: Record<string, WidgetPrimitive>};
 /** a = source node, as = output slot; b = target node, bs = input slot (index into def.inputs). */
 export type CfEdge = {id: string; a: string; as: number; b: string; bs: number};
 export type CfGraph = {nodes: CfNode[]; edges: CfEdge[]};
@@ -232,7 +312,11 @@ export function sanitizeGraph(raw: unknown, reg: Registry): CfGraph {
   const r = raw as {nodes?: unknown; edges?: unknown} | null;
   if (!r || !Array.isArray(r.nodes)) return {nodes: [], edges: []};
   const nodes = (r.nodes as CfNode[]).filter(n => n && typeof n.id === 'string' && typeof n.t === 'string')
-    .map(n => ({id: n.id, t: n.t, x: Number(n.x) || 0, y: Number(n.y) || 0, title: typeof n.title === 'string' ? n.title : n.t}));
+    .map(n => {
+      const params = sanitizeWidgetParams(reg.byName.get(n.t), n.params);
+      return {id: n.id, t: n.t, x: Number(n.x) || 0, y: Number(n.y) || 0,
+        title: typeof n.title === 'string' ? n.title : n.t, ...(params ? {params} : {})};
+    });
   let g: CfGraph = {nodes, edges: []};
   for (const e of (Array.isArray(r.edges) ? r.edges : []) as Partial<CfEdge>[]) {
     if (!e || typeof e.a !== 'string' || typeof e.b !== 'string') continue;

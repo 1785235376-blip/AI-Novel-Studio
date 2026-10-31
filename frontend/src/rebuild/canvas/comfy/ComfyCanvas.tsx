@@ -3,8 +3,8 @@
 import {useCallback, useEffect, useId, useMemo, useRef, useState} from 'react';
 import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, KeyboardEvent as RKE} from 'react';
 import {useLocale} from '../../../i18n';
-import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible,
-  type CfGraph, type CfNode, type NodeDef, type Registry} from './comfyRegistry';
+import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, defaultWidgetParams, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible, widgetDefault,
+  type CfGraph, type CfNode, type NodeDef, type Registry, type WidgetDef, type WidgetPrimitive} from './comfyRegistry';
 import {sessionCanvasStore} from '../RebuildCanvas';
 import {loadRemoteComfyGraph, saveRemoteComfyGraph, type ComfyRemoteContext} from './comfyRemote';
 
@@ -121,7 +121,9 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const onContext = (e: RME) => { e.preventDefault(); openMenu(e.clientX, e.clientY, (e.target as Element).closest('[data-node-id]')?.getAttribute('data-node-id') ?? undefined); };
   const add = (d: NodeDef) => {
     if (!menu) return;
-    const n: CfNode = {id: uid(), t: d.name, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10, title: nodeLabel(d, 'zh-CN')};
+    const params = defaultWidgetParams(d);
+    const n: CfNode = {id: uid(), t: d.name, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10,
+      title: nodeLabel(d, 'zh-CN'), ...(params ? {params} : {})};
     setG(x => ({...x, nodes: [...x.nodes, n]})); setSel(n.id); setMenu(null); setMsg('');
   };
   const del = (id: string) => { setG(x => ({nodes: x.nodes.filter(n => n.id !== id), edges: x.edges.filter(e => e.a !== id && e.b !== id)})); setSel(s => (s === id ? null : s)); setMenu(null); };
@@ -133,6 +135,27 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     return r.ok;
   };
   const disconnect = (b: string, bs: number) => setG(x => ({...x, edges: x.edges.filter(e => !(e.b === b && e.bs === bs))}));
+
+  const setWidgetParam = (name: string, value: WidgetPrimitive) => {
+    if (!sel) return;
+    setG(x => ({...x, nodes: x.nodes.map(n => n.id === sel
+      ? {...n, params: {...(n.params ?? {}), [name]: value}} : n)}));
+  };
+  const widgetValue = (node: CfNode, widget: WidgetDef): WidgetPrimitive => {
+    const value = node.params?.[widget.name];
+    if (widget.kind === 'BOOLEAN') return typeof value === 'boolean' ? value : widgetDefault(widget);
+    if (widget.kind === 'INT' || widget.kind === 'FLOAT') return typeof value === 'number' ? value : widgetDefault(widget);
+    return typeof value === 'string' ? value : widgetDefault(widget);
+  };
+  const commitNumber = (widget: WidgetDef, raw: string) => {
+    if (!raw.trim()) return;
+    const value = Number(raw);
+    if (!Number.isFinite(value)) return;
+    if (widget.kind === 'INT' && !Number.isSafeInteger(value)) return;
+    if (widget.min != null && value < widget.min) return;
+    if (widget.max != null && value > widget.max) return;
+    setWidgetParam(widget.name, value);
+  };
 
   const onDown = (e: RPE) => {
     const el = e.target as Element;
@@ -260,9 +283,32 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
           </div>
           {!results.length ? <p className="none" role="status">{L('没有匹配的节点', 'No matching node')}</p> : null}
         </div>) : null}
-      {selNode && selDef && selDef.inputs.length ? (
-        <div className="cfy-insp" data-comfy-inspector aria-label={L('输入端口连线', 'Input links')} role="group">
+      {selNode && selDef && (selDef.inputs.length || selDef.widgets.length) ? (
+        <div className="cfy-insp" data-comfy-inspector aria-label={L('节点检查器', 'Node inspector')} role="group">
           <b>{nodeLabel(selDef, locale)}</b>
+          {selDef.widgets.length ? (
+            <div className="cfy-params" data-comfy-params aria-label={L('节点参数', 'Node parameters')} role="group">
+              <b>{L('参数', 'Parameters')} <small>{L(`· ${selDef.widgets.length} 个`, `· ${selDef.widgets.length}`)}</small></b>
+              {selDef.widgets.map(widget => {
+                const value = widgetValue(selNode, widget);
+                return <label key={widget.name}><span>{widget.name} <small>{widget.kind}</small></span>
+                  {widget.kind === 'BOOLEAN' ? <input type="checkbox" data-widget-name={widget.name}
+                    checked={value === true} onChange={e => setWidgetParam(widget.name, e.target.checked)} />
+                    : widget.kind === 'COMBO' && widget.choices?.length ? <select data-widget-name={widget.name}
+                        value={String(value)} onChange={e => setWidgetParam(widget.name, e.target.value)}>
+                        {(widget.choices.includes(String(value)) ? widget.choices : [String(value), ...widget.choices]).slice(0, 256)
+                          .map(choice => <option key={choice} value={choice}>{choice}</option>)}
+                      </select>
+                    : widget.kind === 'STRING' ? (widget.multiline
+                      ? <textarea data-widget-name={widget.name} value={String(value)} onChange={e => setWidgetParam(widget.name, e.target.value)} />
+                      : <input type="text" data-widget-name={widget.name} value={String(value)} onChange={e => setWidgetParam(widget.name, e.target.value)} />)
+                    : <input type="number" data-widget-name={widget.name} value={String(value)}
+                        min={widget.min} max={widget.max} step={widget.kind === 'INT' ? 1 : widget.step ?? 'any'}
+                        onChange={e => commitNumber(widget, e.target.value)} />}
+                </label>;
+              })}
+              <small className="cfy-insp__note">{L('仅草稿参数，不会执行', 'Draft parameters only; never runs')}</small>
+            </div>) : null}
           {selDef.inputs.map((p, i) => {
             const cur = g.edges.find(e => e.b === selNode.id && e.bs === i);
             const opts = g.nodes.filter(n => n.id !== selNode.id).flatMap(n => (def(n.t)?.outputs ?? []).map((o, s) => ({n, o, s}))).filter(x => typesCompatible(x.o.type, p.type));

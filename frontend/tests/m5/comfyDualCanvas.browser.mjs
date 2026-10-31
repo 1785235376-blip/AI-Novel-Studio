@@ -49,7 +49,7 @@ async function session(theme) {
   const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e).slice(0, 160)));
   await p.goto(BASE); await p.waitForFunction(() => !document.body.innerText.includes('正在加载…'), null, {timeout: 60000}).catch(() => {});
   await p.waitForTimeout(1500);
-  return {ctx, p, errs};
+  return {ctx, p, errs, lower};
 }
 const skipGate = async p => { const l = p.getByRole('button', {name: '跳过，直接进入小说写作', exact: true}).first(); if (await l.count()) { await l.click().catch(() => {}); await p.waitForTimeout(500); } };
 
@@ -62,7 +62,7 @@ const lum = `(c => { const m = c.match(/rgba?\\(([^)]+)\\)/); if (!m) return nul
 const fails = [], rows = []; let nonGet = 0; let lowerWrites = 0;
 const AXE_FILE = process.env.AXE || '/workspace/hr/ux-20261030/axe/node_modules/axe-core/axe.min.js';
 for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
-  const {ctx, p, errs} = await session(theme); await skipGate(p);
+  const {ctx, p, errs, lower} = await session(theme); await skipGate(p);
   for (let i = 0; i < 3; i++) { const t = p.getByRole('button', {name: '跳过', exact: true}); if (await t.count()) { await t.first().click().catch(() => {}); await p.waitForTimeout(300); } }
   await p.getByRole('button', {name: '专业', exact: true}).first().click().catch(() => {}); await p.waitForTimeout(500);
   for (const mod of (process.env.MODS || 'VIDEO,IMAGE').split(',')) {
@@ -119,6 +119,14 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
       }
       await p.keyboard.press('Escape'); }
     await addNode('CheckpointLoaderSimple', 200); await addNode('KSampler', 600);
+    // [PARAMS] selected KSampler exposes editable widgets; edited values must reach the draft PUT.
+    { const seed = p.locator(`${LO} [data-comfy-params] [data-widget-name="seed"]`);
+      if (await seed.count()) { await seed.fill('77'); await p.waitForTimeout(900);
+        const samplers = lower.get(mod.toLowerCase())?.graph?.nodes?.filter(n => n.t === 'KSampler') ?? [];
+        const ok = samplers.some(n => n.params?.seed === 77);
+        rows.push({key: `${theme}|${mod}|params`, seeds: samplers.map(n => n.params?.seed)});
+        if (!ok) v.push(`P params seed not persisted: ${JSON.stringify(samplers.map(n => n.params))}`);
+      } else v.push('P params inspector missing for KSampler'); }
     const idOf = c => p.locator(`${LO} [data-node-class="${c}"]`).first().getAttribute('data-node-id');
     const ids = [await idOf('CheckpointLoaderSimple'), await idOf('KSampler')].filter(Boolean);
     const drag = async (a, bsel) => { const s = await p.locator(`${LO} [data-out="${a}"]`).boundingBox(), t = await p.locator(`${LO} [data-in="${bsel}"]`).boundingBox();

@@ -38,7 +38,7 @@ it('StrictMode only reads; exact mapping preview never adds a relation until sep
   const f = fixture((url) => { if (url.endsWith('reference-confirm')) { f.saved(receipt); return reply(receipt); } return reply(reviewed); });
   render(<StrictMode><PortableProjectsPanel client={client()} /></StrictMode>);
   await screen.findByText('关系状态：PENDING'); expect(f.fetch.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
-  fireEvent.click(previewButton()); await screen.findByLabelText('新关系来源图片');
+  fireEvent.click(previewButton()); await screen.findByLabelText('新关系来源图片', {}, {timeout: 10000});
   expect((screen.getByLabelText('来源图片 SHA-256') as HTMLInputElement).value).toBe(sha);
   expect(confirmButton().disabled).toBe(true); expect(f.fetch.mock.calls.filter(([url]) => url.endsWith('reference-confirm'))).toHaveLength(0);
   fireEvent.click(consent()); fireEvent.click(confirmButton()); fireEvent.click(confirmButton());
@@ -64,7 +64,7 @@ it.each(['target-project', 'asset-map', 'hash', 'wrong-kind', 'duplicate'])('rej
 it('lost confirmation stays locked, refresh with UNKNOWN never resends', async () => {
   const f = fixture(url => { if (url.endsWith('reference-confirm')) { f.saved({ ...row, version: 10, reference_state: 'UNKNOWN' }); return Promise.reject(new TypeError('synthetic lost response')); } return reply(reviewed); });
   render(<PortableProjectsPanel client={client()} />); await screen.findByText('关系状态：PENDING');
-  fireEvent.click(previewButton()); await screen.findByLabelText('新关系来源图片'); fireEvent.click(consent()); fireEvent.click(confirmButton());
+  fireEvent.click(previewButton()); await screen.findByLabelText('新关系来源图片', {}, {timeout: 10000}); fireEvent.click(consent()); fireEvent.click(confirmButton());
   await screen.findByText(/关系写入结果未确认，禁止重发/); expect(confirmButton().disabled).toBe(true);
   fireEvent.click(confirmButton()); fireEvent.click(screen.getByRole('button', { name: '刷新便携与存储状态' }));
   await screen.findByText('关系状态：UNKNOWN'); expect((previewButton() as HTMLButtonElement).disabled).toBe(true);

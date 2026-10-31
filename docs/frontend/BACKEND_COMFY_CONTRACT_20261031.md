@@ -29,7 +29,7 @@
    - 未配置/不可达 → **503** `{"code":"comfy_unavailable"}`，前端保留内置节点库；
    - 只读：不提交 workflow、不执行节点；复用既有有界传输（禁 redirect、4 MiB、10 s）。
 2. `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}`（kind=image|video）
-   - 按项目 scope 存储 `{nodes:[{id,t,x,y,title}], edges:[{id,a,as,b,bs}]}`；
+   - 按项目 scope 存储 `{nodes:[{id,t,x,y,title,params?}], edges:[{id,a,as,b,bs}]}`；`params` 为 widget 值（string/int/float/bool，有界）；
    - `PUT` body `{expected_version, graph}`，版本冲突 → **409** `{"code":"LOWER_CANVAS_VERSION_CONFLICT","current_version":N}`；
    - 边界：400 节点 / 800 连线 / 1 MB；重复节点/边 id、缺失端点、自环 → 400 明确 code；
    - 响应带 `execution:"NOT_IMPLEMENTED"`；只存草稿，不执行、不报价、不写资产。
@@ -37,7 +37,8 @@
 未实现（下一步）：
 
 3. `POST .../lower-canvas/{kind}/runs` 与 `GET .../runs/{run_id}`：Convert to ComfyUI prompt、报价确认、执行状态、产物写资产库。阻塞点：前端节点参数尚不可编辑，CfGraph 没有 widget 值；需要前端补 params 后再实现真实执行与费用合同。当前后端不提供任何虚假执行/价格/状态接口。
-4. 前端 wiring 已接入（本批新增）：
+4. 节点参数编辑（本批新增）：下画布选中节点后可编辑 INT/FLOAT/STRING/BOOLEAN/COMBO widget，值写入 `CfNode.params` 并随草稿持久化/同步；后端接受有界 params；仍未执行任何节点。
+5. 前端 wiring 已接入（上一批）：
    - 真实账号/作品身份（`resolveWorkspaceIdentity().kind === 'real'`）时，`DualStack` 拉取 `GET /api/comfy/object_info`，用 `parseObjectInfo` + `mergeImported` 合并到节点库；503 时保留内置节点库；
    - 下画布草稿通过 `GET/PUT /api/projects/{id}/studio/lower-canvas/{kind}` 同步，携带 `X-Session-Token` / `X-Branch-Id`，使用 `expected_version` CAS；
    - 无身份仍保持 session-only（内存），不发任何请求；本地 localStorage 仍保留离线缓存；
