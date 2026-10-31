@@ -188,7 +188,7 @@ it('preserves saved content after a server conflict and requires new preflight',
 
 it('downloads through the real mounted IMAGE adapter with the original captured collaboration headers', async () => {
   const h = harness(); const onBusy = vi.fn();
-  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
+  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'mounted-session', actor: { id: 'author', displayName: 'Author', workspaceId: 'w' }, scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
   await openBook(); await preflight(); ack(); fireEvent.click(download());
   await screen.findByText('已校验并下载 CBZ 合成图片副本。');
   expect(saveOtioFile).toHaveBeenCalledTimes(1);
@@ -321,7 +321,7 @@ it('discarded PDF preflight cannot replace a newer CBZ check or release its busy
 
 it('downloads PDF through the original mounted IMAGE owner with captured collaboration headers', async () => {
   const h = harness(); const onBusy = vi.fn();
-  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'pdf-mounted-session', scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'pdf-mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
+  render(<StudioComicPanel projectId="novel" context={{ sessionToken: 'pdf-mounted-session', actor: { id: 'author', displayName: 'Author', workspaceId: 'w' }, scope: { workspaceId: 'w', projectId: 'novel', storylineId: 's', branchId: 'pdf-mounted-branch' } }} isCurrent={() => true} onDirtyChange={vi.fn()} onBusyChange={onBusy} />);
   await openBook(); await pdfPreflight(); pdfAck(); fireEvent.click(pdfDownload());
   await screen.findByText('已校验并下载 PDF 合成图片副本。'); expect(saveOtioFile).toHaveBeenCalledTimes(1);
   expect(h.posts()[1][1].headers).toMatchObject({ 'X-Session-Token': 'pdf-mounted-session', 'X-Branch-Id': 'pdf-mounted-branch' });

@@ -79,6 +79,8 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 function mount() {
+  // Current shell folds the inspector below 1280px; this contract asserts the mounted inspector.
+  Object.defineProperty(window, 'innerWidth', { value: 1440, configurable: true });
   const query = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={project} context={{ sessionToken: '' }}
     scope={{ workspace: '本机', project: 'Workflow fixture', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE"
@@ -90,6 +92,9 @@ const intentCheckbox = (label: string) => within(screen.getByRole('region', { na
 async function openWorkflow() {
   fireEvent.click(await screen.findByRole('button', { name: '制作操作' }));
   await screen.findByRole('region', { name: '七个制作模块状态' });
+  // Current novice default hides the contract/inspector panels; switch to professional as the UI now requires.
+  const pro = screen.queryByRole('button', { name: /切换到专业模式/ });
+  if (pro) fireEvent.click(pro);
 }
 
 describe('production workflow dashboard mounted in the original Studio workspace', () => {

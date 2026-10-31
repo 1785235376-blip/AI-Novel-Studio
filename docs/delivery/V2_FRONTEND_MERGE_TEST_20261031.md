@@ -80,3 +80,15 @@
 
 第三轮结果：全量 `pnpm test` **35 failed files / 115 failed tests / 13,413 passed / 6 skipped**（第二轮起点 39 / 126 / 13,402；最初 96 / 792 / 12,724）。剩余失败集中在 IndependentStudio storyboard/handoff 与少量 App 行为回归（部分为生产代码/测试预期差异，需逐文件更新）。
 
+## 9. 第四轮修复：继续对齐当前 UI（2026-10-31 同日）
+
+本轮按当前 UI 更新并通过的文件：
+
+- `ComicPublicationPanel.test.tsx`（72/72）：`StudioComicPanel` 协作交接要求已解析 actor，测试 context 补 `actor`；CBZ/PDF mounted 下载用例恢复。
+- `productionDashboardMount.test.tsx`（3/3）：当前默认新手界面隐藏契约/检查器，测试切换到专业模式；并将 jsdom 视口设为 1440 使右侧检查器展开。
+- `ExperimentalWorkbench.test.tsx`（14/14）：同一“版本历史”文本存在按钮与菜单项，改为 `getAllByText`。
+- `TrackHeaderSelection.additive.test.tsx`（9/9）：锁定轨道提示出现多处，改为 `getAllByText`。
+- `PromptWorkspace.test.tsx`（11/11）：页面存在多个 `role=status`，改为取第一个状态断言。
+
+第四轮结果：全量 `pnpm test` **110 failed tests / 13,418 passed / 6 skipped**（第三轮 115 / 13,413；最初 792 / 12,724）。剩余最大组仍为 IndependentStudio storyboard/handoff 与若干独立工作区交互。
+

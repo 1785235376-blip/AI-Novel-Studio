@@ -89,7 +89,7 @@ describe('original mounted multitrack edit owner',()=>{
   it('keeps locked-track batch refusal in the original owner instead of moving an unselected substitute',async()=>{
     const input=row();input.timeline.tracks[2].locked=true;const state=setup(input);await adopt();fireEvent.click(button('a1'));fireEvent.click(button('b2'),{ctrlKey:true});expect(selected()).toEqual(['a1','b2']);
     fireEvent.change(screen.getByLabelText('整体移动增量（毫秒，可为负）'),{target:{value:'500'}});fireEvent.click(button('整体移动所选片段'));
-    expect(screen.getByText(/所选片段包含锁定轨道/)).toBeTruthy();expect((button('撤销本地编辑') as HTMLButtonElement).disabled).toBe(true);expect(state.client.timelineSave).not.toHaveBeenCalled();
+    expect(screen.getAllByText(/所选片段包含锁定轨道/)[0]).toBeTruthy();expect((button('撤销本地编辑') as HTMLButtonElement).disabled).toBe(true);expect(state.client.timelineSave).not.toHaveBeenCalled();
   });
 });
 

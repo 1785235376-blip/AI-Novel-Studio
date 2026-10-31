@@ -93,7 +93,7 @@ describe('R3-U3-C1 Prompt workspace (jsdom)', () => {
     await waitFor(() => expect((textarea as HTMLTextAreaElement).value).toContain('🙂'));
     // Typing must never POST: nothing is created until the user clicks save.
     expect(calls.filter(call => call.method === 'POST')).toHaveLength(0);
-    expect(screen.getByRole('status').textContent).toMatch(/未保存/);
+    expect(screen.getAllByRole('status')[0].textContent).toMatch(/未保存/);
   });
 
   it('does not trim CJK, newlines or emoji, and reports them back unchanged', async () => {

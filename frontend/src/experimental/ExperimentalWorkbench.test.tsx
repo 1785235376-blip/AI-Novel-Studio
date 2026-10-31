@@ -17,7 +17,7 @@ describe('default-off Experimental UI', () => {
   it('keeps the inherited launcher unchanged without opt-in', () => {
     render(<FeatureLauncher selectedId="history" expandedGroups={FEATURE_GROUP_DEFAULTS} onSelect={() => {}} onToggleGroup={() => {}} />);
     fireEvent.click(screen.getByRole('button', { name: '打开功能导航' }));
-    expect(screen.queryByText('实验工作台')).toBeNull(); expect(screen.getByText('版本历史')).toBeTruthy();
+    expect(screen.queryByText('实验工作台')).toBeNull(); expect(screen.getAllByText('版本历史')[0]).toBeTruthy();
   });
   it('adds only an optional consumer group', () => {
     render(<FeatureLauncher selectedId="experimental" expandedGroups={{ ...FEATURE_GROUP_DEFAULTS, experimental: true }} extraGroups={EXPERIMENTAL_GROUPS} onSelect={() => {}} onToggleGroup={() => {}} />);
