@@ -112,3 +112,7 @@
 
 测试：`tests/test_project_capacity_create_coverage.py` 5 项（直接 create 计量/幂等不重复计费/失败释放且无残留/超额写前拒绝/默认关闭不建账本）；容量组回归 **75 passed**。
 
+## 补充：历史写入的启动对账门（2026-10-31 续）
+
+`AssetLibraryService` 在模块导入时记录进程启动时间。音频历史写入的容量预留（双 flag）在读取账本 `reconciled_at` 时要求它**不早于本进程启动**，否则返回 `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`——重启后旧进程留下的“已对账”账本不能直接用于新的历史写入；必须先显式 reconcile（或由 admission 写入重新对账）。这对“启动后先对账再准许新增写入”的合同补上了历史写入这一路径；admission 路径本来每次写前 reconcile，天然满足。进程内 reconcile 之后的写入不受影响；系统时间回退按 fail-closed 处理。
+

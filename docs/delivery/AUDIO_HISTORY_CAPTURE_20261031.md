@@ -99,3 +99,5 @@
 
 本地模式边界说明：恢复写入口依赖原项目权限 + `commit_invoke` 的 commit authority/incarnation 复核，不依赖 local-mode 的 session token 作为授权来源；历史只读路由的 session 撤销语义仍由原 route 的 session guard 处理。\n\n协作模式补充（`tests/test_audio_history_collaboration_authority.py`，3 项通过）：在真实 collaboration scope/activation 下，预览后撤销 session 或停用成员，恢复与历史读取均 401/403 且不追加版本；仅有读权限（无 domain.write）的成员预览可读、确认恢复 401/403 且无写入。均通过既有原权限 owner fail closed，无需新增授权 owner。
 
+补充（启动对账门）：历史写入的容量预留现在要求账本 `reconciled_at` 不早于当前进程启动；重启后旧账本被视为 stale，返回 `AUDIO_HISTORY_CAPACITY_NOT_RECONCILED`，需先显式对账。新增 1 项测试（将可证账本改为过去时间→历史写入被拒且版本不变→显式 reconcile 后写入成功）；音频历史容量计费文件现 12 passed。
+

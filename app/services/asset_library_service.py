@@ -14,7 +14,7 @@ import threading
 import uuid
 from contextvars import ContextVar
 from contextlib import contextmanager
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from ..repository import atomic_write, now
@@ -28,6 +28,14 @@ class AssetIntegrityError(ValueError):
 
 class AssetIdempotencyConflict(ValueError):
     """An idempotency key cannot identify two different uploads."""
+
+
+_PROCESS_STARTED_AT = datetime.now(timezone.utc)
+
+
+def _process_started_at():
+    """Process start captured at import for the capacity startup gate."""
+    return _PROCESS_STARTED_AT
 
 
 class AssetLibraryService:
@@ -301,6 +309,18 @@ class AssetLibraryService:
         except CapacityLedgerUnavailable:
             raise ValueError("AUDIO_HISTORY_CAPACITY_LEDGER_UNAVAILABLE") from None
         if snapshot is None:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED")
+        reconciled_at = snapshot.get("reconciled_at")
+        if not isinstance(reconciled_at, str) or not reconciled_at:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED")
+        try:
+            from datetime import datetime
+            reconciled = datetime.fromisoformat(reconciled_at)
+        except ValueError:
+            raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED") from None
+        if reconciled.tzinfo is None or reconciled < _process_started_at():
+            # The ledger was reconciled before this process started: require a
+            # fresh reconcile before trusting it for new history writes.
             raise ValueError("AUDIO_HISTORY_CAPACITY_NOT_RECONCILED")
         if snapshot["unknown"]["blocked"]:
             raise ValueError("AUDIO_HISTORY_CAPACITY_UNKNOWN_BLOCKED")

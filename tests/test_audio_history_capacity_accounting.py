@@ -301,3 +301,30 @@ def test_explicit_restore_is_capacity_accounted(audio_history):
         assert HEAD in meta
     finally:
         set_both_flags(False, False)
+
+def test_history_write_requires_a_reconcile_after_process_start(audio_history):
+    """A ledger reconciled by a previous process is stale for trusted history writes."""
+    e = audio_history
+    set_both_flags(True, True)
+    try:
+        reconcile(e)
+        asset = create_audio(e)
+        ledger = json.loads(ledger_path(e).read_text(encoding="utf-8"))
+        ledger["projects"][e.rig.nid]["reconciled_at"] = "2020-01-01T00:00:00+00:00"
+        ledger_path(e).write_text(json.dumps(ledger), encoding="utf-8")
+        previous = e.rig.workspace.settings if hasattr(e.rig.workspace, "settings") else None
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            meta = e.rig.assets._load(asset["id"])
+            expected = meta["version"]
+            with pytest.raises(ValueError, match="AUDIO_HISTORY_CAPACITY_NOT_RECONCILED"):
+                e.rig.assets.update_metadata(asset["id"], {"approved_at": "2026-10-31T00:00:00+00:00"})
+            assert e.rig.assets._load(asset["id"])["version"] == expected
+        # A fresh explicit reconcile makes the ledger usable again.
+        reconcile(e)
+        with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+            e.rig.assets.update_metadata(asset["id"], {"approved_at": "2026-10-31T00:00:00+00:00"})
+            assert e.rig.assets._load(asset["id"])["version"] == expected + 1
+        assert ledger_record(e)["reservations"] == {}
+    finally:
+        set_both_flags(False, False)
+
