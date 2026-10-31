@@ -16,7 +16,7 @@ vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, inspector 
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: () => null }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open production receipt</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open production receipt</button> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate, chapter, requestedTab, requestedTask }: any) => {
   const client = useMemo(() => experimentalClient('story', { sessionToken: '' }), []);
   return requestedTab === 'cover_storyboard_generation' ? <MediaPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'media' ? requestedTask.id : undefined} /> : <ProductionLineagePanel client={client} manifestsEnabled onNavigate={onNavigate} />;

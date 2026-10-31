@@ -27,7 +27,7 @@ vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGene
 </> }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()),  FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ onNavigate }: any) => <>
   <button onClick={() => onNavigate({ kind: 'generation', id: 'author-one', chapter_id: 'recovery:1', version: 3, signal: navigationController?.signal })}>Open current author job</button>
   <button onClick={() => onNavigate({ kind: 'generation', id: 'author-two', chapter_id: 'recovery:2', version: 10 })}>Open other author job</button>

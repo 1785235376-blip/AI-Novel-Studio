@@ -19,7 +19,9 @@ const APP = resolve(__dirname, "../../app");
 // 规格说明：旧 regex 的“同一行 str(exc)/f\"\" 即判动态”会把 AUDIO_PARAMETER_UNSUPPORTED 等误判为动态；ast 不再误判，但这些 code 仍保守留在名单外。
 const SCANNER = resolve(__dirname, "../scripts/scan_error_codes.py");
 type Scan = { literal: Record<string, string[]>; dynamic: Record<string, string[]>; unknown: string[]; enums: Record<string, string[]> };
-const runScanner = (args: string[]): any => JSON.parse(execFileSync("python3", [SCANNER, ...args], { encoding: "utf8", maxBuffer: 256 << 20 }));
+// [HERMIA-FE-20261031] Windows 环境通常没有 python3 别名；优先显式 PYTHON，其次按平台回退。
+const PYTHON = process.env.PYTHON ?? (process.platform === "win32" ? "python" : "python3");
+const runScanner = (args: string[]): any => JSON.parse(execFileSync(PYTHON, [SCANNER, ...args], { encoding: "utf8", maxBuffer: 256 << 20 }));
 const scanDir = (dir: string): Scan => runScanner([dir]);
 // [HERMIA-FE-20261025 VERA-fbe029c4 P3] 缺少 python3 时不再在 collect 阶段整文件消失（692 例从计数中蒸发）：
 // 扫描失败被记录，下方 "python3 scanner is available" 用例显式失败，其余契约用例同样显式失败；与扫描无关的用例照常运行。

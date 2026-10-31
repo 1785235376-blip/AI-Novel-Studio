@@ -11,7 +11,7 @@ vi.mock('./ui/AppShell',()=>({AppShell:({main}:any)=><main>{main}</main>}));
 vi.mock('./novel/AiWritingPanel',()=>({AiWritingPanel:()=>null}));
 vi.mock('./novel/SourcePrivacyControl',()=>({SourcePrivacyControl:()=>null}));
 vi.mock('./novel/ChapterTree',()=>({ChapterTree:()=>null}));
-vi.mock('./ui/FeatureLauncher',()=>({FeatureLauncher:()=>null}));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()), FeatureLauncher:()=>null}));
 const chapter:Chapter={id:'n:1',novel_id:'n',number:1,title:'Synthetic',content:'Saved prose',document:{type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'Saved prose'}]}]},word_count:11,version:2,status:'DRAFT'};
 const clients:QueryClient[]=[];
 beforeEach(()=>{localStorage.clear();useStudio.getState().setCollaboration('');useStudio.setState({novelId:'n',chapterId:'n:1',textModel:null});vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({features:{}}),{status:200})));vi.spyOn(api,'chapters').mockResolvedValue([chapter]);vi.spyOn(api,'legacyHistory').mockResolvedValue([])});
