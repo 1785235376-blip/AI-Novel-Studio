@@ -45,3 +45,18 @@
 - 前端下画布选中节点后显示参数编辑器（INT/FLOAT/STRING/BOOLEAN/COMBO），初始值来自 object_info default/choices；
 - 参数写入 `CfNode.params`，随 node/edge 草稿一起保存到 localStorage、session store 和后端 `lower-canvas`；
 - 后端 `LowerCanvasNode.params` 有界校验后原样返回；无参数的旧草稿保持兼容。
+
+## 3. Run preflight / quote（本批新增）
+
+`POST /api/projects/{nid}/studio/lower-canvas/{kind}/runs/preflight`（kind=image|video）：
+
+- body `{expected_version, provider_id?}`；先核对当前下画布草稿版本（CAS），再从已保存的 ComfyUI provider 读取 `/object_info`；
+- 只允许 `local=True` 的 ComfyUI provider（`LOWER_CANVAS_RUN_LOCAL_PROVIDER_REQUIRED`），避免云端任意节点执行；
+- 将 CfGraph + params 转为 ComfyUI API prompt：
+  - 节点/边/ID/输出节点/环/必填输入/端口类型/槽位全部校验；
+  - widget 值按 object_info 类型/choices/默认值校验，未知参数拒绝；
+  - 返回 `studio-lower-canvas-run-quote/1`：`quote_id`、`quote_digest`、draft_version、provider_id、node/edge/output 数量、`price.amount_micros=0`（本地无计费）、`expires_at`、`confirmation_required=true`；
+- `execution:"NOT_DISPATCHED"`、`dispatch_contract:"NOT_IMPLEMENTED"`：**不提交 /prompt、不轮询 /history、不下载 /view、不写资产**。真实 dispatch 是下一批合同，需要显式确认 + 幂等 + 运行记录 + 资产回写。
+
+测试：`tests/test_lower_canvas_runs_preflight.py` 12 passed（prompt 转换、参数/端口/环/版本/本地 provider/路由注册）。
+
