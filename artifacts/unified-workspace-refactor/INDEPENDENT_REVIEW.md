@@ -2051,3 +2051,37 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - PromptWorkspace：在 e14713dc 和 a83df9ce 上，"edits the body without saving" 都失败，说明这个用例在改动前就已失败。loadingOwner 和 CanvasCandidateReview.independent 两个版本各单独跑 10 次，失败都是 0/10，也没有出现在门禁失败里，判断既不是回归也不是 flaky。
 - 门禁（adj = raw − ISI + 8，基线 297）：run1 293/8/293，run2 295/10/293，run3 294/9/293。最好一轮 293 ≤ 297，按规则 (a) 通过；三轮都没有非基线新增失败。门禁在全部变异结束后才启动，两者没有重叠。
 - 证据：/workspace/hr/vera-compare/align-a83df9ce/
+
+## [VERA-FE] 独立复审：a83df9ce..5632fe65（2026-10-31）
+
+**结论：通过。** a83 那轮的 P2/P3 问题全部修复，每项修复都已用变异测试证明能被测试抓到。新发现一个 P3（SVG `<title>` 和可见文字会被读屏读两遍），不阻塞合入。
+
+- **c5b24cf3 画布标签**：`.rcv-label` 改为渲染 `z(label)`，rough.926–928 补齐。
+  - en 显示 Image canvas，zh 仍为「图片画布」。
+  - 变异 M1（去掉 z()）：4 个用例变红。
+- **1b8e3da0 SDK 403 在显示层翻译**：
+  - 用路由拦截 /studio/prompts 返回 403 实测：en 下 Prompt 工作台内无中文；zh 下原句「当前会话无权访问此内容。请重新核对身份和分支。」不变。
+  - client.ts 和 studioClient.ts 在 a83..5632 之间 diff 为 0 行，原串仍在。
+  - 变异 M2（删 rough.929）：library 和 detail 两个用例变红。
+- **184036c9 第 955 行**：rough.935 加上 deniedEn 测试。变异 M3（删 rough.935）变红。浏览器里触发不到这个 denied 状态，以单测为证。
+- **faedcb77 缩放按钮**：
+  - en：aria-label 为 Zoom / Zoom out / Zoom in，Fit to view 是按钮文字，不再出现 Upscale。
+  - zh：缩放 / 缩小 / 放大 / 适配，不变。
+  - 变异 M4（改回 z('放大')）变红。
+  - 其余 4 个没改的组件只记作已知项。
+- **7645e7b6 SVG `<title>`**：
+  - hover 能看到完整标题。变异 M5（去掉 title）变红。
+  - textContent 的副作用：全仓 grep 出 41 个相关测试文件，3 轮门禁里全部通过。但 m3s1.test.tsx:82 的 `.ttl` `textContent.toContain(...)` 现在会被 title 满足，断言实际变弱了，建议改成只断言可见 tspan 或 title。
+  - axe：0 违规。
+  - **P3 读两遍**：Chrome 无障碍树里 text.ttl 的名称取自 title，子节点又有可见的 StaticText。zh 下标题没被截断，会读成「新生成图片 ◈ 新生成图片」。建议给可见部分加 aria-hidden，或者把 title 移到 g 上。
+- **5632fe65 getLocale 行为测试**：我自己做的变异 M6（渲染改回 getLocale()）让 getLocaleRevert 的 2 个用例变红，上一轮的缺口已补上。
+- **1024/1440 双语扫描**：画布和 Prompt 工作台在 en 下 0 个中文、0 溢出、axe 0。zh 无回归。运行时切换语言后，节点行和标题双向都正确。主导航里残留的中文是已知项。
+- **门禁**：3 轮的非基线新增都是 0。单独重复跑：PendingCanonReviewPanel 新旧版本都是 10/10；PluginResourceDetail.additive 新版本 10/10，旧版本 a83 9/10（1 次 writing_presets 断言失败，属于旧版本的偶发失败）。
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 295 | 10 | 293 | 0 |
+
+证据：/workspace/hr/vera-compare/align-5632fe65/（mut.txt, unit-green.txt, sdk-unchanged.txt, ttl-tests.txt, e4.json, ax.json, shots/e4-*, full1-3.json, iso-*.txt, PROGRESS.md）
