@@ -38,7 +38,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const [menu, setMenu] = useState<null | {cx: number; cy: number; wx: number; wy: number; node?: string}>(null);
   const [q, setQ] = useState('');
   const addBtnRef = useRef<HTMLButtonElement>(null);
-  // [VERA-3 P2] 菜单由键盘关闭（Esc）或添加节点后，焦点回到「＋ 节点」按钮
+  // [VERA-3/4] Esc / Enter / 点击选项加节点后，焦点回到「＋ 节点」按钮
   const closeMenu = () => { setMenu(null); addBtnRef.current?.focus(); };
   const [msg, setMsg] = useState('');
   const [link, setLink] = useState<null | {from: string; slot: number; type: string; x: number; y: number}>(null);
@@ -63,7 +63,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const add = (d: NodeDef) => {
     if (!menu) return;
     const n: CfNode = {id: uid(), t: d.name, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10, title: nodeLabel(d, 'zh-CN')};
-    setG(x => ({...x, nodes: [...x.nodes, n]})); setSel(n.id); setMenu(null); setMsg('');
+    setG(x => ({...x, nodes: [...x.nodes, n]})); setSel(n.id); setMsg(''); closeMenu(); // [VERA-4 P3] 点击选项与 Esc/Enter 一样，焦点回到「＋ 节点」
   };
   const del = (id: string) => { setG(x => ({nodes: x.nodes.filter(n => n.id !== id), edges: x.edges.filter(e => e.a !== id && e.b !== id)})); setSel(s => (s === id ? null : s)); setMenu(null); };
   const tryConnect = (a: string, as: number, b: string, bs: number) => {

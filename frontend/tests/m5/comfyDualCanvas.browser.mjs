@@ -112,6 +112,14 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
     if (ids.length >= 2) { await drag(`${ids[0]}:1`, `${ids[1]}:0`); const e0 = await edges(); const h = await dragHit(`${ids[0]}:0`, `${ids[1]}:0`); const e1 = await edges();
       if (!h.hit || !h.port) v.push('H1 rect.hit not the drop target ' + JSON.stringify(h)); rows.push({key: `${theme}|${mod}|hit`, ...h});
       if (e0 !== 0 || e1 !== 1) { v.push(`C2 edges ${e0}->${e1} ids=${ids} st=${await p.locator(`${LO} [data-comfy-status]`).textContent()}`); if (SHOTS) await p.screenshot({path: `${SHOTS}/FAIL-${theme}-${mod}-link.png`}); } rows.push({key: `${theme}|${mod}|link`, e0, e1}); } else v.push('C2 nodes not added ' + ids.length);
+    // [VERA-4 P3] F2 focus returns to「＋ 节点」after click-add (after link tests so it does not pollute ports)
+    { await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(150);
+      const before = await p.locator(`${LO} [data-node-class]`).count();
+      await p.locator(`${LO} [data-add-node-menu] [data-node-type=VAELoader]`).click(); await p.waitForTimeout(150);
+      const after = await p.locator(`${LO} [data-node-class]`).count();
+      if (after !== before + 1 || await p.locator(`${LO} [data-add-node-menu]`).count()) v.push(`F2 click-add ${before}->${after}`);
+      if (!(await p.evaluate(() => document.activeElement?.hasAttribute('data-comfy-add') ?? false))) v.push('F2 focus not on add button after click-add');
+      rows.push({key: `${theme}|${mod}|click-add`, before, after}); }
     for (const w of [1024, 1440, 1920]) {
       await p.setViewportSize({width: w, height: 900}); await p.waitForTimeout(250);
       const bg = await p.evaluate(`(${lum})(getComputedStyle(document.querySelector('${LO} [role=application]').closest('.cfy, .rcv') || document.querySelector('${LO}')).backgroundColor)`);

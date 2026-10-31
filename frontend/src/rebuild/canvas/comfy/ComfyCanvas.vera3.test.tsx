@@ -33,3 +33,12 @@ describe('P2 focus returns to add button', () => {
   });
 });
 
+
+describe('P3 focus returns to add button after click-add', () => {
+  it('after clicking an option', () => {
+    render(<DualStack kind="image" scope="n1" />); fireEvent.click(btn());
+    fireEvent.click(menu()!.querySelector('[data-node-type=KSampler]')!);
+    expect(menu()).toBeNull(); expect(low().querySelectorAll('[data-node-class=KSampler]').length).toBe(1);
+    expect(document.activeElement).toBe(btn());
+  });
+});
