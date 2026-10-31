@@ -27,7 +27,7 @@ it.each([{items:[]},{current_words:20,target_words:100,current_chapters:1,target
  const save=vi.spyOn(api,'saveChapter').mockResolvedValue({...chapter,content:'Retained local prose',version:3});mount(goal);
  expect(await screen.findByText('写作目标数据不完整，请刷新后重试。正文仍可编辑和保存。')).toBeTruthy();
  await waitFor(()=>expect((screen.getByLabelText('Recovery editor') as HTMLTextAreaElement).value).toBe('Saved prose'));
- fireEvent.change(screen.getByLabelText('Recovery editor'),{target:{value:'Retained local prose'}});fireEvent.click(screen.getByRole('button',{name:/保存/}));
+ fireEvent.change(screen.getByLabelText('Recovery editor'),{target:{value:'Retained local prose'}});fireEvent.click(screen.getAllByRole('button',{name:/保存/})[0]);
  await waitFor(()=>expect(save).toHaveBeenCalledOnce());expect(save.mock.calls[0].slice(0,3)).toEqual(['n:1','Retained local prose',2]);
  expect(screen.queryByLabelText('写作目标进度')).toBeNull();
 });

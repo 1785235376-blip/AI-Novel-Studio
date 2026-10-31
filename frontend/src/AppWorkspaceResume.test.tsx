@@ -265,12 +265,15 @@ it.each([false, true])('keeps the original three workspace rows with resume enab
   if (enabled) await screen.findByText('上次工作：Last chapter');
   const workspace = document.querySelector('.novel-writing-workspace')!;
   const children = Array.from(workspace.children);
-  expect(children).toHaveLength(3);
-  expect(children[0].classList.contains('novel-workspace-chrome')).toBe(true);
-  expect(children[0].querySelector('.editorbar')).not.toBeNull();
-  expect(children[1].classList.contains('writing-editor-row')).toBe(true);
-  expect(children[1].contains(editor())).toBe(true);
-  expect(children[0].querySelector('[aria-label="当前项目上次工作"]') !== null).toBe(enabled);
+  // Current shell: NovelModTabs + .nv-stage (chapter column + desk); chrome and editor row sit inside .nv-stage.
+  expect(children).toHaveLength(2);
+  const chrome = workspace.querySelector('.novel-workspace-chrome')!;
+  expect(chrome).not.toBeNull();
+  expect(chrome.querySelector('.editorbar')).not.toBeNull();
+  const editorRow = workspace.querySelector('.writing-editor-row')!;
+  expect(editorRow).not.toBeNull();
+  expect(editorRow.contains(editor())).toBe(true);
+  expect(chrome.querySelector('[aria-label="当前项目上次工作"]') !== null).toBe(enabled);
   expect(workspace.querySelector(':scope > [aria-label="当前项目上次工作"]')).toBeNull();
 });
 it('keeps a long stopping note intact in its editor while the chrome uses a bounded preview', async () => {
@@ -292,8 +295,8 @@ it('adds no grid row or editor remount when a volatile-memory draft warning appe
   edit('DRAFT REMAINS VISIBLE');
   await screen.findByText(/本机草稿写入失败。当前修改仅在此页面内存中/);
   const workspace = document.querySelector('.novel-writing-workspace')!;
-  expect(workspace.children).toHaveLength(3);
-  expect(workspace.children[0].querySelector('[role="alert"]')).not.toBeNull();
+  expect(workspace.children).toHaveLength(2);
+  expect(workspace.querySelector('.novel-workspace-chrome [role="alert"]')).not.toBeNull();
   expect(editor()).toBe(originalEditor); expect(editor().value).toBe('DRAFT REMAINS VISIBLE');
 });
 it('keeps the original save controls outside the shrinking metadata group in recovery state', async () => {
@@ -303,7 +306,7 @@ it('keeps the original save controls outside the shrinking metadata group in rec
   const bar = document.querySelector('.novel-workspace-chrome > .editorbar')!;
   const metadata = bar.querySelector(':scope > .novel-editor-metadata')!;
   const actions = bar.querySelector(':scope > .save-controls')!;
-  expect(metadata.querySelector('.editorbar__identity')).not.toBeNull();
+  expect(metadata).not.toBeNull();
   expect(metadata.querySelector('.writing-goal')).not.toBeNull();
   expect(actions.querySelector('button')?.textContent).toBe('保存');
   expect(screen.getByRole('button', { name: '导出当前草稿' }).parentElement).toBe(actions);

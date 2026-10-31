@@ -69,3 +69,14 @@
 
 第二轮结果：`pnpm build` **PASS**；全量 `pnpm test` **39 failed files / 126 failed tests / 13,402 passed / 6 skipped**（本轮起点 43 / 154 / 13,374；最初 96 / 792 / 12,724）。剩余失败集中在 IndependentStudio storyboard/handoff 等既有产品/测试漂移，未在本轮清理。
 
+## 8. 第三轮修复：测试对齐当前 UI（2026-10-31 同日）
+
+按“更新测试到当前 UI”推进，已完全转绿的文件：
+
+- `AppWorkspaceResume.test.tsx`（33/33）：当前工作区直挂子节点为 `NovelModTabs + .nv-stage`，chrome/editor row 在 `.nv-stage` 内；更新行数与选择器断言。
+- `AppWritingGoalRecovery.test.tsx`（4/4）：当前 App 同时存在多个“保存”按钮，改为选择第一个可访问保存按钮。
+- `AppModuleNavigationIntent.test.tsx`（34/34）：基础 shell 设置菜单仅保留 `AI 主控`，WORKFLOW 为命令面板路由（不再在设置菜单），更新菜单断言。
+- `studioExecutionRecipeView.video.test.ts`（7/7）：当前配方明确支持 `include_audio` 并保留“第一条源音轨”，同步 notes 文案与支持/拒绝用例。
+
+第三轮结果：全量 `pnpm test` **35 failed files / 115 failed tests / 13,413 passed / 6 skipped**（第二轮起点 39 / 126 / 13,402；最初 96 / 792 / 12,724）。剩余失败集中在 IndependentStudio storyboard/handoff 与少量 App 行为回归（部分为生产代码/测试预期差异，需逐文件更新）。
+
