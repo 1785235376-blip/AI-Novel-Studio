@@ -3,6 +3,7 @@
 
 ## 现状（只读核对结论）
 - 后端只有内部 `ComfyUIImageProvider`（固定工作流配方，供正式生图），**没有**：object_info 代理、下画布图保存、下画布执行、执行状态/费用接口。
+- 已核实（只读 be-d657@d657b424）：`app/model_center/discovery.py` 的 COMFYUI 探测分支已在内部调用 ComfyUI `GET /object_info`（与 `/system_stats` 一起，第 586 行，节点名截至 4096 个），但只用于模型发现/前置条件判断，未暴露为前端可用的 API；因此第 1 条可复用该内部读取实现，只需新增对外只读路由。
 - `canvas-views` 只服务上画布（主线）。
 - 因此前端下画布标为「仅本次会话 / 仅本机草稿 · 不会执行 · 未连接 ComfyUI」，不发任何请求。
 
