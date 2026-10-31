@@ -68,6 +68,7 @@ import { InterfaceModeSwitch } from '../onboarding/InterfaceModeSwitch';
 import { createStudioEntryClient } from '../onboarding/studioEntryClient';
 import { useStudioEntry } from '../onboarding/useStudioEntry';
 import './independentStudio.css';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3 nav]
 
 export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO', 'EDIT'].includes(module);
 let studioObserver = 0;
@@ -92,6 +93,7 @@ export function IndependentStudioWorkspace(props: IndependentStudioProps) {
   return <IndependentStudioSession key={JSON.stringify([signature(props.projectId, props.context), props.context.localHostToken])} {...props} />;
 }
 function IndependentStudioSession({ projectId, context, scope, actor, module, requestedAssetId, onOpenBroker, onModuleChange, onProjectChoice, onVerified, status }: IndependentStudioProps) {
+  const navT = useTz(); // [HERMIA-FE-20261031 VERA-P3 nav]
   const query = useQueryClient();
   const [editorSession, setEditorSession] = useState<{ prepared: PreparedStoryboardEditor; ticket: number; module: 'IMAGE' | 'VIDEO' }>();
   const editorTicket = useRef(0), editorPreparing = useRef(false);
@@ -755,7 +757,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const maskEpoch = selectionEpoch.current;
   const relationshipReview = relationshipReviewEpoch !== undefined && relationshipReviewEpoch === selectionEpoch.current;
   const main = <div className="independent-studio">
-    {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>创作开始</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>任务中心</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
+    {overview && !denied && <div className="studio-graph-actions" aria-label={navT('独立工作区内容')}><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>{navT('创作开始')}</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>{navT('任务中心')}</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>{navT('素材工作区')}</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>{navT('创作图')}</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>{navT('制作操作')}</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
     {module === 'IMAGE' && (workspaceView === 'ASSETS' || comicOnly) && (overview || comicWorkspace) && !denied && !identityRetired && <Panel title="漫画制作 Comic">
       <Button aria-expanded={comicOpen} onClick={() => navigate(() => setComicOpen(!comicOpen))}>{comicOpen ? '关闭漫画制作' : '打开漫画制作'}</Button>
       {comicOpen && !comicWorkspace && <StatusMessage tone={comicError ? 'error' : undefined}>{comicError || '正在核对漫画权限…'}</StatusMessage>}

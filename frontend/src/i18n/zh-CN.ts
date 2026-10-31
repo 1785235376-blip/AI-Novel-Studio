@@ -1517,5 +1517,15 @@ export const zhCN = {
   'zoom.graphOut': '缩小节点图', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.graphLevel': '节点图缩放', // [HERMIA-FE-20261031 VERA-P3 zoom]
   'zoom.graphIn': '放大节点图', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'rough.936': '独立工作区内容', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.937': '创作开始', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.938': '任务中心', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.939': '素材工作区', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.940': '创作图', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.941': '制作操作', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.942': '界面模式选择', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.943': '新手模式', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.944': '专业模式', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.945': '新手模式与专业模式共用同一份项目、素材、任务与图谱数据；切换只改变界面呈现，不会转换、复制或删除任何内容。', // [HERMIA-FE-20261031 VERA-EN]
 } as const;
 export type MessageKey = keyof typeof zhCN;
