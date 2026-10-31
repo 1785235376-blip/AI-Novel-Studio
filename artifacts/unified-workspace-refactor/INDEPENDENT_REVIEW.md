@@ -2120,3 +2120,22 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | 3 | 293 | 8 | 293 | 0 |
 
 证据：/workspace/hr/vera-compare/align-63fec627/（PROGRESS.md, mut.txt, unit-green.txt, ax2.json, top.json, top-summary.txt, e4.json, e4-summary.txt, creative-compare.txt, full1-3.json, shots/）
+
+## [VERA-FE] 独立复审 63fec627..0f2cea09（2026-10-31，未提交）
+
+**结论：通过（APPROVE），附 1 条 P3。**
+
+- **97051407 截断标题（Chrome CDP AX 树，zh/en × 默认/短/12 字边界/超长）**：截断节点 `text.ttl` 的 AX name 恰好等于完整标题一次，子节点为空（tspan aria-hidden 生效），◈/❝ 不进入 name；未截断节点 name 为空、可见文字以 StaticText 暴露，无重复、无被 aria-hidden 吞掉的情况。en 默认标题 "New generated image"(19) 走截断分支，zh "新生成图片" 走未截断分支，均正确。axe(canvas 区) zh/en 0 违规。证据 ax.json、shots/ax-*.png。
+- **P3**：未截断分支中图标（◈ ✦ ⤢）未 aria-hidden，作为独立 StaticText 被读出（"◈ 新生成图片"）。与截断分支不一致，建议给图标包 `<tspan aria-hidden="true">`。
+- **0f2cea09**：en 下 aria-label=“Asset inspector”、title=“Not available in the public edition”，zh 不变（单测 + 变异证实）。mock 路由下所有模块未渲染 section.asset-inspector / NSFW 偏好按钮，浏览器层未直接观测到，以单测为准。同一表单的 summary/按钮文案仍为硬编码中文（范围外，记录）。
+- **变异 8/8 杀死**：去 aria-hidden、删 `<title>`、不截断、去省略号、inspTz/prefTz 回退硬编码、en key 改中文/改错。
+- **回归溢出（en 1024/1440 × 普通/专业 × 全部模块）**：1440 无溢出；1024 NOVEL 有右侧助手栏按钮 offscreen（r≈1061–1191），本区间未改动这些文件，非本次新增。
+- **门禁**（基线 raw 298 / ISI 8）：
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 296 | 10 | 294 | 1（TaskCenter.additive receipt，单独重跑 3/3 通过，负载抖动）|
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/align-0f2cea09/
