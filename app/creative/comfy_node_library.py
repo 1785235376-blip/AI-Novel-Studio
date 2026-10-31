@@ -332,6 +332,7 @@ def fetch_comfyui_object_info(*, provider_id: str | None = None, guard=lambda: N
         "provider_id": pid,
         "available_providers": available,
         "endpoint_origin": _endpoint_origin(endpoint),
+        "endpoint": endpoint,
         "observed_at": datetime.now(timezone.utc).isoformat(),
         "source_version": hashlib.sha256(raw).hexdigest(),
         "payload": payload,

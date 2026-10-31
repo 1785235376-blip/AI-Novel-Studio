@@ -60,3 +60,19 @@
 
 测试：`tests/test_lower_canvas_runs_preflight.py` 12 passed（prompt 转换、参数/端口/环/版本/本地 provider/路由注册）。
 
+## 4. Run dispatch / status / asset writeback（本批新增）
+
+`POST /api/projects/{nid}/studio/lower-canvas/{kind}/runs`：
+
+- body `{expected_version, quote_id, quote_digest, provider_id?}`；`quote_id` 必须来自 preflight 且未消费、未过期；同一 `quote_digest` 只启动一次；
+- 通过后重新校验 draft/prompt，使用本地 ComfyUI 同步执行：
+  - `POST /prompt`（一次，无自动重试）→ 有界 `GET /history/{prompt_id}` 轮询 → 对输出 `GET /view` 下载；
+  - 结果限制：最多 32 张、单张 ≤16 MiB、总计 ≤64 MiB；仅 PNG/JPEG/WEBP magic；
+  - 输出通过 `service.assets.create` 写入资产库，返回 asset ids/尺寸/SHA；
+  - provider/asset 失败 → 生成 `status=FAILED` 的 run 记录（有界 error code），绝不伪造成功；
+  - 进程/请求中断时 run 保持 RUNNING，可由 GET 查看；不提供虚假 COMPLETED。
+- `GET /api/projects/{nid}/studio/lower-canvas/{kind}/runs/{run_id}` 返回 run 记录。
+- 运行记录保存在 `lower_canvas_runs_v1`；quote 保存在 `lower_canvas_run_quotes_v1` 并标记 consumed。
+
+测试：`tests/test_lower_canvas_runs_dispatch.py` 4 passed（成功/资产、失败无伪资产、stale quote、路由注册）；合并 run/preflight/lower-canvas/registry 组 36 passed。
+
