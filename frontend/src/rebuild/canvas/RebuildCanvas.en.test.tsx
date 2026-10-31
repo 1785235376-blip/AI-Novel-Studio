@@ -73,3 +73,12 @@ it('untruncated node title has no duplicate <title>', () => {
   expect(ttl.textContent).not.toContain('…');
   expect(ttl.querySelector('title')).toBeNull();
 });
+// [HERMIA-FE-20261031 VERA-P3 r3] truncated: visible truncated text is aria-hidden so only the full <title> is announced.
+it('truncated node title hides the visible truncated text from screen readers', () => {
+  const {container} = render(<RebuildCanvas kind="image" scope="en-t3" seed={graph('image_generate')} />);
+  const ttl = container.querySelector('text.ttl')!;
+  const hidden = ttl.querySelector('[aria-hidden="true"]');
+  expect(hidden?.textContent).toContain('…');
+  expect(ttl.querySelector('title')?.textContent).toBe('New generated image');
+  expect(hidden?.querySelector('title')).toBeNull();
+});
