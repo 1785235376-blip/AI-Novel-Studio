@@ -51,3 +51,6 @@
 ### 能力补充：Provider usage-only attestation（价格未知）
 新增 `studio-provider-usage-attestation/1`：provider adapter 可只上报可信 usage（images/gpu_ms 等计数），不声明价格。job view 的 `studio-job-cost/1` 变为 `USAGE_ATTESTED`：`trusted=true`、usage/attested_at 可见、`actual_microusd/currency/pricing_version` 仍为 null、`decision_required=true`；若后续记录价格 attestation，则升级为 `ATTESTED` 并覆盖 usage-only 记录。错 job/request/provider/model、空 usage、负值等 fail closed；损坏/超限 sidecar 不升级。测试新增 2 项（usage-only 读取与价格升级、错绑/空 usage 拒绝）；cost attestation 文件 **5 passed**。
 
+### 能力补充：容量写入覆盖矩阵（machine-readable）
+`studio-runtime-capabilities/1` 的 `project_capacity.write_entries` 新增逐入口覆盖状态：asset create（全部调用方）/手工导入/音频历史写入的 admission 状态随 flag 变化；项目 scope 文档、导出输出标记 `NOT_CONNECTED`；临时媒体、共享查询索引标记 `NOT_ACCOUNTED`；调额标记 `MANAGEMENT_ONLY`。runtime capability 测试扩展为默认/flag 开两组断言，18 passed；registry 容量 limits 增加 `write_coverage:ADMISSION_GUARDED_ASSET_CREATE_ONLY`。
+
