@@ -89,7 +89,7 @@ export type RunQuote = {
   price: {currency: string; amount_micros: number; reason: string};
   expires_at: string; confirmation_required: boolean;
 };
-export type RunAsset = {id: string; filename?: string; media_type?: string; sha256?: string; size?: number; width?: number; height?: number};
+export type RunAsset = {id: string; filename?: string; media_type?: string; sha256?: string; size?: number; width?: number; height?: number; version?: number};
 export type LowerCanvasRun = {
   id: string; contract: string; kind: 'image' | 'video'; status: 'RUNNING' | 'COMPLETED' | 'FAILED';
   draft_version: number; quote_digest: string; provider_id: string; node_count: number; edge_count: number;
@@ -129,4 +129,19 @@ export async function fetchLowerCanvasRun(remote: ComfyRemoteContext, kind: 'ima
     {method: 'GET', headers: headers(remote), cache: 'no-store'});
   if (!response.ok) throw new Error('COMFY_RUN_GET_' + response.status);
   return await parseJson(response) as LowerCanvasRun;
+}
+
+
+/** Read one generated asset for a bounded preview; no content is persisted in the draft. */
+export async function downloadAssetBlob(remote: ComfyRemoteContext, assetId: string): Promise<Blob> {
+  const f = fetchImpl();
+  if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
+  if (!/^[A-Za-z0-9_.:-]{1,240}$/.test(assetId)) throw new Error('COMFY_ASSET_ID_INVALID');
+  const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/assets/${encodeURIComponent(assetId)}/download`,
+    {method: 'GET', headers: headers(remote), cache: 'no-store'});
+  if (!response.ok) throw new Error('COMFY_ASSET_DOWNLOAD_' + response.status);
+  const blob = await response.blob();
+  if (!blob.size || blob.size > 16 * 1024 * 1024) throw new Error('COMFY_ASSET_SIZE_INVALID');
+  if (!/^image\/(png|jpeg|webp)$/.test(blob.type)) throw new Error('COMFY_ASSET_MEDIA_INVALID');
+  return blob;
 }

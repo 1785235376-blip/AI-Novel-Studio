@@ -85,3 +85,10 @@
 - 草稿保存冲突/云端不可用时按钮禁用或提示，不伪造运行结果。
 - 测试：`ComfyCanvas.run.test.tsx` 2 passed（报价确认、dispatch body、assets、ready gate）。
 
+## 6. 结果资产预览与接入上画布（本批新增）
+
+- run 完成面板按 asset id 读取 `/api/projects/{nid}/studio/assets/{aid}/download`（有界 16 MiB、image/png|jpeg|webp）并显示缩略图；
+- 每个结果提供「接入上画布」：通过 `feedToUpper` 在上画布创建 `image_reference` 快照节点，节点保留 `assetId`/`assetSha256`/`assetVersion`（不是实时 ComfyUI 链接）；
+- 运行结果只读/显式采用，不自动接入上画布；上画布仍是本地草稿结构，未执行。
+- 测试：`ComfyCanvas.run.test.tsx` 覆盖下载缩略图、点击接入、上画布节点 asset 字段。
+

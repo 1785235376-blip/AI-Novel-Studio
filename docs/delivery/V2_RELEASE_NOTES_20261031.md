@@ -84,3 +84,6 @@
 ### 前端：下画布 run 报价/确认/结果 UI
 下画布新增「运行…」：真实身份下先保存草稿，再取 preflight 报价（本地 ComfyUI、0 计费、5 分钟）；用户显式确认后才 dispatch；完成/失败面板显示 asset ids 或 bounded error，不自动重试。测试 `ComfyCanvas.run.test.tsx` 2 passed。
 
+### ComfyUI 下画布：结果缩略图 + 接入上画布
+运行完成后按资产下载接口读取有界缩略图；用户可点「接入上画布」，在上画布创建带 assetId/SHA/version 的 image_reference 快照节点（不建立实时 ComfyUI 链接、不自动执行）。测试覆盖预览与接入字段。
+

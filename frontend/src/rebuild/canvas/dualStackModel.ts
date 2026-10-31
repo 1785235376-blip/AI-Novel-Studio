@@ -28,6 +28,9 @@ export function feedToUpper(upper: CvGraph, node: CvNode): {graph: CvGraph; id: 
   const id = `fed${Date.now().toString(36)}${(seq++).toString(36)}`;
   const maxX = upper.nodes.length ? Math.max(...upper.nodes.map(n => n.x)) : -200;
   const minY = upper.nodes.length ? Math.min(...upper.nodes.map(n => n.y)) : 0;
-  const copy: CvNode = {id, t: node.t, x: Math.round((maxX + 220) / 10) * 10, y: minY, title: `↑${node.title}`};
+  const copy: CvNode = {id, t: node.t, x: Math.round((maxX + 220) / 10) * 10, y: minY, title: `↑${node.title}`,
+    ...(node.assetId ? {assetId: node.assetId} : {}),
+    ...(node.assetSha256 ? {assetSha256: node.assetSha256} : {}),
+    ...(node.assetVersion != null ? {assetVersion: node.assetVersion} : {})};
   return {graph: {nodes: [...upper.nodes, copy], edges: [...upper.edges]}, id};
 }

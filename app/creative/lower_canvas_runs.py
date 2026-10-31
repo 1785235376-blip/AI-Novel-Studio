@@ -471,7 +471,8 @@ def _default_asset_writer(service, nid: str, scope: dict, actor: str):
         measured = inspect_image(image["content"])
         row = service.assets.create(nid, image["filename"], base64.b64encode(image["content"]).decode("ascii"),
             measured["media_type"], "image", branch_id=scope.get("branch_id"), owner_actor_id=actor)
-        return {"id": row["id"], "filename": row.get("filename", image["filename"]),
+        return {"id": row["id"], "version": row.get("version", 1),
+                "filename": row.get("filename", image["filename"]),
                 "media_type": row.get("media_type", measured["media_type"]),
                 "sha256": row.get("sha256", image["sha256"]), "size": row.get("size", image["size"]),
                 "width": measured.get("width"), "height": measured.get("height")}
