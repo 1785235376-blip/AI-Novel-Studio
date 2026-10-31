@@ -47,3 +47,14 @@
 - 音频历史与项目容量按 flag 实时反映为 `IMPLEMENTED_VERIFIED_SYNTHETIC/PARTIAL` 或 `UNAVAILABLE_BY_FLAG`；成本、canvas_return、历史产品线等明确标为 `PARTIAL/PRODUCT_DECISION`，F37/warm-409 标 `UNKNOWN`。
 - 只读、确定性（无时间戳/随机值）、不写盘、不改变既有 capability 字段；不把合成证据提升为真实环境通过。
 
+## 补充：容量写入覆盖矩阵（2026-10-31 续）
+
+`runtime` 合同的 `project_capacity.write_entries` 现在逐项列出容量 admission 覆盖状态：
+- `file_asset_create`：`ADMISSION_GUARDED_VIA_ASSET_CREATE`（flag 开）/`UNAVAILABLE`（默认），覆盖 `AssetLibraryService.create` 全部 16+ 调用方；
+- `studio_manual_import`：`ADMISSION_GUARDED`/`UNAVAILABLE`；
+- `audio_history_commit`：双 flag 时 `ADMISSION_GUARDED`（仅记录/blob）；
+- `project_scope_document`、`export_outputs`：`NOT_CONNECTED`（仍由原 owner/配额管理）；
+- `temporary_media`、`shared_query_index`：`NOT_ACCOUNTED`；
+- `limit_adjustment`：`MANAGEMENT_ONLY`（lease+CAS+audit，不计量）。
+该矩阵只读、确定性、不写盘；默认 flag 关闭时所有 admission 项显示 `UNAVAILABLE`，避免把能力合同误读为已开启。
+

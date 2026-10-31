@@ -42,6 +42,25 @@ DEFAULT_PROJECT_CAPACITY = {
         'PROJECT_CAPACITY_VERSION_CONFLICT', 'PROJECT_CAPACITY_NOT_RECONCILED',
         'PROJECT_CAPACITY_LEDGER_UNAVAILABLE', 'PROJECT_CAPACITY_RESERVATION_UNKNOWN',
         'PROJECT_CAPACITY_COMMIT_EXCEEDS_RESERVATION'],
+    'write_entries': [
+        {'entry': 'file_asset_create', 'status': 'UNAVAILABLE', 'gate': 'ENABLE_PROJECT_CAPACITY_ADMISSION',
+         'note': 'AssetLibraryService.create reconciles/reserves/commits all 16+ callers'},
+        {'entry': 'studio_manual_import', 'status': 'UNAVAILABLE', 'gate': 'ENABLE_PROJECT_CAPACITY_ADMISSION',
+         'note': 'route-level admission plus _capacity_admitted=True'},
+        {'entry': 'audio_history_commit', 'status': 'UNAVAILABLE',
+         'gate': 'ENABLE_AUDIO_ASSET_HISTORY+ENABLE_PROJECT_CAPACITY_ADMISSION',
+         'note': 'capture/migration/restore records and blobs only'},
+        {'entry': 'project_scope_document', 'status': 'NOT_CONNECTED', 'gate': None,
+         'note': 'experimental_v1 scope documents are measured by the original owner, not this ledger'},
+        {'entry': 'export_outputs', 'status': 'NOT_CONNECTED', 'gate': None,
+         'note': 'document/media export jobs keep their original quota'},
+        {'entry': 'temporary_media', 'status': 'NOT_ACCOUNTED', 'gate': None,
+         'note': 'FFmpeg/temp staging is bounded by storage admission, not project ledger'},
+        {'entry': 'shared_query_index', 'status': 'NOT_ACCOUNTED', 'gate': None,
+         'note': 'shared derived index/cursor artifacts are not project-owned'},
+        {'entry': 'limit_adjustment', 'status': 'MANAGEMENT_ONLY', 'gate': None,
+         'note': 'lease+CAS+audit; does not measure or reserve bytes'},
+    ],
 }
 DEFAULT_U16 = {
     'gate_before_claim': 'IMPLEMENTED_FILE_SYNTHETIC_ONLY',
@@ -97,6 +116,12 @@ def test_extended_capabilities_reflect_flag_boundaries_without_writes(rig):
         capacity = value['project_capacity']
         assert capacity['admission_enabled'] is True
         assert capacity['content_admission'] == 'FLAG_GATED'
+        entries = {item['entry']: item['status'] for item in capacity['write_entries']}
+        assert entries['file_asset_create'] == 'ADMISSION_GUARDED_VIA_ASSET_CREATE'
+        assert entries['studio_manual_import'] == 'ADMISSION_GUARDED'
+        assert entries['audio_history_commit'] == 'ADMISSION_GUARDED'
+        assert entries['project_scope_document'] == 'NOT_CONNECTED'
+        assert entries['temporary_media'] == 'NOT_ACCOUNTED'
         assert snapshot(rig.root) == before
     finally:
         object.__setattr__(settings, 'enable_audio_asset_history', previous_history)

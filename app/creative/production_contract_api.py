@@ -35,6 +35,40 @@ class AudioAssetHistoryCapability(StrictContract):
     legacy_reads_migrate: Literal[False] = False
 
 
+class CapacityWriteCoverage(StrictContract):
+    entry: str
+    status: Literal["ADMISSION_GUARDED", "ADMISSION_GUARDED_VIA_ASSET_CREATE",
+                    "NOT_CONNECTED", "NOT_ACCOUNTED", "MANAGEMENT_ONLY", "UNAVAILABLE"]
+    gate: str | None = None
+    note: str | None = None
+
+
+def capacity_write_coverage(*, admission: bool, history: bool) -> tuple[CapacityWriteCoverage, ...]:
+    guarded = "ADMISSION_GUARDED" if admission else "UNAVAILABLE"
+    gate = "ENABLE_PROJECT_CAPACITY_ADMISSION"
+    return (
+        CapacityWriteCoverage(entry="file_asset_create",
+            status="ADMISSION_GUARDED_VIA_ASSET_CREATE" if admission else "UNAVAILABLE",
+            gate=gate, note="AssetLibraryService.create reconciles/reserves/commits all 16+ callers"),
+        CapacityWriteCoverage(entry="studio_manual_import", status=guarded, gate=gate,
+            note="route-level admission plus _capacity_admitted=True"),
+        CapacityWriteCoverage(entry="audio_history_commit",
+            status="ADMISSION_GUARDED" if (admission and history) else "UNAVAILABLE",
+            gate="ENABLE_AUDIO_ASSET_HISTORY+ENABLE_PROJECT_CAPACITY_ADMISSION",
+            note="capture/migration/restore records and blobs only"),
+        CapacityWriteCoverage(entry="project_scope_document", status="NOT_CONNECTED",
+            note="experimental_v1 scope documents are measured by the original owner, not this ledger"),
+        CapacityWriteCoverage(entry="export_outputs", status="NOT_CONNECTED",
+            note="document/media export jobs keep their original quota"),
+        CapacityWriteCoverage(entry="temporary_media", status="NOT_ACCOUNTED",
+            note="FFmpeg/temp staging is bounded by storage admission, not project ledger"),
+        CapacityWriteCoverage(entry="shared_query_index", status="NOT_ACCOUNTED",
+            note="shared derived index/cursor artifacts are not project-owned"),
+        CapacityWriteCoverage(entry="limit_adjustment", status="MANAGEMENT_ONLY",
+            note="lease+CAS+audit; does not measure or reserve bytes"),
+    )
+
+
 class ProjectCapacityCapability(StrictContract):
     gate: Literal["ENABLE_PROJECT_CAPACITY_ADMISSION"] = "ENABLE_PROJECT_CAPACITY_ADMISSION"
     admission_enabled: bool = False
@@ -46,6 +80,7 @@ class ProjectCapacityCapability(StrictContract):
     limit_adjustment: Literal["MANAGEMENT_LEASE_CAS_AUDIT"] = "MANAGEMENT_LEASE_CAS_AUDIT"
     unknown_objects: Literal["REPORT_ONLY_BLOCKS_NEW_RESERVATIONS"] = \
         "REPORT_ONLY_BLOCKS_NEW_RESERVATIONS"
+    write_entries: tuple[CapacityWriteCoverage, ...] = ()
     error_codes: tuple[str, ...] = (
         "PROJECT_CAPACITY_EXCEEDED", "PROJECT_CAPACITY_UNKNOWN_BLOCKED",
         "PROJECT_CAPACITY_VERSION_CONFLICT", "PROJECT_CAPACITY_NOT_RECONCILED",
@@ -171,7 +206,9 @@ def build_capability_registry(*, settings) -> CapabilityRegistry:
             gate="ENABLE_PROJECT_CAPACITY_ADMISSION",
             evidence=("tests/test_project_capacity_ledger.py", "tests/test_project_capacity_create_coverage.py",
                       "tests/test_project_capacity_admission_manual_import.py"),
-            limits=("non_asset_project_writers:NOT_CONNECTED", "startup_reconcile_gate:IMPLEMENTED_FOR_HISTORY_WRITES_ONLY",
+            limits=("non_asset_project_writers:NOT_CONNECTED",
+                    "write_coverage:ADMISSION_GUARDED_ASSET_CREATE_ONLY",
+                    "startup_reconcile_gate:IMPLEMENTED_FOR_HISTORY_WRITES_ONLY",
                     "approval_revocation_races:NOT_VERIFIED", "real_postgres:NOT_RUN")),
         CapabilityItem(id="project_identity_tombstones", title="项目 incarnation/删除墓碑",
             status="IMPLEMENTED_VERIFIED_SYNTHETIC", verification="FILE_AND_HTTP_SYNTHETIC",
@@ -277,7 +314,9 @@ def create_production_contract_router(service, invoke):
                     version_restore="ENABLED" if audio_history else "UNAVAILABLE"),
                 project_capacity=ProjectCapacityCapability(
                     admission_enabled=capacity_admission,
-                    content_admission="FLAG_GATED" if capacity_admission else "UNAVAILABLE"),
+                    content_admission="FLAG_GATED" if capacity_admission else "UNAVAILABLE",
+                    write_entries=capacity_write_coverage(
+                        admission=capacity_admission, history=audio_history)),
                 capability_registry=build_capability_registry(settings=settings))
             guard()
             return result
