@@ -20,12 +20,14 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|assets/[^/]+/history/[a-f0-9]{64}/restore(?:/preview)?|assets/[^/]+/history/migrate|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
-        "PUT": root + r"/(?:capacity/limit|preferences|assets/[^/]+/lineage)",
+        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|capacity|references|relationships|production-contracts(?:/runtime)?|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)|director/workspace/[^/]+|lower-canvas/[^/]+(?:/runs/[^/]+)?))?",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:capacity/reconcile|assets/[^/]+/history/[a-f0-9]{64}/restore(?:/preview)?|assets/[^/]+/history/migrate|activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?|lower-canvas/[^/]+/runs(?:/preflight)?))",
+        "PUT": root + r"/(?:capacity/limit|preferences|assets/[^/]+/lineage|lower-canvas/[^/]+)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
+        return True
+    if method == "GET" and re.fullmatch(root + r"/assets", normalized_path):
         return True
     if method == "GET" and re.fullmatch(root + r"/assets/[^/]+/history(?:/[a-f0-9]{64}(?:/download)?)?", normalized_path):
         return True

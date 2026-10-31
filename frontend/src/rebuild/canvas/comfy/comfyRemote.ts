@@ -26,10 +26,11 @@ async function parseJson(response: Response): Promise<unknown> {
 }
 
 /** GET /api/comfy/object_info. 503 / network failure → null (caller keeps built-ins). */
-export async function fetchImportedObjectInfo(signal?: AbortSignal): Promise<ImportedObjectInfo | null> {
+export async function fetchImportedObjectInfo(remote: ComfyRemoteContext,
+                                              signal?: AbortSignal): Promise<ImportedObjectInfo | null> {
   const f = fetchImpl();
   if (!f) return null;
-  const response = await f('/api/comfy/object_info', {method: 'GET', headers: headers({projectId: '', token: ''}), signal,
+  const response = await f('/api/comfy/object_info', {method: 'GET', headers: headers(remote), signal,
     cache: 'no-store'});
   if (!response.ok) return null;
   const raw = await parseJson(response);
