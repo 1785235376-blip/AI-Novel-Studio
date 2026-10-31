@@ -26,3 +26,6 @@
 
 未完成：非资产 owner 项目文件/导出/共享文档写入口、启动自动对账门、审批/撤权竞争、真实 PG/崩溃窗口；真实环境验收仍未执行。
 
+### 能力补充：V2 全能力注册表（machine-readable）
+`studio-runtime-capabilities/1` 新增 `capability_registry`（`v2-capability-registry/1`）：逐项列出小说/章节、剧本分镜、IMAGE、VIDEO、Graph、音频、音频历史、Timeline、导出、TaskCenter、资产查询、容量、成本、canvas_return、真实环境与阻塞项的状态、flag、证据与限制。默认状态下音频历史/容量为 `UNAVAILABLE_BY_FLAG`，真实 PG/浏览器/模型/打包桌面/hosted CI/外部 NLE 为 `NOT_RUN`，PUBLISHING/ACL 为 `BLOCKED`，F37 根因为 `UNKNOWN`。新增测试 4 项（只读/确定性、默认边界、flag 反映、形状与路径脱敏）；runtime capability 组合 18 passed。
+

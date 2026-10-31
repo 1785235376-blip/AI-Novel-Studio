@@ -37,3 +37,13 @@
 - 该合同只反映服务端 flag 与已实现边界；`ENABLED` 不等于真实 PostgreSQL/浏览器/真实模型/打包桌面验收通过。
 - 未增加任何写路径或放宽关闭门；默认 flag 仍为 false。
 - 历史写入容量预留/失败残留计费、恢复审计持久化、真实 PG/broker 运行仍为 NOT_RUN。
+
+## 补充：V2 全能力注册表（2026-10-31 续）
+
+`GET /api[/v1]/projects/{nid}/studio/production-contracts/runtime` 在原有能力字段之外新增 `capability_registry`（`v2-capability-registry/1`），用同一原读权限/项目 activation/最终 guard 返回机器可读的 V2.0 能力就绪清单：
+
+- `real_environments`：`real_postgres`、`real_browser_e2e`、`real_model_gpu_provider`、`windows_packaged_desktop`、`hosted_ci`、`external_nle` 均为 `NOT_RUN`；`publishing_review`、`windows_acl_junction_probe` 为 `BLOCKED`。
+- `items`：每项含 `id/title/status/verification/gate/evidence/limits`；status 枚举限定为 `IMPLEMENTED_VERIFIED_SYNTHETIC / PARTIAL / UNAVAILABLE_BY_FLAG / NOT_IMPLEMENTED / NOT_RUN / NOT_VERIFIED / BLOCKED / PRODUCT_DECISION / UNKNOWN`。
+- 音频历史与项目容量按 flag 实时反映为 `IMPLEMENTED_VERIFIED_SYNTHETIC/PARTIAL` 或 `UNAVAILABLE_BY_FLAG`；成本、canvas_return、历史产品线等明确标为 `PARTIAL/PRODUCT_DECISION`，F37/warm-409 标 `UNKNOWN`。
+- 只读、确定性（无时间戳/随机值）、不写盘、不改变既有 capability 字段；不把合成证据提升为真实环境通过。
+
