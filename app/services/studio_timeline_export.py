@@ -19,7 +19,7 @@ from ..media_files import MediaValidationError
 
 PREVIEW_SCALE = "HALF_EVEN_FLOOR_BILINEAR_V1"
 
-EXPORT_PRESETS = ("REVIEW_MP4", "DELIVERY_H264_MP4", "DELIVERY_VP9_WEBM", "AUDIO_WAV_PCM16")
+EXPORT_PRESETS = ("REVIEW_MP4", "DELIVERY_H264_MP4", "DELIVERY_VP9_WEBM", "AUDIO_WAV_PCM16", "AUDIO_WAV_PCM24")
 
 
 def normalize_export_profile(value):
@@ -30,7 +30,7 @@ def normalize_export_profile(value):
         raise ValueError("STUDIO_TIMELINE_PREVIEW_SCALE_INVALID")
     if preset not in EXPORT_PRESETS:
         raise ValueError("STUDIO_TIMELINE_EXPORT_PRESET_INVALID")
-    if preset in {"REVIEW_MP4", "AUDIO_WAV_PCM16"}:
+    if preset in {"REVIEW_MP4", "AUDIO_WAV_PCM16", "AUDIO_WAV_PCM24"}:
         if set(value) != {"preset"}:
             raise ValueError("STUDIO_TIMELINE_REVIEW_PROFILE_OPTIONS_INVALID")
         return {"preset": preset}
@@ -65,7 +65,7 @@ def export_profile_digest(profile):
 
 def export_profile_kind(profile):
     """Output kind is derived only from the exact closed export profile."""
-    return "audio" if normalize_export_profile(profile)["preset"] == "AUDIO_WAV_PCM16" else "video"
+    return "audio" if normalize_export_profile(profile)["preset"] in {"AUDIO_WAV_PCM16", "AUDIO_WAV_PCM24"} else "video"
 
 
 def bound_timeline_output_kind(context):
@@ -95,17 +95,20 @@ def compiler_profile(profile, *, duration_ms, max_bytes):
     if type(duration_ms) is not int or duration_ms < 1 or type(max_bytes) is not int or max_bytes < 1:
         raise ValueError("STUDIO_TIMELINE_EXPORT_CAPACITY_INVALID")
     preset = profile["preset"]
-    if preset == "AUDIO_WAV_PCM16":
+    if preset in {"AUDIO_WAV_PCM16", "AUDIO_WAV_PCM24"}:
         # Integer ms at 48 kHz gives an exact sample count. The closed bitexact
-        # PCM16 stereo WAV consists of a 44-byte header plus uncompressed data.
+        # stereo WAV consists of a 44-byte header plus uncompressed data.
         samples = duration_ms * 48
-        estimate = 44 + samples * 2 * 2
+        width = 2 if preset == "AUDIO_WAV_PCM16" else 3
+        codec = "pcm_s16le" if width == 2 else "pcm_s24le"
+        header = 44 if width == 2 else 68  # classic vs WAVE_FORMAT_EXTENSIBLE fmt chunk
+        estimate = header + samples * width * 2
         if estimate > max_bytes:
             raise ValueError("STUDIO_TIMELINE_EXPORT_BYTES_BUDGET_EXCEEDED")
         return {"profile": profile, "extension": "wav", "mime": "audio/wav", "video_codec": None,
-                "audio_codec": "pcm_s16le", "encoder": "pcm_s16le", "audio_encoder": "pcm_s16le",
-                "options": ["-vn", "-c:a", "pcm_s16le", "-map_metadata", "-1", "-fflags", "+bitexact"],
-                "estimated_max_bytes": estimate, "sample_count": samples}
+                "audio_codec": codec, "encoder": codec, "audio_encoder": codec,
+                "options": ["-vn", "-c:a", codec, "-map_metadata", "-1", "-fflags", "+bitexact"],
+                "estimated_max_bytes": estimate, "sample_count": samples, "bits_per_sample": width * 8}
     if preset == "REVIEW_MP4":
         bitrate = max(100_000, min(8_000_000, int(max_bytes * 8 * 0.85 / (duration_ms / 1000)) - 96_000))
         return {"profile": profile, "extension": "mp4", "mime": "video/mp4", "video_codec": "mpeg4", "audio_codec": "aac",
@@ -324,25 +327,27 @@ def prove_output(path, timeline, compiled, *, guard):
     result = probe_media_file(path, guard=guard)
     videos = [item for item in result["streams"] if isinstance(item, dict) and item.get("codec_type") == "video"]
     audios = [item for item in result["streams"] if isinstance(item, dict) and item.get("codec_type") == "audio"]
-    if compiled["profile"]["preset"] == "AUDIO_WAV_PCM16":
-        import wave
+    if compiled["profile"]["preset"] in {"AUDIO_WAV_PCM16", "AUDIO_WAV_PCM24"}:
+        from ..media_files import inspect_wav_metadata
         if videos or len(audios) != 1:
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_STREAMS_INVALID")
         audio = audios[0]
+        expected_codec = compiled["audio_codec"]
+        expected_width = compiled["bits_per_sample"] // 8
         try:
-            with wave.open(str(path), "rb") as source:
-                proof = (source.getnchannels(), source.getsampwidth(), source.getframerate(), source.getnframes(), source.getcomptype())
-            valid = (proof == (2, 2, 48000, compiled["sample_count"], "NONE")
-                and audio.get("codec_name") == "pcm_s16le" and int(audio["sample_rate"]) == 48000
+            proof = inspect_wav_metadata(Path(path).read_bytes())
+            valid = (proof["channels"] == 2 and proof["sample_width"] == expected_width
+                and proof["sample_rate"] == 48000 and proof["frame_count"] == compiled["sample_count"]
+                and audio.get("codec_name") == expected_codec and int(audio["sample_rate"]) == 48000
                 and int(audio["channels"]) == 2 and result["format"].get("format_name") == "wav"
                 and Path(path).stat().st_size == compiled["estimated_max_bytes"])
-        except (wave.Error, EOFError, KeyError, TypeError, ValueError) as error:
+        except (KeyError, TypeError, ValueError) as error:
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_PROBE_INVALID") from error
         if not valid:
             raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_PROFILE_MISMATCH")
-        return {"audio_codec": "pcm_s16le", "sample_rate": 48000, "channels": 2,
-                "sample_count": compiled["sample_count"], "bits_per_sample": 16, "container": "wav",
-                "profile_validation": "NATIVE_FFPROBE_EXACT"}
+        return {"audio_codec": expected_codec, "sample_rate": 48000, "channels": 2,
+                "sample_count": compiled["sample_count"], "bits_per_sample": compiled["bits_per_sample"],
+                "container": "wav", "profile_validation": "NATIVE_FFPROBE_EXACT"}
     if len(videos) != 1 or len(audios) != 1:
         raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_STREAMS_INVALID")
     video, audio = videos[0], audios[0]

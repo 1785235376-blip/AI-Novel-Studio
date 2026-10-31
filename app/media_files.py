@@ -164,6 +164,77 @@ def _media_inspection_directory(prefix: str = "novel-media-"):
         _cleanup_media_directory(temporary, identity)
 
 
+def inspect_wav_metadata(data: bytes) -> dict:
+    """Parse bounded PCM WAV metadata, including WAVE_FORMAT_EXTENSIBLE.
+
+    Python's ``wave`` module rejects extensible PCM (format 0xfffe), which
+    FFmpeg emits for 24-bit output. This reader accepts classic PCM (1) and
+    extensible PCM with the PCM sub-format GUID, validates the RIFF chunks and
+    returns the same fields used by the original wave-based path.
+    """
+    import struct
+
+    def fail(reason="invalid WAV media"):
+        raise MediaValidationError(reason)
+
+    if not isinstance(data, (bytes, bytearray)) or len(data) < 44:
+        fail()
+    if bytes(data[:4]) != b"RIFF" or bytes(data[8:12]) != b"WAVE":
+        fail()
+    declared = struct.unpack_from("<I", data, 4)[0]
+    if declared + 8 > len(data) or declared < 36:
+        fail()
+    channels = rate = bits = width = None
+    data_size = None
+    offset = 12
+    while offset + 8 <= declared + 8:
+        chunk_id = bytes(data[offset:offset + 4])
+        chunk_size = struct.unpack_from("<I", data, offset + 4)[0]
+        body = offset + 8
+        if chunk_size > declared + 8 - body:
+            fail()
+        if chunk_id == b"fmt ":
+            if chunk_size < 16:
+                fail()
+            tag = struct.unpack_from("<H", data, body)[0]
+            channels = struct.unpack_from("<H", data, body + 2)[0]
+            rate = struct.unpack_from("<I", data, body + 4)[0]
+            block = struct.unpack_from("<H", data, body + 12)[0]
+            bits = struct.unpack_from("<H", data, body + 14)[0]
+            if tag == 0xFFFE:
+                if chunk_size < 40:
+                    fail()
+                valid_bits = struct.unpack_from("<H", data, body + 18)[0]
+                sub_format = bytes(data[body + 24:body + 40])
+                if sub_format[:2] != b"\x01\x00":
+                    fail()
+                if valid_bits not in (0, bits):
+                    fail()
+            elif tag != 1:
+                fail()
+            if not (1 <= channels <= 8 and 8000 <= rate <= 192000 and 8 <= bits <= 32 and bits % 8 == 0):
+                fail()
+            width = bits // 8
+            if block != channels * width or block <= 0:
+                fail()
+        elif chunk_id == b"data":
+            data_size = chunk_size
+            break
+        offset = body + chunk_size + (chunk_size & 1)
+        if offset > declared + 8:
+            fail()
+    if data_size is None or not channels or not rate or not width:
+        fail()
+    frame_bytes = channels * width
+    if data_size <= 0 or data_size > len(data) - body or data_size % frame_bytes:
+        fail()
+    frames = data_size // frame_bytes
+    return {"media_type": "audio/wav", "extension": "wav",
+            "duration_ms": round(frames * 1000 / rate), "sample_rate": rate,
+            "channels": channels, "sample_width": width, "frame_count": frames,
+            "validation": "PCM_DECODED"}
+
+
 def inspect_media(data: bytes, kind: str, *, guard=None, include_video_dimensions=False) -> dict:
     """Verify actual local bytes, return measured duration and container MIME.
 
@@ -197,7 +268,9 @@ def inspect_media(data: bytes, kind: str, *, guard=None, include_video_dimension
         except (wave.Error, EOFError) as exc:
             if exc is guard_failure:
                 raise
-            raise MediaValidationError("invalid WAV media") from exc
+            parsed = inspect_wav_metadata(data)
+            current()
+            return parsed
     mp4 = len(data) >= 12 and data[4:8] == b"ftyp"
     webm = data[:4] == b"\x1aE\xdf\xa3"
     mp3 = data[:3] == b"ID3" or (len(data) > 1 and data[0] == 255 and data[1] & 224 == 224)
