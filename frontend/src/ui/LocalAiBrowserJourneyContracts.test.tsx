@@ -88,12 +88,12 @@ describe('additive M3 browser journeys follow existing product state', () => {
     ['legacy revoked-host rebind', legacyJourney, 'bindAndOpen'],
   ])('returns from CONTROL through the existing NOVEL tab before opening feature navigation: %s', (_name, journey, helper) => {
     render(<ExistingModuleRoutes/>);
-    expect(screen.getByRole('tablist', {name: '主控设置'})).toBeTruthy();
+    expect(screen.getByLabelText('AI 主控')).toBeTruthy();
     expect(screen.queryByRole('button', {name: '打开功能导航'})).toBeNull();
     fireEvent.click(within(screen.getByRole('tablist', {name: '创作模块'})).getByRole('tab', {name: '小说'}));
-    expect(screen.queryByRole('tablist', {name: '主控设置'})).toBeNull();
+    expect(screen.queryByLabelText('AI 主控')).toBeNull();
     fireEvent.click(screen.getByRole('button', {name: '打开功能导航'}));
-    expect(within(screen.getByRole('navigation', {name: '功能面板导航'})).getByRole('button', {name: 'Agent 团队'})).toBeTruthy();
+    expect(within(screen.getByRole('navigation', {name: '功能面板导航'})).getByRole('button', {name: 'AI 团队'})).toBeTruthy();
 
     // Guard the actual browser helper, rather than just proving a separate
     // successful test path. These source checks preserve its real UI entry.

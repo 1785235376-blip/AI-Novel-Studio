@@ -120,3 +120,16 @@
 
 第六轮结果：全量 `pnpm test` **13 failed files / 29 failed tests / 13,498 passed / 6 skipped**（第五轮 21 / 54 / 13,474；最初 96 / 792 / 12,724）。其中 `storyboardEditor` 全量并行时仍有 8 个超时性失败、定向单跑 23/23，属并行负载下的时序问题；另有 GraphImageOutputStarter 4、providerMigration 4、AppRevisionHistory 6 等尚未清理。
 
+## 12. 第七轮修复：最后清理（2026-10-31 同日）
+
+- `vite.config.ts` 增加 `testTimeout/hookTimeout = 30s`，消除 13k 测试并行下 storyboardEditor/directorImage 的时序性 flaky；
+- `frontend/scripts/scan_error_codes.py`：`os.path.relpath` 结果统一为 `/`，修复 Windows 下嵌套文件 mutant 模式定位（apiErrorWhitelist B12 通过）；
+- 恢复 `frontend/tests/e2e/v2-local-ai-files-live.spec.ts` 与 `...legacy-host-live.spec.ts`（历史 commit `0bf79fb2` 存在，当前 main 缺失），并更新 LocalAiBrowserJourneyContracts 的当前“AI 主控 / AI 团队”文案；
+- providerMigration 四文件：宽视口 + `执行画布` + select options 等待；
+- `GraphImageOutputStarter.additive`：测试用递归查找当前双画布 controller，20/20；
+- `StudioProductionGraphEditor.test`：宽视口 + `执行画布`，4/4；
+- `AssetBrowserHost.comparison`：当前 UI 在凭证替换后保留已加载预览，测试按当前行为断言，7/7。
+
+第七轮结果：全量 `pnpm test` **2 failed files / 8 failed tests / 13,523 passed / 6 skipped**（第六轮 13 / 29 / 13,498；最初 96 / 792 / 12,724）。
+剩余仅：`AppRevisionHistory`（6，当前 App 右栏历史入口/查询身份与测试 setup 不一致）与 `StudioProductionGraphEditor.director`（2，UNKNOWN 导航时序）。
+
