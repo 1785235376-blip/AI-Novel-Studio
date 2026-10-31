@@ -45,3 +45,6 @@
 
 测试 `tests/test_provider_cost_attestation.py`：3 项（可信绑定/默认 UNKNOWN、错 request/provider/负金额/非法 source 拒绝且无 sidecar、损坏/超限/孤儿 sidecar 不冒充可信成本）；production/cost 组回归 **80 passed / 1 xfailed**。registry `studio_task_cost` 证据/limits 更新（real provider adapter 仍未接入；真实验收 NOT_RUN）。
 
+### 能力补充：本地 VIDEO 时间线渲染（REVIEW_MP4）
+新增 `tests/test_studio_video_timeline_local_render.py`：本机 FFmpeg 生成合成 MP4（红色画面 + 440Hz 音频）作为正式 video Asset，时间线 schema 2 单 VIDEO 轨（含 include_audio）经原 `timeline_save`/`timeline_export_preview`/`timeline_export` 渲染为 `REVIEW_MP4` 候选；FFprobe 校验 `mpeg4` 320x180、AAC 48kHz stereo、时长约 1s、哈希/正式资产字节一致、人工 review 后 APPROVED。**1 passed**，相关 media/timeline/video 组回归通过。registry `timeline_render_export` 证据增加该测试，limits 增加 `video_track_local_render:FILE_FFMPEG_VERIFIED`（真实模型视频/真实 NLE 仍 NOT_RUN）。
+
