@@ -84,6 +84,7 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
   // [HERMIA-FE-20261031 DUALCANVAS-COMFY RUN] Adopt one locally generated result as an upper-canvas
   // image reference snapshot. The node keeps the asset id/digest (not a live ComfyUI link).
   const adoptRunAsset = useCallback((asset: RunAsset) => {
+    if (asset.kind === 'video') return;
     const key = canvasStorageKey(kind, scope);
     const current = readCanvasGraph(key) ?? seed ?? {nodes: [], edges: []};
     const title = asset.filename ? '结果 ' + asset.filename : 'Result ' + asset.id;

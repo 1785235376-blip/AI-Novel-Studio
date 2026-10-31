@@ -52,7 +52,7 @@
 
 .cfy-runassets{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto}
 .cfy-runasset{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:5px;align-items:center}
-.cfy-runasset img,.cfy-runasset__pending{width:44px;height:44px;object-fit:cover;border-radius:4px;border:1px solid var(--stg-line)}
+.cfy-runasset img,.cfy-runasset video,.cfy-runasset__pending{width:44px;height:44px;object-fit:cover;border-radius:4px;border:1px solid var(--stg-line)}
 .cfy-runasset__pending{background:var(--cv-chip-2)}
 .cfy-runasset small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--cv-ink-2)}
 .cfy-runasset button{font-size:10.5px;padding:2px 6px;border-radius:4px;border:1px solid var(--stg-line-strong);background:var(--cv-input);color:var(--cv-ink);cursor:pointer}

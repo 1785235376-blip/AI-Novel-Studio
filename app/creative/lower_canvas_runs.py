@@ -33,7 +33,8 @@ QUOTE_TTL_SECONDS = 300
 RUNS_COLLECTION = "lower_canvas_runs_v1"
 QUOTES_COLLECTION = "lower_canvas_run_quotes_v1"
 IMAGE_MAX_BYTES = 16 * 1024 * 1024
-RUN_MAX_OUTPUT_BYTES = 64 * 1024 * 1024
+VIDEO_MAX_BYTES = 64 * 1024 * 1024
+RUN_MAX_OUTPUT_BYTES = 256 * 1024 * 1024
 RUN_MAX_IMAGES = 32
 PORT_WIDGET_KINDS = {"INT", "FLOAT", "STRING", "BOOLEAN"}
 _NODE_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
@@ -343,10 +344,12 @@ def _public_run(row: dict) -> dict:
     }
 
 
-def _media_type(data: bytes) -> str:
-    if data.startswith(b"\x89PNG\r\n\x1a\n"): return "image/png"
-    if data.startswith(b"\xff\xd8\xff"): return "image/jpeg"
-    if data[:4] == b"RIFF" and data[8:12] == b"WEBP": return "image/webp"
+def _media_kind(data: bytes) -> tuple[str, str]:
+    if data.startswith(b"\x89PNG\r\n\x1a\n"): return "image", "image/png"
+    if data.startswith(b"\xff\xd8\xff"): return "image", "image/jpeg"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP": return "image", "image/webp"
+    if data[4:8] == b"ftyp": return "video", "video/mp4"
+    if data.startswith(b"\x1a\x45\xdf\xa3"): return "video", "video/webm"
     raise LowerCanvasRunError("LOWER_CANVAS_RESULT_MEDIA_INVALID", status=502)
 
 
@@ -452,10 +455,12 @@ def execute_comfy_prompt(transport, endpoint: str, prompt: dict, *, guard=lambda
             if not isinstance(content, (bytes, bytearray)) or not content:
                 raise LowerCanvasRunError("LOWER_CANVAS_RESULT_BYTES_INVALID", status=502)
             content = bytes(content)
-            if len(content) > IMAGE_MAX_BYTES or total_bytes + len(content) > RUN_MAX_OUTPUT_BYTES:
+            kind, media_type = _media_kind(content)
+            per_file = IMAGE_MAX_BYTES if kind == "image" else VIDEO_MAX_BYTES
+            if len(content) > per_file or total_bytes + len(content) > RUN_MAX_OUTPUT_BYTES:
                 raise LowerCanvasRunError("LOWER_CANVAS_RESULT_TOO_LARGE", status=502)
             total_bytes += len(content)
-            images.append({"filename": filename, "media_type": _media_type(content),
+            images.append({"filename": filename, "kind": kind, "media_type": media_type,
                            "sha256": hashlib.sha256(content).hexdigest(), "size": len(content),
                            "content": content})
     if not images:
@@ -467,8 +472,13 @@ def _default_asset_writer(service, nid: str, scope: dict, actor: str):
     def write(image: dict) -> dict:
         if not hasattr(service, "assets"):
             raise LowerCanvasRunError("LOWER_CANVAS_ASSET_OWNER_MISSING", status=503)
-        from ..media_files import inspect_image
-        measured = inspect_image(image["content"])
+        kind = str(image.get("kind") or "image")
+        if kind == "video":
+            from ..media_files import inspect_media
+            measured = inspect_media(image["content"], "video", include_video_dimensions=True)
+        else:
+            from ..media_files import inspect_image
+            measured = inspect_image(image["content"])
         # Project/branch-scoped generated result. Do not set an owner-only marker:
         # the regular project asset/detail/download routes are actor-agnostic.
         # The writer must run inside the workspace asset scope so the recorded
@@ -476,12 +486,14 @@ def _default_asset_writer(service, nid: str, scope: dict, actor: str):
         scope_context = service._asset_scope(nid, scope) if hasattr(service, "_asset_scope") else nullcontext()
         with scope_context:
             row = service.assets.create(nid, image["filename"], base64.b64encode(image["content"]).decode("ascii"),
-                measured["media_type"], "image", branch_id=scope.get("branch_id"))
-        return {"id": row["id"], "version": row.get("version", 1),
+                measured["media_type"], kind, branch_id=scope.get("branch_id"))
+        return {"id": row["id"], "version": row.get("version", 1), "kind": kind,
+                "extension": measured.get("extension"),
                 "filename": row.get("filename", image["filename"]),
                 "media_type": row.get("media_type", measured["media_type"]),
                 "sha256": row.get("sha256", image["sha256"]), "size": row.get("size", image["size"]),
-                "width": measured.get("width"), "height": measured.get("height")}
+                "width": measured.get("width"), "height": measured.get("height"),
+                "duration_seconds": measured.get("duration_seconds")}
     return write
 
 

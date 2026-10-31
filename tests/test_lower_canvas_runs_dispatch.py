@@ -32,8 +32,9 @@ class Resp:
 
 
 class FakeComfy:
-    def __init__(self, history_status="success"):
+    def __init__(self, history_status="success", media=PNG):
         self.history_status = history_status
+        self.media = media
         self.get_calls = []
         self.post_calls = []
 
@@ -47,7 +48,7 @@ class FakeComfy:
             return Resp({"p1": {"status": {"status_str": "success"},
                 "outputs": {"save": {"images": [{"filename": "out.png", "subfolder": "", "type": "output"}]}}}})
         if url.endswith("/view"):
-            return Resp(content=PNG)
+            return Resp(content=self.media)
         return Resp({}, status=404)
 
     def post(self, url, **kwargs):
@@ -117,6 +118,19 @@ def test_dispatch_rejects_stale_quote_before_touching_comfyui(tmp_path, monkeypa
             transport_factory=lambda endpoint: fake)
     assert raised.value.code == "LOWER_CANVAS_RUN_QUOTE_STALE"
     assert fake.post_calls == []
+
+
+def test_dispatch_accepts_video_result_and_keeps_video_kind(tmp_path, monkeypatch):
+    video = b"\x00\x00\x00\x18ftypmp42" + b"fake-video-bytes"
+    fake = FakeComfy(media=video)
+    written = []
+    service, nid, scope, quote, result = dispatch_fixture(tmp_path, monkeypatch, fake, writer=lambda image: (
+        written.append(image) or {"id": "asset-video", "kind": image["kind"], "filename": image["filename"],
+                                  "media_type": image["media_type"], "sha256": image["sha256"], "size": image["size"]}))
+    assert result["status"] == "COMPLETED" and result["error"] is None
+    assert result["assets"][0]["id"] == "asset-video"
+    assert written and written[0]["kind"] == "video" and written[0]["media_type"] == "video/mp4"
+    assert written[0]["size"] == len(video)
 
 
 def test_dispatch_and_get_routes_registered():

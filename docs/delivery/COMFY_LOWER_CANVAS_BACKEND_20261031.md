@@ -103,3 +103,11 @@
 - 结果：HTTP E2E 1 passed；与 preflight/dispatch/lower-canvas/registry 合并组 37 passed。
 - 仍非真实 ComfyUI 模型：fake server 只返回固定 PNG；真实 provider/GPU 执行 NOT_RUN。
 
+## 8. 视频结果链（本批新增）
+
+- ComfyUI `/view` 返回的 MP4/WebM/MOV 现可识别为 `kind=video`；
+- 结果边界：图片 ≤16 MiB、视频 ≤64 MiB、总 ≤256 MiB；资产通过 `inspect_media(data, 'video', include_video_dimensions=True)` 真实解码后写入资产库（kind=video）；
+- `GET .../runs/{run_id}` 的 assets 带 kind/extension/media_type/duration；
+- 前端资产下载允许视频 MIME，结果面板用 `<video controls>` 展示；视频结果暂不显示「接入上画布」（上画布尚无正式视频资产消费合同）；
+- 测试：HTTP E2E 用真实 ffmpeg 生成 2×2 MP4，经 fake `/view` → 资产写库 → 下载为 video/mp4（3 passed）；dispatch 单测覆盖视频 kind（5 passed）。
+
