@@ -1500,5 +1500,11 @@ export const zhCN = {
   'rough.926': '视频画布', // [HERMIA-FE-20261031 VERA-EN]
   'rough.927': '创作画布', // [HERMIA-FE-20261031 VERA-EN]
   'rough.928': '执行画布', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.929': '当前会话无权访问此内容。请重新核对身份和分支。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.930': '版本或来源已经变化。当前草稿已保留，请核对服务端版本。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.931': '记录不可用，或此功能尚未启用。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.932': '请求未完成。请核对输入与连接状态。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.933': '资产所在磁盘的可用空间不足。请释放空间后重试导入。', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.934': '暂时无法确认资产存储的可用空间。请检查存储位置是否可访问后重试。', // [HERMIA-FE-20261031 VERA-EN]
 } as const;
 export type MessageKey = keyof typeof zhCN;

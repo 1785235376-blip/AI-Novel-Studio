@@ -1509,4 +1509,10 @@ export const en: Record<MessageKey, string> = {
   'rough.926': 'Video canvas', // [HERMIA-FE-20261031 VERA-EN]
   'rough.927': 'Creation canvas', // [HERMIA-FE-20261031 VERA-EN]
   'rough.928': 'Execution canvas', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.929': 'This session cannot access this content. Check your identity and branch.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.930': 'The version or source has changed. Your draft is kept; check the server version.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.931': 'Record unavailable, or this feature is not enabled yet.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.932': 'Request did not complete. Check your input and connection.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.933': 'Not enough free disk space for assets. Free some space and retry the import.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.934': 'Cannot confirm free asset storage space right now. Check the storage location is reachable and retry.', // [HERMIA-FE-20261031 VERA-EN]
 };
