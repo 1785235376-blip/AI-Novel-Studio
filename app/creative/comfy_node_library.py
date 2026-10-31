@@ -270,14 +270,15 @@ def _transport_for(endpoint: str):
     return _LocalImageTransport(endpoint, configured=True, trust_env=False)
 
 
-def load_comfyui_node_library(*, provider_id: str | None = None, guard=lambda: None,
+def fetch_comfyui_object_info(*, provider_id: str | None = None, guard=lambda: None,
                               transport_factory=None) -> dict:
-    """Fetch and normalize one configured ComfyUI provider's node metadata.
+    """Fetch the configured provider's raw /object_info under strict bounds.
 
-    Read-only: no workflow is submitted, no file is written, no node is executed.
+    Returns the raw payload plus bounded source metadata; no parsing/normalizing
+    happens here so the passthrough proxy can preserve ComfyUI's native shape.
     """
     if not callable(guard):
-        raise ValueError("COMFY_NODE_LIBRARY_GUARD_INVALID")
+        raise ValueError("COMFYUI_NODE_LIBRARY_GUARD_INVALID")
     configs = _provider_configs()
     pid, cfg, available = _select_provider(provider_id, configs)
     endpoint = str(cfg.get("endpoint") or "").strip().rstrip("/")
@@ -323,14 +324,39 @@ def load_comfyui_node_library(*, provider_id: str | None = None, guard=lambda: N
     except (UnicodeError, ValueError):
         raise ComfyNodeLibraryError("COMFYUI_NODE_LIBRARY_INVALID", status=502,
             detail="object_info is not valid UTF-8 JSON") from None
-    result = parse_comfyui_object_info(payload)
-    for node in result["nodes"]:
-        node["studio_type_hints"] = studio_type_hints(node)
-    result.update({
+    if not isinstance(payload, dict):
+        raise ComfyNodeLibraryError("COMFYUI_NODE_LIBRARY_INVALID", status=502,
+            detail="ComfyUI /object_info must be a JSON object")
+    guard()
+    return {
         "provider_id": pid,
         "available_providers": available,
         "endpoint_origin": _endpoint_origin(endpoint),
         "observed_at": datetime.now(timezone.utc).isoformat(),
+        "source_version": hashlib.sha256(raw).hexdigest(),
+        "payload": payload,
+        "raw_bytes": len(raw),
+    }
+
+
+def load_comfyui_node_library(*, provider_id: str | None = None, guard=lambda: None,
+                              transport_factory=None) -> dict:
+    """Fetch and normalize one configured ComfyUI provider's node metadata.
+
+    Read-only: no workflow is submitted, no file is written, no node is executed.
+    """
+    fetched = fetch_comfyui_object_info(provider_id=provider_id, guard=guard,
+        transport_factory=transport_factory)
+    payload = fetched.pop("payload")
+    result = parse_comfyui_object_info(payload)
+    for node in result["nodes"]:
+        node["studio_type_hints"] = studio_type_hints(node)
+    result.update({
+        "provider_id": fetched["provider_id"],
+        "available_providers": fetched["available_providers"],
+        "endpoint_origin": fetched["endpoint_origin"],
+        "observed_at": fetched["observed_at"],
+        "source_version": fetched["source_version"],
         "compatibility": {
             "contract": COMPATIBILITY_CONTRACT,
             "purpose": "NODE_LIBRARY_METADATA_ONLY",

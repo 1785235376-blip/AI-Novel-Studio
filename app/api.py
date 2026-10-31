@@ -4022,3 +4022,47 @@ from .services.ai_planning_service import AIPlanningService
 from .ai_planning_api import create_ai_planning_router
 ai_planning_service = AIPlanningService(creation_workbench_service, runtime, lore_service)
 router.include_router(create_ai_planning_router(ai_planning_service, _workbench_authorize))
+
+@router.get("/comfy/object_info")
+def comfy_object_info(provider_id: str | None = None, nodes: str | None = None, meta: bool = False):
+    """Read-only passthrough of a configured ComfyUI provider's /object_info.
+
+    Lower-canvas node library only: it never submits a workflow or executes a
+    node. Missing/unreachable provider returns 503 so the frontend keeps its
+    built-in node registry. Optional `nodes` is a bounded whitelist filter.
+    """
+    from .creative.comfy_node_library import ComfyNodeLibraryError, fetch_comfyui_object_info
+    try:
+        fetched = fetch_comfyui_object_info(provider_id=provider_id)
+    except ComfyNodeLibraryError:
+        raise HTTPException(503, {"code": "comfy_unavailable",
+            "message": "ComfyUI provider is not configured or unavailable"}) from None
+    payload = fetched["payload"]
+    if nodes:
+        requested: list[str] = []
+        for raw in nodes.split(",")[:200]:
+            name = raw.strip()
+            if name and len(name) <= 160 and name not in requested:
+                requested.append(name)
+        payload = {name: payload[name] for name in requested if name in payload}
+    headers = {
+        "Cache-Control": "no-store",
+        "X-Comfy-Source-Version": str(fetched["source_version"]),
+        "X-Comfy-Fetched-At": str(fetched["observed_at"]),
+        "X-Comfy-Provider-Id": str(fetched["provider_id"]),
+    }
+    if meta:
+        merged = {
+            "object_info": payload,
+            "source_version": fetched["source_version"],
+            "fetched_at": fetched["observed_at"],
+            "provider_id": fetched["provider_id"],
+            "endpoint_origin": fetched["endpoint_origin"],
+            "node_count": len(payload),
+            "execution": "NOT_IMPLEMENTED",
+        }
+        return Response(content=json.dumps(merged, ensure_ascii=False),
+            media_type="application/json", headers=headers)
+    return Response(content=json.dumps(payload, ensure_ascii=False),
+        media_type="application/json", headers=headers)
+
