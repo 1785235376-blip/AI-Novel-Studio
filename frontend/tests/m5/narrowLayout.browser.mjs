@@ -8,6 +8,7 @@
 //  A4 ≤1100: left rail (.mw-left/.vid-rail) hidden AND a narrow-nav alternative entry is visible for IMAGE/ASSETS/VIDEO
 //  A5 1181–1280 zh: Ctrl K hint visible (P3)
 //  A6 [HERMIA-FE-20261030 VERA-MF] NSFW badge on: settings still in viewport (A1) and a visible search label is not ellipsis-truncated
+//  A7 [HERMIA-FE-20261031 VERA-OBS] no visible button/link in the main area (incl. NOVEL assistant rail) extends past the viewport right edge — geometric, so it also catches painted content spilling from a collapsed (aria-hidden/inert) rail
 //  Header-fit sweep: NSFW=off,on WS=1024,1280,1366,1440,1441,1460,1500,1540,1600,1680,1720,1800,1920 MODS=NOVEL
 import {createRequire} from 'node:module';
 import fs from 'node:fs';
@@ -55,6 +56,7 @@ const probe = p => p.evaluate((process_hdr) => {
   if (vert.length) out.push('A2 squeeze: ' + vert.slice(0, 3).map(T).join('|').slice(0, 60));
   for (const c of document.querySelectorAll('.media-ws-main,.main-workspace')) { if (!vis(c)) continue; const cr = c.getBoundingClientRect();
     for (const bt of c.querySelectorAll('.img-empty button,.mw-empty button,[class*=empty] button')) if (vis(bt)) { const r = bt.getBoundingClientRect(); if (r.right > cr.right + 1 || r.left < cr.left - 1) out.push('A3 btn out: ' + T(bt).slice(0, 20)); } }
+  for (const e of document.querySelectorAll('main button, main a[href]')) { const r0 = e.getBoundingClientRect(); if (r0.width > 0 && r0.height > 0 && getComputedStyle(e).visibility !== 'hidden' && !e.closest('.global-header')) { const r = e.getBoundingClientRect(); if (r.right > innerWidth + 0.5) out.push(`A7 btn out: ${(e.getAttribute('aria-label') || T(e)).slice(0, 20)} r=${Math.round(r.right)}`); } }
   const rails = [...document.querySelectorAll('.mw-left,.vid-rail')].filter(vis);
   const narrowNav = [...document.querySelectorAll('[data-narrow-nav]')].filter(vis);
   const kbd = document.querySelector('.global-search>kbd'); const kbdVis = !!kbd && vis(kbd) && kbd.getBoundingClientRect().width > 2;

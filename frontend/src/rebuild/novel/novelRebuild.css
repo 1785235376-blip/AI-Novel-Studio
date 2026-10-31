@@ -113,6 +113,8 @@ html .app-shell .context-bar__save-location{margin-left:auto}
 html .app-shell[data-module="NOVEL"] .workspace-body{grid-template-columns:200px minmax(480px,1fr) 312px!important}
 html .app-shell[data-module="NOVEL"].is-inspector-collapsed .workspace-body{grid-template-columns:200px minmax(480px,1fr) 0!important}
 html .app-shell[data-module="NOVEL"] .workspace-inspector{width:312px!important;min-width:0;position:relative;display:flex;flex-direction:column;overflow:hidden}
+/* [HERMIA-FE-20261031 VERA-OBS] collapsed (aria-hidden/inert) NOVEL rail must not keep a 312px box: its buttons spilled past the viewport right edge at 1024. */
+html .app-shell.is-inspector-collapsed[data-module="NOVEL"] .workspace-inspector{display:none}
 html .app-shell .workspace-body:has(>.workspace-banner){grid-template-rows:auto minmax(0,1fr)}
 html .app-shell .workspace-body>.workspace-banner{grid-column:1/-1;grid-row:1;min-width:0}
 html .app-shell .workspace-body:has(>.workspace-banner)>aside,html .app-shell .workspace-body:has(>.workspace-banner)>section{grid-row:2}
