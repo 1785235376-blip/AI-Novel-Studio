@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { Button } from '../ui/primitives';
+import { useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 import { emptyContent, type Draft, type DraftContent } from './promptDraft';
 import type { PromptEntry } from './promptTypes';
 
@@ -22,6 +23,7 @@ type Props = {
   disabled: boolean; onCopy: (content: DraftContent) => void;
 };
 export function PromptIndependentDraft(props: Props) {
+  const z = useTz();
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const lifetime = useRef({ draft: props.draft, detail: props.detail, scopeKey: props.scopeKey,
@@ -37,7 +39,7 @@ export function PromptIndependentDraft(props: Props) {
   const captured = lifetime.current;
   const retired = !!props.detail && retiredDetails.current.has(props.detail);
   const content = retired ? null : independentPromptContent(props.draft, props.detail);
-  return <section aria-label="独立复用 Prompt">
+  return <section aria-label={z('独立复用 Prompt')}>
     <Button disabled={props.disabled || !content} onClick={() => {
       if (!alive.current || lifetime.current !== captured || captured.consumed || captured.disabled
           || (captured.detail && retiredDetails.current.has(captured.detail))) return;
@@ -45,8 +47,7 @@ export function PromptIndependentDraft(props: Props) {
       if (!fresh) return;
       captured.consumed = true;
       props.onCopy(fresh);
-    }}>复制已载入版本为新草稿</Button>
-    <p>仅复用已载入的完整正文和生成参数。角色、场景、镜头、参考资产绑定及审核状态不会继承。
-      先保存当前修改，再复制；新草稿需另行保存，不会修改原 Prompt。</p>
+    }}>{z('复制已载入版本为新草稿')}</Button>
+    <p>{z('仅复用已载入的完整正文和生成参数。角色、场景、镜头、参考资产绑定及审核状态不会继承。 先保存当前修改，再复制；新草稿需另行保存，不会修改原 Prompt。')}</p>
   </section>;
 }

@@ -2023,3 +2023,14 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - en 下错误提示仍是中文，例如 403 时显示"当前会话无权访问此内容。请重新核对身份和分支。"
 - StudioMediaExecutionPanel 仍是中文。
 - en 下正式区块里新建节点的默认标题"新生成图片"是中文。这是数据层的默认名，不属于本次修改范围。
+
+## [VERA-FE] 复审 252848a7..e14713dc（61d90991、e14713dc）
+
+**结论：PASS**（附 P3 观察项）
+
+- 61d90991：StudioMediaExecutionPanel.en.test.tsx 3/3 通过。把第 94 行 `t("重新读取配置")` 改回中文后，"renders without Chinese" 变红；已还原。Playwright 在 en 下的成功路径（providers/timelines/workflow）中，面板可见文本里没有中文字符。zh 文案完整，未退化。403 在项目级就被拦截，页面显示「当前会话无权访问此项目」，面板不挂载。这条拦截文案在 en 下仍是中文，属于其他组件，记为观察项。notice（回执不完整）在 zh 下能出现；en 下这次没有复现出来，未单独验证。
+- e14713dc：defaultNodeTitle.test.ts 在 61d90991 上变红（模块不存在），在 e14713dc 上通过。把 displayNodeTitle 改成恒等返回后，en 用例变红。拦截 POST /studio/canvas-views，两种语言下 image_node_intent.title 与 definition.title 都是「新生成图片」。en 显示 "New generate image"，zh 显示「新生成图片」。localStorage 里保存的仍是原值，没有回写路径（RebuildCanvas 无重命名 UI，displayNodeTitle 只在渲染时调用）。
+- P3：CanvasImageNodeTask 用的是 getLocale() 而不是 hook，切换语言后可能不会重渲染。对不以「新」开头的用户标题也会调用 translateZh，如果正好命中词典，显示时会被翻译。
+- 观察项：RebuildCanvas「所选图片节点参数」在 en 下仍有中文；Prompt 工作台在 en 下是中文。
+- 门禁（adj = raw − ISI + 8，基线 297）：run1 295/10/293，run2 296/8/296，run3 293/8/293。最好一轮 293 ≤ 297，通过。run2 有 3 个非基线失败（director.additive、InteractiveStoryPanel.removal、TaskCenter receiptCompanion），单独重跑后均通过，判为 flaky。run1 与变异时段重叠，但 panel/defaultNodeTitle 用例在 run1 中没有失败，未受污染。
+- 证据：/workspace/hr/vera-compare/align-e14713dc/

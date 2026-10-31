@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
-import { getLocale, useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3c]
+import { useLocale, useTz } from '../i18n'; // [HERMIA-FE-20261031 VERA-P3c]
 import { displayNodeTitle } from '../i18n/defaultNodeTitle'; // [HERMIA-FE-20261031 VERA-EN]
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import { assertCanvasImageNodeJob, assertSavedImageNode, canonicalImageNode, checkedCanvasImageNodeBinding, imageNodeApprovedPin,
@@ -27,6 +27,7 @@ const scopeFor = (owner: StudioGraphDraftOwner) => owner.mode === 'local'
 /** A one-node intent; it never serializes the browser graph or owns production state. */
 export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
   const t = useTz();
+  const locale = useLocale(); // [HERMIA-FE-20261031 VERA-P3]
   const [createHint, setCreateHint] = useState<CanvasImageNodeCreateHintState>(() => readCanvasImageNodeCreateHint(props.owner, props.node.id));
   const hintRef=useRef(createHint);hintRef.current=createHint;
   const [queueHint,setQueueHint]=useState<CanvasImageNodeQueueHintState>(()=>readCanvasImageNodeQueueHint(props.owner,props.node.id));
@@ -317,7 +318,7 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
   const approved = job?.status === 'APPROVED';
   return <section aria-label={t('正式图片节点与保存位置')}>
     <Panel title={t('正式图片节点任务')} actions={props.onClose && <Button onClick={props.onClose}>{t('关闭正式节点任务')}</Button>}>
-      <p>{t('节点')} {props.node.id} · {displayNodeTitle(getLocale(), props.node.title)} · {t('坐标')} ({props.node.x}, {props.node.y}){t('。只为此节点创建原生产任务；提示词、连线和其他节点仍是浏览器草稿。')}</p>
+      <p>{t('节点')} {props.node.id} · {displayNodeTitle(locale, props.node.title)} · {t('坐标')} ({props.node.x}, {props.node.y}){t('。只为此节点创建原生产任务；提示词、连线和其他节点仍是浏览器草稿。')}</p>
       <p>{t('先显式保存空白作品位置，再分别预览、入队、执行和人工审核。审核成功后还需单独确认采用；不兼容的旧队列结果不会变成正式来源。')}</p>
       {!base && <Button disabled={!current() || !props.canMutate || busy || uncertain} onClick={() => void prepare()}>{t('为此节点保存正式空白位置')}</Button>}
       {createHint.state==='present'&&!base&&queueHint.state==='absent'&&<Button disabled={!current()||busy||childDirty} onClick={()=>void resolveCreate()}>{t('重新核对此次空白位置创建')}</Button>}
