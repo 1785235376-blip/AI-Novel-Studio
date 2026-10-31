@@ -24,3 +24,4 @@
 .cfy-insp label small{color:var(--cv-ink-muted);font-size:10px}
 .cfy-insp select{grid-column:1/-1;font-size:11.5px;padding:3px;background:var(--cv-input);color:var(--cv-ink);border:1px solid var(--stg-line-strong);border-radius:4px}
 .cfy-insp__note{color:var(--cv-ink-muted);font-size:10.5px}
+.cfy .cfy-edge--draft{pointer-events:none}

@@ -98,7 +98,8 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   };
   const onUp = (e: RPE) => {
     if (link) {
-      const inEl = (e.target as Element).closest?.('[data-in]');
+      const hit = typeof document.elementFromPoint === 'function' ? document.elementFromPoint(e.clientX, e.clientY) : null;
+      const inEl = hit?.closest('[data-in]') ?? (e.target as Element).closest?.('[data-in]');
       if (inEl) { const [id, s] = inEl.getAttribute('data-in')!.split(':'); tryConnect(link.from, link.slot, id, Number(s)); }
       setLink(null);
     }
@@ -150,10 +151,12 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
                   const linked = g.edges.some(e => e.b === n.id && e.bs === i);
                   const ok = link ? typesCompatible(link.type, p.type) && link.from !== n.id : undefined;
                   return <g key={`i${i}`} data-in={`${n.id}:${i}`} data-port-type={p.type} data-compatible={ok === undefined ? undefined : String(ok)} className="cfy-port">
+                    <rect className="hit" x={-9} y={portY(i) - 9} width={W / 2 + 9} height={18} fill="transparent" />
                     <circle cx={0} cy={portY(i)} r={6} fill={linked ? portColor(p.type) : 'var(--cv-node)'} stroke={portColor(p.type)} strokeWidth={2} />
                     <text className="pl" x={10} y={portY(i) + 4}>{p.name}{p.optional ? '?' : ''}</text></g>;
                 })}
                 {d?.outputs.map((p, i) => <g key={`o${i}`} data-out={`${n.id}:${i}`} data-port-type={p.type} className="cfy-port">
+                  <rect className="hit" x={W / 2} y={portY(i) - 9} width={W / 2 + 9} height={18} fill="transparent" />
                   <circle cx={W} cy={portY(i)} r={6} fill={portColor(p.type)} />
                   <text className="pl pr" x={W - 10} y={portY(i) + 4} textAnchor="end">{p.name}</text></g>)}
                 {d?.widgets.length ? <text className="sub" x={12} y={h - 8}>{L(`${d.widgets.length} 个参数（草稿，不执行）`, `${d.widgets.length} params (draft, not run)`)}</text> : null}
