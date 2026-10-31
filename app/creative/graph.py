@@ -222,6 +222,20 @@ class CreativeGraphService:
         current()
         return result
 
+    def comfy_node_mapping(self, nid, scope, actor, guard=lambda: None, *, provider_id=None, mapping_id=None):
+        """Validate closed Studio recipe mappings against read-only ComfyUI node metadata."""
+        _, current = self._context(nid, scope, actor, guard)
+        from .comfy_node_library import ComfyNodeLibraryError, load_comfyui_node_library
+        from .comfy_node_mapping import ComfyNodeMappingError, validate_node_mappings
+        try:
+            library = load_comfyui_node_library(provider_id=provider_id, guard=current)
+            result = validate_node_mappings(library, mapping_id=mapping_id)
+        except (ComfyNodeLibraryError, ComfyNodeMappingError):
+            current()
+            raise
+        current()
+        return result
+
     def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False, include_local_subgraph=False, include_local_conditions=False):
         _, current = self._context(nid, scope, actor, guard)
         if include_local_conditions:

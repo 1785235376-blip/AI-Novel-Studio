@@ -349,5 +349,7 @@ def load_comfyui_node_library(*, provider_id: str | None = None, guard=lambda: N
             "cache": "NONE_LIVE_READ_ONLY",
         },
     })
+    from .comfy_node_mapping import annotate_node_library
+    result = annotate_node_library(result)
     guard()
     return result

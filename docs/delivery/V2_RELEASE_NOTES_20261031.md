@@ -63,3 +63,6 @@
 ### 新增：ComfyUI 节点库只读桥接（后端）
 只读端点 `GET /api/projects/{nid}/studio/graphs/comfyui-node-library` 从已保存的 ComfyUI provider 导入 `/object_info` 节点元数据，形成 `studio-comfyui-node-library/1` 描述与 `studio-comfyui-node-compatibility/1` 兼容标记；不注册可执行节点、不执行 ComfyUI，执行映射标为 `NOT_IMPLEMENTED`。详见 `docs/delivery/COMFYUI_NODE_LIBRARY_BRIDGE_20261031.md`。
 
+### 补充：ComfyUI 节点映射校验（后端）
+新增只读端点 `GET /api/projects/{nid}/studio/graphs/comfyui-node-mapping`，按封闭配方表校验已配置 ComfyUI provider 是否具备现有 Studio `image_generate`/`image_upscale` 适配器所需节点类；返回 `COMPATIBLE`/`MISSING_CLASSES`，并给节点库节点附加 `studio_mappings`。不执行任意 ComfyUI 图（`NOT_IMPLEMENTED`）。
+
