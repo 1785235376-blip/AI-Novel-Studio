@@ -2085,3 +2085,38 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 | 3 | 295 | 10 | 293 | 0 |
 
 证据：/workspace/hr/vera-compare/align-5632fe65/（mut.txt, unit-green.txt, sdk-unchanged.txt, ttl-tests.txt, e4.json, ax.json, shots/e4-*, full1-3.json, iso-*.txt, PROGRESS.md）
+
+## [VERA-FE] 独立复审：5632fe65..63fec627（2026-10-31）
+
+**结论：通过，无 P0/P1/P2。** 剩下两处 P3：一是标题被截断时，读屏仍会「完整标题 + 截断文字」部分重复；二是 en 下还有两个属性是中文，属于已知项。
+
+- **e2ead24c / 83c3934b / bfdd6379 / 3cea5d03：四个组件的缩放按钮**
+  - en 下 aria-label 和可见文字都是英文，没有 Upscale；zh 不变。
+  - 变异 Z1–Z4：把各组件的放大按钮改回中文字面量，每个都变红。
+  - 变异 Z0：四个组件的源码整体回到 5632fe65，4 个 zoomEn 测试都变红，其中包括 TimelineRulerPanel。
+- **b63f330f：截断时才加 `<title>`**
+  - 用 Chrome 无障碍树实测 zh 和 en，各测默认标题、短标题、长标题。
+  - 未截断（zh「新生成图片」「雾港」，en「Fog port」）：没有 `<title>`，无障碍名称为空，只读可见文字，不重复。
+  - 截断（zh 长标题，en「New generated image」和长标题）：有 `<title>`。无障碍树里是 generic 节点，名称为完整标题，子节点为「◈ 截断…」，所以仍会部分读两遍，P3 残留。建议给可见文字加 aria-hidden，只用 title 作名称。
+  - 变异 T1（回到始终带 title）和 T2（截断分支去掉 title）都变红。
+- **26311cf5：m3s1 断言**
+  - 变异 M1：可见文字只留 2 个字，`<title>` 保留全称。
+  - 结果：新断言变红，旧版 m3s1（5632fe65 那份）7/7 全绿，证明旧断言会漏掉，新断言能拦住。
+- **63fec627：en 主导航和界面模式**
+  - 新的 navEn 测试：变异 N1（「创作开始」改回字面量）和 N2（界面模式按钮去掉 z()）都变红。
+  - 浏览器 1024 和 1440：en 下主导航和界面模式没有汉字（语言按钮里自称「中 / 中文」除外）。axe 0 违规。溢出 0（唯一一条是 H1.sr-only 误报）。zh 不变。
+  - 已知 P3：en 下 AssetInspector 的 aria-label「资产检查面板」和 PreferencesForm 的 title「公开版本不提供此功能」仍是中文，不在本次范围内。
+- **顶栏**：宽度 1024/1280/1440/1600/1720 × 普通/专业 × zh/en × NSFW 开/关，共 40 种组合。
+  - 设置按钮都在视口内、能点中、点开有菜单。
+  - 顶栏和页面都没有溢出，nsfw 标记都可见，顶栏 axe 0 违规。
+  - 新手引导开着时遮罩会盖住设置按钮，这是预期行为。
+- **门禁**：3 轮的非基线新增都是 0。
+  - src/creative 的失败数为 130 / 132 / 130，全部出现在 5632fe65 三轮的失败并集里，新增 0。run2 多出的 2 条属于 ISI 的波动。
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 295 | 10 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+证据：/workspace/hr/vera-compare/align-63fec627/（PROGRESS.md, mut.txt, unit-green.txt, ax2.json, top.json, top-summary.txt, e4.json, e4-summary.txt, creative-compare.txt, full1-3.json, shots/）
