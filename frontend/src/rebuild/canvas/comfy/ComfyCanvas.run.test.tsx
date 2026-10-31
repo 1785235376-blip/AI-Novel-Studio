@@ -17,7 +17,8 @@ const run = {
   contract: 'studio-lower-canvas-run/1', id: 'lcr_run1', kind: 'image', status: 'COMPLETED',
   draft_version: 2, quote_digest: quote.quote_digest, provider_id: 'comfy', node_count: 1,
   edge_count: 0, output_nodes: ['remote-save'],
-  assets: [{id: 'asset-out-1', version: 1, filename: 'out.png', media_type: 'image/png', sha256: 'c'.repeat(64), size: 4}],
+  assets: [{id: 'asset-out-1', kind: 'image', version: 1, filename: 'out.png', media_type: 'image/png', sha256: 'c'.repeat(64), size: 4},
+    {id: 'asset-video-1', kind: 'video', version: 1, filename: 'out.mp4', media_type: 'video/mp4', sha256: 'd'.repeat(64), size: 4}],
   error: null, created_at: '2026-10-31T00:00:00+00:00', updated_at: '2026-10-31T00:00:00+00:00',
 };
 
@@ -54,6 +55,7 @@ it('requires a quote confirmation before dispatching and shows the completed ass
     if (url.endsWith('/studio/lower-canvas/image/runs/preflight') && method === 'POST') return json(quote);
     if (url.endsWith('/studio/lower-canvas/image/runs') && method === 'POST') return json(run);
     if (url.endsWith('/studio/assets/asset-out-1/download')) return blobResponse(new Blob([new Uint8Array([1, 2, 3, 4])], {type: 'image/png'}));
+    if (url.endsWith('/studio/assets/asset-video-1/download')) return blobResponse(new Blob([new Uint8Array([5, 6, 7, 8])], {type: 'video/mp4'}));
     return json({detail: {code: 'NOT_FOUND'}}, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -87,6 +89,8 @@ it('requires a quote confirmation before dispatching and shows the completed ass
   expect(result.querySelector('[data-run-asset="asset-out-1"]')).toBeTruthy();
   expect(result.textContent).toContain('out.png');
   await waitFor(() => expect(document.querySelector('[data-run-thumb]')).toBeTruthy());
+  await waitFor(() => expect(document.querySelector('[data-run-thumb-video]')).toBeTruthy());
+  expect(document.querySelector('[data-run-asset="asset-video-1"] [data-run-adopt]')).toBeNull();
   fireEvent.click(document.querySelector('[data-run-adopt]')!);
   const upper = JSON.parse(localStorage.getItem(canvasStorageKey('image', 'n1'))!);
   expect(upper.nodes[0]).toMatchObject({t: 'image_reference', assetId: 'asset-out-1',

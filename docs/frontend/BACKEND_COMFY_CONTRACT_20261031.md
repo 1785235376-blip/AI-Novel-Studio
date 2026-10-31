@@ -11,7 +11,7 @@
 1. `GET /api/comfy/object_info` → 原样透传 ComfyUI `/object_info`（可按白名单过滤节点），带 `source_version`、`fetched_at`。前端已有 `parseObjectInfo(info, 'imported')` + `mergeImported()`，可直接合并（PoemSeed 自有节点不会被覆盖）。
    - 错误：ComfyUI 未连接 → 503 `{code:'comfy_unavailable'}`；前端保持内置节点库。
 2. `GET/PUT /api/projects/{id}/lower-canvas/{kind}`（kind=image|video），按 user/project/project_instance 作用域，乐观并发 `version`；body = 前端 `CfGraph {nodes:[{id,t,x,y,title}], edges:[{id,a,as,b,bs}]}`。
-3. `POST .../runs/preflight` + `POST .../runs` + `GET .../runs/{run_id}`（后端已实现）→ preflight 生成 quote；dispatch 校验 quote 后同步执行本地 ComfyUI（/prompt → /history → /view），结果写入资产库，run 记录可读。前端执行/确认 UI 已接入：下画布「运行…」→ 显示零计费报价 → 确认运行 → 完成/失败面板；结果资产可读取缩略图，并可「接入上画布」为带 assetId/SHA/version 的 image_reference 快照；不自动重试、不支持云端 ComfyUI。
+3. `POST .../runs/preflight` + `POST .../runs` + `GET .../runs/{run_id}`（后端已实现）→ preflight 生成 quote；dispatch 校验 quote 后同步执行本地 ComfyUI（/prompt → /history → /view），结果写入资产库，run 记录可读。前端执行/确认 UI 已接入：下画布「运行…」→ 显示零计费报价 → 确认运行 → 完成/失败面板；结果资产可读取缩略图（图片）或视频预览（MP4/WebM/MOV），图片可「接入上画布」为带 assetId/SHA/version 的 image_reference 快照；视频暂不接入上画布；不自动重试、不支持云端 ComfyUI。
 4. 产物图片存储：结果写入资产库（复用现有 assets），返回 asset_id，前端用「接入上画布」作为参考图快照。
 
 ## 数据约定

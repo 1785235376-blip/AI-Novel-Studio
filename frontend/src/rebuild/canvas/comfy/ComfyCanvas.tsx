@@ -413,9 +413,13 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
         <p>{runMessage}</p>
         {runResult?.assets.length ? <div className="cfy-runassets" data-run-assets>
           {runResult.assets.slice(0, 8).map(asset => <div key={asset.id} className="cfy-runasset" data-run-asset={asset.id}>
-            {runThumbs[asset.id] ? <img data-run-thumb src={runThumbs[asset.id]} alt={asset.filename || asset.id} /> : <span className="cfy-runasset__pending" aria-hidden="true" />}
-            <small>{asset.filename || asset.id}</small>
-            {onAdoptAsset ? <button type="button" data-run-adopt onClick={() => onAdoptAsset(asset)}>{L('接入上画布', 'Adopt to upper')}</button> : null}
+            {runThumbs[asset.id]
+              ? (asset.kind === 'video'
+                ? <video data-run-thumb-video src={runThumbs[asset.id]} controls muted playsInline aria-label={asset.filename || asset.id} />
+                : <img data-run-thumb src={runThumbs[asset.id]} alt={asset.filename || asset.id} />)
+              : <span className="cfy-runasset__pending" aria-hidden="true" />}
+            <small>{asset.kind === 'video' ? L('视频', 'Video') + ' · ' : ''}{asset.filename || asset.id}</small>
+            {onAdoptAsset && asset.kind !== 'video' ? <button type="button" data-run-adopt onClick={() => onAdoptAsset(asset)}>{L('接入上画布', 'Adopt to upper')}</button> : null}
           </div>)}
         </div> : null}
         <div className="cfy-runpanel__actions"><button type="button" onClick={closeRun}>{L('关闭', 'Close')}</button></div>

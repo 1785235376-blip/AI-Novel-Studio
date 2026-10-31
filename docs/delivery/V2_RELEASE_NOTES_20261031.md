@@ -90,3 +90,6 @@
 ### ComfyUI 下画布：loopback HTTP 端到端验收
 新增 mounted app + 127.0.0.1 fake ComfyUI HTTP server 集成测试：object_info→草稿→preflight→run dispatch→asset download 全链路通过。同步修复 middleare 准入（lower-canvas/runs、object_info、assets 列表）、run 资产 project binding、前端 object_info 携带 session/branch headers。测试合并组 37 passed；真实 ComfyUI/GPU 仍 NOT_RUN。
 
+### ComfyUI 下画布：视频结果链
+`/view` MP4/WebM/MOV 现可识别为视频结果；图片≤16 MiB、视频≤64 MiB、总≤256 MiB；视频经 ffmpeg 真实解码后以 kind=video 写资产库，run 返回 extension/duration；前端显示视频预览，视频暂不支持接入上画布。HTTP E2E 用真实 ffmpeg 生成的 MP4 验证。
+

@@ -7,9 +7,12 @@ session authority, the configured-provider transport, synchronous /prompt →
 from __future__ import annotations
 
 import json
+import subprocess
+import tempfile
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -31,7 +34,8 @@ def png_bytes() -> bytes:
 
 
 class FakeComfyHandler(BaseHTTPRequestHandler):
-    png = png_bytes()
+    media_bytes = png_bytes()
+    media_type = "image/png"
     prompts: list[dict] = []
 
     def log_message(self, *_args):
@@ -53,10 +57,10 @@ class FakeComfyHandler(BaseHTTPRequestHandler):
                 "outputs": {"node1": {"images": [{"filename": "mock.png", "subfolder": "", "type": "output"}]}}}})
         if self.path.startswith("/view"):
             self.send_response(200)
-            self.send_header("Content-Type", "image/png")
-            self.send_header("Content-Length", str(len(self.png)))
+            self.send_header("Content-Type", self.media_type)
+            self.send_header("Content-Length", str(len(self.media_bytes)))
             self.end_headers()
-            self.wfile.write(self.png)
+            self.wfile.write(self.media_bytes)
             return
         self._json({"error": "not found"}, 404)
 
@@ -76,6 +80,36 @@ class FakeComfyHandler(BaseHTTPRequestHandler):
 def fake_comfy():
     FakeComfyHandler.prompts = []
     server = ThreadingHTTPServer(("127.0.0.1", 0), FakeComfyHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_address[1]}"
+    finally:
+        server.shutdown(); server.server_close(); thread.join(timeout=5)
+
+
+def mp4_bytes() -> bytes:
+    import shutil
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        pytest.skip("ffmpeg not available")
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "result.mp4"
+        completed = subprocess.run([ffmpeg, "-y", "-f", "lavfi", "-i", "color=c=black:s=2x2:d=0.2",
+            "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(path)],
+            capture_output=True, timeout=60)
+        if completed.returncode != 0 or not path.exists():
+            pytest.skip("ffmpeg could not encode a synthetic mp4")
+        return path.read_bytes()
+
+
+@pytest.fixture
+def fake_comfy_video():
+    class VideoHandler(FakeComfyHandler):
+        media_bytes = mp4_bytes()
+        media_type = "video/mp4"
+    FakeComfyHandler.prompts = []
+    server = ThreadingHTTPServer(("127.0.0.1", 0), VideoHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
@@ -128,7 +162,7 @@ def test_lower_canvas_run_over_http_with_real_asset_writeback(rig, monkeypatch, 
     asset_id = run["assets"][0]["id"]
     download = rig.client.get(f"/api/projects/{rig.nid}/studio/assets/{asset_id}/download", headers=headers)
     assert download.status_code == 200, download.text
-    assert download.content == FakeComfyHandler.png
+    assert download.content == FakeComfyHandler.media_bytes
     assets = rig.client.get(f"/api/projects/{rig.nid}/studio/assets", headers=headers)
     assert assets.status_code == 200, assets.text
     assert any(row["id"] == asset_id for row in assets.json()["items"])
@@ -144,3 +178,33 @@ def test_lower_canvas_and_node_library_routes_are_admitted():
     assert is_independent_studio_route("POST", root + "/lower-canvas/image/runs")
     assert is_independent_studio_route("GET", root + "/assets")
     assert is_independent_studio_route("GET", root + "/assets/aid/download")
+
+
+def test_lower_canvas_video_result_is_written_and_downloadable(rig, monkeypatch, tmp_path, fake_comfy_video):
+    from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+
+    scope, headers = shared_scope(rig)
+    grant_scope = AuthorizationScope(ScopeKind.PROJECT, "query-workspace", rig.nid)
+    rig.grants.assign_permission(PermissionAssignment("e2e-write-video", "reader", "domain.write",
+        ModalityDomain.NOVEL, grant_scope, "fixture"))
+    path = tmp_path / "asset-providers.json"
+    path.write_text(json.dumps({"comfy": {"endpoint": fake_comfy_video, "api_style": "comfyui",
+        "enabled": True, "local": True, "default_model": "", "requires_credential": False}}), encoding="utf-8")
+    monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(path))
+    base = f"/api/projects/{rig.nid}/studio/lower-canvas/image"
+    draft = {"nodes": [{"id": "node1", "t": "MockOutput", "x": 0, "y": 0, "title": "output"}], "edges": []}
+    assert rig.client.put(base, headers=headers, json={"expected_version": 0, "graph": draft}).status_code == 200
+    quote = rig.client.post(f"{base}/runs/preflight", headers=headers, json={"expected_version": 1})
+    assert quote.status_code == 200, quote.text
+    quote = quote.json()
+    run = rig.client.post(f"{base}/runs", headers=headers, json={"expected_version": 1,
+        "quote_id": quote["quote_id"], "quote_digest": quote["quote_digest"]})
+    assert run.status_code == 200, run.text
+    run = run.json()
+    assert run["status"] == "COMPLETED" and run["error"] is None
+    assert run["assets"][0]["kind"] == "video"
+    asset_id = run["assets"][0]["id"]
+    download = rig.client.get(f"/api/projects/{rig.nid}/studio/assets/{asset_id}/download", headers=headers)
+    assert download.status_code == 200, download.text
+    assert download.headers["content-type"].startswith("video/")
+    assert len(download.content) > 100

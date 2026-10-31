@@ -90,7 +90,8 @@ export type RunQuote = {
   price: {currency: string; amount_micros: number; reason: string};
   expires_at: string; confirmation_required: boolean;
 };
-export type RunAsset = {id: string; filename?: string; media_type?: string; sha256?: string; size?: number; width?: number; height?: number; version?: number};
+export type RunAsset = {id: string; kind?: 'image' | 'video'; filename?: string; media_type?: string; sha256?: string;
+  size?: number; width?: number; height?: number; version?: number; extension?: string; duration_seconds?: number};
 export type LowerCanvasRun = {
   id: string; contract: string; kind: 'image' | 'video'; status: 'RUNNING' | 'COMPLETED' | 'FAILED';
   draft_version: number; quote_digest: string; provider_id: string; node_count: number; edge_count: number;
@@ -142,7 +143,7 @@ export async function downloadAssetBlob(remote: ComfyRemoteContext, assetId: str
     {method: 'GET', headers: headers(remote), cache: 'no-store'});
   if (!response.ok) throw new Error('COMFY_ASSET_DOWNLOAD_' + response.status);
   const blob = await response.blob();
-  if (!blob.size || blob.size > 16 * 1024 * 1024) throw new Error('COMFY_ASSET_SIZE_INVALID');
-  if (!/^image\/(png|jpeg|webp)$/.test(blob.type)) throw new Error('COMFY_ASSET_MEDIA_INVALID');
+  if (!blob.size || blob.size > 64 * 1024 * 1024) throw new Error('COMFY_ASSET_SIZE_INVALID');
+  if (!/^(?:image\/(?:png|jpeg|webp)|video\/(?:mp4|webm|quicktime))$/.test(blob.type)) throw new Error('COMFY_ASSET_MEDIA_INVALID');
   return blob;
 }
