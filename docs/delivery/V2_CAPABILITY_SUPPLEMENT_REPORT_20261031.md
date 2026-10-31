@@ -5,7 +5,7 @@
 ## 1. 基线
 
 - V2.0.0 主体合并：PR #51（`46ef2e12`，后端能力/安全硬化）、#52（`2d14f8c0`，全分支后端收尾）、#53（`d11c890c`，前后端对齐）、#54（`35253de6`，版本号 2.0.0）。
-- 能力补充开始 main：`46ef2e12` / 报告生成时 main：`94abff88b66d37cd9ac164b9f3ee902145699cc9`。
+- 能力补充开始 main：`46ef2e12` / 报告生成时 main：`94abff88b66d37cd9ac164b9f3ee902145699cc9` / 最终验证于 main `12f03d9aed0ea23d829f2d44a00d1be71aec7a86`（报告合并前）。
 - 所有补充批次经普通工作分支 + PR merge commit 合入 main，未强推/未删分支/未发布。
 
 ## 2. 补充批次
@@ -33,6 +33,14 @@
 - **成本**：默认 UNKNOWN；provider adapter 可记录 priced/usage-only attestation，读取为 ATTESTED/USAGE_ATTESTED；真实 adapter/价格来源仍 NOT_INTEGRATED。
 - **K1**：全能力 registry + 容量覆盖矩阵可机器读取；仍是状态读模型，不代表验收。
 
+## 3.1 最终验证（2026-10-31）
+
+在 main `12f03d9a` 上重跑合并后能力组：
+
+- 命令：`python -m pytest tests/test_v2_capability_registry.py test_studio_runtime_capabilities.py test_provider_cost_attestation.py test_project_capacity_scope_documents.py test_project_capacity_create_coverage.py test_audio_history_capacity_accounting.py test_project_capacity_ledger.py test_project_capacity_diagnostics.py test_project_capacity_attribution.py test_project_capacity_admin_api.py test_graph_multinode_media_chain.py test_studio_timeline_audio_profiles.py test_studio_video_timeline_local_render.py -q`
+- 结果：**96 passed**（Windows 11 / Python 3.11 / File 合成；无 skip/fail）。
+- 状态：本组不覆盖真实 PG/浏览器/模型/打包桌面；相关环境仍 NOT_RUN。
+
 ## 4. 仍未完成 / 阻塞 / 产品决定
 
 - **NOT_RUN**：真实 PostgreSQL（迁移 018–020、备份恢复、scope JSONB、崩溃窗口）、真实浏览器 E2E、真实模型/GPU/付费 Provider、Windows 打包桌面、hosted CI、外部 NLE、POSIX。
@@ -44,6 +52,8 @@
 - **历史产品分支** `#36`–`#49`、`#26` 未合入 main。
 
 ## 5. 验证与证据
+
+- 最终合并后能力组：96 passed（`Validation\backend-finalize-20261031\v2-capability-final-verify.log`）。
 
 - 各批次测试日志位于本地 `D:\PoemSeed\Validation\backend-finalize-20261031\`（如 `v2-*-*.log`）；仓库内证据文档见 `docs/delivery/`。
 - 关键组合：容量/registry/runtime 94 passed；cost 45 passed；graph 19 passed；video/timeline 14 passed；production/cost 80 passed/1 xfailed。
