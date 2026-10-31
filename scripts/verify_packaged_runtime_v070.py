@@ -121,7 +121,7 @@ def main() -> int:
     forbidden = ("bootstrap_secret", "session_token", "ownership_nonce", "DEEPSEEK_KEY_SENTINEL")
     result["secret_exposure"] = sum(serialized.count(value) for value in forbidden)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
-    return 0 if exit_code == 0 and result["version"] == "0.7.0" and frontend_ready and chinese_roundtrip and public_listeners == 0 else 1
+    return 0 if exit_code == 0 and result["version"] == "2.0.0" and frontend_ready and chinese_roundtrip and public_listeners == 0 else 1
 
 
 if __name__ == "__main__":

@@ -42,7 +42,7 @@ def layout(tmp_path: Path) -> Path:
         (root / "PostgreSQL/bin" / name).write_bytes(b"tool")
     (root / "release").mkdir()
     (root / "release/version.json").write_text(
-        json.dumps({"product":"AI-Novel-Studio","version":"0.7.0","channel":"beta","display_version":"0.7.0 Beta"}),
+        json.dumps({"product":"AI-Novel-Studio","version":"2.0.0","channel":"stable","display_version":"V2.0"}),
         encoding="utf-8",
     )
     return root

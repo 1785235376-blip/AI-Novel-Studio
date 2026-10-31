@@ -32,8 +32,8 @@ def _copy_version_contract(tmp_path: Path) -> Path:
 
 def test_release_version_has_one_authoritative_source_and_consumers_match():
     release = load_release_version(ROOT / "release" / "version.json")
-    assert release.version == "0.7.0"
-    assert release.display_version == "0.7.0 Beta"
+    assert release.version == "2.0.0"
+    assert release.display_version == "V2.0"
     assert set(validate_repository_versions(ROOT)) == {
         "backend", "backend_module", "frontend", "environment"
     }
@@ -58,7 +58,7 @@ def test_backend_and_documentation_mismatches_fail_explicitly(tmp_path: Path):
     backend = _copy_version_contract(tmp_path / "backend")
     pyproject = (backend / "pyproject.toml").read_text(encoding="utf-8")
     (backend / "pyproject.toml").write_text(
-        pyproject.replace('version = "0.7.0"', 'version = "0.6.9"'), encoding="utf-8"
+        pyproject.replace('version = "2.0.0"', 'version = "0.6.9"'), encoding="utf-8"
     )
     with pytest.raises(VersionMismatch, match="backend"):
         validate_repository_versions(backend)

@@ -170,7 +170,7 @@ def main() -> int:
             raise RuntimeError("chapter version persistence mismatch")
 
         report = {
-            "runtime": {"backend_origin": origin, "backend_port": backend_port, "database_port": database_port, "application_version": "0.7.0"},
+            "runtime": {"backend_origin": origin, "backend_port": backend_port, "database_port": database_port, "application_version": "2.0.0"},
             "test_ids": {"workspace_id": workspace_id, "project_id": project_id, "chapter_id": chapter_id},
             "database": {
                 "project": {"id": str(project_row[0]), "slug": project_row[1], "title": project_row[2], "updated_at": project_row[3].isoformat()},
