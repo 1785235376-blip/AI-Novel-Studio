@@ -164,7 +164,7 @@ def build_capability_registry(*, settings) -> CapabilityRegistry:
             gate="ENABLE_PROJECT_CAPACITY_ADMISSION",
             evidence=("tests/test_project_capacity_ledger.py", "tests/test_project_capacity_create_coverage.py",
                       "tests/test_project_capacity_admission_manual_import.py"),
-            limits=("non_asset_project_writers:NOT_CONNECTED", "startup_reconcile_gate:NOT_DONE",
+            limits=("non_asset_project_writers:NOT_CONNECTED", "startup_reconcile_gate:IMPLEMENTED_FOR_HISTORY_WRITES_ONLY",
                     "approval_revocation_races:NOT_VERIFIED", "real_postgres:NOT_RUN")),
         CapabilityItem(id="project_identity_tombstones", title="项目 incarnation/删除墓碑",
             status="IMPLEMENTED_VERIFIED_SYNTHETIC", verification="FILE_AND_HTTP_SYNTHETIC",
