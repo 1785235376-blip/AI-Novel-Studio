@@ -2034,3 +2034,20 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - 观察项：RebuildCanvas「所选图片节点参数」在 en 下仍有中文；Prompt 工作台在 en 下是中文。
 - 门禁（adj = raw − ISI + 8，基线 297）：run1 295/10/293，run2 296/8/296，run3 293/8/293。最好一轮 293 ≤ 297，通过。run2 有 3 个非基线失败（director.additive、InteractiveStoryPanel.removal、TaskCenter receiptCompanion），单独重跑后均通过，判为 flaky。run1 与变异时段重叠，但 panel/defaultNodeTitle 用例在 run1 中没有失败，未受污染。
 - 证据：/workspace/hr/vera-compare/align-e14713dc/
+
+## [VERA-FE] 复审 e14713dc..a83df9ce（06de27e7、e0b4094a、26451eda、a83df9ce）
+
+**结论：PASS（有条件）**：未发现阻断问题。下面 P2 两项建议下一轮修。
+
+- 06de27e7：en 下显示 "New generated image" / "New generated video"。只翻译「新+NODE_TYPES 标签」；「风格」「生成图片」「新灯塔」这类用户标题原样显示。存储和请求体都没有经过翻译，仍是中文（沿用上轮拦截结论，本提交只改显示函数）。变异：让用户标题走 translateZh，或把 'generated image' 改回 'generate image'，相应用例都会变红。
+- e0b4094a：Playwright 运行时用语言开关切换（zh→en、en→zh），正式节点说明行和 SVG 节点标题都会即时重渲染。变异：渲染时改回 getLocale()，源码检查用例变红；但行为用例仍是绿的，因为组件仍调用 useLocale() 触发重渲染。也就是说只有源码检查能守住这一点。
+- 26451eda / a83df9ce：en 下右键菜单、端口、状态行、所选节点参数面板和 Prompt 工作台在 1024 和 1440 两个宽度下都没有汉字，没有检测到溢出，axe（wcag2a/aa）0 违规。zh 文案完整，没有退化。
+  - P2：`.rcv-label` 原样渲染调用方传入的 label（「图片画布」「视频画布」「创作画布」「执行画布」），所以 en 下画布左上角仍显示中文。
+  - P2：Prompt 接口返回 403 时，en 下错误提示仍是「当前会话无权访问此内容。请重新核对身份和分支。」。该文案来自 creative/client.ts 和 studioClient.ts，没有翻译。PromptWorkspace 的 denied EmptyState 这次没有通过 Playwright 走到。
+  - P3：IndependentStudioWorkspace:955 的 detail「私人预览已关闭。…」和 rough.734 文本不同，en 下仍会显示中文（代码检查结论）。
+  - P3：缩放「＋」按钮的 aria-label 在 en 下是 "Upscale"：「放大」和节点类型名撞车了，读屏软件会读错。
+  - P3：SVG 节点标题在 en 下被截成 "New generate…"，长英文读不全。
+- pat.rough 改名：全仓没有遗留的、带 {var} 却未加 pat. 前缀的 rough 键。20 条 pat.rough 用数字代入后，en 全部命中模板且无汉字；zh 原样不变。组件里的 zh 拼接结果和改动前一致。en 下数字按千分位格式化（例如 65,536），属于预期。
+- PromptWorkspace：在 e14713dc 和 a83df9ce 上，"edits the body without saving" 都失败，说明这个用例在改动前就已失败。loadingOwner 和 CanvasCandidateReview.independent 两个版本各单独跑 10 次，失败都是 0/10，也没有出现在门禁失败里，判断既不是回归也不是 flaky。
+- 门禁（adj = raw − ISI + 8，基线 297）：run1 293/8/293，run2 295/10/293，run3 294/9/293。最好一轮 293 ≤ 297，按规则 (a) 通过；三轮都没有非基线新增失败。门禁在全部变异结束后才启动，两者没有重叠。
+- 证据：/workspace/hr/vera-compare/align-a83df9ce/
