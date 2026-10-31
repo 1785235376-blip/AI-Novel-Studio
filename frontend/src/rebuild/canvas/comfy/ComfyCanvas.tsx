@@ -6,8 +6,8 @@ import {useLocale} from '../../../i18n';
 import {GROUP_LABEL, NODE_GROUPS, connect, defaultRegistry, defaultWidgetParams, nodeLabel, portColor, sanitizeGraph, searchDefs, typesCompatible, widgetDefault,
   type CfGraph, type CfNode, type NodeDef, type Registry, type WidgetDef, type WidgetPrimitive} from './comfyRegistry';
 import {sessionCanvasStore} from '../RebuildCanvas';
-import {dispatchLowerCanvasRun, fetchLowerCanvasRun, loadRemoteComfyGraph, preflightLowerCanvasRun, saveRemoteComfyGraph,
-  type ComfyRemoteContext, type LowerCanvasRun, type RunQuote} from './comfyRemote';
+import {dispatchLowerCanvasRun, downloadAssetBlob, fetchLowerCanvasRun, loadRemoteComfyGraph, preflightLowerCanvasRun, saveRemoteComfyGraph,
+  type ComfyRemoteContext, type LowerCanvasRun, type RunAsset, type RunQuote} from './comfyRemote';
 
 /** 无身份时下画布的会话内存（类型化，不混入主画布 CvGraph）；随 sessionCanvasStore.clear() 一起清空。 */
 const COMFY_SESSION = new Map<string, unknown>();
@@ -21,7 +21,8 @@ export const nodeHeight = (d?: NodeDef) => HEAD + Math.max(1, d ? Math.max(d.inp
 let seq = 0; const uid = () => `cf${Date.now().toString(36)}${(seq++).toString(36)}`;
 
 type Props = {kind: 'image' | 'video'; storageKey: string; persist: 'local' | 'session'; label: string; ariaLabel: string; badge: string; badgeTitle?: string;
-  emptyHint?: string; onSelect?: (n: CfNode | null, def: NodeDef | null) => void; registry?: Registry; remote?: ComfyRemoteContext};
+  emptyHint?: string; onSelect?: (n: CfNode | null, def: NodeDef | null) => void; registry?: Registry; remote?: ComfyRemoteContext;
+  onAdoptAsset?: (asset: RunAsset) => void};
 
 function load(key: string, persist: 'local' | 'session', reg: Registry): CfGraph {
   let raw: unknown = null;
@@ -30,7 +31,7 @@ function load(key: string, persist: 'local' | 'session', reg: Registry): CfGraph
   return sanitizeGraph(raw, reg);
 }
 
-export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge, badgeTitle, emptyHint, onSelect, registry, remote}: Props) {
+export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge, badgeTitle, emptyHint, onSelect, registry, remote, onAdoptAsset}: Props) {
   const locale = useLocale(); const zh = locale.startsWith('zh');
   const L = (z: string, e: string) => (zh ? z : e);
   const reg = registry ?? defaultRegistry(kind);
@@ -43,6 +44,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const [runQuote, setRunQuote] = useState<RunQuote | null>(null);
   const [runResult, setRunResult] = useState<LowerCanvasRun | null>(null);
   const [runMessage, setRunMessage] = useState('');
+  const [runThumbs, setRunThumbs] = useState<Record<string, string>>({});
   const skipRemoteSave = useRef(true);
   const graphRef = useRef(g);
   const [sel, setSel] = useState<string | null>(null);
@@ -113,6 +115,22 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     }, 500);
     return () => clearTimeout(timer);
   }, [g, remote, remoteState, kind]);
+  useEffect(() => {
+    if (!remote || !runResult?.assets.length) { setRunThumbs({}); return; }
+    let alive = true; const urls: string[] = [];
+    (async () => {
+      for (const asset of runResult.assets.slice(0, 8)) {
+        try {
+          const blob = await downloadAssetBlob(remote, asset.id);
+          if (!alive) return;
+          const url = URL.createObjectURL(blob); urls.push(url);
+          setRunThumbs(prev => ({...prev, [asset.id]: url}));
+        } catch { /* preview is optional; the asset id remains visible */ }
+      }
+    })();
+    return () => { alive = false; urls.forEach(url => URL.revokeObjectURL(url)); };
+  }, [remote?.projectId, remote?.token, remote?.branchId, runResult?.id]);
+
   useEffect(() => { const n = g.nodes.find(x => x.id === sel) ?? null; onSelect?.(n, n ? def(n.t) ?? null : null); }, [sel, g.nodes, onSelect, def]);
 
   const world = (cx: number, cy: number) => {
@@ -393,7 +411,13 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
         data-run-status={runResult?.status ?? 'ERROR'} role="status">
         <b>{runPhase === 'done' ? L('运行完成', 'Run completed') : L('运行未完成', 'Run not completed')}</b>
         <p>{runMessage}</p>
-        {runResult?.assets.length ? <p data-run-assets>{runResult.assets.map(a => a.id).slice(0, 8).join(', ')}</p> : null}
+        {runResult?.assets.length ? <div className="cfy-runassets" data-run-assets>
+          {runResult.assets.slice(0, 8).map(asset => <div key={asset.id} className="cfy-runasset" data-run-asset={asset.id}>
+            {runThumbs[asset.id] ? <img data-run-thumb src={runThumbs[asset.id]} alt={asset.filename || asset.id} /> : <span className="cfy-runasset__pending" aria-hidden="true" />}
+            <small>{asset.filename || asset.id}</small>
+            {onAdoptAsset ? <button type="button" data-run-adopt onClick={() => onAdoptAsset(asset)}>{L('接入上画布', 'Adopt to upper')}</button> : null}
+          </div>)}
+        </div> : null}
         <div className="cfy-runpanel__actions"><button type="button" onClick={closeRun}>{L('关闭', 'Close')}</button></div>
       </div> : null}
       <div className="rcv-zoom"><button type="button" aria-label={L('缩小画布', 'Zoom out')} onClick={() => zoom(1 / 1.15)}>－</button><span>{Math.round(vp.k * 100)}%</span>

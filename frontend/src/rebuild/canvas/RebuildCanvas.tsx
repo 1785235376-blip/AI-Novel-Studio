@@ -12,7 +12,8 @@ import {displayNodeTitle} from '../../i18n/defaultNodeTitle';
 
 export type CanvasKind = 'image' | 'video';
 export type NodeType = {id: StudioGraphDefinitionId; label: string; color: string; icon: string; ins: boolean; outs: boolean};
-export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string; prompt?: string};
+export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string; prompt?: string;
+  assetId?: string; assetSha256?: string; assetVersion?: number};
 export type CvEdge = {id: string; a: string; b: string};
 export type CvGraph = {nodes: CvNode[]; edges: CvEdge[]};
 

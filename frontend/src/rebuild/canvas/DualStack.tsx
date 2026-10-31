@@ -12,7 +12,7 @@ import {RebuildCanvas, canvasStorageKey, readCanvasGraph, writeCanvasGraph, type
 import {feedToUpper, lowerCanvasStore} from './dualStackModel';
 import {ComfyCanvas} from './comfy/ComfyCanvas';
 import {defaultRegistry, mergeImported, nodeLabel, type CfNode, type NodeDef, type Registry} from './comfy/comfyRegistry';
-import {fetchImportedObjectInfo, type ComfyRemoteContext} from './comfy/comfyRemote';
+import {fetchImportedObjectInfo, type ComfyRemoteContext, type RunAsset} from './comfy/comfyRemote';
 import {readLayout, writeLayout, layoutStore, splitterKey, toggleMax, toggleSwap, topShare, withTopShare, RATIO_MIN, RATIO_MAX, type DualLayout} from './dualLayout';
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {useLocale, useT, type Locale} from '../../i18n';
@@ -81,6 +81,20 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
   const [upperInit, setUpperInit] = useState<{sel?: string; reveal?: boolean}>({});
   const onUpperVp = useCallback((v: CvViewport) => { upperVp.current = v; }, []);
   const onLowerSel = useCallback((n: CfNode | null, d: NodeDef | null) => { setPicked(n ? {n, d} : null); if (!n) setConfirm(false); }, []);
+  // [HERMIA-FE-20261031 DUALCANVAS-COMFY RUN] Adopt one locally generated result as an upper-canvas
+  // image reference snapshot. The node keeps the asset id/digest (not a live ComfyUI link).
+  const adoptRunAsset = useCallback((asset: RunAsset) => {
+    const key = canvasStorageKey(kind, scope);
+    const current = readCanvasGraph(key) ?? seed ?? {nodes: [], edges: []};
+    const title = asset.filename ? '结果 ' + asset.filename : 'Result ' + asset.id;
+    const node: CvNode = {id: '', t: 'image_reference', x: 0, y: 0, title,
+      assetId: asset.id, ...(asset.sha256 ? {assetSha256: asset.sha256} : {}),
+      ...(asset.version != null ? {assetVersion: asset.version} : {})};
+    const {graph, id} = feedToUpper(current, node);
+    writeCanvasGraph(key, graph);
+    setUpperInit({sel: id, reveal: true}); setRev(r => r + 1);
+    setNote(tr('dual.feed.done', {title: asset.filename || asset.id}));
+  }, [kind, scope, seed, tr]);
   const feedable = !!picked?.d?.feedAs;
   // [HERMIA-FE-20261031 DUALCANVAS-COMFY] layout: ratio / swap / maximise, per identity (no identity → this session only)
   const locale = useLocale();
@@ -167,7 +181,7 @@ export function DualStack({kind, scope, seed}: {kind: CanvasKind; scope: string;
           </div>
           <ComfyCanvas key={lower.key} kind={kind} storageKey={lower.key} persist={lower.persist}
             label={t.lower} ariaLabel={tr('dual.infinite', {label: t.lower})} onSelect={onLowerSel}
-            registry={registry} remote={remote}
+            registry={registry} remote={remote} onAdoptAsset={adoptRunAsset}
             badge={tr(remote ? 'dual.badge.remote' : session ? 'dual.badge.session' : 'dual.badge.real')}
             badgeTitle={tr(remote ? 'dual.badge.remote.title' : 'dual.badge.title')}
             emptyHint={tr('dual.empty')} />

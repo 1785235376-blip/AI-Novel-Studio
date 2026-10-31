@@ -3,7 +3,7 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {cleanup, fireEvent, render, waitFor} from '@testing-library/react';
 import {DualStack} from '../DualStack';
-import {sessionCanvasStore} from '../RebuildCanvas';
+import {canvasStorageKey, sessionCanvasStore} from '../RebuildCanvas';
 import {useStudio} from '../../../store';
 
 const COLLAB = {workspaceId: 'ws1', projectId: 'n1', storylineId: 's1', branchId: 'b1'};
@@ -16,10 +16,15 @@ const quote = {
 const run = {
   contract: 'studio-lower-canvas-run/1', id: 'lcr_run1', kind: 'image', status: 'COMPLETED',
   draft_version: 2, quote_digest: quote.quote_digest, provider_id: 'comfy', node_count: 1,
-  edge_count: 0, output_nodes: ['remote-save'], assets: [{id: 'asset-out-1', filename: 'out.png'}],
+  edge_count: 0, output_nodes: ['remote-save'],
+  assets: [{id: 'asset-out-1', version: 1, filename: 'out.png', media_type: 'image/png', sha256: 'c'.repeat(64), size: 4}],
   error: null, created_at: '2026-10-31T00:00:00+00:00', updated_at: '2026-10-31T00:00:00+00:00',
 };
 
+const blobResponse = (value: Blob) => ({
+  ok: true, status: 200, blob: async () => value,
+  headers: {get: () => null},
+} as unknown as Response);
 const json = (value: unknown, status = 200, headers: Record<string, string> = {}) => ({
   ok: status < 400, status, json: async () => value,
   headers: {get: (key: string) => headers[key.toLowerCase()] ?? headers[key] ?? null},
@@ -27,6 +32,7 @@ const json = (value: unknown, status = 200, headers: Record<string, string> = {}
 
 beforeEach(() => {
   cleanup(); localStorage.clear(); sessionCanvasStore.clear();
+  Object.assign(URL, {createObjectURL: vi.fn(() => 'blob:mock-result'), revokeObjectURL: vi.fn()});
   useStudio.setState({novelId: 'n1', actor: {id: 'actor-1', displayName: 'A', workspaceId: 'ws1'} as never,
     scope: COLLAB as never, sessionToken: 'session-a'});
 });
@@ -47,6 +53,7 @@ it('requires a quote confirmation before dispatching and shows the completed ass
     }
     if (url.endsWith('/studio/lower-canvas/image/runs/preflight') && method === 'POST') return json(quote);
     if (url.endsWith('/studio/lower-canvas/image/runs') && method === 'POST') return json(run);
+    if (url.endsWith('/studio/assets/asset-out-1/download')) return blobResponse(new Blob([new Uint8Array([1, 2, 3, 4])], {type: 'image/png'}));
     return json({detail: {code: 'NOT_FOUND'}}, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -77,7 +84,13 @@ it('requires a quote confirmation before dispatching and shows the completed ass
   }, {timeout: 4000});
   expect(result.getAttribute('data-run-status')).toBe('COMPLETED');
   expect(result.textContent).toContain('运行完成');
-  expect(result.textContent).toContain('asset-out-1');
+  expect(result.querySelector('[data-run-asset="asset-out-1"]')).toBeTruthy();
+  expect(result.textContent).toContain('out.png');
+  await waitFor(() => expect(document.querySelector('[data-run-thumb]')).toBeTruthy());
+  fireEvent.click(document.querySelector('[data-run-adopt]')!);
+  const upper = JSON.parse(localStorage.getItem(canvasStorageKey('image', 'n1'))!);
+  expect(upper.nodes[0]).toMatchObject({t: 'image_reference', assetId: 'asset-out-1',
+    assetSha256: 'c'.repeat(64), assetVersion: 1});
 
   const dispatch = calls.find(c => c.url.endsWith('/studio/lower-canvas/image/runs') && c.method === 'POST')!;
   expect(JSON.parse(String(dispatch.body))).toEqual({
