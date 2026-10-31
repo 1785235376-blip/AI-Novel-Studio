@@ -1515,4 +1515,5 @@ export const en: Record<MessageKey, string> = {
   'rough.932': 'Request did not complete. Check your input and connection.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.933': 'Not enough free disk space for assets. Free some space and retry the import.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.934': 'Cannot confirm free asset storage space right now. Check the storage location is reachable and retry.', // [HERMIA-FE-20261031 VERA-EN]
+  'rough.935': 'Private preview is closed. Check your identity and scope, then open it again.', // [HERMIA-FE-20261031 VERA-EN]
 };
