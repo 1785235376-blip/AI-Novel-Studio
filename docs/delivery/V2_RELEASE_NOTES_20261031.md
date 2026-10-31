@@ -37,3 +37,6 @@
 
 测试：`tests/test_studio_timeline_audio_profiles.py` PCM16/PCM24 各多轨（440Hz+880Hz muted）真实 FFmpeg/FFprobe、字节数/编码/采样率/位宽/权限审批/正式资产读回 **2 passed**；相关 media/timeline/video 回归 11 passed/1 skipped（1 error 为 main 上同样存在的旧 fixture 预存错误）。
 
+### 能力补充：Graph 三级媒体链与第三级 UNKNOWN 栅栏
+新增 `tests/test_graph_multinode_media_chain.py`：三级 IMAGE 图（t2i → review → i2i → review → i2i → review），验证每级下游 preview 的 source snapshot digest 等于上一级已审核正式资产 digest、下游 provider 实际收到上一级正式落盘字节、最终正式资产 digest/字节可回读；第三级 provider 在 dispatch 后失败时 job 保持 UNKNOWN、不得重复 execute、无法生成第三级/review_c 输出，取消后仍不产生；图组回归 **19 passed**。registry `graph_multi_node_recovery` 证据增加该测试，limits 增加 `multi_level_media_chain:FILE_SYNTHETIC_VERIFIED`（真实模型/PG/完整未知恢复仍 NOT_RUN/NOT_VERIFIED）。
+
