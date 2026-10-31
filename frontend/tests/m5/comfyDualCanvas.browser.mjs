@@ -69,6 +69,8 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
       rows.push({key: `${theme}|${mod}|axe-menu`, violations: ax}); if (ax.length) v.push('A1 axe ' + ax.join(','));
       await p.keyboard.press('Escape'); await p.waitForTimeout(100);
       if (await p.locator(`${LO} [data-add-node-menu]`).count()) v.push('K0 Esc did not close menu');
+      // [VERA-3 P2] F0 focus returns to「＋ 节点」after Esc
+      if (!(await p.evaluate(() => document.activeElement?.hasAttribute('data-comfy-add') ?? false))) v.push('F0 focus not on add button after Esc');
       // [P2-2] K1 keyboard: open, type, ArrowDown/ArrowUp, Enter adds the active option
       await p.locator(`${LO} [data-comfy-add]`).click(); await p.waitForTimeout(150);
       const cb = p.locator(`${LO} [data-add-node-menu] [role=combobox]`);
@@ -79,6 +81,8 @@ for (const theme of (process.env.THEMES || 'light,dark').split(',')) {
         const after = await p.locator(`${LO} [data-node-class]`).count();
         if (actType !== 'KSampler' || after !== before + 1 || await p.locator(`${LO} [data-add-node-menu]`).count()) v.push(`K1 kbd act=${actType} ${before}->${after}`);
         rows.push({key: `${theme}|${mod}|kbd`, actType, before, after});
+        // [VERA-3 P2] F1 focus returns to「＋ 节点」after Enter adds
+        if (!(await p.evaluate(() => document.activeElement?.hasAttribute('data-comfy-add') ?? false))) v.push('F1 focus not on add button after Enter');
       }
       await p.keyboard.press('Escape'); }
     await addNode('CheckpointLoaderSimple', 200); await addNode('KSampler', 600);

@@ -37,6 +37,9 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
   const [sel, setSel] = useState<string | null>(null);
   const [menu, setMenu] = useState<null | {cx: number; cy: number; wx: number; wy: number; node?: string}>(null);
   const [q, setQ] = useState('');
+  const addBtnRef = useRef<HTMLButtonElement>(null);
+  // [VERA-3 P2] 菜单由键盘关闭（Esc）或添加节点后，焦点回到「＋ 节点」按钮
+  const closeMenu = () => { setMenu(null); addBtnRef.current?.focus(); };
   const [msg, setMsg] = useState('');
   const [link, setLink] = useState<null | {from: string; slot: number; type: string; x: number; y: number}>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -129,7 +132,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     const cur = Math.max(0, Math.min(active, last));
     const nx = e.key === 'ArrowDown' ? Math.min(last, cur + 1) : e.key === 'ArrowUp' ? Math.max(0, cur - 1) : e.key === 'Home' ? 0 : e.key === 'End' ? last : null;
     if (nx !== null) { e.preventDefault(); setActive(nx); document.getElementById(optId(flat[nx].name))?.scrollIntoView?.({block: 'nearest'}); return; }
-    if (e.key === 'Enter' && activeDef) { e.preventDefault(); add(activeDef); }
+    if (e.key === 'Enter' && activeDef) { e.preventDefault(); add(activeDef); closeMenu(); }
   };
   const Gl = (gr: keyof typeof GROUP_LABEL) => (zh ? GROUP_LABEL[gr].zh : GROUP_LABEL[gr].en);
 
@@ -137,7 +140,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
     <div className="rcv cfy" data-comfy-canvas={kind} onKeyDown={onKey}>
       <span className="rcv-label">{label}</span>
       <span className="rcv-local" data-honest="no-exec" title={badgeTitle}>{badge}</span>
-      <button type="button" className="cfy-add" data-comfy-add aria-haspopup="menu" onClick={e => { const r = svgRef.current?.getBoundingClientRect(); openMenu((r?.left || 0) + 60, (r?.top || 0) + 50); e.stopPropagation(); }}>
+      <button type="button" ref={addBtnRef} className="cfy-add" data-comfy-add aria-haspopup="menu" onClick={e => { const r = svgRef.current?.getBoundingClientRect(); openMenu((r?.left || 0) + 60, (r?.top || 0) + 50); e.stopPropagation(); }}>
         {L('＋ 节点', '+ Node')}</button>
       <svg ref={svgRef} className="rcv-svg" role="application" aria-label={ariaLabel} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={() => { drag.current = null; setLink(null); }} onWheel={onWheel}>
@@ -180,7 +183,7 @@ export function ComfyCanvas({kind, storageKey, persist, label, ariaLabel, badge,
       {menu ? (
         // [HERMIA-FE-20261031 DUALCANVAS-COMFY P2-2] combobox + listbox（APG）：分组 role=group + aria-labelledby；↑↓ / Home / End 移动，Enter 添加，Esc 关闭。
         <div className="rcv-menu cfy-menu" data-add-node-menu role="dialog" aria-label={L('添加节点', 'Add node')} style={{left: menu.cx, top: menu.cy}}
-          onPointerDown={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); setMenu(null); } }}>
+          onPointerDown={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); closeMenu(); } }}>
           <div className="grp">{L('添加到下画布（只是草稿结构，不会执行）', 'Add to lower canvas (draft only, never runs)')}</div>
           <input type="text" role="combobox" autoFocus value={q} onChange={e => { setQ(e.target.value); setActive(0); }}
             aria-expanded="true" aria-controls={`${mid}-lb`} aria-autocomplete="list" aria-activedescendant={activeDef ? optId(activeDef.name) : undefined}
