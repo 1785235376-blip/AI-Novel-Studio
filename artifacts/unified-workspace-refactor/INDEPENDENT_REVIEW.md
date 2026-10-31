@@ -2141,3 +2141,38 @@ Hermia 第 3 轮（14:28–14:46）的情况：
 - 上下画布的 aria-label 等
 
 ComfyCanvas 内部自己的文案已经双语。另外，新节点的 `title` 固定按 zh-CN 存（`nodeLabel(d,'zh-CN')`），「已选：」后面显示的也是中文名。
+
+## [VERA-FE] 独立复审 hermia-dualcanvas-comfy a14080c7..d87d6389（2026-10-31，未提交）
+
+**结论：有条件通过。1 条 P2（菜单关闭后焦点没有回到触发按钮），若干 P3（变异存活）。上轮的 P2 aria-required-children、P2 en 汉字泄漏、P3 R4/D1 均已关闭。**
+
+- **efa61bd0 i18n**：在 en × light/dark × IMAGE/VIDEO 下加节点、选中、打开确认框，`.dstk` 和对话框的文本以及 aria-label/title/placeholder/aria-valuetext 中汉字为 0。显示为「Selected: Reference image」；分隔条为 "Resize canvases…" / "top 60%"；确认框为 "Send to main canvas?"。zh 文案与改前逐条一致，没有退化。
+  - 存储：新节点的 title 一律存中文注册名（例如 ["K 采样器","参考图"]），显示时再按 locale 翻译，用户改过的标题原样显示。存储与语言无关，设计合理。
+  - P3：上画布 VIDEO 的种子节点 "镜头 1 · 雾港码头" 在 en 下前缀没有翻译。来自种子数据，不在本区间。
+- **c605ab27 combobox/listbox**：四个视图（light/dark × IMAGE/VIDEO）下，Hermia 的浏览器断言 41 行 0 失败。我自己的 axe（wcag2a/aa + best-practice）在菜单和整个 .dstk 上，en/zh 共 8 种组合全部为 0。
+  - 打开菜单时焦点在 combobox。Home/End/↓ 时 aria-activedescendant 指向正确、aria-selected 同步。搜索 "vae" 后剩 7 项，active 重置到第一项。无匹配时选项为 0、activedescendant 被移除、role=status 播报，此时按 Enter 不做任何事。Esc 关闭菜单；Enter 添加节点。
+  - **P2：Esc 关闭或 Enter 添加后，焦点落到 body，没有回到「＋ 节点」触发按钮。** 8 种组合全部如此，见 e7.json 中的 esc.focusTrigger=false。
+  - 浏览器断言的变异：rect.hit 宽度改为 0 → H1 和 C2 变红；pointer-events:none → 变红；注入一个 POST → N1 变红。
+- **d87d6389**：D1 变异（feedable 改成 picked）已被 DualStack.feedable.test 杀死。节点数锁定为 53/52、11 个分类加 other 桶。核实 app/model_center/discovery.py:586 是 `stats = get('/system_stats'); info = get('/object_info')`，与文档一致。
+- **单测变异**：13 项，杀死 8 项，存活 5 项（P3）：
+  - E2：分隔条 aria-valuetext 硬编码中文。
+  - E6：分隔条 aria-label 硬编码中文。en 单测没有覆盖分隔条属性，浏览器扫描能抓到。
+  - E5：存储 title 改成随 locale 存。存储语义没有被锁定。
+  - K4：ArrowDown 不前进。单测和浏览器断言都杀不死，因为 ksampler 过滤后 ↓↓↑ 仍然停在第一项。
+  - K6：过滤时不重置 active。
+  - 详见 mut.txt 和 bmut.txt。
+- **复确认**：
+  - 普通模式只显示上画布，没有 lower/splitter/dual 入口。
+  - 亮色下画布亮度 0.869，不是黑底；暗色 0.005。
+  - 非 GET 请求为 0。
+  - 诚实标注仍在：「仅本机草稿 · 不会执行 · 未连接 ComfyUI」，参数显示「（草稿，不执行）」，没有运行类按钮。
+- **溢出**：zh/en × 1024/1440 × 普通/专业 × IMAGE/VIDEO，没有文档级溢出，也没有元素越界（e5.json）。
+- **门禁**（基线 raw 298 / ISI 8）：
+
+| run | raw | ISI | adj | 非基线新增 |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 296 | 10 | 294 | 1（TaskCenter.receiptCompanion，单独重跑 3/3 通过，负载抖动）|
+
+最佳 293 ≤ 297，通过。证据：/workspace/hr/vera-compare/comfy-d87d6389/
