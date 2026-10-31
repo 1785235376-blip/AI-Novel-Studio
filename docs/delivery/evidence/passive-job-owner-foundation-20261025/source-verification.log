@@ -1,0 +1,3 @@
+app/repositories/generation_repository.py: OK
+app/repositories/postgres/generation.py: OK
+app/services/generation_project_binding.py: OK

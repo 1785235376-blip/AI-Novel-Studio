@@ -1,0 +1,107 @@
+{
+  "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+  "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+  "baseline_commit": "c6ec9529043dd63e4b96a34de558939bf2efd848",
+  "changed_sources": {
+    "app/creative/asset_usage_budget.py": {
+      "git_blob_sha256": "c9ed977be76e4f56736e4e0ec5a5504a7dd020bb307b1a163e8e5986e4568b86",
+      "workspace_sha256": "c9ed977be76e4f56736e4e0ec5a5504a7dd020bb307b1a163e8e5986e4568b86"
+    },
+    "app/creative/asset_usage_paging.py": {
+      "git_blob_sha256": "396d76593e0f6d1341ec21ac2d2eab0431a8f2f915080dfcff40ef75c64dbeef",
+      "workspace_sha256": "396d76593e0f6d1341ec21ac2d2eab0431a8f2f915080dfcff40ef75c64dbeef"
+    },
+    "app/creative/asset_usage_read_mode.py": {
+      "git_blob_sha256": "5af12e8b65446b785ab17d832c66d3a84a33806f28fe023504eab54ed3ae2fea",
+      "workspace_sha256": "5af12e8b65446b785ab17d832c66d3a84a33806f28fe023504eab54ed3ae2fea"
+    },
+    "app/creative/asset_usage_request.py": {
+      "git_blob_sha256": "9294cb90e557342c943f53843a6dbac502309ac90a5ae247a04b614100729c1a",
+      "workspace_sha256": "9294cb90e557342c943f53843a6dbac502309ac90a5ae247a04b614100729c1a"
+    },
+    "app/creative/graph_api.py": {
+      "git_blob_sha256": "4ad4ceec304c798fde3be1136ba5e015e9b1f3e27df1f1837ea3d07560cb458a",
+      "workspace_sha256": "4ad4ceec304c798fde3be1136ba5e015e9b1f3e27df1f1837ea3d07560cb458a"
+    },
+    "app/creative/production_execution_api.py": {
+      "git_blob_sha256": "736b09bcf7b15f51aaa4dcbe69d1b8b42d9065561934b3cb42b3c0e7b06b52a6",
+      "workspace_sha256": "736b09bcf7b15f51aaa4dcbe69d1b8b42d9065561934b3cb42b3c0e7b06b52a6"
+    },
+    "app/creative/project_store.py": {
+      "git_blob_sha256": "cc7a3e2484204a806690cb94276dd941f6d7ef1f52fb1a88d30f6c8eed171a27",
+      "workspace_sha256": "cc7a3e2484204a806690cb94276dd941f6d7ef1f52fb1a88d30f6c8eed171a27"
+    },
+    "app/main.py": {
+      "git_blob_sha256": "e5f85f8a28deb0c70245a0cc00a89acebd99be4fe312de2cd2acea538bdfb128",
+      "workspace_sha256": "e5f85f8a28deb0c70245a0cc00a89acebd99be4fe312de2cd2acea538bdfb128"
+    },
+    "app/repositories/file/identity.py": {
+      "git_blob_sha256": "f9c70829a3ac4a93d5b3413180dfa939257e2e85692f72757033df1636445c37",
+      "workspace_sha256": "f9c70829a3ac4a93d5b3413180dfa939257e2e85692f72757033df1636445c37"
+    },
+    "app/repositories/file/mutation_coordinator.py": {
+      "git_blob_sha256": "2086a77a771740b7383781017983664b64cb920d26d421e099541575d4812244",
+      "workspace_sha256": "2086a77a771740b7383781017983664b64cb920d26d421e099541575d4812244"
+    },
+    "app/repositories/file/scope.py": {
+      "git_blob_sha256": "7dcd9b03f6e3f93098023639ba3e60ea848ee22747115729be38cbc7fd36de74",
+      "workspace_sha256": "7dcd9b03f6e3f93098023639ba3e60ea848ee22747115729be38cbc7fd36de74"
+    },
+    "app/repository.py": {
+      "git_blob_sha256": "e2e50abe36fccf3e62298de3595364fce2c2440ee7161b25835d3aeb60ae0211",
+      "workspace_sha256": "e2e50abe36fccf3e62298de3595364fce2c2440ee7161b25835d3aeb60ae0211"
+    },
+    "app/services/asset_library_service.py": {
+      "git_blob_sha256": "e60477a5dce3b091b601f8a798f02339bad4ebd5d465c8388bcdab93dcf3bbf5",
+      "workspace_sha256": "e60477a5dce3b091b601f8a798f02339bad4ebd5d465c8388bcdab93dcf3bbf5"
+    },
+    "scripts/measure_asset_usage_resource_process.py": {
+      "git_blob_sha256": "bb196129f2d323279035b0ace81a125a22471b72a3a3561b6dbde20da9dd6014",
+      "workspace_sha256": "bb196129f2d323279035b0ace81a125a22471b72a3a3561b6dbde20da9dd6014"
+    },
+    "scripts/record_asset_usage_validation.py": {
+      "git_blob_sha256": "9a06585230ef25fa400ce86b02a93f7d654baf87d3b92c2b4b0ff3a6bbd2b6c2",
+      "workspace_sha256": "9a06585230ef25fa400ce86b02a93f7d654baf87d3b92c2b4b0ff3a6bbd2b6c2"
+    },
+    "tests/studio_asset_usage_meter.py": {
+      "git_blob_sha256": "9ec8dec093fbb37da516f757e2b20ac10c79346a10e3071f33bbdcb7f0276a2e",
+      "workspace_sha256": "9ec8dec093fbb37da516f757e2b20ac10c79346a10e3071f33bbdcb7f0276a2e"
+    },
+    "tests/studio_asset_usage_resource_meter.py": {
+      "git_blob_sha256": "28a27c1fc5939a2d201d128d3d7e1203f33721c503e3e535d2d970c9909eebcd",
+      "workspace_sha256": "28a27c1fc5939a2d201d128d3d7e1203f33721c503e3e535d2d970c9909eebcd"
+    },
+    "tests/test_studio_asset_usage_authority_budget.py": {
+      "git_blob_sha256": "25e8940d4b183383adfd67ee90bdeaad5035b3c6d71bb2aad5ba5b857992ed73",
+      "workspace_sha256": "25e8940d4b183383adfd67ee90bdeaad5035b3c6d71bb2aad5ba5b857992ed73"
+    },
+    "tests/test_studio_asset_usage_budget.py": {
+      "git_blob_sha256": "557aa62028836e79e2136b42ea2d46a5208de032675b082d91421f1f3d72b020",
+      "workspace_sha256": "557aa62028836e79e2136b42ea2d46a5208de032675b082d91421f1f3d72b020"
+    },
+    "tests/test_studio_asset_usage_budget_guards.py": {
+      "git_blob_sha256": "d8e9eac3b40ba566041823a28e3e08be62df722d431e87e67cf2a3858875edfd",
+      "workspace_sha256": "d8e9eac3b40ba566041823a28e3e08be62df722d431e87e67cf2a3858875edfd"
+    },
+    "tests/test_studio_asset_usage_resource_costs.py": {
+      "git_blob_sha256": "ab126a3e1638db660dfd4195cb78f68c63740e00e3baf686663db6fbfbfe044d",
+      "workspace_sha256": "ab126a3e1638db660dfd4195cb78f68c63740e00e3baf686663db6fbfbfe044d"
+    },
+    "tests/test_studio_asset_usage_resource_independent.py": {
+      "git_blob_sha256": "aee52b196b163a13f1966fc8809de327c7a9bc50bb93f828c6c58aa95c5790af",
+      "workspace_sha256": "aee52b196b163a13f1966fc8809de327c7a9bc50bb93f828c6c58aa95c5790af"
+    },
+    "tests/test_studio_asset_usage_resource_integration.py": {
+      "git_blob_sha256": "6bee8c7968d40593106726fff5c17818817bce6e31cec5a607f6e82467831d8f",
+      "workspace_sha256": "6bee8c7968d40593106726fff5c17818817bce6e31cec5a607f6e82467831d8f"
+    },
+    "tests/test_studio_asset_usage_resource_loopback.py": {
+      "git_blob_sha256": "d7de4373c8b74ca4feeb4c77e81b499324568e4c41944880511c26406ed0a7f3",
+      "workspace_sha256": "d7de4373c8b74ca4feeb4c77e81b499324568e4c41944880511c26406ed0a7f3"
+    },
+    "tests/test_studio_asset_usage_strict_coordination.py": {
+      "git_blob_sha256": "f073b1670092ffe1fbb7ede1a9b31faeb6bab627240699259dcad43079c5cc54",
+      "workspace_sha256": "f073b1670092ffe1fbb7ede1a9b31faeb6bab627240699259dcad43079c5cc54"
+    }
+  }
+}

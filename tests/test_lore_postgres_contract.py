@@ -12,7 +12,7 @@ from app.repositories.postgres.models import CharacterModel,NovelModel
 from tests.test_memory_contract import setup as setup_file,prepare as prepare_memory
 from app.lore.memory_agent import MemoryAgentRunner
 from app.agents import AgentRegistry,AgentRunner
-from app.providers import Generation
+from tests.test_memory_agent_contract import Runtime, memory_settings
 import json
 from app.repository import FileRepository
 from app.repositories.file.lore import FileLoreRepository
@@ -53,14 +53,12 @@ def test_real_postgres_memory_contract_matches_file(bundle,tmp_path):
  file_repo=setup_file(tmp_path);_,file_memory,file_prop=prepare_memory(file_repo);_,file_created=file_memory.approve_character_memory(file_prop["id"],{"character_id":"hero","memory_type":"EXPERIENCE","content":{"event":"storm"}},"tester",memory_id="memory-pg",business_id="hero-storm")
  for key in ("id","novel_id","character_id","business_id","memory_type","content","status","valid_from_chapter","valid_to_chapter"):assert created[key]==file_created[key]
 
-def test_real_postgres_memory_agent_creates_pending_only(bundle):
+def test_real_postgres_memory_agent_creates_pending_only(bundle, memory_settings):
  novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters);nid=novels.create({"title":"Agent PG"})["id"];chapter=chapters.create(nid,{"title":"One","content":"Lin changed."});saved=chapters.save(chapter["id"],{"content":"Lin changed.","version":1,"source":"AI_ACCEPT"})
  with bundle.novels.database.session() as s:
   novel=s.scalar(select(NovelModel).where(NovelModel.slug==nid));s.add(CharacterModel(novel_id=novel.id,slug="lin",name="Lin",facts={}))
  output=json.dumps({"proposals":[{"proposal_type":"CHARACTER_MEMORY","payload":{"character_id":"lin","memory_type":"STATE_CHANGE","content":{"state":"changed"}},"confidence":.8,"evidence":[{"chapter_id":chapter["id"],"chapter_version":saved["version"],"excerpt":"Lin changed.","locator":{"kind":"DOCUMENT_RANGE","from":1,"to":12}}]}]})
- class R:
-  def generate(self,*a):return Generation(output,"fake","memory")
- class RT:
-  def router(self,*a):return R()
- agent=MemoryAgentRunner(bundle.novels,bundle.chapters,LoreService(bundle.lore),GenerationService(bundle.generations),AgentRunner(AgentRegistry()),RT());ids=agent.extract(nid,chapter["id"],saved["version"],job_id="agent-pg-job")
+ runtime=Runtime(output)
+ agent=MemoryAgentRunner(bundle.novels,bundle.chapters,LoreService(bundle.lore),GenerationService(bundle.generations),AgentRunner(AgentRegistry()),runtime);ids=agent.extract(nid,chapter["id"],saved["version"],job_id="agent-pg-job")
  assert len(ids)==1 and bundle.lore.get_proposal(ids[0])["status"]=="PENDING" and bundle.lore.list_memories(nid)==[]
+ assert runtime.prepared==[("mock","memory-test")] and len(runtime.provider.calls)==1

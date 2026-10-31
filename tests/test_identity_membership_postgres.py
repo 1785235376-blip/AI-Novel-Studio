@@ -1,9 +1,7 @@
-import os
 from uuid import uuid4
 
 import psycopg
 import pytest
-from dotenv import load_dotenv
 
 from app.collaboration import Workspace
 from app.identity import User, WorkspaceMembership
@@ -19,11 +17,8 @@ class Novels:
 
 
 @pytest.mark.postgres_backend_only
-def test_real_postgres_identity_membership_round_trip_and_cardinality():
-    load_dotenv()
-    raw_url = os.getenv("DATABASE_URL")
-    if not raw_url:
-        pytest.skip("DATABASE_URL is not configured")
+def test_real_postgres_identity_membership_round_trip_and_cardinality(isolated_postgres_url):
+    raw_url = isolated_postgres_url
     url = raw_url.replace("postgresql+psycopg://", "postgresql://")
     connection = lambda: psycopg.connect(url, options="-c timezone=UTC")
     suffix = uuid4().hex

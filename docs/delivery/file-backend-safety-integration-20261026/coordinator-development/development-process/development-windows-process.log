@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+  File "<frozen runpy>", line 290, in run_path
+  File "<frozen runpy>", line 254, in _get_code_from_file
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\PoemSeed\\Worktrees\\file-safety-process-20261026\\scripts\\run_studio_backend_tests.py'

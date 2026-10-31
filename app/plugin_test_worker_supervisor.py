@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import threading
 import time
+import subprocess
 from dataclasses import dataclass, field
 from queue import Empty, Queue
 from typing import Any, IO, Literal
@@ -303,11 +304,19 @@ class HostTestWorkerSupervisor:
 
     def _on_crash(self, session: WorkerSession) -> HostTestJobOutcome:
         exit_status = session.owned.poll()
+        if exit_status is None:
+            # On Windows the stdout reader can observe EOF just before the
+            # process handle is signaled. Reap a natural exit for a bounded
+            # interval before cleanup so its actual crash status is retained.
+            try:
+                exit_status = session.owned.wait(timeout=0.1)
+            except subprocess.TimeoutExpired:
+                pass
         with session._lock:
             session.lifecycle = ExecutionLifecycleState.FAILED
         self._kill(session)
         outcome = self._outcome(session, accepted=False, reason=REASON_WORKER_CRASH)
-        outcome.worker_exit_status = exit_status
+        outcome.worker_exit_status = exit_status if exit_status is not None else session.owned.poll()
         return outcome
 
     def _fail(self, session: WorkerSession, reason: str, *, kill: bool) -> HostTestJobOutcome:

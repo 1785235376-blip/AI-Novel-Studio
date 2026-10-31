@@ -1,0 +1,48 @@
+{
+  "overall": "PARTIAL_IMPLEMENTATION_NOT_ACCEPTED",
+  "cursor_http": "UNSUPPORTED",
+  "source_review": "STATIC_REVIEW_NO_OPEN_P1_P2",
+  "execution": "BLOCKED_BEFORE_TEST_EXECUTION",
+  "stages": [
+    {
+      "stage": "M0",
+      "status": "PARTIAL",
+      "facts": "Exact base SHA/tree and existing source contract verified; focused baseline and effective red execution NOT_RUN."
+    },
+    {
+      "stage": "M1",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "facts": "Original authority filtering, strict input and opt-in compatibility wiring."
+    },
+    {
+      "stage": "M2",
+      "status": "PARTIAL_BLOCKED",
+      "facts": "Standalone engine authored; original lifecycle observation wiring missing, HTTP refuses cursor."
+    },
+    {
+      "stage": "M3",
+      "status": "COMPONENT_IMPLEMENTED_UNVERIFIED",
+      "facts": "Bounded FIFO/TTL/HMAC metadata engine is unmounted; no product token is issued."
+    },
+    {
+      "stage": "M4",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "facts": "Static capabilities and bounded NOT_ASSERTED observation contract."
+    },
+    {
+      "stage": "M5",
+      "status": "TESTS_AUTHORED_NOT_RUN",
+      "facts": "File/HTTP, full business snapshots, security/revocation and synthetic engine counterexamples authored."
+    },
+    {
+      "stage": "M6",
+      "status": "PARTIAL_BLOCKED",
+      "facts": "Independent source review completed with two P2 corrections; no runtime, regression or scale evidence."
+    },
+    {
+      "stage": "M7",
+      "status": "PARTIAL_DELIVERY",
+      "facts": "Remote staged source/tests/docs/hashes/review and real failed CI scheduling evidence delivered; no synthetic execution logs exist."
+    }
+  ]
+}

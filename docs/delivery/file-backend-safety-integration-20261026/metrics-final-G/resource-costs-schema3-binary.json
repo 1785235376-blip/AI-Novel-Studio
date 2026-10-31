@@ -1,0 +1,541 @@
+{
+  "scenario": "original saved schema3 Graph direct audio pin; no dispatch",
+  "records": [
+    {
+      "request_phase": "first_page_schema3",
+      "response_bytes": 2274,
+      "returned": 1,
+      "rows": [
+        {
+          "query_checkpoint_phase": "HTTP_entry",
+          "stage": "HTTP_outer",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 8,
+          "read_bytes": 672,
+          "json_decodes": 8,
+          "json_input_bytes": 672,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "HTTP_entry",
+          "stage": "HTTP_outer",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 2257,
+          "json_decodes": 1,
+          "json_input_bytes": 2257,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "HTTP_entry",
+          "stage": "original_authorization_or_reauthorization",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 6,
+          "read_bytes": 1392,
+          "json_decodes": 6,
+          "json_input_bytes": 1392,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "after_source",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 3,
+          "read_bytes": 252,
+          "json_decodes": 3,
+          "json_input_bytes": 252,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "after_source",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 2257,
+          "json_decodes": 1,
+          "json_input_bytes": 2257,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_content_validation",
+          "category": "asset_binary",
+          "synthetic_relative_file": "assets/96381256-1464-4b50-9ebc-ae01bf4bd710.bin",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 19244,
+          "json_decodes": 0,
+          "json_input_bytes": 0,
+          "observed_file_sizes": [
+            19244
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_content_validation",
+          "category": "asset_metadata",
+          "synthetic_relative_file": "assets/96381256-1464-4b50-9ebc-ae01bf4bd710.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 2,
+          "read_bytes": 1652,
+          "json_decodes": 2,
+          "json_input_bytes": 1652,
+          "observed_file_sizes": [
+            826
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_content_validation",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 28,
+          "read_bytes": 2352,
+          "json_decodes": 28,
+          "json_input_bytes": 2352,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_content_validation",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 10,
+          "read_bytes": 2320,
+          "json_decodes": 10,
+          "json_input_bytes": 2320,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_content_validation",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 9,
+          "read_bytes": 20313,
+          "json_decodes": 8,
+          "json_input_bytes": 18056,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_discovery",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 13,
+          "read_bytes": 1092,
+          "json_decodes": 13,
+          "json_input_bytes": 1092,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_discovery",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 3,
+          "read_bytes": 696,
+          "json_decodes": 3,
+          "json_input_bytes": 696,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "consumer_discovery",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 4,
+          "read_bytes": 9028,
+          "json_decodes": 4,
+          "json_input_bytes": 9028,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "after_source",
+          "stage": "original_authorization_or_reauthorization",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 28,
+          "read_bytes": 6496,
+          "json_decodes": 28,
+          "json_input_bytes": 6496,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "before_issue",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 7,
+          "read_bytes": 588,
+          "json_decodes": 7,
+          "json_input_bytes": 588,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "before_issue",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 2,
+          "read_bytes": 4514,
+          "json_decodes": 2,
+          "json_input_bytes": 4514,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "consumer_discovery",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 13,
+          "read_bytes": 1092,
+          "json_decodes": 13,
+          "json_input_bytes": 1092,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "consumer_discovery",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 3,
+          "read_bytes": 696,
+          "json_decodes": 3,
+          "json_input_bytes": 696,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "consumer_discovery",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 4,
+          "read_bytes": 9028,
+          "json_decodes": 4,
+          "json_input_bytes": 9028,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "original_authorization_or_reauthorization",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 14,
+          "read_bytes": 3248,
+          "json_decodes": 14,
+          "json_input_bytes": 3248,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "source_asset_validation",
+          "category": "asset_metadata",
+          "synthetic_relative_file": "assets/96381256-1464-4b50-9ebc-ae01bf4bd710.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 826,
+          "json_decodes": 1,
+          "json_input_bytes": 826,
+          "observed_file_sizes": [
+            826
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "source_asset_validation",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 7,
+          "read_bytes": 588,
+          "json_decodes": 7,
+          "json_input_bytes": 588,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_issue",
+          "stage": "source_asset_validation",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 2,
+          "read_bytes": 4514,
+          "json_decodes": 2,
+          "json_input_bytes": 4514,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "before_return",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 14,
+          "read_bytes": 1176,
+          "json_decodes": 14,
+          "json_input_bytes": 1176,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "before_return",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 4,
+          "read_bytes": 9028,
+          "json_decodes": 4,
+          "json_input_bytes": 9028,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "consumer_discovery",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 13,
+          "read_bytes": 1092,
+          "json_decodes": 13,
+          "json_input_bytes": 1092,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "consumer_discovery",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 3,
+          "read_bytes": 696,
+          "json_decodes": 3,
+          "json_input_bytes": 696,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "consumer_discovery",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 4,
+          "read_bytes": 9028,
+          "json_decodes": 4,
+          "json_input_bytes": 9028,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "original_authorization_or_reauthorization",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 19,
+          "read_bytes": 4408,
+          "json_decodes": 19,
+          "json_input_bytes": 4408,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "source_asset_validation",
+          "category": "asset_metadata",
+          "synthetic_relative_file": "assets/96381256-1464-4b50-9ebc-ae01bf4bd710.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 826,
+          "json_decodes": 1,
+          "json_input_bytes": 826,
+          "observed_file_sizes": [
+            826
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "source_asset_validation",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 7,
+          "read_bytes": 588,
+          "json_decodes": 7,
+          "json_input_bytes": 588,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_return",
+          "stage": "source_asset_validation",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 2,
+          "read_bytes": 4514,
+          "json_decodes": 2,
+          "json_input_bytes": 4514,
+          "observed_file_sizes": [
+            2257
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_source",
+          "stage": "original_authorization_or_reauthorization",
+          "category": "project_metadata",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/novel.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 4,
+          "read_bytes": 928,
+          "json_decodes": 4,
+          "json_input_bytes": 928,
+          "observed_file_sizes": [
+            232
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_source",
+          "stage": "source_asset_validation",
+          "category": "asset_metadata",
+          "synthetic_relative_file": "assets/96381256-1464-4b50-9ebc-ae01bf4bd710.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 1,
+          "read_bytes": 826,
+          "json_decodes": 1,
+          "json_input_bytes": 826,
+          "observed_file_sizes": [
+            826
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_source",
+          "stage": "source_asset_validation",
+          "category": "incarnation_marker",
+          "synthetic_relative_file": "novels/query-a350022e593b427faf9a01676da1c9fb/creative_project_v2.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 7,
+          "read_bytes": 588,
+          "json_decodes": 7,
+          "json_input_bytes": 588,
+          "observed_file_sizes": [
+            84
+          ]
+        },
+        {
+          "query_checkpoint_phase": "before_source",
+          "stage": "source_asset_validation",
+          "category": "scope_json",
+          "synthetic_relative_file": "experimental_v1/9c2eba42a95e153f2825f1cdb3ff38c633eff5962574bb03a805ec1e748a20a5.json",
+          "physical_input_via_usage_budget": true,
+          "read_calls": 2,
+          "read_bytes": 4514,
+          "json_decodes": 2,
+          "json_input_bytes": 4514,
+          "observed_file_sizes": [
+            2257
+          ]
+        }
+      ],
+      "read_calls": 251,
+      "read_bytes": 133329,
+      "json_decodes": 249,
+      "json_input_bytes": 111828,
+      "write_opens": 236,
+      "write_calls": 0,
+      "written_bytes": 0,
+      "mkdir_attempts": 236,
+      "created_directories": 0,
+      "owner_calls": {
+        "_workbench_authorize": 71,
+        "_source": 3,
+        "usage_directory": 3,
+        "usage_get": 1
+      },
+      "reader_errors": [],
+      "usage_budgets": [
+        {
+          "charged_read_bytes": 133329,
+          "charged_file_attempts": 251
+        }
+      ],
+      "elapsed_seconds": 0.5109097999811638,
+      "instrumented_python_peak_bytes": 436892,
+      "memory_scope": "tracemalloc during instrumented request; not RSS, not a hard process limit"
+    }
+  ]
+}

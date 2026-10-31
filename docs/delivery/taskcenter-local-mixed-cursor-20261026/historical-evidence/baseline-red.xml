@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="192.827" timestamp="2026-10-26T23:24:16.795795+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_taskcenter_local_mixed_http" name="test_actual_order_first_next_replay_final_zero_write[/api]" time="171.032"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;582d1891-2b5b-4dc1-a1e0-7b8d16b05fd6&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">mixed = namespace(e=namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7fb3812a46e0&gt;, nid='query-438b...4d-6607-4b36-ac04-dcb1bbf038e4'], adapter=None, monkeypatch=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb38186e720&gt;)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_actual_order_first_next_replay_final_zero_write(mixed,prefix):
+        e=mixed;before=snapshot(e.rig.root);expected=get(e,{'page_mode':'offset','limit':100},prefix).json()['items']
+&gt;       first=get(e,prefix=prefix);assert first.status_code==200,first.text
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"582d1891-2b5b-4dc1-a1e0-7b8d16b05fd6"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_local_mixed_http.py:38: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_local_mixed_http" name="test_actual_order_first_next_replay_final_zero_write[/api/v1]" time="15.964"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;22e6038b-4129-4a8a-bcab-51ccb13a924c&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">mixed = namespace(e=namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7fb3812d91f0&gt;, nid='query-b487...e4-2697-44e2-b0ff-83acc498426d'], adapter=None, monkeypatch=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb38016cc20&gt;)
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_actual_order_first_next_replay_final_zero_write(mixed,prefix):
+        e=mixed;before=snapshot(e.rig.root);expected=get(e,{'page_mode':'offset','limit':100},prefix).json()['items']
+&gt;       first=get(e,prefix=prefix);assert first.status_code==200,first.text
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"22e6038b-4129-4a8a-bcab-51ccb13a924c"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_local_mixed_http.py:38: AssertionError</failure></testcase></testsuite></testsuites>

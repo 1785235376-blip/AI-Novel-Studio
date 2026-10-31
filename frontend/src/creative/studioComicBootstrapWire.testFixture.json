@@ -1,0 +1,112 @@
+{
+  "capture_contract": "actual-mounted-comic-bootstrap/1",
+  "project_id": "r3-mounted-1d4091d622644400b95c56bea5027500",
+  "scope": {
+    "workspaceId": "w-11ef43bc4464442186e626e903660e8f",
+    "projectId": "r3-mounted-1d4091d622644400b95c56bea5027500",
+    "storylineId": "s-11ef43bc4464442186e626e903660e8f",
+    "branchId": "b-11ef43bc4464442186e626e903660e8f"
+  },
+  "branch_id": "b-11ef43bc4464442186e626e903660e8f",
+  "bootstrap": {
+    "contract": "studio-comic-workspace/1",
+    "project": {
+      "id": "r3-mounted-1d4091d622644400b95c56bea5027500",
+      "title": "Synthetic mounted R3"
+    },
+    "source_free": true,
+    "capabilities": {
+      "can_mutate": true,
+      "can_review": true
+    }
+  },
+  "page": {
+    "id": "5a2e5093-6f8f-4483-8165-ba74e518c118",
+    "version": 1,
+    "status": "DRAFT",
+    "stale": false,
+    "privacy_level": "LOCAL_ONLY",
+    "document": {
+      "title": "独立页",
+      "source_mode": "INDEPENDENT",
+      "screenplay_id": null,
+      "expected_screenplay_version": null,
+      "preset": "PAGE",
+      "font_family": "NOTO_SANS_SC_OFL",
+      "width": 800,
+      "height": 1120,
+      "safe_area": 24,
+      "segment_height": 1120,
+      "panels": []
+    },
+    "scene_ids": {},
+    "history_versions": [],
+    "automatic_promotion": false
+  },
+  "catalog": {
+    "screenplays": [],
+    "characters": [],
+    "assets": [],
+    "presets": {
+      "PAGE": {
+        "width": 800,
+        "height": 1120,
+        "safe_area": 24,
+        "segment_height": 1120
+      },
+      "WEBTOON": {
+        "width": 800,
+        "height": 2400,
+        "safe_area": 24,
+        "segment_height": 1200
+      }
+    },
+    "renderer": {
+      "available": true,
+      "version": "12.3.0",
+      "freetype_version": "2.14.3",
+      "jpeg_version": "6.2",
+      "webp_version": "1.6.0",
+      "format": "PNG",
+      "model_called": false
+    },
+    "font": {
+      "available": false,
+      "code": "COMIC_PINNED_OFL_CJK_FONT_UNAVAILABLE"
+    },
+    "privacy_level": "LOCAL_ONLY",
+    "automatic_generation": false,
+    "appearance_reference_policy": "UNAVAILABLE_SOURCE_FREE",
+    "image_brief_policy": "HUMAN_AUTHORED_DECLARATION_NO_GENERATION"
+  },
+  "records": {
+    "items": [
+      {
+        "id": "5a2e5093-6f8f-4483-8165-ba74e518c118",
+        "version": 1,
+        "status": "DRAFT",
+        "stale": false,
+        "privacy_level": "LOCAL_ONLY",
+        "document": {
+          "expected_screenplay_version": null,
+          "font_family": "NOTO_SANS_SC_OFL",
+          "height": 1120,
+          "panels": [],
+          "preset": "PAGE",
+          "safe_area": 24,
+          "screenplay_id": null,
+          "segment_height": 1120,
+          "source_mode": "INDEPENDENT",
+          "title": "独立页",
+          "width": 800
+        },
+        "scene_ids": {},
+        "history_versions": [],
+        "automatic_promotion": false
+      }
+    ]
+  },
+  "books": {
+    "items": []
+  }
+}

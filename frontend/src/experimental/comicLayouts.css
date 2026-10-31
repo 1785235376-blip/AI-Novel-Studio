@@ -1,0 +1,13 @@
+.comic-source-preview { display: block; max-width: 100%; max-height: 480px; object-fit: contain; border: 1px solid var(--border-default); margin-block: var(--space-3); }
+.comic-preview { border: 1px solid var(--border-default); margin-block: var(--space-3); }
+.comic-preview img { display: block; width: 100%; height: auto; }
+.comic-preview-viewport { max-width: 100%; overflow-x: auto; }
+.comic-geometry-surface { position: relative; width: 100%; max-width: 480px; outline: var(--border-strong); background: var(--color-bg-subtle); margin-block: var(--space-3); }
+.comic-geometry-object { position: absolute; border: var(--border-strong); background: var(--color-bg-surface); }
+.comic-geometry-object.is-selected { outline: 2px solid var(--color-selection-border); }
+.comic-geometry-object.comic-geometry-bubble { border-style: dashed; background: var(--color-accent-subtle); }
+.comic-geometry-object .comic-geometry-move { width: 100%; height: 100%; min-width: 0; min-height: 0; padding: 0; overflow: hidden; white-space: normal; align-items: flex-start; touch-action: none; cursor: move; }
+.comic-geometry-object .comic-geometry-resize { position: absolute; right: 0; bottom: 0; width: var(--control-height-sm); height: var(--control-height-sm); min-width: 0; padding: 0; touch-action: none; cursor: nwse-resize; }
+.comic-geometry-object button:disabled { cursor: not-allowed; }
+button.ui-button.comic-framing-surface { display: block; min-width: 0; min-height: 0; max-width: 100%; padding: 0; box-sizing: content-box; overflow: hidden; touch-action: none; cursor: move; }
+.comic-framing-surface img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }

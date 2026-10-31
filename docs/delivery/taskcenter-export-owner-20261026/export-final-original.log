@@ -1,0 +1,20 @@
+cwd=/workspace/shared/taskcenter-export-owner-20261026
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_export_jobs.py", "tests/test_export_snapshot_and_import_review.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-export-owner-evidence/export-final-original.xml", "--basetemp=/tmp/tmpuxqy1c9s/export-final-original/pytest-tmp", "-o", "cache_dir=/tmp/tmpuxqy1c9s/export-final-original/pytest-cache"]
+........................................................................ [ 98%]
+.                                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_export_jobs.py::test_export_job_is_durable_idempotent_and_completes
+  /workspace/shared/taskcenter-export-owner-20261026/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_jobs.py::test_export_job_is_durable_idempotent_and_completes
+  /workspace/shared/taskcenter-export-owner-20261026/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_export_jobs.py::test_export_download_route_returns_attachment
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-export-owner-evidence/export-final-original.xml -
+73 passed, 3 warnings in 321.81s (0:05:21)

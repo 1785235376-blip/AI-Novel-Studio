@@ -1,0 +1,38 @@
+cwd=/workspace/shared/taskcenter-local-mixed-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_mixed_external.py", "tests/test_taskcenter_mixed_external_cases.py", "tests/test_taskcenter_mixed_external_races.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-dac-final.xml", "--basetemp=/tmp/tmpdhh8f1y9/candidate-dac-final/pytest-tmp", "-o", "cache_dir=/tmp/tmpdhh8f1y9/candidate-dac-final/pytest-cache"]
+.........................F.....                                          [100%]
+=================================== FAILURES ===================================
+___ test_original_reauthorization_cannot_be_replaced_with_local_observation ____
+
+mixed_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f1923a098e0>, nid='query-0ccaaed3cc1c4e38...nticImportService object at 0x7f192d0307d0>, store=<app.experimental.store.ExperimentalStore object at 0x7f19231023c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f1923aca120>
+
+    def test_original_reauthorization_cannot_be_replaced_with_local_observation(mixed_rig,monkeypatch):
+        e=mixed_rig;original=e.importer.jobs
+        def changed(*a,**kw):
+            result=original(*a,**kw);object.__setattr__(e.rig.settings,'enable_collaboration_runtime',True);return result
+        monkeypatch.setattr(e.importer,'jobs',changed);r=get(e)
+>       assert r.status_code==401,r.text
+E       AssertionError: {"detail":{"code":"BRANCH_SCOPE_REQUIRED"},"code":"BRANCH_SCOPE_REQUIRED","message":"BRANCH_SCOPE_REQUIRED","details":{"code":"BRANCH_SCOPE_REQUIRED"},"request_id":"e6ca8074-d3bb-497f-9ca2-f713da91747e"}
+E       assert 400 == 401
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_taskcenter_mixed_external_races.py:23: AssertionError
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_mixed_external.py::test_both_original_post_writers_then_mixed_replay_and_final[/api]
+  /workspace/shared/taskcenter-local-mixed-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_mixed_external.py::test_both_original_post_writers_then_mixed_replay_and_final[/api]
+  /workspace/shared/taskcenter-local-mixed-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-dac-final.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_mixed_external_races.py::test_original_reauthorization_cannot_be_replaced_with_local_observation
+1 failed, 30 passed, 3 warnings in 168.54s (0:02:48)

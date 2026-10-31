@@ -1,0 +1,90 @@
+"""Additional read-only-review tests; source and original assertions remain untouched."""
+from pathlib import Path
+import base64
+import json
+import pytest
+from app.services.asset_library_service import AssetLibraryService
+from app.services.audio_asset_history_store import AudioHistoryIntegrityError, AudioHistoryCapacityError, HEAD
+
+RAW = b'RIFF-independent-review-synthetic'
+
+def create(owner, key='new-upload'):
+    return owner.create('review-project', 'review.wav', base64.b64encode(RAW).decode(), 'audio/wav', 'audio', idempotency_key=key)
+
+@pytest.mark.parametrize('stage', ['after_blob', 'after_record', 'before_current_commit', 'after_current_commit'])
+def test_create_exception_keeps_committed_bytes_and_retry_visibility(tmp_path, stage):
+    owner = AssetLibraryService(tmp_path)
+    def fault(actual):
+        if actual == stage:
+            raise RuntimeError('review injected ' + stage)
+    owner._audio_history_store.fault = fault
+    with pytest.raises(RuntimeError, match='review injected'):
+        create(owner)
+    rows = list(owner.root.glob('*.json'))
+    current_bins = list(owner.root.glob('*.bin'))
+    assert len(rows) == len(current_bins) == (1 if stage == 'after_current_commit' else 0)
+    # Independent blob survives cleanup even if the original current file never commits.
+    blobs = list((owner.root / '.audio-history').glob('*/blobs/*.bin'))
+    assert len(blobs) == 1 and blobs[0].read_bytes() == RAW
+    owner = AssetLibraryService(tmp_path)
+    result = create(owner)
+    assert len(list(owner.root.glob('*.json'))) == 1
+    assert len(list(owner.root.glob('*.bin'))) == 1
+    if rows:
+        assert result['id'] == rows[0].stem
+    history = owner.audio_history(result['id'])
+    assert len(history['items']) == history['current_version'] == 1
+    assert owner.audio_history_content(result['id'], history['head']) == RAW
+
+@pytest.mark.parametrize('corrupt', ['', 'not-a-digest', 'f' * 64, None])
+def test_bad_head_fails_history_and_next_write_without_changing_current(tmp_path, corrupt):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._meta_path(row['id'])
+    meta = json.loads(path.read_text())
+    meta[HEAD] = corrupt
+    path.write_text(json.dumps(meta))
+    before = path.read_bytes()
+    with pytest.raises((AudioHistoryIntegrityError, FileNotFoundError, ValueError)):
+        owner.audio_history(row['id'])
+    with pytest.raises((AudioHistoryIntegrityError, FileNotFoundError, ValueError)):
+        owner.update_metadata(row['id'], {'parameters': {'take': 2}}, expected_version=1)
+    assert path.read_bytes() == before
+
+@pytest.mark.parametrize('corrupt_target', ['current', 'history'])
+def test_corrupt_binary_does_not_allow_successful_new_head(tmp_path, corrupt_target):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    if corrupt_target == 'current':
+        target = owner._bin_path(row['id'])
+    else:
+        target = owner.root / '.audio-history' / row['id'] / 'blobs' / (row['sha256'] + '.bin')
+    target.write_bytes(b'X' * len(RAW))
+    before = owner._meta_path(row['id']).read_bytes()
+    with pytest.raises(ValueError):
+        owner.update_metadata(row['id'], {'parameters': {'take': 2}}, expected_version=1)
+    assert owner._meta_path(row['id']).read_bytes() == before
+
+@pytest.mark.parametrize('operation', ['delete', 'restore'])
+def test_hundred_state_ceiling_lifecycle_denial_preserves_current(tmp_path, operation):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    target = 100 if operation == 'delete' else 99
+    for expected in range(1, target):
+        owner.update_metadata(row['id'], {'parameters': {'take': expected + 1}}, expected_version=expected)
+    if operation == 'restore':
+        owner.delete(row['id'])
+    before = owner._meta_path(row['id']).read_bytes()
+    with pytest.raises(AudioHistoryCapacityError, match='AUDIO_HISTORY_VERSION_LIMIT'):
+        getattr(owner, operation)(row['id'])
+    assert owner._meta_path(row['id']).read_bytes() == before
+    current = json.loads(before)
+    chain = owner._audio_history_store.chain(current)
+    assert len(chain) == 100 and chain[0]['asset_version'] == 100
+
+def test_noop_edit_does_not_create_revision(tmp_path):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    before = owner.audio_history(row['id'])
+    owner.update_metadata(row['id'], {'parameters': {}}, expected_version=1)
+    assert owner.audio_history(row['id']) == before

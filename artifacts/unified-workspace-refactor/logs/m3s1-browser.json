@@ -1,0 +1,74 @@
+{
+ "1366": {
+  "inspCreative": {
+   "canvas": "image",
+   "title": "新文本输入",
+   "type": "文本输入"
+  },
+  "saveMsg": "已保存到本机草稿（未同步服务端）",
+  "canvasTitle": "✎ 雾港封面·夜",
+  "stillSelected": "true",
+  "execTfBefore": "translate(-20,10) scale(1)",
+  "execTfAfter": "translate(-20,10) scale(1)",
+  "sentCount": 7,
+  "overlaps": 0,
+  "first3InView": true,
+  "inspExec": {
+   "canvas": "video",
+   "title": "参考 · 雾港封面·夜",
+   "type": "参考图"
+  },
+  "overflow": false,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ },
+ "1440": {
+  "inspCreative": {
+   "canvas": "image",
+   "title": "新文本输入",
+   "type": "文本输入"
+  },
+  "saveMsg": "已保存到本机草稿（未同步服务端）",
+  "canvasTitle": "✎ 雾港封面·夜",
+  "stillSelected": "true",
+  "execTfBefore": "translate(-20,10) scale(1)",
+  "execTfAfter": "translate(-20,10) scale(1)",
+  "sentCount": 7,
+  "overlaps": 0,
+  "first3InView": true,
+  "inspExec": {
+   "canvas": "video",
+   "title": "参考 · 雾港封面·夜",
+   "type": "参考图"
+  },
+  "overflow": false,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ },
+ "1920": {
+  "inspCreative": {
+   "canvas": "image",
+   "title": "新文本输入",
+   "type": "文本输入"
+  },
+  "saveMsg": "已保存到本机草稿（未同步服务端）",
+  "canvasTitle": "✎ 雾港封面·夜",
+  "stillSelected": "true",
+  "execTfBefore": "translate(-20,10) scale(1)",
+  "execTfAfter": "translate(-20,10) scale(1)",
+  "sentCount": 7,
+  "overlaps": 0,
+  "first3InView": true,
+  "inspExec": {
+   "canvas": "video",
+   "title": "参考 · 雾港封面·夜",
+   "type": "参考图"
+  },
+  "overflow": false,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ }
+}

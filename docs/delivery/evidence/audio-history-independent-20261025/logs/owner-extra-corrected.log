@@ -1,0 +1,4 @@
+{"cwd": "<REVIEW_ROOT>", "python": "<MAIN_ROOT>/.venv/bin/python", "project_root": "<REVIEW_ROOT>", "module_files": ["<REVIEW_ROOT>/app/config.py", "<REVIEW_ROOT>/app/services/asset_library_service.py", "<REVIEW_ROOT>/app/services/audio_asset_history_store.py"], "data_path": "<REVIEW_ROOT>/.runtime/audio-history-20261025/data", "home": "<REVIEW_ROOT>/.runtime/independent-review/home", "tmp": "<REVIEW_ROOT>/.runtime/independent-review/tmp", "file_mock_only": true, "network_audit_deny": true}
+.............                                                            [100%]
+13 passed in 2.40s
+exit_code=0

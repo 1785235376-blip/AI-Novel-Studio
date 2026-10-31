@@ -1,0 +1,43 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_local_mixed_http.py::test_actual_order_first_next_replay_final_zero_write[/api]",
+    "tests/test_taskcenter_local_mixed_http.py::test_actual_order_first_next_replay_final_zero_write[/api/v1]",
+    "tests/test_taskcenter_local_mixed_http.py::test_parameter_order_and_duplicates_are_canonical",
+    "tests/test_taskcenter_local_mixed_http.py::test_selected_private_aba_restart[semantic_import]",
+    "tests/test_taskcenter_local_mixed_http.py::test_selected_private_aba_restart[exports]",
+    "tests/test_taskcenter_local_mixed_http.py::test_exact_pair_caps_and_empty_query",
+    "tests/test_taskcenter_local_mixed_http.py::test_empty_bound_sources[semantic_import]",
+    "tests/test_taskcenter_local_mixed_http.py::test_empty_bound_sources[exports]",
+    "tests/test_taskcenter_local_mixed_http.py::test_empty_bound_sources[both]",
+    "tests/test_taskcenter_local_mixed_http.py::test_equal_ids_stay_authority_scoped",
+    "tests/test_taskcenter_local_mixed_http.py::test_registry_reorder_restarts",
+    "tests/test_taskcenter_local_mixed_http.py::test_real_singleton_replacement_refuses[semantic_import]",
+    "tests/test_taskcenter_local_mixed_http.py::test_real_singleton_replacement_refuses[exports]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_local_mixed_http.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-mixed-evidence/candidate-mixed.xml",
+    "--basetemp=/tmp/tmp8j_la2nt/candidate-mixed/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp8j_la2nt/candidate-mixed/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-mixed-cursor-20261026",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 13
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

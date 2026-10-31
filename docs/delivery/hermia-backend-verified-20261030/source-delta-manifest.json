@@ -1,0 +1,642 @@
+{
+  "base": "2e52c7470593e1c49b08d26a66cd73e2c71b64a0",
+  "verified_source": "1349026fd209c048f583859f8a9e41af7301160b",
+  "files": [
+    {
+      "path": "app/creative/asset_usage_budget.py",
+      "bytes": 13582,
+      "sha256": "36516037912198627741914b2f1d464bb7c419a6d4b97ca802bdc2cafec0fbd5",
+      "git_blob": "0b19cc3400fd6a767241f6d643c57b52ccc2f477"
+    },
+    {
+      "path": "app/creative/asset_usage_request.py",
+      "bytes": 3215,
+      "sha256": "33cfe1cf80a43e4e8c5094792c192a665ee3071cfe5625236693c5d5258332e0",
+      "git_blob": "e44c1e9664fc00c934a0d6e1eb902db5dcf437ee"
+    },
+    {
+      "path": "app/creative/production_execution_api.py",
+      "bytes": 41173,
+      "sha256": "4c7eab9af69423b527d2dec941d0258183938ba9d245de1a2165e51d555aca4d",
+      "git_blob": "9c65f4de48536298501e391235807756fa64cfe3"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "bytes": 37538,
+      "sha256": "f65cb8cad90b39bd2a26bcc94b8b084436e9040b1434b69adcd8e10ae9857fb9",
+      "git_blob": "5d08f442a3807969a40a4dca01882f4fc69f8545"
+    },
+    {
+      "path": "app/creative/timeline_transfer.py",
+      "bytes": 9491,
+      "sha256": "be6fcd1fe69a03df7da7942242f7dd0d836fba32caff483b0ffdf844434c2382",
+      "git_blob": "3e0adc2dc6f40102c48040a257db2b9d637d23a8"
+    },
+    {
+      "path": "app/experimental/subtitle_timeline.py",
+      "bytes": 25750,
+      "sha256": "03c61e8c0f051ddbd85b3dc154a684d2eb41c1e755f6954caf9aaeeabe6950ce",
+      "git_blob": "b67c90aff0a2969218c1f9ed191e7bf4fbf978f2"
+    },
+    {
+      "path": "app/experimental/taskcenter_cursor.py",
+      "bytes": 12129,
+      "sha256": "3fac30605f2bc4d5e43b7f01df4ebec0417db71abca7d5888d37966eca8543b1",
+      "git_blob": "bc542446c7c33307f5dc10bf177bc085444e05a8"
+    },
+    {
+      "path": "app/experimental/taskcenter_cursor_http.py",
+      "bytes": 15666,
+      "sha256": "6887aa3be84de68cc2a112d05ad6c46f6bacd0efacbb11cfa4cde6be9967fb6f",
+      "git_blob": "7bedf95dbf23a7a4ee52db29cb50d5609e6d572a"
+    },
+    {
+      "path": "app/experimental/timeline_exchange.py",
+      "bytes": 38434,
+      "sha256": "4627b3c1d0000eebabb4de81535f19a141fb63bb9e2d92779c395fa38fea650c",
+      "git_blob": "217aa2b3da419d7c781512063cf3be0fc0f29f6a"
+    },
+    {
+      "path": "app/export_formats.py",
+      "bytes": 15847,
+      "sha256": "0a72a487dbe7365496c7c50fe5fb416a79d4c3eda459375926824cf3d59b1780",
+      "git_blob": "c3523eddac1083e902b06b97f402aaf8554ef739"
+    },
+    {
+      "path": "app/repositories/file/mutation_coordinator.py",
+      "bytes": 6285,
+      "sha256": "626183833a86bc885c294435adb42937d331e4dbaa9e74d4d786ba73ab7143b5",
+      "git_blob": "8a05b5004bb65b2cc340e0448f79263126e05094"
+    },
+    {
+      "path": "app/services/export_execution_claim.py",
+      "bytes": 4144,
+      "sha256": "1b52bb3b46092d013ac58db5f6e555e00604c3999dbfa00f8f540f80992509f5",
+      "git_blob": "03a7dd338557ee0052e39b721d631b0de659565e"
+    },
+    {
+      "path": "app/services/export_job_service.py",
+      "bytes": 43525,
+      "sha256": "87dbeb03d1195cd3e80ebd249fdf091fb7feb2732d95c2aa5f60af15e3cff890",
+      "git_blob": "a675d3f11759e6448f22526dfaf993bf760a3000"
+    },
+    {
+      "path": "app/services/studio_timeline_exchange.py",
+      "bytes": 20921,
+      "sha256": "89f9c51f47866a931ae2e07854fa811c4d621a281367c233aa650d9d120bd43a",
+      "git_blob": "deae09a84a86de257b4d666902199cedc6aeb668"
+    },
+    {
+      "path": "app/services/studio_timeline_subtitles.py",
+      "bytes": 6069,
+      "sha256": "a0836a9b14799d574f3e20c7635960af5432fe60a7d911880c2d8388c4de099b",
+      "git_blob": "ea5fcc9b82414bac896f14ed457157f0fa6bd994"
+    },
+    {
+      "path": "database/migrations/018_context_privacy.sql",
+      "bytes": 1562,
+      "sha256": "e2e6c2c45a07b9593c5e4ff9400d3eb0e4bad6096ea0aaadb1bba691df3bb5b1",
+      "git_blob": "b454ddc859fd582421671e5c719a628c2dea8f0e"
+    },
+    {
+      "path": "database/migrations/019_experimental_scope_documents.sql",
+      "bytes": 807,
+      "sha256": "eb3516c8f802e51efa523950807795ea9400bf91f62e9191d1c726a5cb10ffaf",
+      "git_blob": "28b62185b70b8d28feed825002a824acafaee1a0"
+    },
+    {
+      "path": "database/migrations/020_stable_chapter_identity.sql",
+      "bytes": 6214,
+      "sha256": "92774a1b26f4e79056e7f0d5d3fedf76b77887a109de7a1251bd6b16081722f7",
+      "git_blob": "77f2b7471650669029859246aa672357e87c279d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/DELIVERY.md",
+      "bytes": 3390,
+      "sha256": "e751a8c137ac294f5d3daed2b5a579fc4be0598ca39c65bddfd7750e8ca6822c",
+      "git_blob": "405d2021bac716be9530b1a31304579fced8ba5d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/after.json",
+      "bytes": 102644,
+      "sha256": "009f33602f462afd2a5a115c35b7b368c1fc44d0e0b4a924f21c2b7b95b30d78",
+      "git_blob": "b72950af7260fb35b310271abddb7c8b7c5353dd"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/baseline-clean.log",
+      "bytes": 10907,
+      "sha256": "0cd4651db1cd1847f37a55efd3409c6d363153ba80cf4dc3d436b79791c18648",
+      "git_blob": "f7f9577fddb72b4515eb76476b6586f2f06acab7"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/baseline.log",
+      "bytes": 11001,
+      "sha256": "4b97399d3319d9c28fb4f101047461c258cae78bd4618843d55c3082e89238de",
+      "git_blob": "f23fcf3455b788084db9d28f7826db094560fb4b"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/before.json",
+      "bytes": 102644,
+      "sha256": "009f33602f462afd2a5a115c35b7b368c1fc44d0e0b4a924f21c2b7b95b30d78",
+      "git_blob": "b72950af7260fb35b310271abddb7c8b7c5353dd"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/commands.txt",
+      "bytes": 729,
+      "sha256": "e42b77878bd4633564f6eb7c471025726f05fc9308daaa9a0eaa5b8ebda4ae7b",
+      "git_blob": "72765290e2fe82bb51a5fdaf84f2921f0a7b6e4c"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/fixed.log",
+      "bytes": 1428,
+      "sha256": "1acce27c89a8a66238948a49eca1fd25129888b9b3ab2d81a49734647723c1cd",
+      "git_blob": "7227d9d7b3cc7f2c2738ec96267492f78743f145"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/REVIEW.md",
+      "bytes": 2974,
+      "sha256": "c336e96f4041ee8292628a3c15e8070db482da544a622240ddac7b35c64c81c8",
+      "git_blob": "2cabfecf3f8aef2657cc81a876c34449be3b1606"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "git_blob": "d00491fd7e5bb6fa28c517a0bb32b8b506539d4d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final.log",
+      "bytes": 6980,
+      "sha256": "1f16c3ced640b5b39991650c2eaf99501f24020ddafee27c048977ad1c0eba96",
+      "git_blob": "f6f062a2d6f431fa291cc8fa3398edc4f034b19a"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final.xml",
+      "bytes": 9649,
+      "sha256": "a9c575d2ceeefb783b307ada2b0eaf2fc45f8f37cef447de66e3b94e07682be4",
+      "git_blob": "8abb51f5c33978e805309fbe8c5f8089e177668d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final24.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "git_blob": "d00491fd7e5bb6fa28c517a0bb32b8b506539d4d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final24.log",
+      "bytes": 9247,
+      "sha256": "7cc40581946d090ccc29416e1bd85ef0f9d1576c65a247d2812d6c06cba64b8c",
+      "git_blob": "e4f8cde89f8a732c99b7829b0ed77c45cea244b5"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline-final24.xml",
+      "bytes": 13196,
+      "sha256": "5390d64998b55c5f57170ecc69f6dc37952284a3ec2e0c6d0c6b303493e66afd",
+      "git_blob": "2b2e0e8e118729e7408fe3b4e3d70b9085a70bab"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "git_blob": "d00491fd7e5bb6fa28c517a0bb32b8b506539d4d"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline.log",
+      "bytes": 6976,
+      "sha256": "af9ce733f9d2cb2a9ce220d99038849b2134e36d93607f9dbd74078b13bf2cad",
+      "git_blob": "33f505e3a4699cb2657a9ce86397d12e29c387a7"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/baseline.xml",
+      "bytes": 9147,
+      "sha256": "f77efdb5ca4aec3c60c0d4ea5b4933d6735f9842b21d1b88a42255a7765fd9a6",
+      "git_blob": "2d015ba2dea4fe99e7f0f42e9a3f4abd44d6c38a"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/fixed-after.json",
+      "bytes": 64467,
+      "sha256": "542cf8d621bda5d6b61983c09092fac24655d1c43fd4b0010fe4401e25234fbc",
+      "git_blob": "3c1c963788daed6fb94ac653fcee2332b8ed92ca"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/fixed-before.json",
+      "bytes": 64467,
+      "sha256": "542cf8d621bda5d6b61983c09092fac24655d1c43fd4b0010fe4401e25234fbc",
+      "git_blob": "3c1c963788daed6fb94ac653fcee2332b8ed92ca"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/fixed-final24.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "git_blob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/fixed-final24.log",
+      "bytes": 709,
+      "sha256": "5bca358a9a739bdcee7cadcd3afba6f3ecbeb1660ea4e91c443623cb5becde03",
+      "git_blob": "c9eed79b00869a4e10adf4db1f0c3185bcb39141"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/fixed-final24.xml",
+      "bytes": 3048,
+      "sha256": "d2019196d26292326f7ba1b7bcf4a4806008ce14b72a75b2902ff662037c8800",
+      "git_blob": "810ee0dbaa003a49f91b48d88e26f991983dae7b"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/independent/test_sixfix_independent.py",
+      "bytes": 6412,
+      "sha256": "0891ca36cc381dd6606311261e1b0e666287d7b770bed7d899abd0570b81c734",
+      "git_blob": "02b8c604906334557dbbb125b93273c8d7207997"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/joint.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "git_blob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/joint.log",
+      "bytes": 1680,
+      "sha256": "882a67e10ea2bf4d693568950a1c5e25b2a59f7d176e3639f345f30df901ca8f",
+      "git_blob": "f11a63e3ef5180636829bd4707c9e1f8048562b7"
+    },
+    {
+      "path": "docs/delivery/hermia-export-sixfix-rebuild-20261029/joint.xml",
+      "bytes": 26003,
+      "sha256": "9a809bc597ce3e82cf477849612425fbe32256ec596db80b452708b3b9666f84",
+      "git_blob": "867612f815cc4df6799ac82668caa0553583c1ce"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/DELIVERY.md",
+      "bytes": 4072,
+      "sha256": "391ec0cd7dca68c9f1be007a881bea8207bc4cd17de7453802da6cce7be188ed",
+      "git_blob": "0ef9e7e228dcc0fc1a3de04663c3e1d653ff6a4f"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/after.json",
+      "bytes": 100644,
+      "sha256": "c077633b741af4392fe01f3ce149dc048d10205ce00f4a2f3e3bac8c34199ba9",
+      "git_blob": "26667463844e575416e2cab8d09a382ea27577af"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/baseline-final.log",
+      "bytes": 10068,
+      "sha256": "4a1755fb6b491a158e6d6cf7233416ad3a436f481aed627cb48ea3ed37a0612c",
+      "git_blob": "7da566990c748a3cc8323cf2ce65da5e87d96d44"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/baseline-fixture-missing-module.log",
+      "bytes": 27323,
+      "sha256": "7152be9bd0e336fac18a2d9d02df27618fa8815261631fb1bdaff005fc29be6f",
+      "git_blob": "415bf2c5433c98331e06940aa712ff6fc502eb10"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/baseline-fixture-missing-protocol.log",
+      "bytes": 27995,
+      "sha256": "171badde4775f28493e340da40241bc71314f187b5a8abe9a02508ad7623d2fa",
+      "git_blob": "f89417f57299ab6c739127827b9b2157bd7f6a26"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/baseline.log",
+      "bytes": 10021,
+      "sha256": "eaa8aff4f8e687f5f0a37948c1c1ce33024a09d11e75aeed2d68ca25efbd8d85",
+      "git_blob": "9eec57b19b5d08197a3ec02367cabffc6af86c1e"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/before.json",
+      "bytes": 100644,
+      "sha256": "c077633b741af4392fe01f3ce149dc048d10205ce00f4a2f3e3bac8c34199ba9",
+      "git_blob": "26667463844e575416e2cab8d09a382ea27577af"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/commands.txt",
+      "bytes": 773,
+      "sha256": "5e916c3b64b41e532a40819a0cb591895ae93578e807bc13725a7cffcbe0f1ba",
+      "git_blob": "1924b091049a41bb63861cfc991e03280c78f083"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/fixed.log",
+      "bytes": 1242,
+      "sha256": "f20587b710d65c5a4577d8d0e83d8dc88c7946681eab82e3d509dc1f83aa72b7",
+      "git_blob": "0b4ac12a5a3091a8222625a8214a0c719bb15656"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/REVIEW.md",
+      "bytes": 2178,
+      "sha256": "6c8429634fb8e1259b0a3e56e7f2ff1f455249d352bd955f8dde668eaa6a8236",
+      "git_blob": "1916f3ae8d30a64d8215459de106fd7a9692fd9d"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/baseline-app-hashes.json",
+      "bytes": 64467,
+      "sha256": "542cf8d621bda5d6b61983c09092fac24655d1c43fd4b0010fe4401e25234fbc",
+      "git_blob": "3c1c963788daed6fb94ac653fcee2332b8ed92ca"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/baseline-final.log",
+      "bytes": 8723,
+      "sha256": "57326f572a96310738c170bf71ae4b714ae1b6b7000e58e52690929bfaf0b725",
+      "git_blob": "e533ba3312076565a261a8cbdf5205aa5d1c97dd"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/baseline-final.xml",
+      "bytes": 9983,
+      "sha256": "e8c8abb9f20122c3083a5e47374aabd43f0e8b98d5f8f4abe52c993e8d76a501",
+      "git_blob": "79c30081894152bb10c3ed86d1d0c9c0a7e4930f"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/fixed-after.json",
+      "bytes": 64467,
+      "sha256": "f3d6f7cf6de88a6cfc0f91622d7a4b55fc9976d2cb19dcdf3f1939f1110935b9",
+      "git_blob": "06276497abc2e2f8042cb08b7b274afa9d11de99"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/fixed-before.json",
+      "bytes": 64467,
+      "sha256": "f3d6f7cf6de88a6cfc0f91622d7a4b55fc9976d2cb19dcdf3f1939f1110935b9",
+      "git_blob": "06276497abc2e2f8042cb08b7b274afa9d11de99"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/fixed.log",
+      "bytes": 1320,
+      "sha256": "702d8d545e02d86faab0bc3ad27a369a67a3daf4233fa3539183621b20c654b6",
+      "git_blob": "22638fec19ea38720ddf42f01d61eb2fa99415d4"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/fixed.xml",
+      "bytes": 2057,
+      "sha256": "c5a0acd1d3df4005cf8bcea0fc2538cf9cfddbaf07a4c19e77d7e230d97c3c55",
+      "git_blob": "97bee92f0eb44d887de5adc8c7656ea911d25fd3"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/provenance.log",
+      "bytes": 186,
+      "sha256": "a8045a4e4bf43cc2cf821d12d74e05c45649a705a9c7d5c8d986852ca538b663",
+      "git_blob": "d590d66980a50a059a5054a67e6ad44312b9f19a"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/independent/test_vtt_independent.py",
+      "bytes": 3928,
+      "sha256": "1b0cd0e07cfd4170642abd592b3625329366596684e898542454dad80f88d646",
+      "git_blob": "0f209414222129035929bc5254fa6e61b64026f6"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/joint.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "git_blob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/joint.log",
+      "bytes": 1378,
+      "sha256": "fdb5f492446de6d07b6dbf24c783c838352bd6b4f099a5f1f3137474768cfe2a",
+      "git_blob": "6bd1db8da01d2de53cd2a30a0a621793cfcec01f"
+    },
+    {
+      "path": "docs/delivery/hermia-vtt-rebuild-20261029/joint.xml",
+      "bytes": 5145,
+      "sha256": "2a1308b5809577ee28484c2f5490722e21b91c5d465a18c9ac50723d4605d4c8",
+      "git_blob": "09df7c6ce23b48b4d3469c229a2eeb15aa9431a8"
+    },
+    {
+      "path": "docs/delivery/studio-otio-external-native-20261030.md",
+      "bytes": 3479,
+      "sha256": "faec734f2ffb4a1888da016821a6e4f604c6f8915d6ebf135f955c68190ba6a5",
+      "git_blob": "9450da163f785ec6da9274dbf7bdf8395ec0c7da"
+    },
+    {
+      "path": "tests/conftest.py",
+      "bytes": 4238,
+      "sha256": "8207c000bbf7e3e5bdd8b83b3d7d8b2d36453be414899425e3cdf3d749fef095",
+      "git_blob": "2bb2d162fa641b9f85612bf4a56b5b9475459491"
+    },
+    {
+      "path": "tests/file_safety_http_server.py",
+      "bytes": 10218,
+      "sha256": "1216bd7d68fd6aedf858acd0e117a9b267f1a2179487df932dadc2dc2f57fba5",
+      "git_blob": "241586cf39e55bd89613f56fd7eb19c95b4832cf"
+    },
+    {
+      "path": "tests/postgres_test_selection.py",
+      "bytes": 3061,
+      "sha256": "63db37e9922a6039389713404039a4d238325019a90b9e8eb044f4e8fdafad77",
+      "git_blob": "f9023110caf6b91672fdb46298fa764b82252e94"
+    },
+    {
+      "path": "tests/test_backend_mode_harness.py",
+      "bytes": 2593,
+      "sha256": "80ce08dc98a53f0d1c9aada14e10cb204747f1d8b2550d1998831594a9c4aec2",
+      "git_blob": "93ad6d3974e2a9862e1dcfb77a6a5f74df7676d7"
+    },
+    {
+      "path": "tests/test_caption_vtt_consumer_api_20261030.py",
+      "bytes": 3925,
+      "sha256": "80c4c168b030cd36960e7a5e9634201ab62d14ffb1f6188d709ac06c43163d13",
+      "git_blob": "283f0d84799723b7eedf9711cc23cc0db715cd19"
+    },
+    {
+      "path": "tests/test_caption_vtt_literal_consumer_20261030.py",
+      "bytes": 1809,
+      "sha256": "f0cb37ba305f15c6a7dbe60a73a8d8affc5b3e6c847afeb3da4198667d1677c7",
+      "git_blob": "879a5bf2c527ec5e1237dfe4f730b4cfaccf3bf1"
+    },
+    {
+      "path": "tests/test_chapter_concurrency.py",
+      "bytes": 6146,
+      "sha256": "5a60360af6dfbd32b1111aa0ce9d864d2b7c7880bcd1373b35f37b359b74335c",
+      "git_blob": "5b3414dd1104da46d4703bb617a91cf344458116"
+    },
+    {
+      "path": "tests/test_collaboration_ux_api_v057.py",
+      "bytes": 7760,
+      "sha256": "8d630de71d68040542182af457ed250767a1c62a4255f68645ea1c5663c1c43d",
+      "git_blob": "84d2d12b13840c247d53ca9dc95fdf3a6dcef7a3"
+    },
+    {
+      "path": "tests/test_context_intelligence.py",
+      "bytes": 8163,
+      "sha256": "f126a4b29cf8316a990522a0b0db9044a1f5229fbb96b756b3b9df01cb0e995d",
+      "git_blob": "1838b53976a4354a208dbc0a387cf9757df5b14e"
+    },
+    {
+      "path": "tests/test_export_combined_cancel_rebuild.py",
+      "bytes": 4479,
+      "sha256": "31b2648b8b988f6e00052c6540d8839ab217155ed03bf25110ac82d75e2d12fc",
+      "git_blob": "f0ccaebb101d0c84446b90ce53b641c4d1524b30"
+    },
+    {
+      "path": "tests/test_export_execution_claim_independent.py",
+      "bytes": 10090,
+      "sha256": "a83f898dab2d934d3e146f01837061aa1462bfe67fbacb234ae52c30f3657bca",
+      "git_blob": "402cf30fa0a1ed6d6e0bf0816d0bfa9d6ca21c4a"
+    },
+    {
+      "path": "tests/test_export_owner_independent_process.py",
+      "bytes": 10155,
+      "sha256": "c7b2d97925cf62d4e70b46b2105eda00ae43ff4d5aa012c270e5b80ba8b95d98",
+      "git_blob": "b4fbe48f92c0e4a628afb66d6a870248e116e542"
+    },
+    {
+      "path": "tests/test_export_recovery_ownership_process.py",
+      "bytes": 6910,
+      "sha256": "630ff4264bb7775bf603ea488c190ca619bd0eb1dfd7732741f3205c897e1358",
+      "git_blob": "742696655a82100becb82ab8995d781caab0b755"
+    },
+    {
+      "path": "tests/test_export_remaining_rebuild.py",
+      "bytes": 4177,
+      "sha256": "06dfbc2dc89e1e94f724d4dab785f849951904f70e509eec8c792e4b92c83b27",
+      "git_blob": "7fbebb7701408a3b8a960e9db8fe700eccd1a99a"
+    },
+    {
+      "path": "tests/test_file_safety_observer_context.py",
+      "bytes": 2673,
+      "sha256": "c1e24f58f614c49dfecdfdf2706e53c4ca56268638ca6989532c0e82a04f49f5",
+      "git_blob": "d53d8717763dcbd17503fbdc792696420ac2b9d6"
+    },
+    {
+      "path": "tests/test_file_usage_request_context.py",
+      "bytes": 5042,
+      "sha256": "c8080f2e928ef79bfbac92389fc613d74f475d3969cf797d90f50992a9899109",
+      "git_blob": "c548dfd420a97128ceef2b4b74906b44de7e9dfa"
+    },
+    {
+      "path": "tests/test_generation_snapshot_runtime_v056.py",
+      "bytes": 6459,
+      "sha256": "3c4368edea446b8a7c92c924284c631ccf302625fc8b3154dede8bba4bc825d1",
+      "git_blob": "ab9062c6910124f0eb77e397e0d97f00c9c7ad74"
+    },
+    {
+      "path": "tests/test_identity_membership_postgres.py",
+      "bytes": 2258,
+      "sha256": "3632ff17f34c9130f09b2edef2664a495acc449bed3d6f0303156a26674f77bf",
+      "git_blob": "fcde2f5eaa6a1fd336c933d31532c42cfa4f6e28"
+    },
+    {
+      "path": "tests/test_lore_context_contract.py",
+      "bytes": 13647,
+      "sha256": "554210cd2e69e74c2a033fc90f5d1299e449dce041c003ce9ff186c865edd12b",
+      "git_blob": "c4b6ae325c05599cbe79b3eb4ff58f5b1295ddb5"
+    },
+    {
+      "path": "tests/test_lore_postgres_contract.py",
+      "bytes": 7302,
+      "sha256": "dcde9bdfaa2635988da594c4caad33b2200469d1a6ea6189b453adeb4f5b9b0e",
+      "git_blob": "05dc62fd63afff550fc6f0cf4a8dcfe0345f967a"
+    },
+    {
+      "path": "tests/test_packaged_postgres_migrations_v070.py",
+      "bytes": 2753,
+      "sha256": "dea7a6c2c03db3165eea426dbb1ba03d7ad8cd587dcf1544b6e29b19d8af4dbb",
+      "git_blob": "fba81f2b2f5af56c8e754841f038c1de2638aa24"
+    },
+    {
+      "path": "tests/test_postgres_migration_completeness_20261030.py",
+      "bytes": 1822,
+      "sha256": "442ef90f9e331b0c52c8741de4a7b28364e914901121cb76289959845f4be203",
+      "git_blob": "4c519f4d3e4e6b82672a505835f2124859aa39d8"
+    },
+    {
+      "path": "tests/test_postgres_test_selection_20261030.py",
+      "bytes": 5792,
+      "sha256": "59294762d52048519758621de107a38035be17eb02ccf8171b5e325f7b426e3e",
+      "git_blob": "e4ecf18444144370be7e08fb238a0db868fe38d9"
+    },
+    {
+      "path": "tests/test_studio_otio_external_native_20261030.py",
+      "bytes": 10120,
+      "sha256": "643f445e1fabc432c00ac354c847b80c2f89019fa98e28aa5175a7f024e6cb1d",
+      "git_blob": "3dd975498c23004bf5c5d8cb10005f2709fc9eba"
+    },
+    {
+      "path": "tests/test_studio_otio_link_loss_20261030.py",
+      "bytes": 3000,
+      "sha256": "dfe510547ff2a3bc0870b5575a1c67db5dd532cf3d87475fdd25e96300f7135f",
+      "git_blob": "7a16b53f486df078d9264716d42ae61fcf2945cf"
+    },
+    {
+      "path": "tests/test_studio_otio_link_loss_api_20261030.py",
+      "bytes": 3792,
+      "sha256": "ba1b92f770c4b819c6b9480ecdad1ebcf0cda3b54e7c5b8e43de89dc3531a16c",
+      "git_blob": "6ec559cac5d14dca3255698c84c9eb0fcede8e15"
+    },
+    {
+      "path": "tests/test_studio_otio_postgres_20261030.py",
+      "bytes": 6672,
+      "sha256": "37d46e489be04cb7339bb3b17304ed9fbd7c9c3b7ce29b4f3a40299833a04311",
+      "git_blob": "8526bebbd39c4ddbb38eaac0e235a083397c331b"
+    },
+    {
+      "path": "tests/test_studio_otio_precision_diagnostic_20261030.py",
+      "bytes": 4683,
+      "sha256": "91105c615b57844c5eb46402b315daa8475107989847f7511ed2c6d925343ea7",
+      "git_blob": "1ee5021c0dc6e8c372ded6a0c20027dd018d9ca3"
+    },
+    {
+      "path": "tests/test_studio_otio_runtime_20261029.py",
+      "bytes": 7979,
+      "sha256": "1cb8d9b581757835d6b36c0dbdb66a711fdaedaa83d8af9815fcaacd0acf7014",
+      "git_blob": "f074f98cfc5c1656ed14c4c9a12c7aebdcafbe76"
+    },
+    {
+      "path": "tests/test_studio_vtt_html_references_20261030.py",
+      "bytes": 1800,
+      "sha256": "60262ad2cd5340cf4841d5d7fe767ef84ec2bce745448eebaf0a701cc39cad50",
+      "git_blob": "acbaf4ac6370889e5218f75cbf0a72c21f6e2cd2"
+    },
+    {
+      "path": "tests/test_studio_vtt_import_api_20261030.py",
+      "bytes": 5578,
+      "sha256": "4d0a5370d9121ce18d761e529ffeac0f1dfbf55511d7077b6b75b4262eefc983",
+      "git_blob": "1082ebe55aeb0e103dd1ff36893d86eb8bbe7cf9"
+    },
+    {
+      "path": "tests/test_studio_vtt_literal_rebuild_20261029.py",
+      "bytes": 2490,
+      "sha256": "4e2363cef368a3cabe91385ea2c43c7d04517df8f5efdaccf05b1b5f4a0f2993",
+      "git_blob": "24979e8be79687f5d7ad158a30b25f94f8ec9cb1"
+    },
+    {
+      "path": "tests/test_taskcenter_rebuilt_process_boundaries.py",
+      "bytes": 7296,
+      "sha256": "308dd81e8b6e167e2644c33cdd28b6eb8dcedb4012284596bf853fd052362b4b",
+      "git_blob": "dcae7b6fb908155c50b02c090a5f1e4d6eed68df"
+    },
+    {
+      "path": "tests/test_taskcenter_return_deadline.py",
+      "bytes": 2837,
+      "sha256": "94ee4157b5365fe5a5af9924dcc8be4aeb473316af35c515d90b8151e1de9b58",
+      "git_blob": "74d3631674475d3532d836169ae462b75cb1f5c1"
+    },
+    {
+      "path": "tests/test_taskcenter_return_receipt_independent.py",
+      "bytes": 7322,
+      "sha256": "913330c9fdc5c3364028d1c3ba40b332d3685d51a9996597208a77f7f65ea899",
+      "git_blob": "652639b252efd68c9665a0eeb85ac8a8fbd5449b"
+    },
+    {
+      "path": "tests/test_taskcenter_single_reader_independent.py",
+      "bytes": 5176,
+      "sha256": "6089509e034d07ea86d815882076d1227a1c17896226c397d36d1526c7f917b9",
+      "git_blob": "09fd14956ecf6eec33104d03d793c441a6ffdecc"
+    },
+    {
+      "path": "tests/test_taskcenter_single_reader_receipts.py",
+      "bytes": 6390,
+      "sha256": "e46cc98e2f300583d2682ddebabeb0a335d3ed7161aa57132ffa6cea0849623b",
+      "git_blob": "14c0445ae2325e83267c323d0b02fce618d3806c"
+    },
+    {
+      "path": "tests/test_usage_request_context_tcp.py",
+      "bytes": 3050,
+      "sha256": "69bfbca705239c3f9220ba37200f8a68be34f22a17bc64fa289e78fe5d4d2b76",
+      "git_blob": "5273af24e47ae0b525f043ff16dfea510193349a"
+    },
+    {
+      "path": "tests/test_v056_atomic_persistence_integration.py",
+      "bytes": 7993,
+      "sha256": "75b1b225b5448de351e43a1f1c8204b094c855bc031ed388ba29befd028f162f",
+      "git_blob": "4d32531876e65fc1aa9087c277c142aa50dd047b"
+    }
+  ]
+}

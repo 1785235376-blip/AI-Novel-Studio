@@ -1,0 +1,385 @@
+{
+  "contract": "studio-node-job-discard-file-api/1",
+  "baseline_commit": "e28baafe73b9074ee7f7da8a814637a5958f196f",
+  "implementation_sha256": {
+    "app/creative/canvas_image_node_job_discard.py": "32e687e70c3565ebf0f27f6b19795391f8c5d09b52b8d718fa7e3aa3ac0d9dd2",
+    "app/creative/canvas_image_node_job_observation.py": "458147d15d36c072443fea6712a44ee00eca2c510df8bcbfb6d762df0c50f393",
+    "app/creative/production_execution.py": "fd30e5863a71916a2498cf4de4a5a1042ce8138005ba068863b98f5b78a67650",
+    "app/creative/production_execution_api.py": "50d609e7ca134ff2960e7a8a56bcef9be8e076f2bc40bf00360a399e3b840e43",
+    "app/creative/production_execution_models.py": "c0470783a3506b56bf2cfb3e547244920360ffc31ecfe842982b1ae0ba6cbd9f",
+    "app/services/image_job_service.py": "3d557204f34d21865a24eb9651447e9cd0cfc5372dd3ae1a66e4414b39b59829",
+    "app/services/studio_image_execution.py": "b2d887670db55cd44e0dc62b634af60961f49ef88766492756a2cc9db81e26d7"
+  },
+  "evidence_type": "REAL_ORIGINAL_FILE_API_QUEUED_LOCAL_DISCARD_ONLY",
+  "project": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+  "scope": {
+    "mode": "local",
+    "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+  },
+  "selected_job": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "947be49f-e9d3-4f92-a427-14b5a93725c2",
+    "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "ad9dc2faf14d732e110fe6f3c01f396cd1d0cad0dbac8f1254564307d20999a5",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-24T16:31:35.685841+00:00",
+    "updated_at": "2026-10-24T16:31:35.685853+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "prompt": "Synthetic queue recovery prompt; no inference",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "source_snapshots": [],
+      "allow_cloud": false,
+      "license_note": "Synthetic queue-only test",
+      "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+        "scope": {
+          "mode": "local",
+          "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+        },
+        "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+        "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+        "canvas_version": 1,
+        "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+        "node_id": "queue-recovery-node",
+        "title": "One durable node queue intent",
+        "position": {
+          "x": 48.0,
+          "y": 80.0
+        },
+        "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+      }
+    },
+    "provider": {
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "local": true,
+      "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "AUTOMATIC1111_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "automatic_fallback": false,
+      "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+      },
+      "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "original-target-observation",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "observation": {
+    "contract": "studio-image-node-job-observation/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "947be49f-e9d3-4f92-a427-14b5a93725c2",
+      "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "branch_id": null,
+      "version": 1,
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "status": "QUEUED",
+      "request_digest": "ad9dc2faf14d732e110fe6f3c01f396cd1d0cad0dbac8f1254564307d20999a5",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T16:31:35.685841+00:00",
+      "updated_at": "2026-10-24T16:31:35.685853+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "output_candidate": null,
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+          },
+          "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+          "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "approved_asset_version": null,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+      },
+      "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+      "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+    "canvas_read": false,
+    "automatic_actions": false
+  },
+  "discard": {
+    "contract": "studio-image-node-job-discard/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "947be49f-e9d3-4f92-a427-14b5a93725c2",
+      "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "branch_id": null,
+      "version": 2,
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "status": "CANCELLED",
+      "request_digest": "ad9dc2faf14d732e110fe6f3c01f396cd1d0cad0dbac8f1254564307d20999a5",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T16:31:35.685841+00:00",
+      "updated_at": "2026-10-24T16:31:35.786154+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": "LOCAL_RESULT_DISCARD",
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "output_candidate": null,
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+          },
+          "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+          "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "approved_asset_version": null,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": true
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+      },
+      "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+      "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+    "canvas_read": false,
+    "automatic_actions": false,
+    "local_result_discarded": true,
+    "remote_stop_confirmed": false
+  },
+  "after": {
+    "contract": "studio-image-node-job-observation/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "947be49f-e9d3-4f92-a427-14b5a93725c2",
+      "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "branch_id": null,
+      "version": 2,
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "status": "CANCELLED",
+      "request_digest": "ad9dc2faf14d732e110fe6f3c01f396cd1d0cad0dbac8f1254564307d20999a5",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T16:31:35.685841+00:00",
+      "updated_at": "2026-10-24T16:31:35.786154+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": "LOCAL_RESULT_DISCARD",
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "output_candidate": null,
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+          },
+          "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+          "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "approved_asset_version": null,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": true
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-c5105f09bbec43e7ae13127f74ba8c8a",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-c5105f09bbec43e7ae13127f74ba8c8a"
+      },
+      "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+      "canvas_id": "a942736c-ce9b-4ec2-89a0-7070b05d8aaf",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:40909866-6a34-4582-ac8d-8ee5afc21286",
+    "canvas_read": false,
+    "automatic_actions": false
+  }
+}

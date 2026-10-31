@@ -1,0 +1,10 @@
+run 1 failedTotal 12 protects IMAGE cost=p:25474ms after invalid preview=p:74ms authoritative download=p:990ms authors a director in =p:23208ms asset-B-ABA=p:85ms
+run 2 failedTotal 12 protects IMAGE cost=p:26128ms after invalid preview=p:114ms authoritative download=p:746ms authors a director in =p:21564ms asset-B-ABA=p:74ms
+run 3 failedTotal 13 protects IMAGE cost=p:28401ms after invalid preview=p:89ms authoritative download=p:793ms authors a director in =p:20546ms asset-B-ABA=p:67ms
+run 4 failedTotal 12 protects IMAGE cost=p:23591ms after invalid preview=p:80ms authoritative download=p:564ms authors a director in =p:15410ms asset-B-ABA=p:60ms
+run 5 failedTotal 12 protects IMAGE cost=p:15800ms after invalid preview=p:67ms authoritative download=p:497ms authors a director in =p:11897ms asset-B-ABA=p:23ms
+run 6 failedTotal 12 protects IMAGE cost=p:7489ms after invalid preview=p:58ms authoritative download=p:304ms authors a director in =p:5052ms asset-B-ABA=p:28ms
+run 7 failedTotal 12 protects IMAGE cost=p:5251ms after invalid preview=p:59ms authoritative download=p:133ms authors a director in =p:4143ms asset-B-ABA=p:15ms
+run 8 failedTotal 12 protects IMAGE cost=p:5581ms after invalid preview=p:58ms authoritative download=p:144ms authors a director in =p:4695ms asset-B-ABA=p:15ms
+run 9 failedTotal 12 protects IMAGE cost=p:5216ms after invalid preview=p:58ms authoritative download=p:134ms authors a director in =p:4843ms asset-B-ABA=p:15ms
+run 10 failedTotal 12 protects IMAGE cost=p:4921ms after invalid preview=p:57ms authoritative download=p:131ms authors a director in =p:4095ms asset-B-ABA=p:15ms

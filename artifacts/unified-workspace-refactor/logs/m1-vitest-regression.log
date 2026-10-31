@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspace/layout/persistence.test.ts (12 tests) 20ms
+ ✓ src/workbench/workbench.test.ts (18 tests) 13ms
+ ✓ src/workspace/layout/model.test.ts (10 tests) 10ms
+ ✓ src/rebuild/canvas/RebuildCanvas.test.tsx (2 tests) 107ms
+ ✓ src/workbench/capabilityBadge.test.ts (4 tests) 6ms
+ ✓ src/workbench/revisionRestore.test.ts (5 tests) 5ms
+ ✓ src/workbench/novelCta.test.ts (3 tests) 3ms
+ ✓ src/workbench/novelSecondaryEntries.test.ts (2 tests) 4ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (10 tests) 192ms
+ ✓ src/workbench/CommandSearch.test.tsx (12 tests) 515ms
+ ✓ src/ui/AppShell.test.tsx (35 tests) 531ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (19 tests) 766ms
+
+ Test Files  12 passed (12)
+      Tests  132 passed (132)
+   Start at  17:36:10
+   Duration  1.74s (transform 832ms, setup 140ms, collect 2.42s, tests 2.17s, environment 1.89s, prepare 689ms)
+
+EXIT 0

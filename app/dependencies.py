@@ -43,6 +43,8 @@ from .packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLoc
 from .packaging.initial_workspace import PackagedInitialWorkspaceProvisioner
 from .packaging.runtime_identity import RuntimeIdentity
 from .model_center import create_default_model_center
+from .model_center.discovery_bridge import _LocalImageTransport
+from .creative.production_execution import endpoint_local as _asset_endpoint_local
 from .stable_identity import StableIdentityStore, get_host_identity_store
 from .provider_runtime_v2_model_center_snapshot_bridge import create_provider_runtime_snapshot as _create_provider_runtime_snapshot
 import os
@@ -66,14 +68,21 @@ for _provider, _cfg in _saved_asset_configs.items():
         _models[_provider] = _cfg.get("default_model", "")
 for _provider,_endpoint in _endpoints.items():
     if not _endpoint: continue
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(_endpoint)
+    except ValueError:
+        continue
     _cfg=_saved_asset_configs.get(_provider) or IMAGE_PROVIDER_CATALOG.get(_provider,{})
     if _cfg.get('local') and _provider not in _saved_asset_configs: continue
     if _cfg.get('enabled') is False: continue
     try:
         import httpx
         _style=_cfg.get('api_style','openai')
-        if _style=='comfyui': _adapter=ComfyUIImageProvider(httpx,_endpoint)
-        elif _style=='automatic1111': _adapter=Automatic1111ImageProvider(httpx,_endpoint)
+        if _style in {'comfyui','automatic1111'}:
+            _transport=_LocalImageTransport(_endpoint,configured=True,trust_env=not _asset_endpoint_local(_endpoint,bool(_cfg.get('local'))))
+        if _style=='comfyui': _adapter=ComfyUIImageProvider(_transport,_endpoint)
+        elif _style=='automatic1111': _adapter=Automatic1111ImageProvider(_transport,_endpoint)
         else: _adapter=build_openai_compatible_from_vault(httpx, _provider, _endpoint, credential_vault)
         _adapter.default_model=_cfg.get('default_model','')
         asset_provider_registry.register(_provider,_adapter)
@@ -86,6 +95,12 @@ def refresh_asset_provider(provider_id: str) -> bool:
     cfg = saved.get(provider_id) if isinstance(saved.get(provider_id), dict) else {}
     catalog=IMAGE_PROVIDER_CATALOG.get(provider_id,{})
     effective={**catalog,**cfg};endpoint=effective.get("endpoint","");style=effective.get("api_style","openai")
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(endpoint) if endpoint else None
+    except ValueError:
+        asset_provider_registry.unregister(provider_id)
+        return False
     if not cfg and effective.get("local"): asset_provider_registry.unregister(provider_id);return False
     legacy_vault_provider="openai" if provider_id=="custom" and cfg and "requires_credential" not in cfg else provider_id
     if effective.get("enabled") is False or not endpoint or (effective.get("requires_credential",True) and not credential_vault.has(legacy_vault_provider)):
@@ -93,8 +108,10 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     try:
         import httpx
-        if style=="comfyui": adapter=ComfyUIImageProvider(httpx,endpoint)
-        elif style=="automatic1111": adapter=Automatic1111ImageProvider(httpx,endpoint)
+        if style in {"comfyui","automatic1111"}:
+            transport=_LocalImageTransport(endpoint,configured=True,trust_env=not _asset_endpoint_local(endpoint,bool(effective.get('local'))))
+        if style=="comfyui": adapter=ComfyUIImageProvider(transport,endpoint)
+        elif style=="automatic1111": adapter=Automatic1111ImageProvider(transport,endpoint)
         else: adapter=build_openai_compatible_from_vault(httpx,legacy_vault_provider,endpoint,credential_vault)
         adapter.default_model=effective.get("default_model","")
         asset_provider_registry.register(provider_id,adapter)
@@ -103,14 +120,25 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     return True
 
+from .model_center.discovery import LocalDiscoveryService
+from .model_center.discovery_bridge import LocalDiscoveryBridge
+local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_path()/"model-center"/"local-discovery.json")
+local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
+
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
-def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
+local_ai_discovery.route_bridge.video_registry=screenplay_service.video_providers
+def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True, *, video_to_video: bool = False) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
+        return False
+    try:
+        from .net_safety import validate_provider_endpoint
+        validate_provider_endpoint(endpoint)
+    except ValueError:
         return False
     try:
         import httpx
         secret=credential_vault.resolve(provider_id) if requires_credential else None
-        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, secret, model_id))
+        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, secret, model_id, video_to_video=video_to_video))
         return True
     except (ImportError, ValueError):
         return False
@@ -118,8 +146,8 @@ asset_task_worker=AssetTaskWorker(screenplay_service)
 asset_library_service=AssetLibraryService(settings.data_path())
 import_review_service=ImportReviewService(settings.data_path())
 
-def _export_snapshot(novel_id: str, format: str):
-    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format)
+def _export_snapshot(novel_id: str, format: str, permission_context: dict | None = None):
+    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format, permission_context=permission_context)
 
 export_job_service=ExportJobService(
     settings.data_path(),
@@ -127,6 +155,14 @@ export_job_service=ExportJobService(
     snapshotter=_export_snapshot,
 )
 chapter_service=ChapterService(repositories.chapters)
+from .experimental.store import ExperimentalStore
+from .services.branch_manuscript_service import BranchManuscriptService
+branch_manuscript_service = BranchManuscriptService(
+    ExperimentalStore(settings.data_path(), settings.storage_backend, settings.database_url),
+    novel_service, chapter_service)
+chapter_service.branch_authority = branch_manuscript_service.for_scope
+novel_service.branch_authority = branch_manuscript_service.for_scope
+adaptation_service.branch_authority = branch_manuscript_service.for_scope
 memory_service=MemoryService(repositories.lore)
 user_preference_service=UserPreferenceService(settings.data_path())
 harness_process_service=HarnessProcessService()
@@ -154,12 +190,14 @@ narrative_state_service=NarrativeStateService(repositories.narrative,repositorie
 narrative_finding_service=NarrativeFindingService(repositories.narrative)
 narrative_proposal_service=NarrativeProposalService(repositories.narrative,narrative_state_service)
 collaboration_scope_service=CollaborationScopeService(repositories.scope,repositories.novels)
+branch_manuscript_service.scopes = collaboration_scope_service
 authorization_service=AuthorizationService(repositories.authorization,collaboration_scope_service)
 identity_service=IdentityService(repositories.identity,collaboration_scope_service)
 membership_authorization_service=MembershipAuthorizationService(identity_service,authorization_service)
 audit_service=AuditService(repositories.authorization)
 atomic_chapter_audit_port=create_atomic_chapter_audit_port(repositories.chapters,repositories.authorization)
 collaboration_application_service=CollaborationApplicationService(membership_authorization_service,atomic_chapter_audit_port,audit_service)
+collaboration_application_service.branch_manuscripts = branch_manuscript_service
 trusted_session_resolver=create_runtime_session_resolver(
     packaged_runtime=settings.enable_packaged_runtime,
     dev_sessions_json=settings.collaboration_dev_sessions_json,
@@ -195,6 +233,7 @@ collaboration_read_service=CollaborationReadService(
     visual_workflows=VisualTextWorkflowAdapter(runtime.provider_registry, runtime.model_registry),
     runtime_diagnostics=TextRuntimeDiagnosticsAdapter(runtime.provider_registry, runtime.model_registry),
 )
+collaboration_read_service.branch_manuscripts = branch_manuscript_service
 collaboration_admin_service=CollaborationAdminService(
     sessions=trusted_session_resolver,
     identity=identity_service,
@@ -212,3 +251,19 @@ memory_agent_service=MemoryAgentRunner(repositories.novels,repositories.chapters
 def create_provider_runtime_snapshot():
     """Build the read-only Provider Runtime snapshot from Host-owned services."""
     return _create_provider_runtime_snapshot()
+
+# The interop Host is passive at construction and disabled by default.
+from .local_interop.provider import InteropContextProvider
+from .local_interop.host import LocalInteropHost
+
+def _interop_jobs():
+    from .jobs import jobs
+    return jobs
+
+local_interop_host = LocalInteropHost(InteropContextProvider(
+    collaboration_read_service, model_center=model_center_service, jobs=_interop_jobs,
+    export_jobs=export_job_service,
+    # get_workflow_run() can mutate timeout state. This owner-level read-only
+    # projection intentionally does not call it or advance the workflow.
+    workflow_reader=lambda task_id: v1_capability_service._get("workflow_runs", task_id),
+))

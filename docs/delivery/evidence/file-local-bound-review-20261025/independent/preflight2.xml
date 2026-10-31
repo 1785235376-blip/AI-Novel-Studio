@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="6.117" timestamp="2026-10-25T19:00:06.976243+09:00" hostname="8a71deb1dd45"><testcase classname="review-file-adoption-independent.test_independent" name="test_genuine_cold_bound_accept_all_effects" time="0.053"><error message="failed on setup with &quot;NameError: name '_review' is not defined&quot;">source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=&lt;function JobManager._run at 0x7feed841f2e0&gt;, client=&lt;starlette.testclient.TestClient object at 0x7feed5388110&gt;)
+memory_settings = &lt;module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'&gt;
+
+    @pytest.fixture
+    def ready(source, memory_settings):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+&gt;       job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+
+../review-file-adoption-independent/test_independent.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:698: in create
+    return self.start_prepared(job)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+app/jobs.py:725: in start_prepared
+    return self._start_prepared_validated(job)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.jobs.JobManager object at 0x7feed5215c70&gt;
+job = Job(id='5ae34a23-e893-44ab-9690-016232cb8c76', operation='rewrite', novel_id='passive-manager-book', chapter_id='passi...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+
+    def _start_prepared_validated(self, job):
+        self.require_ordinary_mutation_eligibility(job)
+        if is_image_job(job):
+            from .creative.director_image_execution import require_capability
+            require_capability(self, job, started=True)
+        if _is_research_ocr_execution(job):
+            from .experimental.research_ocr_execution import require_capability
+            require_capability(self, job, started=True)
+        if _is_creative_execution(job):
+            _require_creative_execution_session(job, manager=self, started=True)
+            self._guard_creative_request(job)
+        from .experimental.character_author_context import is_character_job
+        if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
+        if job.graph_binding is not None or job.operation == "graph_text":
+            self._guard_graph_request(job)
+        if job.adaptation_binding is not None or job.experimental_origin == "creative_adaptation_model":
+            if not generation_content_available(job): raise ValueError("ADAPTATION_LIVE_AUTHORITY_REQUIRED")
+        validate_generation_bounds(job)
+        job._generation_bounds = (job.generation_max_output_bytes, job.generation_deadline)
+        if job.expected_request_digest and not callable(job.request_authorization):
+            raise ValueError("AUTHOR_PREVIEW_SESSION_REQUIRED")
+        if (job.partial_revision_only or job.revision_selection_binding is not None) and not callable(job.request_authorization):
+            raise ValueError("REVISION_SELECTION_AUTHORITY_REQUIRED")
+        if is_character_job(job) and not callable(job.character_context_resolver):
+            raise ValueError("CHARACTER_CONTEXT_SESSION_REQUIRED")
+        if job.before_dispatch is not None or job.on_terminal is not None:
+            if not callable(job.before_dispatch) or not callable(job.on_terminal):
+                raise ValueError("GENERATION_DISPATCH_HOOK_PAIR_REQUIRED")
+            job.dispatch_hooks_required = True
+        if job.dispatch_hooks_required and (not callable(job.before_dispatch) or not callable(job.on_terminal)):
+            raise ValueError("GENERATION_DISPATCH_SESSION_REQUIRED")
+        with self.lock:
+            if job.id in self.jobs and not (job.reviewed_variant and self.jobs[job.id] is job):
+                raise ValueError("GENERATION_JOB_ALREADY_STARTED")
+            job.status = "QUEUED"
+            self.jobs[job.id] = job
+&gt;           try: self._persist(job, _review=_review)
+                                            ^^^^^^^
+E           NameError: name '_review' is not defined
+
+app/jobs.py:783: NameError</error></testcase></testsuite></testsuites>

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+  File "D:\PoemSeed\Worktrees\file-backend-safety-asset-order-F-20261026\scripts\run_studio_backend_tests.py", line 72, in main
+    assert settings.mock_provider and not settings.enable_cloud and not settings.enable_packaged_runtime
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

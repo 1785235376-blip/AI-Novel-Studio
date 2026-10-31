@@ -1,0 +1,105 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-file-adoption-independent/run.py /workspace/scratch/20a0022d2b33/review-file-adoption-independent/test_independent.py -xq --junitxml=/workspace/scratch/20a0022d2b33/review-file-adoption-independent/preflight2.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+ M app/jobs.py
+?? app/services/file_generation_review.py
+E
+==================================== ERRORS ====================================
+_________ ERROR at setup of test_genuine_cold_bound_accept_all_effects _________
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7feed841f2e0>, client=<starlette.testclient.TestClient object at 0x7feed5388110>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+
+    @pytest.fixture
+    def ready(source, memory_settings):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+>       job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+
+../review-file-adoption-independent/test_independent.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:698: in create
+    return self.start_prepared(job)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+app/jobs.py:725: in start_prepared
+    return self._start_prepared_validated(job)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.jobs.JobManager object at 0x7feed5215c70>
+job = Job(id='5ae34a23-e893-44ab-9690-016232cb8c76', operation='rewrite', novel_id='passive-manager-book', chapter_id='passi...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+
+    def _start_prepared_validated(self, job):
+        self.require_ordinary_mutation_eligibility(job)
+        if is_image_job(job):
+            from .creative.director_image_execution import require_capability
+            require_capability(self, job, started=True)
+        if _is_research_ocr_execution(job):
+            from .experimental.research_ocr_execution import require_capability
+            require_capability(self, job, started=True)
+        if _is_creative_execution(job):
+            _require_creative_execution_session(job, manager=self, started=True)
+            self._guard_creative_request(job)
+        from .experimental.character_author_context import is_character_job
+        if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
+        if job.graph_binding is not None or job.operation == "graph_text":
+            self._guard_graph_request(job)
+        if job.adaptation_binding is not None or job.experimental_origin == "creative_adaptation_model":
+            if not generation_content_available(job): raise ValueError("ADAPTATION_LIVE_AUTHORITY_REQUIRED")
+        validate_generation_bounds(job)
+        job._generation_bounds = (job.generation_max_output_bytes, job.generation_deadline)
+        if job.expected_request_digest and not callable(job.request_authorization):
+            raise ValueError("AUTHOR_PREVIEW_SESSION_REQUIRED")
+        if (job.partial_revision_only or job.revision_selection_binding is not None) and not callable(job.request_authorization):
+            raise ValueError("REVISION_SELECTION_AUTHORITY_REQUIRED")
+        if is_character_job(job) and not callable(job.character_context_resolver):
+            raise ValueError("CHARACTER_CONTEXT_SESSION_REQUIRED")
+        if job.before_dispatch is not None or job.on_terminal is not None:
+            if not callable(job.before_dispatch) or not callable(job.on_terminal):
+                raise ValueError("GENERATION_DISPATCH_HOOK_PAIR_REQUIRED")
+            job.dispatch_hooks_required = True
+        if job.dispatch_hooks_required and (not callable(job.before_dispatch) or not callable(job.on_terminal)):
+            raise ValueError("GENERATION_DISPATCH_SESSION_REQUIRED")
+        with self.lock:
+            if job.id in self.jobs and not (job.reviewed_variant and self.jobs[job.id] is job):
+                raise ValueError("GENERATION_JOB_ALREADY_STARTED")
+            job.status = "QUEUED"
+            self.jobs[job.id] = job
+>           try: self._persist(job, _review=_review)
+                                            ^^^^^^^
+E           NameError: name '_review' is not defined
+
+app/jobs.py:783: NameError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_passive_generation_manager_binding.py:28
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_passive_generation_manager_binding.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_memory_agent_contract.py:107
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:107: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+tests/test_memory_agent_contract.py:132
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-file-adoption-independent/preflight2.xml -
+=========================== short test summary info ============================
+ERROR ../review-file-adoption-independent/test_independent.py::test_genuine_cold_bound_accept_all_effects
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+6 warnings, 1 error in 6.11s

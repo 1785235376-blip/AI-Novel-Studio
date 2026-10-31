@@ -1,0 +1,78 @@
+ACTUAL_ORIGINAL_SYNTHETIC_PREDICATE {"actual_mock": true, "actual_provider_type": "app.providers.MockProvider", "mock_provider": true, "packaged": false, "remote": false}
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+........................................................................ [ 31%]
+........................................................................ [ 42%]
+........................................................................ [ 52%]
+........................................................................ [ 63%]
+........................................................................ [ 74%]
+..........s............................................................. [ 84%]
+..............F............ss........................................... [ 95%]
+................................                                         [100%]
+=================================== FAILURES ===================================
+__________ test_generation_is_idempotent_under_concurrent_submission ___________
+
+source = namespace(client=<starlette.testclient.TestClient object at 0x7f7fa8949100>, manager=<app.jobs.JobManager object at 0x..., payload={'novel_id': 'variants-book', 'chapter_id': 'variants-book:1', 'instruction': '继续', 'profile': 'LOCAL_ONLY'})
+
+    def test_generation_is_idempotent_under_concurrent_submission(source):
+        def submit(_):
+            response = source.client.post("/api/generate/continue",
+                headers={"Idempotency-Key": "generation-race-unique"}, json=source.payload)
+            assert response.status_code == 202, response.text
+            return response.json()["job_id"]
+    
+        with ThreadPoolExecutor(max_workers=3) as pool:
+>           ids = list(pool.map(submit, range(3)))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_generation_variants_phase3.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+_ = 0
+
+    def submit(_):
+        response = source.client.post("/api/generate/continue",
+            headers={"Idempotency-Key": "generation-race-unique"}, json=source.payload)
+>       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"aa5ff21c-34cd-4e97-9862-f74d2772065c"}
+E       assert 409 == 202
+E        +  where 409 = <Response [409 Conflict]>.status_code
+
+tests/test_generation_variants_phase3.py:82: AssertionError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/mock-final-frozen-regression.xml -
+=========================== short test summary info ============================
+FAILED tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission
+1 failed, 676 passed, 3 skipped, 4 warnings in 127.24s (0:02:07)

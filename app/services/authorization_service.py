@@ -1,6 +1,8 @@
 from __future__ import annotations
 from dataclasses import asdict
 from uuid import uuid4
+from contextlib import ExitStack
+from functools import wraps
 from ..authorization import *
 
 ROLE_PERMISSIONS = {
@@ -16,23 +18,42 @@ def serialize(item):
 
 def deserialize_scope(value):return AuthorizationScope(ScopeKind(value["kind"]),value["workspace_id"],value.get("project_id"),value.get("storyline_id"),value.get("branch_id"))
 
+def assignment_lease(method):
+ @wraps(method)
+ def bound(self,item):
+  # Validate and save under the original project lease. Retirement must wait
+  # for this grant to finish and then remove it; a paused grant cannot insert
+  # an old project's authority after deletion and same-ID recreation.
+  with ExitStack() as leases:
+   mutation=getattr(self.repository,"mutation",None)
+   if callable(mutation):leases.enter_context(mutation())
+   if item.scope.project_id:
+    owner=getattr(self.scope_service.repository,"project_authority_lease",None)
+    if callable(owner):leases.enter_context(owner(item.scope.project_id))
+   return method(self,item)
+ return bound
+
 class AuthorizationService:
  def __init__(self,repository,scope_service):self.repository=repository;self.scope_service=scope_service
  def _validate_scope(self,scope):
   self.scope_service.get_workspace(scope.workspace_id)
   if scope.project_id is None:return scope
+  try:self.scope_service.novels.get(scope.project_id)
+  except (FileNotFoundError,KeyError) as exc:raise ValueError("project does not exist") from exc
   if scope.storyline_id is None:
    if self.scope_service.repository.project_workspace(scope.project_id)!=scope.workspace_id:raise ValueError("project does not belong to workspace")
    return scope
   self.scope_service.validate_scope_parent(scope.workspace_id,scope.project_id,scope.storyline_id)
   if scope.branch_id is not None:self.scope_service.validate_scope(__import__("app.collaboration",fromlist=["CollaborationScope"]).CollaborationScope(scope.workspace_id,scope.project_id,scope.storyline_id,scope.branch_id))
   return scope
+ @assignment_lease
  def assign_role(self,item):
   self._validate_scope(item.scope)
   candidate=serialize(item)
   existing=next((x for x in self.repository.list_role_assignments(item.principal_id) if x["role"]==candidate["role"] and x["domain"]==candidate["domain"] and x["scope"]==candidate["scope"]),None)
   if existing:return existing
   audit=self._audit_event(item.created_by,"ROLE_ASSIGNED","DomainRoleAssignment",item.id,item.scope,{"principal_id":item.principal_id,"role":item.role.value,"domain":item.domain.value});return self.repository.save_role_assignment_with_audit(candidate,audit)
+ @assignment_lease
  def assign_permission(self,item):
   self._validate_scope(item.scope)
   candidate=serialize(item)

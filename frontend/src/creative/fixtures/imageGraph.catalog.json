@@ -1,0 +1,1246 @@
+{
+  "definitions": [
+    {
+      "id": "text_input",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "default": "",
+            "maxLength": 8000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "title": "TextParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "text": ""
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "text_reference",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "draft_prepare",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": true,
+          "multiple": false
+        },
+        {
+          "id": "direction",
+          "type": "DIRECTOR_NOTES",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "draft",
+          "type": "DRAFT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "manual_transform",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": true,
+          "multiple": false
+        },
+        {
+          "id": "direction",
+          "type": "DIRECTOR_NOTES",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "draft",
+          "type": "DRAFT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "default": "",
+            "maxLength": 8000,
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "title": "ManualParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "result": ""
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "director_note",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "direction",
+          "type": "DIRECTOR_NOTES",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "DirectorParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "note": ""
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "human_review",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "draft",
+          "type": "DRAFT",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "reviewed_draft",
+          "type": "DRAFT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "asset_reference",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "asset",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          },
+          "digest": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Digest",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "image",
+              "video",
+              "audio"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "version",
+          "digest",
+          "kind"
+        ],
+        "title": "AssetParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "media_generate",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "draft",
+          "type": "DRAFT",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "candidate",
+          "type": "MEDIA_CANDIDATE",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "MediaParameters": {
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "height": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Height"
+              },
+              "steps": {
+                "anyOf": [
+                  {
+                    "maximum": 150,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Steps"
+              },
+              "seed": {
+                "anyOf": [
+                  {
+                    "maximum": 2147483647,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Seed"
+              },
+              "negative_prompt": {
+                "anyOf": [
+                  {
+                    "maxLength": 8000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Negative Prompt"
+              },
+              "size": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "1024x1024",
+                      "1536x1024",
+                      "1024x1536"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Size"
+              },
+              "quality": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "low",
+                      "medium",
+                      "high",
+                      "standard",
+                      "hd"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Quality"
+              },
+              "duration_seconds": {
+                "anyOf": [
+                  {
+                    "maximum": 600,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Duration Seconds"
+              },
+              "frame_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 60,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Frame Rate"
+              },
+              "voice_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 240,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Voice Id"
+              },
+              "speech_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 2,
+                    "minimum": 0.5,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Speech Rate"
+              },
+              "in_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "In Ms"
+              },
+              "out_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Out Ms"
+              }
+            },
+            "title": "MediaParameters",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Configuration only; the runtime constructs the original MediaCommand.",
+        "properties": {
+          "operation_id": {
+            "enum": [
+              "m5.image.t2i",
+              "m5.image.i2i",
+              "m7.video.t2v",
+              "m7.video.i2v",
+              "m7.video.v2v",
+              "m8.audio.speech",
+              "m8.audio.music",
+              "m8.audio.effects",
+              "m8.audio.trim"
+            ],
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "provider_id": {
+            "anyOf": [
+              {
+                "maxLength": 240,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Id"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "maxLength": 240,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Id"
+          },
+          "prompt": {
+            "default": "",
+            "maxLength": 16000,
+            "title": "Prompt",
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/$defs/MediaParameters"
+          },
+          "allow_cloud": {
+            "default": false,
+            "title": "Allow Cloud",
+            "type": "boolean"
+          },
+          "license_note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "License Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "MediaNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "media_review",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "candidate",
+          "type": "MEDIA_CANDIDATE",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "asset",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "timeline_export",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "source_1",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_2",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_3",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_4",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_5",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_6",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_7",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_8",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "candidate",
+          "type": "MEDIA_CANDIDATE",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "TimelineSnapshotParameters": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$",
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "title": "Version",
+                "type": "integer"
+              },
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Digest",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version",
+              "digest"
+            ],
+            "title": "TimelineSnapshotParameters",
+            "type": "object"
+          },
+          "TimelineSourceBinding": {
+            "additionalProperties": false,
+            "properties": {
+              "port": {
+                "enum": [
+                  "source_1",
+                  "source_2",
+                  "source_3",
+                  "source_4",
+                  "source_5",
+                  "source_6",
+                  "source_7",
+                  "source_8"
+                ],
+                "title": "Port",
+                "type": "string"
+              },
+              "clip_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$",
+                "title": "Clip Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "port",
+              "clip_id"
+            ],
+            "title": "TimelineSourceBinding",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "timeline_snapshot": {
+            "$ref": "#/$defs/TimelineSnapshotParameters"
+          },
+          "edit_operations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "maxItems": 40,
+            "title": "Edit Operations",
+            "type": "array"
+          },
+          "source_bindings": {
+            "items": {
+              "$ref": "#/$defs/TimelineSourceBinding"
+            },
+            "maxItems": 8,
+            "title": "Source Bindings",
+            "type": "array"
+          },
+          "export_profile": {
+            "additionalProperties": true,
+            "title": "Export Profile",
+            "type": "object"
+          }
+        },
+        "required": [
+          "timeline_snapshot",
+          "export_profile"
+        ],
+        "title": "TimelineNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "image_reference",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "source_1",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_2",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_3",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_4",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_5",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "references",
+          "type": "IMAGE_REFERENCES",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "ImageReferenceBinding": {
+            "additionalProperties": false,
+            "properties": {
+              "port": {
+                "enum": [
+                  "source_1",
+                  "source_2",
+                  "source_3",
+                  "source_4",
+                  "source_5"
+                ],
+                "title": "Port",
+                "type": "string"
+              },
+              "weight": {
+                "default": 1.0,
+                "exclusiveMinimum": 0,
+                "maximum": 1,
+                "title": "Weight",
+                "type": "number"
+              }
+            },
+            "required": [
+              "port"
+            ],
+            "title": "ImageReferenceBinding",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "bindings": {
+            "items": {
+              "$ref": "#/$defs/ImageReferenceBinding"
+            },
+            "maxItems": 5,
+            "title": "Bindings",
+            "type": "array"
+          }
+        },
+        "title": "ImageReferenceParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "bindings": []
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "image_prompt",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "references",
+          "type": "IMAGE_REFERENCES",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "prompt",
+          "type": "IMAGE_PROMPT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "default": "",
+            "maxLength": 8000,
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "title": "ImagePromptParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "prompt": ""
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "image_generate",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "prompt",
+          "type": "IMAGE_PROMPT",
+          "required": true,
+          "multiple": false
+        },
+        {
+          "id": "source",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "mask",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "candidate",
+          "type": "MEDIA_CANDIDATE",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "GraphImageParameters": {
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "height": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Height"
+              },
+              "steps": {
+                "anyOf": [
+                  {
+                    "maximum": 150,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Steps"
+              },
+              "seed": {
+                "anyOf": [
+                  {
+                    "maximum": 2147483647,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Seed"
+              },
+              "negative_prompt": {
+                "anyOf": [
+                  {
+                    "maxLength": 8000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Negative Prompt"
+              },
+              "size": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "1024x1024",
+                      "1536x1024",
+                      "1024x1536"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Size"
+              },
+              "quality": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "low",
+                      "medium",
+                      "high",
+                      "standard",
+                      "hd"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Quality"
+              },
+              "duration_seconds": {
+                "anyOf": [
+                  {
+                    "maximum": 600,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Duration Seconds"
+              },
+              "frame_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 60,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Frame Rate"
+              },
+              "voice_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 240,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Voice Id"
+              },
+              "speech_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 2,
+                    "minimum": 0.5,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Speech Rate"
+              },
+              "in_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "In Ms"
+              },
+              "out_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Out Ms"
+              },
+              "denoising_strength": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Denoising Strength"
+              }
+            },
+            "title": "GraphImageParameters",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": {
+            "enum": [
+              "m5.image.t2i",
+              "m5.image.i2i",
+              "m5.image.reference",
+              "m5.image.inpaint"
+            ],
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "provider_id": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Provider Id",
+            "type": "string"
+          },
+          "model_id": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Model Id",
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/$defs/GraphImageParameters"
+          },
+          "allow_cloud": {
+            "default": false,
+            "title": "Allow Cloud",
+            "type": "boolean"
+          },
+          "license_note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "License Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id",
+          "provider_id",
+          "model_id"
+        ],
+        "title": "ImageNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    }
+  ],
+  "limits": {
+    "nodes": 16,
+    "edges": 40,
+    "definition_bytes": 96000,
+    "output_bytes": 64000,
+    "graphs": 25,
+    "runs": 100,
+    "history": 20,
+    "runtime_timeout_seconds": 3600,
+    "node_timeout_seconds": 5
+  },
+  "capabilities": {
+    "local_execution": true,
+    "chapter_required": false,
+    "model_execution": false,
+    "external_reference_execution": true,
+    "external_reference_detach": false,
+    "binary_cache": false,
+    "parallel_execution": false,
+    "automatic_retry": false,
+    "actor_private": true,
+    "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY",
+    "media_execution": true,
+    "media_execution_contract": "creative-graph-media/1",
+    "media_evidence": "LOCAL_REQUIRED",
+    "media_cache": false,
+    "media_parallel_execution": false,
+    "automatic_media_dispatch": false,
+    "timeline_execution": true,
+    "timeline_evidence": "LOCAL_REQUIRED",
+    "automatic_timeline_dispatch": false,
+    "image_graph": true,
+    "image_graph_schema_version": 4,
+    "image_graph_evidence": "LOCAL_REQUIRED",
+    "image_reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+    "image_upscale_execution": false
+  },
+  "media_limits": {
+    "nodes": 24,
+    "generators": 4,
+    "history": 80
+  }
+}

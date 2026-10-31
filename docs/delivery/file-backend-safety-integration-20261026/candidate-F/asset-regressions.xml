@@ -1,0 +1,867 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="37" skipped="0" tests="192" time="145.884" timestamp="2026-10-26T23:38:17.804197+08:00" hostname="冢"><testcase classname="tests.test_asset_library" name="test_asset_upload_list_metadata_and_download" time="0.498" /><testcase classname="tests.test_asset_library" name="test_concurrent_asset_upload_with_same_key_is_single_resource" time="0.132" /><testcase classname="tests.test_studio_asset_query" name="test_existing_shape_and_combined_filename_kind_filter" time="1.194"><failure message="AssertionError: assert {'code', 'det... 'request_id'} == {'items'}&#10;  &#10;  Extra items in the left set:&#10;  'detail'&#10;  'code'&#10;  'request_id'&#10;  'details'&#10;  'message'...&#10;  &#10;  ...Full output truncated (3 lines hidden), use '-vv' to show">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068C9C6750&gt;, nid='query-cc9f3645983347428805e12ca7...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_existing_shape_and_combined_filename_kind_filter(rig):
+        first = rig.seed("Shrine Cover.PNG")
+        second = rig.seed("shrine ambience.wav", "audio")
+        rig.seed("Forest.png")
+&gt;       assert set(get(rig).json()) == {"items"}
+E       AssertionError: assert {'code', 'det... 'request_id'} == {'items'}
+E         
+E         Extra items in the left set:
+E         'detail'
+E         'code'
+E         'request_id'
+E         'details'
+E         'message'...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests\test_studio_asset_query.py:108: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_name_search_is_unicode_casefold_literal_substring" time="0.247"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;95ff63ef-b414-4f35-902b-4a2325185fbe&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068DF51210&gt;, nid='query-3c6dd0629bc04650a2f012de91...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_name_search_is_unicode_casefold_literal_substring(rig):
+        folded = rig.seed("Straße_神社.png")
+        literal = rig.seed("100%_cover.png")
+        rig.seed("100xxcover.png")
+&gt;       assert ids(get(rig, {"q": "STRASSE_神社"})) == [folded["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"95ff63ef-b414-4f35-902b-4a2325185fbe"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_maximum_keyword_length_is_accepted" time="0.226"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;ee07399b-34da-4dd0-be67-9c84838682de&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E016ED0&gt;, nid='query-445945e667b942c69ecb923458...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_maximum_keyword_length_is_accepted(rig):
+        name = "x" * 255
+        saved = rig.seed(name)
+&gt;       assert ids(get(rig, {"q": name, "limit": 1})) == [saved["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"ee07399b-34da-4dd0-be67-9c84838682de"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_creation_time_precedes_id_in_sort_order" time="0.268"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;2497fec4-cc65-49a1-88a4-44c33d6dca1c&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068D6838D0&gt;, nid='query-7bb68224176f4b659c8266582e...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_creation_time_precedes_id_in_sort_order(rig):
+        rows = sorted([rig.seed("chronology-a.png"), rig.seed("chronology-b.png")], key=lambda row: row["id"])
+        # Deliberately put the lexically larger ID first in time. A global ID sort
+        # cannot accidentally satisfy this assertion; the separate tie test covers
+        # the converse requirement for the secondary sort key.
+        with rig.workspace._asset_scope(rig.nid, rig.scope):
+            for row, stamp in zip(rows, ("2026-02-01T00:00:00+00:00", "2026-01-01T00:00:00+00:00")):
+                row["created_at"] = stamp
+                rig.assets._write_meta(row)
+&gt;       assert ids(get(rig, {"q": "chronology", "limit": 1})) == [rows[1]["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:139: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"2497fec4-cc65-49a1-88a4-44c33d6dca1c"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_corrupt_metadata_is_excluded_by_real_owner_before_total" time="0.257"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;10dcff7d-7c0f-4e5f-a17b-8dbaed460149&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E143E90&gt;, nid='query-83dba6dc322647e4837b2cfa90...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_corrupt_metadata_is_excluded_by_real_owner_before_total(rig):
+        visible = rig.seed("needle-visible.png")
+        damaged = rig.seed("needle-damaged.png")
+        (rig.assets.root / (damaged["id"] + ".json")).write_text("{invalid-json", encoding="utf-8")
+&gt;       assert ids(get(rig)) == [visible["id"]]
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"10dcff7d-7c0f-4e5f-a17b-8dbaed460149"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[image]" time="0.262"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;dcd63a5b-4164-402e-9809-6c3f1b2830f0&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x0000020682C755D0&gt;, nid='query-53f5716a459d411b8b81cff1ca...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'image'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"dcd63a5b-4164-402e-9809-6c3f1b2830f0"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[video]" time="0.208"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;1ab45627-8970-4652-b7bb-9b50de9790a5&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068DFE6790&gt;, nid='query-1127749ea73241bb85bd536108...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'video'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"1ab45627-8970-4652-b7bb-9b50de9790a5"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[audio]" time="0.250"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;30be4556-a1cf-406d-b15f-ba2e6f8b6eea&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1691D0&gt;, nid='query-3f931c571bda416b91392311ff...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'audio'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"30be4556-a1cf-406d-b15f-ba2e6f8b6eea"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[model]" time="0.237"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;1ffe4781-cb6d-4fc5-9dce-ae985e2a73f2&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E142A90&gt;, nid='query-ad2636a876a3495db51f9eee99...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'model'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"1ffe4781-cb6d-4fc5-9dce-ae985e2a73f2"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[text]" time="0.255"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;b060b39a-ea1e-4a46-896e-fe44e3cd6568&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068CA96F50&gt;, nid='query-60b3f04badf94919886f1a58b2...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'text'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"b060b39a-ea1e-4a46-896e-fe44e3cd6568"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[prompt]" time="0.250"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;169d65b1-2313-42f2-a875-67f0468a03ea&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E14E950&gt;, nid='query-95a9147ecc094876ba94151716...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+kind = 'prompt'
+
+    @pytest.mark.parametrize("kind", ["image", "video", "audio", "model", "text", "prompt"])
+    def test_existing_stored_kinds_can_be_selected(rig, kind):
+        selected = rig.seed("kind-fixture.bin", kind)
+        rig.seed("different.bin", "audio" if kind != "audio" else "image")
+&gt;       assert ids(get(rig, {"kind": kind, "limit": 10})) == [selected["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"169d65b1-2313-42f2-a875-67f0468a03ea"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[]" time="0.211"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;482c1e49-707d-45d0-aa8c-70ee5520117f&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E130250&gt;, nid='query-225e533ead00484486d214d0a4...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+query = ''
+
+    @pytest.mark.parametrize("query", ["", "   ", "\u3000"])
+    def test_empty_keyword_means_no_filter(rig, query):
+        saved = rig.seed("anything.png")
+&gt;       assert ids(get(rig, {"q": query})) == [saved["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"482c1e49-707d-45d0-aa8c-70ee5520117f"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[   ]" time="0.221"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;e78272b6-d89f-44e4-8c7d-22782b0fab02&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1728D0&gt;, nid='query-60d400835f394b4aabeb607f4f...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+query = '   '
+
+    @pytest.mark.parametrize("query", ["", "   ", "\u3000"])
+    def test_empty_keyword_means_no_filter(rig, query):
+        saved = rig.seed("anything.png")
+&gt;       assert ids(get(rig, {"q": query})) == [saved["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"e78272b6-d89f-44e4-8c7d-22782b0fab02"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[\u3000]" time="0.227"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;6215bdaa-10c8-4cc7-9d1d-b1a1cae34bf4&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1A4990&gt;, nid='query-89b989360a4b4ac0ab135f9971...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+query = '\u3000'
+
+    @pytest.mark.parametrize("query", ["", "   ", "\u3000"])
+    def test_empty_keyword_means_no_filter(rig, query):
+        saved = rig.seed("anything.png")
+&gt;       assert ids(get(rig, {"q": query})) == [saved["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"6215bdaa-10c8-4cc7-9d1d-b1a1cae34bf4"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_pagination_total_stable_ties_and_boundaries" time="0.334"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;c9e26dcb-49d7-4192-b75b-070fadf3d862&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E166650&gt;, nid='query-9d0be201b77947ebaaa810e25c...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_pagination_total_stable_ties_and_boundaries(rig):
+        stamp = "2026-01-01T00:00:00+00:00"
+        rows = [rig.seed(f"cover-{i}.png", stamp=stamp) for i in range(5)]
+        expected = sorted(row["id"] for row in rows)
+        rig.seed("other.wav", "audio", stamp=stamp)
+        actual = []
+        for offset in (0, 2, 4):
+            response = get(rig, {"q": "cover", "kind": "image", "limit": 2, "offset": offset})
+&gt;           actual.extend(ids(response))
+                          ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"c9e26dcb-49d7-4192-b75b-070fadf3d862"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params0]" time="0.145" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params1]" time="0.126" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params2]" time="0.140" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params3]" time="0.158" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params4]" time="0.126" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params5]" time="0.156" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params6]" time="0.098" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params7]" time="0.119" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params8]" time="0.110" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params9]" time="0.104" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params10]" time="0.102" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params11]" time="0.103" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params12]" time="0.142" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params13]" time="0.100" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params14]" time="0.097" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params15]" time="0.099" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params16]" time="0.125" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params17]" time="0.092" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params18]" time="0.102" /><testcase classname="tests.test_studio_asset_query" name="test_filter_total_respects_project_private_deleted_and_feature_visibility" time="0.296"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;c486c423-613b-4070-a605-87f4d1e65798&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E173090&gt;, nid='query-0e26c3ea64e54d4d8710d81c48...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E16E390&gt;
+
+    def test_filter_total_respects_project_private_deleted_and_feature_visibility(rig, monkeypatch):
+        visible = rig.seed("needle-visible.png")
+        rig.seed("needle-owner.png", owner="other-actor")
+        deleted = rig.seed("needle-deleted.png", deleted=True)
+        hidden = rig.seed("needle-feature.png", required_features=("narrative_production_v2", "asset_lineage_v2"))
+        other = rig.project()
+        rig.seed("needle-other-project.png", project_id=other)
+&gt;       assert set(ids(get(rig, {"q": "needle", "limit": 100}))) == {visible["id"], hidden["id"]}
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"c486c423-613b-4070-a605-87f4d1e65798"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_recreated_project_does_not_adopt_old_bound_assets" time="0.310"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;74cffabd-c793-4b9a-af25-00f678e5651b&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1A5150&gt;, nid='query-e1cbc8902898425ba57716757e...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_recreated_project_does_not_adopt_old_bound_assets(rig):
+        old = rig.seed("needle-old.png")
+        rig.novels.delete(rig.nid)
+        rig.project(rig.nid)
+        new = rig.seed("needle-new.png")
+        response = get(rig, {"q": "needle", "limit": 100})
+&gt;       assert ids(response) == [new["id"]]
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:231: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"74cffabd-c793-4b9a-af25-00f678e5651b"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query" name="test_real_authority_session_membership_and_branch_boundaries" time="0.253"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;e68f9d1f-390b-4fc2-b680-5cbdfb0cb3b9&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1B5A50&gt;, nid='query-60ce739ea4314b6db8ec61facf...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_real_authority_session_membership_and_branch_boundaries(rig):
+        from app.identity import IdentityStatus
+    
+        scope, headers = shared_scope(rig)
+        first = rig.seed("needle-a.png", scope_value=scope)
+        second_scope = {**scope, "branch_id": "query-branch-b"}
+        second = rig.seed("needle-b.png", scope_value=second_scope)
+        query = {"q": "needle", "kind": "image", "limit": 1}
+        response = get(rig, query, headers=headers)
+&gt;       assert ids(response) == [first["id"]] and response.json()["total"] == 1
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query.py:269: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"e68f9d1f-390b-4fc2-b680-5cbdfb0cb3b9"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[no_read-invalid0-403]" time="0.274"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;3933eb51-21a8-4944-8d93-74bd7c326f20&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1AD050&gt;, nid='query-789f8d336767404e92e3d91502...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E15CE10&gt;
+case = 'no_read', invalid = {'kind': 'unknown'}, expected = 403
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+&gt;           assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"3933eb51-21a8-4944-8d93-74bd7c326f20"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[no_read-invalid1-403]" time="0.299"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;12734419-c291-42ea-8565-36318393db64&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E242250&gt;, nid='query-288dd232a2204a9c8bbabcf201...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E15F550&gt;
+case = 'no_read', invalid = {'limit': '0'}, expected = 403
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+&gt;           assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"12734419-c291-42ea-8565-36318393db64"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[missing_branch-invalid2-400]" time="0.273"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;55b7e34d-00de-472d-8b71-c6c13a2305a4&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E23E990&gt;, nid='query-8161da6ccf1441a5a22f6995f4...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E23F690&gt;
+case = 'missing_branch', invalid = {'limit': '0'}, expected = 400
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+&gt;           assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"55b7e34d-00de-472d-8b71-c6c13a2305a4"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[revoked_member-invalid3-403]" time="0.310"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;919cf1c2-dc38-4ca4-a096-e7d450ccd54e&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E179F50&gt;, nid='query-ce5ce2c287fa490ea3134a7d76...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E1A7E10&gt;
+case = 'revoked_member', invalid = {'offset': '-1'}, expected = 403
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+&gt;           assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"919cf1c2-dc38-4ca4-a096-e7d450ccd54e"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[feature_disabled-invalid4-404]" time="0.271"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;3b02baba-d268-446e-a7c6-be2481cdecc7&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E16FE90&gt;, nid='query-f2a803170f8a4ca5995bd7274b...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E1A6350&gt;
+case = 'feature_disabled'
+invalid = {'q': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+expected = 404
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+            assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+            if case == "no_read":
+                headers = {**headers, "X-Session-Token": "token-no-grants"}
+            elif case == "missing_branch":
+                headers = {"X-Session-Token": "token-reader"}
+            else:
+                from app.identity import IdentityStatus
+                rig.identities.set_membership_status("reader", "query-workspace", IdentityStatus.INACTIVE)
+        else:
+            row = rig.seed("private-scope-fixture.png")
+&gt;           assert ids(get(rig, {"limit": 1})) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"3b02baba-d268-446e-a7c6-be2481cdecc7"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_original_refusal_precedes_bad_query[missing_project-invalid5-404]" time="0.194"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;c228e8d7-88d8-4329-837a-1ce323cb5140&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1443D0&gt;, nid='query-39dba0dbe23b4d9aad906884e0...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E144D90&gt;
+case = 'missing_project', invalid = {'kind': 'unknown'}, expected = 404
+
+    @pytest.mark.parametrize("case, invalid, expected", [
+        ("no_read", {"kind": "unknown"}, 403),
+        ("no_read", {"limit": "0"}, 403),
+        ("missing_branch", {"limit": "0"}, 400),
+        ("revoked_member", {"offset": "-1"}, 403),
+        ("feature_disabled", {"q": "x" * 256}, 404),
+        ("missing_project", {"kind": "unknown"}, 404),
+    ])
+    def test_original_refusal_precedes_bad_query(rig, monkeypatch, case, invalid, expected):
+        headers = None
+        nid = rig.nid
+        if case in {"no_read", "missing_branch", "revoked_member"}:
+            scope, headers = shared_scope(rig)
+            row = rig.seed("private-scope-fixture.png", scope_value=scope)
+            assert ids(get(rig, {"limit": 1}, headers=headers)) == [row["id"]]
+            if case == "no_read":
+                headers = {**headers, "X-Session-Token": "token-no-grants"}
+            elif case == "missing_branch":
+                headers = {"X-Session-Token": "token-reader"}
+            else:
+                from app.identity import IdentityStatus
+                rig.identities.set_membership_status("reader", "query-workspace", IdentityStatus.INACTIVE)
+        else:
+            row = rig.seed("private-scope-fixture.png")
+&gt;           assert ids(get(rig, {"limit": 1})) == [row["id"]]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"c228e8d7-88d8-4329-837a-1ce323cb5140"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_authorized_validation_and_queries_do_not_write_source_data" time="0.216"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;384292d7-89d5-42f0-a2ea-deaca5ecf102&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E18C950&gt;, nid='query-99cc6df387444f88abc3df8db1...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_authorized_validation_and_queries_do_not_write_source_data(rig):
+        row = rig.seed("stable-source.png")
+&gt;       assert ids(get(rig, {"limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"384292d7-89d5-42f0-a2ea-deaca5ecf102"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_authority" name="test_existing_scalar_last_value_and_integral_decimal_compatibility" time="0.206"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;4516761e-5dfb-44d1-a73a-baa6f3530557&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E18EED0&gt;, nid='query-d3e7962979d0407fa05012e076...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_existing_scalar_last_value_and_integral_decimal_compatibility(rig):
+        row = rig.seed("kept.png")
+        # These forms were accepted by the original FastAPI/Pydantic binding.
+        # M0 relocates validation; it does not silently tighten their grammar.
+        response = get(rig, [("q", "absent"), ("q", "kept"),
+                             ("kind", "unknown"), ("kind", "image"),
+                             ("limit", "0"), ("limit", "1.0"), ("offset", "0.0")])
+&gt;       assert ids(response) == [row["id"]]
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_authority.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"4516761e-5dfb-44d1-a73a-baa6f3530557"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_cold_hot_deep_low_hit_and_exact_total_file_read_costs" time="1.738"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;e7b387e8-822b-4906-a2b3-5189b90bac37&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E161310&gt;, nid='query-3e974877a2ff4f03bf462a7a04...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_cold_hot_deep_low_hit_and_exact_total_file_read_costs(rig):
+        rows = [rig.seed(f"{'needle' if number == 53 else 'ordinary'}-{number:03d}.bin",
+                         "audio" if number % 2 else "image",
+                         stamp=f"2026-01-01T00:00:{number:02d}+00:00") for number in range(60)]
+        audit = FileReads(rig.assets.root)
+        before = source_snapshot(rig.root)
+    
+        cold, cold_cost = audit.query(rig, {"limit": 4})
+&gt;       assert ids(cold) == [row["id"] for row in rows[:4]]
+               ^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"e7b387e8-822b-4906-a2b3-5189b90bac37"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_index_corpus_budget_is_explicit_and_never_returns_partial_total" time="0.188" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_content_budget_rejects_whole_page_and_is_request_local" time="0.242"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;5a22bb06-e362-4362-99e9-eacbea9ac5c9&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068D7BF5D0&gt;, nid='query-feb1fc9541ca46f794d8af1f9f...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E23DB90&gt;
+
+    def test_content_budget_rejects_whole_page_and_is_request_local(rig, monkeypatch):
+        from app.services.asset_query_budget import AssetQueryReadBudget
+    
+        rows = [rig.seed(f"content-budget-{number}.png") for number in range(3)]
+&gt;       assert len(ids(get(rig, {"limit": 3}))) == 3
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"5a22bb06-e362-4362-99e9-eacbea9ac5c9"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_matching_off_page_invalid_revision_keeps_owner_failure" time="0.251"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;bedea7d5-aee3-4083-a5eb-c69ef007bd1c&quot;}&#10;assert 503 == 422&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1E1A90&gt;, nid='query-3cffed2281384233bd3a0625ff...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_matching_off_page_invalid_revision_keeps_owner_failure(rig):
+        first = rig.seed("good.png", stamp="2026-01-01T00:00:00+00:00")
+        invalid = rig.seed("bad.wav", "audio", stamp="2026-01-02T00:00:00+00:00")
+        with rig.workspace._asset_scope(rig.nid, rig.scope):
+            invalid["version"] = 0
+            rig.assets._write_meta(invalid)
+        response = get(rig, {"limit": 1})
+&gt;       assert_safe_failure(rig, response, 422, "EXPERIMENTAL_INVALID", [first["id"], invalid["id"]])
+
+tests\test_studio_asset_query_indexed.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1E1A90&gt;, nid='query-3cffed2281384233bd3a0625ff...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+response = &lt;Response [503 Service Unavailable]&gt;, status = 422
+code = 'EXPERIMENTAL_INVALID'
+asset_ids = ['24bb79d3-6494-4878-a0cd-e9525b98fb00', 'b33e118a-c4c7-4755-a690-c7b1b631197b']
+
+    def assert_safe_failure(rig, response, status, code, asset_ids=()):
+&gt;       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"bedea7d5-aee3-4083-a5eb-c69ef007bd1c"}
+E       assert 503 == 422
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query_indexed.py:65: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_metadata_rename_type_and_deletion_refresh_real_index" time="0.229"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;58013575-a6ea-46fe-be7d-23625d2bff20&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E24D6D0&gt;, nid='query-b94fef7540984413ada07de94d...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_metadata_rename_type_and_deletion_refresh_real_index(rig):
+        row = rig.seed("before.png")
+&gt;       assert ids(get(rig, {"q": "before", "kind": "image", "limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"58013575-a6ea-46fe-be7d-23625d2bff20"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_query_detects_actual_source_change_before_return" time="0.197"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;6e8af42f-cbff-4149-9a43-4f50ed68280c&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E324910&gt;, nid='query-4cf6afbadcad431aa9aa87f2d4...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E147C10&gt;
+
+    def test_query_detects_actual_source_change_before_return(rig, monkeypatch):
+        row = rig.seed("unchanged.png")
+&gt;       assert ids(get(rig, {"limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"6e8af42f-cbff-4149-9a43-4f50ed68280c"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_damaged_derived_filter_cannot_silently_hide_source_match" time="0.226"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;085533fe-ed1d-415d-aacf-dc4fe71e7d94&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E1CF450&gt;, nid='query-6b190b12becd4c98bdafcad88f...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_damaged_derived_filter_cannot_silently_hide_source_match(rig):
+        row = rig.seed("needle.png")
+&gt;       assert ids(get(rig, {"q": "needle", "limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:199: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"085533fe-ed1d-415d-aacf-dc4fe71e7d94"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_offset_total_rejects_feature_visibility_change_before_return" time="0.211"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;7eb10aec-7d39-46bc-ab8a-24c443bb77e6&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E249210&gt;, nid='query-b89c3adcbf844d20bc42046d84...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E1E29D0&gt;
+
+    def test_offset_total_rejects_feature_visibility_change_before_return(rig, monkeypatch):
+        row = rig.seed("visibility-change.png", required_features=("asset_lineage_v2",))
+&gt;       assert ids(get(rig, {"limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"7eb10aec-7d39-46bc-ab8a-24c443bb77e6"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_injected_content_io_failure_returns_fixed_error_without_path" time="0.224"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;9141de11-52cb-4f6d-9e97-8318bb200834&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E24C350&gt;, nid='query-82b2853d95184e7783026231f9...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068E270590&gt;
+
+    def test_injected_content_io_failure_returns_fixed_error_without_path(rig, monkeypatch):
+        row = rig.seed("io-failure.png")
+&gt;       assert ids(get(rig, {"limit": 1})) == [row["id"]]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"9141de11-52cb-4f6d-9e97-8318bb200834"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_workspace_identity_history_contract" name="test_overview_exposes_stable_owner_incarnation_and_changes_on_same_id_recreation" time="0.349" /><testcase classname="tests.test_studio_workspace_identity_history_contract" name="test_audio_schema_three_history_restore_creates_new_timeline_version" time="0.635" /><testcase classname="tests.test_studio_workspace_identity_history_contract" name="test_audio_timeline_restore_rechecks_exact_current_asset_pin" time="0.486" /><testcase classname="tests.test_studio_workspace_identity_history_contract" name="test_audio_timeline_history_retains_original_host_revocation_guard" time="0.333" /><testcase classname="tests.test_studio_workspace_identity_history_contract" name="test_asset_restore_only_undeletes_current_bytes_and_rejects_version_selection" time="0.254" /><testcase classname="tests.test_studio_asset_usage_compat" name="test_original_graph_and_timeline_usage_routes_are_read_only" time="0.621" /><testcase classname="tests.test_studio_asset_usage_compat" name="test_original_usage_host_denial_precedes_source_lookup" time="0.200" /><testcase classname="tests.test_studio_asset_usage_compat" name="test_original_single_graph_node_capacity_is_not_expanded" time="0.182" /><testcase classname="tests.test_studio_asset_usage_compat" name="test_original_single_timeline_thirty_references" time="0.422" /><testcase classname="tests.test_studio_asset_usage_compat" name="test_original_graph_save_history_and_stale_source_are_preserved" time="0.473" /><testcase classname="tests.test_studio_asset_usage_budget" name="test_scope_budget_refuses_before_any_scope_content_read" time="0.192" /><testcase classname="tests.test_studio_asset_usage_budget" name="test_byte_accounting_is_actual_and_hard_bounded" time="0.002"><failure message="app.creative.asset_usage_budget.UsageBudgetError: STUDIO_USAGE_RESOURCE_UNAVAILABLE">tmp_path = WindowsPath('//?/D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/asset-regressions/tmp/pytest-of-admin/pytest-0/test_byte_accounting_is_actual0')
+
+    def test_byte_accounting_is_actual_and_hard_bounded(tmp_path):
+        from app.creative.asset_usage_budget import UsageReadBudget, UsageBudgetError
+        path = tmp_path / 'bounded.json'
+        path.write_bytes(b'12345678')
+        budget = UsageReadBudget()
+        budget.MAX_READ_BYTES = 10
+&gt;       assert budget.read(path) == '12345678'
+               ^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_usage_budget.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\creative\asset_usage_budget.py:307: in read
+    data = self.read_json_bytes(path, limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\creative\asset_usage_budget.py:301: in read_json_bytes
+    data = self._read_bytes(path, limit, self.MAX_SCOPE_BYTES)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\creative\asset_usage_budget.py:255: in _read_bytes
+    handle = _open_read(path)
+             ^^^^^^^^^^^^^^^^
+app\creative\asset_usage_budget.py:111: in _open_read
+    return _open_windows_read(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('//?/D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/asset-regressions/tmp/pytest-of-admin/pytest-0/test_byte_accounting_is_actual0/bounded.json')
+
+    def _open_windows_read(path):
+        import ctypes
+        from ctypes import wintypes
+        import msvcrt
+        # Only ordinary absolute drive paths reach the native namespace prefix.
+        # Ancestor-directory confinement/ABA remains the original owner's boundary.
+        if (not path.is_absolute() or not re.fullmatch(r'[A-Za-z]:', path.drive)
+                or any(ord(value) &lt; 32 for value in str(path))):
+&gt;           raise UsageBudgetError()
+E           app.creative.asset_usage_budget.UsageBudgetError: STUDIO_USAGE_RESOURCE_UNAVAILABLE
+
+app\creative\asset_usage_budget.py:74: UsageBudgetError</failure></testcase><testcase classname="tests.test_studio_asset_usage_budget" name="test_token_replay_expiration_capacity_and_cleanup" time="0.198"><failure message="KeyError: 'supported_sources'">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068F5A25D0&gt;, nid='query-16b9843e0ae4...5', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000002068F5A1450&gt;
+
+    def test_token_replay_expiration_capacity_and_cleanup(usage_rig, monkeypatch):
+        from app.creative import asset_usage_paging as paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(paging, '_tokens', {})
+        first = query(e, limit=1).json()
+&gt;       assert first['supported_sources'] == ['graph', 'timeline']
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'supported_sources'
+
+tests\test_studio_asset_usage_budget.py:43: KeyError</failure></testcase><testcase classname="tests.test_studio_asset_usage_budget" name="test_after_issue_mutation_discards_new_token" time="0.242" /><testcase classname="tests.test_studio_asset_usage_budget" name="test_oversized_query_and_duplicate_fields_are_rejected" time="0.200" /><testcase classname="tests.test_studio_asset_usage_budget" name="test_page_scans_empty_consumers_with_explicit_continuation" time="0.987"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;STUDIO_GRAPH_USAGE_UNAVAILABLE&quot;},&quot;code&quot;:&quot;STUDIO_GRAPH_USAGE_UNAVAILABLE&quot;,&quot;message&quot;:&quot;STUDIO_GRAPH_USAGE_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;STUDIO_GRAPH_USAGE_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;05a2fbbf-effc-4a50-9eae-46cb577b70b0&quot;}&#10;assert 409 == 200&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">usage_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x000002068E46F850&gt;, nid='query-e22ec7705d89...4', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+
+    def test_page_scans_empty_consumers_with_explicit_continuation(usage_rig):
+        e = usage_rig
+        for index in range(17):
+            graph_create(e, 1, 'empty-page-' + str(index))
+        response = query(e, limit=200, state='STALE')
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"STUDIO_GRAPH_USAGE_UNAVAILABLE"},"code":"STUDIO_GRAPH_USAGE_UNAVAILABLE","message":"STUDIO_GRAPH_USAGE_UNAVAILABLE","details":{"code":"STUDIO_GRAPH_USAGE_UNAVAILABLE"},"request_id":"05a2fbbf-effc-4a50-9eae-46cb577b70b0"}
+E       assert 409 == 200
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests\test_studio_asset_usage_budget.py:99: AssertionError</failure></testcase><testcase classname="tests.test_studio_production_query" name="test_legacy_envelope_and_exact_owner_operation_filters" time="1.155" /><testcase classname="tests.test_studio_production_query" name="test_exact_total_and_descending_ties_across_pages" time="1.459" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params0]" time="0.170" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params1]" time="0.173" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params2]" time="0.204" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params3]" time="0.163" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params4]" time="0.190" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params5]" time="0.184" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params6]" time="0.157" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params7]" time="0.179" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params8]" time="0.197" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params9]" time="0.215" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params10]" time="0.191" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params11]" time="0.206" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params12]" time="0.210" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params13]" time="0.207" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params14]" time="0.185" /><testcase classname="tests.test_studio_production_query" name="test_invalid_query_has_fixed_error_after_authority[params15]" time="0.209" /><testcase classname="tests.test_studio_production_query" name="test_existing_internal_list_is_not_implicitly_paginated" time="0.969" /><testcase classname="tests.test_studio_production_query" name="test_all_original_owners_and_operation_intersection" time="1.628" /><testcase classname="tests.test_studio_production_query" name="test_same_id_project_recreation_excludes_old_queue_and_total" time="1.089" /><testcase classname="tests.test_studio_production_query" name="test_actor_project_scope_and_incarnation_precede_total" time="0.662" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[missing_session-401]" time="0.214" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[invalid_session-401]" time="0.188" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[revoked_session-401]" time="0.194" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[forwarded_host-403]" time="0.252" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[host_origin-403]" time="0.223" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[feature_disabled-404]" time="0.209" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[missing_project-404]" time="0.204" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[missing_branch-400]" time="0.253" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[no_read-403]" time="0.313" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[revoked_member-403]" time="0.290" /><testcase classname="tests.test_studio_production_query" name="test_original_refusal_precedes_invalid_query[collaboration_without_host-403]" time="0.327" /><testcase classname="tests.test_studio_production_query" name="test_neutral_activation_refusal_precedes_bad_query" time="0.372" /><testcase classname="tests.test_studio_production_query" name="test_wire_scalar_convention_and_versioned_alias" time="1.605" /><testcase classname="tests.test_studio_production_query" name="test_corrupt_tail_is_not_hidden_by_filter_or_pagination" time="1.110" /><testcase classname="tests.test_studio_production_query" name="test_video_owner_capacity_refusal_is_not_partial_total" time="0.461" /><testcase classname="tests.test_studio_production_query" name="test_private_graph_benchmark_batch_admission_precedes_total" time="0.387" /><testcase classname="tests.test_studio_production_query" name="test_internal_list_keeps_more_than_default_page_size" time="1.428" /><testcase classname="tests.test_studio_production_query" name="test_host_revocation_during_owner_read_returns_no_page" time="1.238" /><testcase classname="tests.test_studio_production_query" name="test_query_openapi_matches_exact_public_fields" time="0.001" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_original_executor_manual_writeback_reopens" time="1.036" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_configuration_validation_save_read_and_dispatch_binding" time="0.518" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_saved_configuration_change_invalidates_reviewed_preview" time="0.303" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_source_revision_before_dispatch_refuses_without_provider" time="0.459" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_deleted_recreated_shot_rejects_old_pin" time="0.282" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_private_candidate_cannot_bind_before_manual_review" time="0.618" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_review_and_writeback_retries_never_duplicate_asset_or_version" time="0.822" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_cancelled_original_job_is_not_replayed" time="0.485" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_original_execution_gate_remains_opt_in" time="0.466" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_stale_job_cas_refuses_dispatch" time="0.456" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_metadata_refresh_and_reopen_do_not_execute_or_change_saved_inputs" time="0.762" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_uncertain_provider_result_survives_reopen_without_automatic_replay" time="0.600" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_wrong_review_digest_retains_private_candidate" time="0.669" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_revoked_session_cannot_observe_or_adopt_private_candidate" time="0.654" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_revocation_while_waiting_for_queue_owner_does_not_persist" time="0.340" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_change_after_preview_cannot_enter_queue" time="0.350" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_simultaneous_same_request_admission_is_one_durable_job" time="0.544" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_pending_execute_can_be_observed_and_duplicate_never_dispatches" time="0.713" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_two_review_confirmations_promote_exactly_once" time="0.739" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_lost_queue_response_recovers_original_identity_without_execution" time="0.594" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_session_revoked_at_queue_owner_entry_cannot_write" time="0.338" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_candidate_bytes_are_not_returned_after_mid_read_revocation" time="0.605" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_source_edit_after_provider_result_prevents_candidate_publication" time="0.546" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_review_receipt_failure_recovers_existing_promotion_without_regeneration" time="0.792" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_concurrent_storyboard_adoption_uses_document_cas" time="0.784" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_adoption_revocation_after_asset_validation_rolls_back_storyboard" time="0.724" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_deleted_source_recreated_with_identical_content_does_not_resolve_old_pin" time="0.704" /><testcase classname="tests.test_studio_integration_independent_v2" name="test_project_id_reuse_hides_old_receipts_and_forbids_old_candidate" time="0.866" /><testcase classname="tests.test_studio_process_reopen_v2" name="test_original_http_assembly_candidate_adoption_survives_process_restart[/api]" time="11.625" /><testcase classname="tests.test_studio_process_reopen_v2" name="test_original_http_assembly_candidate_adoption_survives_process_restart[/api/v1]" time="11.278" /><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="4.348" /><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]" time="3.756" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[None-continue-LOCAL_ONLY]" time="0.227" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[polish-key-polish-LOCAL_ONLY]" time="0.275" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[brainstorm-key-brainstorm-LOCAL_ONLY]" time="0.284" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[hybrid-key-continue-HYBRID]" time="0.293" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[memory]" time="0.165" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[canon]" time="0.166" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[contexts]" time="0.423" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[generation]" time="0.164" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[version]" time="0.602" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[digest]" time="0.595" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[archive]" time="0.588" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[marker]" time="0.545" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[owner]" time="1.077" /><testcase classname="tests.test_file_keyed_activation" name="test_deletion_during_mock_wait_does_not_write_replacement" time="3.050" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_queued_record_never_restarts_or_upgrades" time="0.611" /><testcase classname="tests.test_file_keyed_activation" name="test_bound_retry_cancel_and_staging_remain_closed" time="3.497" /><testcase classname="tests.test_file_keyed_activation" name="test_duplicate_and_copied_start_capability_cannot_dispatch" time="3.498" /><testcase classname="tests.test_file_keyed_activation" name="test_replaced_authorization_callback_cannot_grant_execution" time="0.558" /><testcase classname="tests.test_file_keyed_activation" name="test_authorization_callbacks_run_outside_owner_review_condition" time="3.393" /><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RECORDED]" time="0.176" /><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RESERVED]" time="0.186" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_completed_candidate_adopts_without_new_execution" time="3.621" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[version]" time="3.386" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[digest]" time="3.443" /><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[context]" time="0.828" /><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[snapshot]" time="3.237" /><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[dispatch]" time="2.283" /><testcase classname="tests.test_file_keyed_activation" name="test_concurrent_completion_review_and_cold_restore_do_not_deadlock" time="3.699" /><testcase classname="tests.test_file_keyed_activation" name="test_uncertain_admission_boundaries_retain_receipt_and_never_redispatch[reserved]" time="0.577" /><testcase classname="tests.test_file_keyed_activation" name="test_uncertain_admission_boundaries_retain_receipt_and_never_redispatch[queue_before]" time="0.488" /><testcase classname="tests.test_file_keyed_activation" name="test_uncertain_admission_boundaries_retain_receipt_and_never_redispatch[queue_after]" time="0.576" /><testcase classname="tests.test_file_keyed_activation" name="test_source_changes_after_snapshot_preserve_execution_facts_but_not_candidate" time="3.393" /><testcase classname="tests.test_file_keyed_activation" name="test_cached_v2_of_existing_unbound_job_is_not_upgraded" time="0.329" /><testcase classname="tests.test_file_keyed_activation" name="test_narrative_context_mode_is_explicitly_unbound" time="0.391" /><testcase classname="tests.test_file_keyed_activation" name="test_explicit_selection_requests_remain_unbound[source]" time="0.373" /><testcase classname="tests.test_file_keyed_activation" name="test_explicit_selection_requests_remain_unbound[selected_text]" time="0.335" /><testcase classname="tests.test_file_keyed_activation" name="test_original_workbench_style_request_remains_unbound" time="0.398" /><testcase classname="tests.test_file_keyed_activation" name="test_unsupported_legacy_adapter_family_remains_unbound" time="0.344" /><testcase classname="tests.test_file_keyed_activation" name="test_variants_remain_unbound_even_with_request_key" time="0.259" /><testcase classname="tests.test_file_keyed_activation" name="test_default_off_local_only_keyed_generation_retains_original_mock_path[continue]" time="0.307" /><testcase classname="tests.test_file_keyed_activation" name="test_default_off_local_only_keyed_generation_retains_original_mock_path[rewrite]" time="0.305" /><testcase classname="tests.test_file_keyed_activation" name="test_default_off_local_only_keyed_cancel_and_retry_remain_available" time="0.270" /><testcase classname="tests.test_file_keyed_activation" name="test_default_off_failed_actual_mock_request_can_be_retried" time="0.301" /><testcase classname="tests.test_file_keyed_activation" name="test_switch_off_keeps_issued_bound_grant_and_new_requests_unbound" time="3.603" /><testcase classname="tests.test_file_keyed_activation" name="test_switch_off_never_restarts_cold_bound_queued_record" time="0.573" /><testcase classname="tests.test_file_keyed_activation" name="test_file_keyed_switch_default_and_environment_are_fresh_imports[None-False]" time="0.062" /><testcase classname="tests.test_file_keyed_activation" name="test_file_keyed_switch_default_and_environment_are_fresh_imports[true-True]" time="0.063" /></testsuite></testsuites>

@@ -1,0 +1,70 @@
+import { validCameraGrammar, type CameraGrammar } from './cameraGrammar';
+export const WORKSPACE_MODES = [
+  { id: 'NOVEL', label: '小说', english: 'Novel' },
+  { id: 'SCREENPLAY', label: '剧本', english: 'Screenplay' },
+  { id: 'DIRECTOR', label: '导演', english: 'Director' },
+  { id: 'STORYBOARD', label: '分镜', english: 'Storyboard' },
+  { id: 'PRODUCTION', label: '制作', english: 'Production' },
+] as const;
+export type WorkspaceMode = typeof WORKSPACE_MODES[number]['id'];
+export type CreativeMode = Exclude<WorkspaceMode, 'NOVEL'> | 'VIDEO_PLANNING' | 'SCRIPT';
+export const SCRIPT_PURPOSES = [
+  { id: 'CUSTOM', label: '自定义文本' }, { id: 'ADVERTISEMENT', label: '广告文案' },
+  { id: 'MV_NARRATION', label: 'MV 旁白' }, { id: 'PODCAST', label: '播客脚本' },
+  { id: 'GAME_DIALOGUE', label: '游戏对白' }, { id: 'PRESENTATION', label: '演示讲稿' },
+  { id: 'SHORT_VIDEO', label: '短视频脚本' },
+] as const;
+export type ScriptPurpose = typeof SCRIPT_PURPOSES[number]['id'];
+export type ScriptContent = { purpose: ScriptPurpose; body: string };
+export type Dialogue = { speaker: string; text: string; delivery: string };
+export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string; genre?: string | null; target_audience?: string | null; target_platform?: string | null; production_budget_constraints?: string | null };
+export type DirectorPerformance = { character: string; action: string; expression: string; state: string };
+export type DirectorPlanning = { rationale: string; sequence_reason: string; duration_reason: string; uncertainty: string; assumptions: string[]; alternatives: { choice: string; tradeoff: string }[]; evidence: { scene_id: string; field: string; dialogue_index: number | null; excerpt: string }[] };
+export type DirectorNote = { id: string; note: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; pacing: string; performance: string; camera_grammar?: CameraGrammar | null;
+  planning?: DirectorPlanning | null; shot_suggestion?: string | null; composition?: string | null; lens?: string | null; character_state?: string | null; performances?: DirectorPerformance[] | null; lighting?: string | null; color_palette?: string | null; material?: string | null; transition?: string | null };
+export type DirectorSceneNote = DirectorNote & { number: number; scene_id: string; blocking: string };
+export type CreativeScene = { id: string; sequence: number; source_chapter_id: string | null; heading: string; time: string; location: string; characters: string[]; action: string; dialogue: Dialogue[]; emotion: string; director_notes: DirectorNote[] };
+export type ShotContinuity = { previous_shot_id?: string | null; next_shot_id?: string | null; characters: string; outfit: string; environment: string; camera: string; time?: string | null; lighting?: string | null };
+export type CreativeShot = { id: string; number: number; scene_id: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; frame_prompt: string; composition: string; color: string; action: string; dialogue: Dialogue[]; sound_effect: string; lens: string; lighting: string; environment: string; sound: string; director_notes: DirectorNote[]; characters?: string[] | null; emotion?: string | null; continuity?: ShotContinuity | null; director_note_ids?: string[] | null; video_generation_hint?: string | null; camera_grammar?: CameraGrammar | null };
+export type VideoSegment = { shot_id: string; duration_seconds: number; note: string };
+export type VideoPlan = { frame_rate: number; width: number; height: number; notes: string; segments: VideoSegment[] };
+export type CreativeInput = { mode: CreativeMode; title: string; source_chapter_ids: string[]; source_independent: boolean; scenes: CreativeScene[]; director_notes: DirectorSceneNote[]; shots: CreativeShot[]; video_plan: VideoPlan | null; script?: ScriptContent | null; visual_target?: VisualTarget | null };
+export type CreativeDocument = CreativeInput & { id: string; version: number; status: string; created_at: string; updated_at: string; actor_id: string; source_evidence: Record<string, unknown>; source_documents?: Record<string, { version: number; digest: string }> };
+export type CreativeCapabilities = { enabled: boolean; modes: CreativeMode[]; can_mutate: boolean; source_adaptation?: string };
+export type CreativeAsset = { id: string; filename: string; kind: string; media_type: string; size: number };
+export type CreativeReferences = { characters: { id: string; name: string }[]; locations: { id: string; name: string }[]; story_routes: { id: string; name: string }[] };
+export const modeForDocument = (mode: CreativeMode): WorkspaceMode => mode === 'VIDEO_PLANNING' ? 'PRODUCTION' : mode === 'SCRIPT' ? 'SCREENPLAY' : mode;
+export function documentInput(row: CreativeInput): CreativeInput {
+  return { mode: row.mode, title: row.title, source_chapter_ids: [...row.source_chapter_ids], source_independent: row.source_independent, scenes: structuredClone(row.scenes), director_notes: structuredClone(row.director_notes || []), shots: row.shots.map(shot => { const { video_generation_hint: hint, ...rest } = structuredClone(shot); return hint == null ? rest : { ...rest, video_generation_hint: hint }; }), video_plan: row.video_plan ? structuredClone(row.video_plan) : null, ...(row.script ? { script: structuredClone(row.script) } : {}), ...(row.visual_target ? { visual_target: structuredClone(row.visual_target) } : {}) };
+}
+export const creativeId = () => globalThis.crypto?.randomUUID?.() || `draft-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+export function newScene(sequence: number, chapterId?: string): CreativeScene {
+  return { id: creativeId(), sequence, source_chapter_id: chapterId || null, heading: `场景 ${sequence}`, time: '', location: '', characters: [], action: '', dialogue: [], emotion: '', director_notes: [] };
+}
+export function newShot(number: number, sceneId: string): CreativeShot {
+  return { id: creativeId(), number, scene_id: sceneId, shot_size: 'MEDIUM', camera_angle: 'EYE_LEVEL', camera_motion: 'STATIC', duration_seconds: 5, frame_prompt: '', composition: '', color: '', action: '', dialogue: [], sound_effect: '', lens: '', lighting: '', environment: '', sound: '', director_notes: [] };
+}
+export function newDocument(mode: CreativeMode, chapterId?: string): CreativeInput {
+  return { mode, title: '', source_chapter_ids: chapterId ? [chapterId] : [], source_independent: false, scenes: [], director_notes: [], shots: [], video_plan: mode === 'PRODUCTION' || mode === 'VIDEO_PLANNING' ? { frame_rate: 24, width: 1920, height: 1080, notes: '', segments: [] } : null, ...(mode === 'SCRIPT' ? { script: { purpose: 'CUSTOM', body: '' } as ScriptContent } : {}) };
+}
+
+// Existing optional owner limits count Unicode code points, not UTF-16 units.
+export const creativeTextLength = (value?: string | null) => Array.from(value || '').length;
+export const validDirectorGenre = (target?: VisualTarget | null) => creativeTextLength(target?.genre) <= 2000;
+export const directorConstraintFields = [
+  { key: 'target_audience', label: '目标受众' },
+  { key: 'target_platform', label: '目标平台' },
+  { key: 'production_budget_constraints', label: '制作预算约束（作者设定）' },
+] as const;
+export const validDirectorIntent = (target?: VisualTarget | null) => validDirectorGenre(target)
+  && directorConstraintFields.every(({ key }) => creativeTextLength(target?.[key]) <= 2000);
+export function creativeAuthoringProblems(value: CreativeInput): string[] {
+  return [
+    ...(!validDirectorGenre(value.visual_target) ? ['文档类型 / 题材超过 2000 字符'] : []),
+    ...directorConstraintFields.filter(({ key }) => creativeTextLength(value.visual_target?.[key]) > 2000).map(({ label }) => `${label}超过 2000 字符`),
+    ...value.shots.filter(shot => creativeTextLength(shot.continuity?.time) > 4000).map(shot => `镜头 ${shot.number} 的时间连续性超过 4000 字符`),
+    ...[...value.director_notes, ...value.shots, ...value.scenes.flatMap(scene => scene.director_notes), ...value.shots.flatMap(shot => shot.director_notes)]
+      .filter(row => row.camera_grammar != null && !validCameraGrammar(row.camera_grammar))
+      .map(row => `手填机位几何 ${row.id} 无效：请核对坐标、轴线人物及有意选择理由`),
+  ];
+}

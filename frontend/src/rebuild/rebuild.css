@@ -1,0 +1,39 @@
+/* [HERMIA-FE-20261022 REBUILD-SHELL] Prototype shell primitives (PoemSeed_V2_HiFi_Prototype.html):
+   one quiet popover, one right drawer, one panel card, honest state tags. Uses tokens.css so
+   浅色/深色 both follow html[data-theme]. */
+.rb-trigger{flex-shrink:0;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--color-border-default);background:transparent;color:var(--color-text-secondary);font:inherit;font-size:12.5px;cursor:pointer;transition:background .16s,color .16s,border-color .16s}
+.rb-trigger:hover,.rb-trigger[aria-expanded="true"]{background:var(--color-bg-subtle);color:var(--color-text-primary);border-color:var(--color-border-strong)}
+.rb-trigger__count{min-width:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-subtle);color:var(--color-text-primary);font-size:11px;text-align:center}
+.rb-anchor{position:relative;display:inline-flex}
+.rb-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:60;width:360px;max-height:min(70vh,560px);overflow:auto;padding:12px;border-radius:10px;border:1px solid var(--color-border-default);background:var(--color-bg-elevated);color:var(--color-text-primary);box-shadow:0 18px 40px rgba(0,0,0,.42);animation:rb-in .16s ease-out}
+.rb-drawer{position:fixed;top:0;right:0;bottom:0;z-index:1000;width:min(380px,92vw);display:flex;flex-direction:column;border-left:1px solid var(--color-border-default);background:var(--color-bg-surface);color:var(--color-text-primary);box-shadow:-18px 0 40px rgba(0,0,0,.38);animation:rb-slide .2s ease-out}
+.rb-drawer__head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--color-border-default)}
+.rb-drawer__body{flex:1;overflow:auto;padding:14px 16px;display:grid;gap:12px;align-content:start}
+.rb-panel{display:grid;gap:10px;padding:14px 16px;margin:0 0 14px;border-radius:10px;border:1px solid var(--color-border-default);background:var(--color-bg-surface);color:var(--color-text-primary)}
+.rb-h{margin:0;font-size:13px;font-weight:600;color:var(--color-text-primary)}
+.rb-sub{margin:0;font-size:12px;color:var(--color-text-secondary)}
+.rb-tabs{display:flex;gap:4px;margin-bottom:10px}
+.rb-tabs button{flex:1;height:26px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--color-text-secondary);font:inherit;font-size:12px;cursor:pointer}
+.rb-tabs button[aria-selected="true"]{background:var(--color-bg-subtle);color:var(--color-text-primary);border-color:var(--color-border-default)}
+.rb-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.rb-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--color-bg-subtle);font-size:12.5px}
+.rb-row__main{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rb-btn{height:26px;padding:0 10px;border-radius:6px;border:1px solid var(--color-border-default);background:var(--color-bg-elevated);color:var(--color-text-primary);font:inherit;font-size:12px;cursor:pointer}
+.rb-btn:hover:not(:disabled){border-color:var(--color-border-strong)}
+.rb-btn:disabled{opacity:.5;cursor:not-allowed}
+.rb-btn--primary{background:var(--color-accent-primary);border-color:var(--color-accent-primary);color:var(--color-text-inverse)}
+.rb-input,.rb-select{height:28px;padding:0 8px;border-radius:6px;border:1px solid var(--color-border-default);background:var(--color-bg-app);color:var(--color-text-primary);font:inherit;font-size:12.5px;min-width:0}
+.rb-field{display:flex;gap:6px;align-items:center}
+.rb-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:10px;font-size:11px;white-space:nowrap;border:1px solid var(--color-border-default);color:var(--color-text-secondary)}
+.rb-tag[data-tone="ok"]{color:var(--color-status-success);border-color:currentColor}
+.rb-tag[data-tone="warn"]{color:var(--color-status-warning);border-color:currentColor}
+.rb-tag[data-tone="err"]{color:var(--color-status-error);border-color:currentColor}
+.rb-note{margin:0;padding:8px 10px;border-radius:8px;font-size:12px;background:var(--color-bg-subtle);color:var(--color-text-secondary)}
+.rb-note[data-tone="err"]{color:var(--color-status-error)}
+.rb-empty{margin:0;padding:14px;text-align:center;font-size:12px;color:var(--color-text-muted)}
+@keyframes rb-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes rb-slide{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.rb-pop,.rb-drawer{animation:none}}
+/* [HERMIA-FE-20261022 REBUILD-4] Header fit: tools take room from the search pill, never push 设置/作者 off-screen. */
+.global-header .global-search{flex:0 1 auto;min-width:44px;width:min(180px,11vw)}
+.global-header .rb-header-tools{flex:none}

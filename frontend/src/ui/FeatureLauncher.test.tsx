@@ -84,4 +84,30 @@ describe('FeatureLauncher',()=>{
     fireEvent.keyDown(buttons[1],{key:'Home'});
     expect(document.activeElement).toBe(buttons[0]);
   });
+
+  it('N-UX-05 shows first-tier strip and N-UX-02 marks workflow as orchestration',()=>{
+    render(<Harness/>);
+    fireEvent.click(screen.getByRole('button',{name:'打开功能导航'}));
+    expect(screen.getByRole('group',{name:'第一梯队面板'})).toBeTruthy();
+    expect(screen.getByRole('button',{name:'第一梯队：故事资料库'})).toBeTruthy();
+    expect(screen.getByRole('button',{name:'第一梯队：一致性检查'})).toBeTruthy();
+    const workflow=screen.getByRole('button',{name:'工作流编排'});
+    expect(workflow.getAttribute('title')||'').toMatch(/非 AI 写作旁路|编排面|多步骤编排/); // [HERMIA-FE-20261022 REBUILD-W3] 文案去内部名
+    expect(workflow.className).toContain('feature-item--workflow');
+    fireEvent.click(screen.getByRole('button',{name:'第一梯队：一致性检查'}));
+    expect(screen.getByRole('button',{name:'一致性检查'}).getAttribute('aria-current')).toBe('page');
+  });
+
+  it('N-UX-10 story hint points to novel World* not storyboard Bible',()=>{
+    render(<Harness/>);
+    fireEvent.click(screen.getByRole('button',{name:'打开功能导航'}));
+    const story=screen.getByRole('button',{name:'故事资料库'});
+    const hint=story.getAttribute('title')||'';
+    expect(hint).toMatch(/World\*|世界观|小说设定/);
+    // [HERMIA-FE-20261022 REBUILD-W3] 作者可见提示不再出现「分镜 Bible」等内部说明
+    expect(hint).not.toMatch(/Bible|World\*/);
+    expect(hint).not.toMatch(/^规划 · 设定 · bible/);
+    // Stable FL id — no invented bible/world FL
+    expect(story.getAttribute('data-feature-id')).toBe('story');
+  });
 });

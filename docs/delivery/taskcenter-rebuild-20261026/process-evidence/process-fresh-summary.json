@@ -1,0 +1,50 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[before-identity]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[before-scope]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[before-grants]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[before-team]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[after-identity]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[after-scope]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[after-grants]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_kill_at_replace_pairs_business_and_lifecycle[after-team]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[fsync-identity]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[fsync-scope]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[fsync-grants]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[fsync-team]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[replace-identity]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[replace-scope]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[replace-grants]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_write_failure_preserves_exact_bytes_and_next_commit[replace-team]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_real_process_lock_serializes_complete_commits[identity]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_real_process_lock_serializes_complete_commits[scope]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_real_process_lock_serializes_complete_commits[grants]",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py::test_real_process_lock_serializes_complete_commits[team]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-process-rebuilt-evidence/process-fresh.xml",
+    "--basetemp=/tmp/tmp7cqylk6_/process-fresh/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp7cqylk6_/process-fresh/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-process-rebuilt",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 20
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

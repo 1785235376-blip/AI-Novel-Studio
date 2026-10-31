@@ -1,5 +1,29 @@
 from __future__ import annotations
 import re
+from datetime import datetime
+
+
+def world_rule_violations(project_id: str, haystack: str, rules: list[dict]) -> list[dict]:
+    """Explicit forbidden-term checks shared by generation and manual scans."""
+    serialized = (haystack or "").casefold()
+    findings = []
+    for rule in rules:
+        payload = rule.get("approved_payload") or rule.get("payload") or rule
+        terms = payload.get("forbidden_terms") or payload.get("forbidden") or []
+        if isinstance(terms, str): terms = [terms]
+        hits = [str(term) for term in terms if str(term) and str(term).casefold() in serialized]
+        if hits:
+            findings.append({"id": f"WORLD_RULE:{rule.get('id', 'unknown')}", "project_id": project_id,
+                "finding_type": "WORLD_RULE_VIOLATION", "severity": "HIGH",
+                "description": f"内容触发世界规则：{payload.get('statement', '未命名规则')}",
+                "rule_id": rule.get("id"), "subject_type": "WORLD_RULE", "subject_id": rule.get("id"), "evidence_ids": hits})
+    return findings
+
+
+def _instant(value):
+    if not isinstance(value, str): return None
+    try: return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError: return None
 
 def deterministic_review(draft:str, context:dict)->list[dict]:
     issues=[]
@@ -17,4 +41,12 @@ def deterministic_review(draft:str, context:dict)->list[dict]:
     for s in context.get("forbidden_secrets",[]):
         if chapter<s.get("earliest_reveal_chapter",10**9) and s.get("content") and s["content"] in draft:
             issues.append({"code":"SECRET_LEAK","severity":"ERROR","message":f"秘密 {s.get('id')} 提前泄露"})
+    for finding in world_rule_violations(context.get("novel_id", ""), draft, context.get("world_rules", [])):
+        issues.append({**finding, "code": "WORLD_RULE_VIOLATION", "message": finding["description"]})
+    for event in context.get("timeline", []):
+        start, end = _instant(event.get("start_time") or event.get("time")), _instant(event.get("end_time"))
+        if start is None or end is None or (start.tzinfo is None) != (end.tzinfo is None): continue
+        if start > end:
+            issues.append({"code": "TIMELINE_ORDER_VIOLATION", "severity": "ERROR", "subject_id": event.get("id"),
+                           "message": f"时间事件{event.get('title') or event.get('id')}结束早于开始，生成上下文存在时间冲突。"})
     return issues

@@ -1,0 +1,28 @@
+diff --git a/app/config.py b/app/config.py
+index ce6a55f..6fe6aa2 100644
+--- a/app/config.py
++++ b/app/config.py
+@@ -24,6 +24,8 @@ class Settings:
+     storage_backend: str = os.getenv("STORAGE_BACKEND", "file").strip().lower()
+     database_url: str = os.getenv("DATABASE_URL", "")
+     enable_lore_context: bool = _bool("ENABLE_LORE_CONTEXT", False)
++    # Admission-only opt-in; existing bound records keep their immutable fences.
++    enable_experimental_file_keyed_generation: bool = _bool("ENABLE_EXPERIMENTAL_FILE_KEYED_GENERATION", False)
+     enable_narrative_context: bool = _bool("ENABLE_NARRATIVE_CONTEXT", False)
+     narrative_context_token_budget: int = int(os.getenv("NARRATIVE_CONTEXT_TOKEN_BUDGET", "800"))
+     context_policy_token_budget: int = int(os.getenv("CONTEXT_POLICY_TOKEN_BUDGET", "2400"))
+diff --git a/app/services/file_generation_admission.py b/app/services/file_generation_admission.py
+index 0839df9..0ac2a00 100644
+--- a/app/services/file_generation_admission.py
++++ b/app/services/file_generation_admission.py
+@@ -4,6 +4,10 @@ from copy import deepcopy
+ 
+ def prepare_admission(manager, owner, novels, chapters, operation, payload, actor, scope, branch):
+     from ..config import settings
++    # Preserve default keyed cancel/retry and all other legacy behavior. This
++    # switch selects NEW admissions only, never downgrades an existing binding.
++    if not settings.enable_experimental_file_keyed_generation:
++        return None
+     from ..jobs import JobManager, runtime
+     # Eligibility is a request-mode choice. Bad composition within this mode
+     # refuses below, never falls through to legacy unbound execution.

@@ -1,0 +1,53 @@
+diff --git a/frontend/src/App.tsx b/frontend/src/App.tsx
+index c5596c0..e18876a 100644
+--- a/frontend/src/App.tsx
++++ b/frontend/src/App.tsx
+@@ -135,6 +135,7 @@ import { NovelAssist, type QuickOp } from "./rebuild/novel/NovelAssist"; // [HER
+ import { gateNovel, novelPanelAllowed, NOVEL_PRO_PANELS, NOVEL_PRO_TABS, NOVEL_PRO_LINKS } from "./rebuild/novel/novelMode"; // [HERMIA-FE-20261022 U4]
+ import { NovelStartEmpty } from "./rebuild/novel/NovelStartEmpty"; // [HERMIA-FE-20261022 REBUILD-W3]
+ import "./rebuild/novel/novelRebuild.css"; // [HERMIA-FE-20261022 REBUILD-W3] 小说工作区按原型重做
++import { UnifiedWorkspacePreview, unifiedWorkspacePreviewEnabled } from "./workspace/UnifiedWorkspacePreview"; // [HERMIA-FE-20261023 M1] opt-in preview
+ export function cacheCreatedNovel(c: QueryClient, n: Novel) {
+   c.setQueryData<Novel[]>(["novels"], (x) =>
+     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
+@@ -179,6 +180,12 @@ export async function recoverGenerationJob(
+ type GenerationOrigin = { namespace: string; chapterId: string; novelId: string; identity: string; epoch: number; serial: number; baseVersion?: number; context: CollaborationContext };
+ type GenerationObservation = GenerationOrigin & { active: boolean; sources: Set<EventSource> };
+ export default function App() {
++  // [HERMIA-FE-20261023 M1] opt-in only (?uw=1). Value is fixed for the page load, so hook order stays stable.
++  if (unifiedWorkspacePreviewEnabled()) return <UnifiedWorkspacePreview />;
++  return <LegacyApp />;
++}
++
++function LegacyApp() {
+   const packagedHost = isPackagedDesktopHost();
+   const qc = useQueryClient(),
+     s = useStudio(),
+diff --git a/frontend/src/workspace/UnifiedWorkspacePreview.tsx b/frontend/src/workspace/UnifiedWorkspacePreview.tsx
+new file mode 100644
+index 0000000..bdba438
+--- /dev/null
++++ b/frontend/src/workspace/UnifiedWorkspacePreview.tsx
+@@ -0,0 +1,22 @@
++// [HERMIA-FE-20261023 M1] Opt-in preview host for DockLayout. Proposed, NOT applied.
++import { DockLayout, type LayoutPanelSpec } from "./layout";
++
++export function unifiedWorkspacePreviewEnabled(): boolean {
++  try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
++}
++
++const SPECS: LayoutPanelSpec[] = [
++  { id: "outline", title: "大纲", defaultDock: "left", docks: ["left", "right", "main", "float"], defaultSize: 248, minSize: 180 },
++  { id: "creative", title: "创作画布", defaultDock: "main", docks: ["main", "float"], defaultSize: 800, minSize: 320 },
++  { id: "execution", title: "执行画布", defaultDock: "main", docks: ["main", "float", "right"], defaultSize: 800, minSize: 320 },
++  { id: "inspector", title: "属性", defaultDock: "right", docks: ["left", "right", "bottom", "float"], defaultSize: 340, minSize: 240, maxSize: 560 },
++  { id: "tasks", title: "任务", defaultDock: "bottom", docks: ["bottom", "right", "left"], defaultSize: 200, minSize: 120 },
++];
++
++export function UnifiedWorkspacePreview() {
++  return (
++    <DockLayout specs={SPECS} scope={{ userId: "local", projectId: "preview", projectInstanceId: "preview" }}
++      storage={window.localStorage} loadOptions={{ inspectorPanelId: "inspector" }}
++      renderPanel={(id) => <p style={{ padding: 12 }}>{id}（M1 预览占位，未接入业务控制器）</p>} />
++  );
++}

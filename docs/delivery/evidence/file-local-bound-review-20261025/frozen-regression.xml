@@ -1,0 +1,1438 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="43" skipped="1" tests="461" time="37.243" timestamp="2026-10-25T19:08:20.120815+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_file_local_bound_review" name="test_cold_bound_accept_full_original_chain" time="0.139" /><testcase classname="tests.test_file_local_bound_review" name="test_cold_bound_reject_changes_only_original_receipt" time="0.063" /><testcase classname="tests.test_file_local_bound_review" name="test_replacement_after_preliminary_read_cannot_be_adopted[accept]" time="0.077" /><testcase classname="tests.test_file_local_bound_review" name="test_replacement_after_preliminary_read_cannot_be_adopted[reject]" time="0.063" /><testcase classname="tests.test_file_local_bound_review" name="test_real_delete_waits_across_original_review_effects[chapter]" time="0.230" /><testcase classname="tests.test_file_local_bound_review" name="test_real_delete_waits_across_original_review_effects[summary]" time="0.228" /><testcase classname="tests.test_file_local_bound_review" name="test_real_delete_waits_across_original_review_effects[canon]" time="0.272" /><testcase classname="tests.test_file_local_bound_review" name="test_port_rotation_cannot_redirect_later_effects[chapter]" time="0.116" /><testcase classname="tests.test_file_local_bound_review" name="test_port_rotation_cannot_redirect_later_effects[summary]" time="0.108" /><testcase classname="tests.test_file_local_bound_review" name="test_missing_durable_row_never_falls_back_to_cache[accept]" time="0.052" /><testcase classname="tests.test_file_local_bound_review" name="test_missing_durable_row_never_falls_back_to_cache[reject]" time="0.080" /><testcase classname="tests.test_file_local_bound_review" name="test_helper_context_expires_and_cannot_cross_threads" time="0.139" /><testcase classname="tests.test_file_local_bound_review" name="test_reentrant_replacement_is_checked_in_final_original_port[chapter]" time="0.120" /><testcase classname="tests.test_file_local_bound_review" name="test_reentrant_replacement_is_checked_in_final_original_port[summary]" time="0.129" /><testcase classname="tests.test_file_local_bound_review" name="test_reentrant_replacement_is_checked_in_final_original_port[canon]" time="0.130" /><testcase classname="tests.test_file_local_bound_review" name="test_original_memory_chain_creates_evidence_and_proposal" time="0.150" /><testcase classname="tests.test_file_local_bound_review" name="test_original_persistence_failures_never_replay[claim]" time="0.070" /><testcase classname="tests.test_file_local_bound_review" name="test_original_persistence_failures_never_replay[chapter]" time="0.077" /><testcase classname="tests.test_file_local_bound_review" name="test_original_persistence_failures_never_replay[canon]" time="0.101" /><testcase classname="tests.test_file_local_bound_review" name="test_original_persistence_failures_never_replay[terminal]" time="0.103" /><testcase classname="tests.test_file_local_bound_review" name="test_partial_effect_notifications_flush_after_locks_even_on_failure" time="0.077" /><testcase classname="tests.test_file_local_bound_review" name="test_memory_composition_rotation_is_detected_before_accepted" time="0.066" /><testcase classname="tests.test_file_local_bound_review" name="test_original_independent_memory_failure_does_not_undo_acceptance" time="0.083" /><testcase classname="tests.test_file_local_bound_review" name="test_current_original_review_preconditions[version]" time="0.068" /><testcase classname="tests.test_file_local_bound_review" name="test_current_original_review_preconditions[unsettled]" time="0.061" /><testcase classname="tests.test_file_local_bound_review" name="test_current_original_review_preconditions[scope]" time="0.041" /><testcase classname="tests.test_file_local_bound_review" name="test_current_original_review_preconditions[callback_authority]" time="0.044" /><testcase classname="tests.test_file_local_bound_review" name="test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[cancel]" time="0.041" /><testcase classname="tests.test_file_local_bound_review" name="test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[start_prepared]" time="0.040" /><testcase classname="tests.test_file_local_bound_review" name="test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[_run]" time="0.042" /><testcase classname="tests.test_file_local_bound_review" name="test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[_cancel_execution]" time="0.053" /><testcase classname="tests.test_file_local_bound_review" name="test_bound_accept_body_is_single_use" time="0.117" /><testcase classname="tests.test_file_local_bound_review" name="test_stale_interrupted_restore_never_holds_review_lock_while_waiting_for_owner" time="0.150" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_extract_original_owner_positive" time="0.059" /><testcase classname="tests.test_bound_memory_project_owner" name="test_replacement_has_zero_bound_memory_writes[before_enqueue]" time="0.075" /><testcase classname="tests.test_bound_memory_project_owner" name="test_replacement_has_zero_bound_memory_writes[delayed_thread]" time="0.071" /><testcase classname="tests.test_bound_memory_project_owner" name="test_replacement_has_zero_bound_memory_writes[before_dispatch]" time="0.079" /><testcase classname="tests.test_bound_memory_project_owner" name="test_replacement_has_zero_bound_memory_writes[during_inference]" time="0.086" /><testcase classname="tests.test_bound_memory_project_owner" name="test_final_original_lease_excludes_delete_through_every_write[evidence]" time="0.204" /><testcase classname="tests.test_bound_memory_project_owner" name="test_final_original_lease_excludes_delete_through_every_write[proposal]" time="0.222" /><testcase classname="tests.test_bound_memory_project_owner" name="test_final_original_lease_excludes_delete_through_every_write[relation]" time="0.233" /><testcase classname="tests.test_bound_memory_project_owner" name="test_final_original_lease_excludes_delete_through_every_write[terminal]" time="0.239" /><testcase classname="tests.test_bound_memory_project_owner" name="test_replacement_enqueue_does_not_inherit_old_receipt" time="0.097" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[null]" time="0.048" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[unknown]" time="0.052" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[bool_version]" time="0.032" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[wrong_job]" time="0.034" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[wrong_operation]" time="0.036" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[wrong_chapter]" time="0.034" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[wrong_version]" time="0.033" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[ordinary_project_binding]" time="0.052" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[graph_binding]" time="0.033" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[adaptation_binding]" time="0.039" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[creative_director_binding]" time="0.033" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[director_image_binding]" time="0.039" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[research_ocr_binding]" time="0.033" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[research_ocr_output_evidence]" time="0.032" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[_creative_director_terminal_evidence]" time="0.034" /><testcase classname="tests.test_bound_memory_project_owner" name="test_memory_binding_is_strict_and_disjoint[director_image_terminal_v3]" time="0.037" /><testcase classname="tests.test_bound_memory_project_owner" name="test_original_memory_binding_is_immutable[drop]" time="0.041" /><testcase classname="tests.test_bound_memory_project_owner" name="test_original_memory_binding_is_immutable[change]" time="0.040" /><testcase classname="tests.test_bound_memory_project_owner" name="test_original_memory_binding_is_immutable[upgrade]" time="0.040" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[novels]" time="0.075" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[chapters]" time="0.060" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[lore]" time="0.068" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[generations]" time="0.085" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[generation_root]" time="0.072" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[chapter_root]" time="0.064" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[lore_root]" time="0.066" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_ports_cannot_be_swapped_or_rerooted[novel_root]" time="0.066" /><testcase classname="tests.test_bound_memory_project_owner" name="test_missing_marker_is_not_provisioned" time="0.034" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_retry_repairs_partial_original_proposal_links" time="0.063" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_effect_ids_do_not_adopt_legacy_receipts" time="0.069" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_runtime_observers_run_after_project_lock_release" time="0.051" /><testcase classname="tests.test_bound_memory_project_owner" name="test_bound_memory_is_not_restored_as_writer_job" time="0.033" /><testcase classname="tests.test_bound_memory_project_owner" name="test_postgres_bound_memory_is_explicitly_unsupported_without_session" time="0.034" /><testcase classname="tests.test_bound_review_port_blockers" name="test_bound_review_replacement_after_initial_read_still_writes_nothing[accept]" time="0.070" /><testcase classname="tests.test_bound_review_port_blockers" name="test_bound_review_replacement_after_initial_read_still_writes_nothing[reject]" time="0.065" /><testcase classname="tests.test_bound_review_port_blockers" name="test_legacy_review_ports_are_not_an_incarnation_fence[before_review_lock]" time="0.075" /><testcase classname="tests.test_bound_review_port_blockers" name="test_legacy_review_ports_are_not_an_incarnation_fence[before_chapter_write]" time="0.069" /><testcase classname="tests.test_bound_review_port_blockers" name="test_legacy_review_ports_are_not_an_incarnation_fence[between_summary_canon]" time="0.071" /><testcase classname="tests.test_bound_review_port_blockers" name="test_delayed_original_memory_enqueue_adopts_replacement_owner" time="0.077" /><testcase classname="tests.test_bound_review_port_blockers" name="test_memory_final_input_recheck_is_not_a_final_write_fence" time="0.084" /><testcase classname="tests.test_memory_agent_contract" name="test_json_output_and_evidence_contract" time="0.000" /><testcase classname="tests.test_memory_agent_contract" name="test_extract_creates_pending_proposal_with_evidence_and_is_idempotent" time="0.055" /><testcase classname="tests.test_memory_agent_contract" name="test_invalid_json_marks_independent_job_failed" time="0.034" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_extraction_rejects_unverified_routes_without_egress[unconfigured]" time="0.041" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_extraction_rejects_unverified_routes_without_egress[remote]" time="0.038" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_extraction_rejects_unverified_routes_without_egress[unverified-local]" time="0.043" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_extraction_rejects_unverified_routes_without_egress[mock-disabled]" time="0.039" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_extraction_rejects_unverified_routes_without_egress[packaged]" time="0.037" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_failure_does_not_fall_back_to_remote_provider" time="0.043" /><testcase classname="tests.test_memory_agent_contract" name="test_memory_dispatch_revalidates_selected_adapter" time="0.036" /><testcase classname="tests.test_memory_agent_contract" name="test_accept_survives_memory_enqueue_failure" time="0.001" /><testcase classname="tests.test_memory_contract" name="test_approval_creates_memory_atomically" time="0.031" /><testcase classname="tests.test_memory_contract" name="test_failed_memory_creation_keeps_proposal_pending" time="0.026" /><testcase classname="tests.test_memory_contract" name="test_reject_creates_no_memory" time="0.022" /><testcase classname="tests.test_memory_contract" name="test_supersede_retract_and_snapshot" time="0.037" /><testcase classname="tests.test_ordinary_project_binding" name="test_cold_reopen_preserves_passive_identity_and_updates" time="0.025" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_owner_delete_recreate_rejects_retained_record" time="0.042" /><testcase classname="tests.test_ordinary_project_binding" name="test_missing_marker_never_provisioned_on_save_get_or_load" time="0.023" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;0]" time="0.024" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;1]" time="0.018" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;2]" time="0.018" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;3]" time="0.020" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;4]" time="0.026" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;5]" time="0.026" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;6]" time="0.021" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;7]" time="0.016" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;8]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;9]" time="0.018" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;10]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;11]" time="0.019" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;12]" time="0.016" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;13]" time="0.018" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;14]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;15]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;16]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;17]" time="0.021" /><testcase classname="tests.test_ordinary_project_binding" name="test_malformed_unknown_and_mixed_binding_fail_closed[&lt;lambda&gt;18]" time="0.016" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[project_incarnation-file:378ddaeb-6402-42ac-b809-503fb677042f]" time="0.018" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[chapter_id-ordinary-owner:2]" time="0.023" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[operation-rewrite]" time="0.023" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[actor_id-actor]" time="0.020" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[workspace_id-workspace]" time="0.022" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[scope_type-PROJECT]" time="0.022" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_identity_cannot_change[scope_id-ordinary-owner]" time="0.021" /><testcase classname="tests.test_ordinary_project_binding" name="test_binding_cannot_be_removed_or_added_to_existing_legacy" time="0.025" /><testcase classname="tests.test_ordinary_project_binding" name="test_collaboration_exact_scope_identity" time="0.020" /><testcase classname="tests.test_ordinary_project_binding" name="test_all_ordinary_operations_are_passive" time="0.031" /><testcase classname="tests.test_ordinary_project_binding" name="test_bound_filename_alias_is_not_readable" time="0.023" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_specialized_file_contracts_remain_exact[graph]" time="0.025" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_specialized_file_contracts_remain_exact[adaptation]" time="0.021" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_specialized_file_contracts_remain_exact[director]" time="0.023" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_specialized_file_contracts_remain_exact[ocr]" time="0.024" /><testcase classname="tests.test_ordinary_project_binding" name="test_original_specialized_file_contracts_remain_exact[image]" time="0.026" /><testcase classname="tests.test_ordinary_project_binding" name="test_save_holds_original_lifecycle_lease_through_atomic_write" time="0.132" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[local-continue]" time="0.017" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[local-rewrite]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[local-polish]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[local-brainstorm]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[local-review]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[branch-continue]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[branch-rewrite]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[branch-polish]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[branch-brainstorm]" time="0.006" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_original_postgres_roundtrip_preserves_binding_and_nullable_identity[branch-review]" time="0.006" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_owner_key_share_and_generation_row_update_lock_share_the_save_session" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_get_and_load_validate_the_original_owner_inside_their_read_session" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_status_result_and_repository_projection_update_without_rebinding" time="0.007" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_save_rejects_missing_replaced_or_wrong_backend_owner_before_job_lookup[missing]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_save_rejects_missing_replaced_or_wrong_backend_owner_before_job_lookup[replacement]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_save_rejects_missing_replaced_or_wrong_backend_owner_before_job_lookup[file_backend]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_get_hides_stale_owner_and_load_omits_it_without_rebinding[missing]" time="0.006" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_get_hides_stale_owner_and_load_omits_it_without_rebinding[replacement]" time="0.006" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_get_hides_stale_owner_and_load_omits_it_without_rebinding[foreign_row_owner]" time="0.006" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_save_rejects_generation_row_foreign_key_owner_mismatch" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_previously_unbound_row_cannot_be_upgraded_to_ordinary_binding" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_bound_row_cannot_be_downgraded_or_nullified[removed]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_bound_row_cannot_be_downgraded_or_nullified[null]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_valid_but_changed_binding_cannot_rewrite_existing_row[operation]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_valid_but_changed_binding_cannot_rewrite_existing_row[actor]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_valid_but_changed_binding_cannot_rewrite_existing_row[branch]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_valid_but_changed_binding_cannot_rewrite_existing_row[replacement_owner]" time="0.005" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_specialized_field_presence_even_null_cannot_fall_through_to_ordinary_save[graph_binding]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_specialized_field_presence_even_null_cannot_fall_through_to_ordinary_save[adaptation_binding]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_specialized_field_presence_even_null_cannot_fall_through_to_ordinary_save[creative_director_binding]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_specialized_field_presence_even_null_cannot_fall_through_to_ordinary_save[director_image_binding]" time="0.000" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_specialized_field_presence_even_null_cannot_fall_through_to_ordinary_save[research_ocr_binding]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-chapter_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-actor_id]" time="0.000" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-workspace_id]" time="0.000" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-scope]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-scope_type]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-scope_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[binding-experimental_origin]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-chapter_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-actor_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-workspace_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-scope]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-scope_type]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-scope_id]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_missing_explicit_nullable_identity_is_rejected_before_sql[item-experimental_origin]" time="0.001" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_postgres_owner_uuid_need_not_be_version_four" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[null]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[binding_job_id]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[row_job_id]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[row_operation]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[extra_field]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[boolean_version]" time="0.003" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_corrupt_persisted_binding_is_hidden_by_get_and_load[scope_field]" time="0.004" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_saved_binding_is_detached_from_mutable_caller_objects_before_commit" time="0.002" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_ordinary_mainline_chapter_must_belong_to_locked_owner_in_same_session[True]" time="0.002" /><testcase classname="tests.test_ordinary_project_binding_postgres" name="test_ordinary_mainline_chapter_must_belong_to_locked_owner_in_same_session[False]" time="0.002" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[COMPLETED]" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[FAILED]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[RUNNING]" time="0.044" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[GENERATING]" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[QUEUED]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[PREPARED]" time="0.039" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_persistence_projection_retains_binding_on_original_manager_save" time="0.044" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_restore_reconstructs_only_read_verifier_and_ignores_persisted_callbacks" time="0.035" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_preparation_does_not_capture_or_consume_client_supplied_binding" time="0.032" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_restore_refuses_same_slug_chapters_from_another_file_root[COMPLETED]" time="0.052" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_restore_refuses_same_slug_chapters_from_another_file_root[RUNNING]" time="0.057" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[None]" time="0.033" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid1]" time="0.032" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid2]" time="0.033" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid3]" time="0.031" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_unbound_public_and_record_are_exact_original_projection" time="0.032" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[replace_owner]" time="0.065" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[missing_marker]" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[missing_record]" time="0.039" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[malformed_json]" time="0.041" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_removed]" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_null]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_unknown_version]" time="0.049" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[outer_identity_missing]" time="0.045" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[identity_changed]" time="0.045" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[owner_changed]" time="0.044" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[replace_owner]" time="0.064" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[missing_marker]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[missing_record]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[malformed_json]" time="0.038" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_removed]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_null]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_unknown_version]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[outer_identity_missing]" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[identity_changed]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[owner_changed]" time="0.039" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_events_never_hold_condition_during_original_repository_read" time="0.042" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_variant_filter_preserves_unbound_legacy_compatibility" time="0.054" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[accept]" time="0.038" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[reject]" time="0.035" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[cancel]" time="0.039" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[start_prepared]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_run]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_cancel_execution]" time="0.034" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_start_prepared_validated]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[stage_reviewed_variants]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[retry-FAILED]" time="0.417" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[cancel-COMPLETED]" time="0.047" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[accept-COMPLETED]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[reject-COMPLETED]" time="0.046" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_read_has_original_public_shape_without_internal_identity" time="0.075" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_cached_reads_and_original_taskcenter_hide_replaced_owner" time="0.086" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_unbound_retry_runs_original_mock_worker_and_accepts_without_binding" time="0.101" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_collaborative_retry_keeps_original_preview_guard_before_passive_guard[False]" time="0.084" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_collaborative_retry_keeps_original_preview_guard_before_passive_guard[True]" time="0.102" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[unregistered]" time="0.091" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[foreign_store]" time="0.088" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[foreign_mainline]" time="0.083" /><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_postgres_manager_restores_bound_passive_record_without_writes[continue]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'continue'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff94e71d0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_postgres_manager_restores_bound_passive_record_without_writes[rewrite]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'rewrite'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff9437080&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_postgres_manager_restores_bound_passive_record_without_writes[polish]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'polish'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff9437c50&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_postgres_manager_restores_bound_passive_record_without_writes[brainstorm]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'brainstorm'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe002785610&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_postgres_manager_restores_bound_passive_record_without_writes[review]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'review'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff9435d30&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_manager_reads_use_one_original_read_session_without_nested_connection[get]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">read = 'get'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff94353a0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_manager_reads_use_one_original_read_session_without_nested_connection[content]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">read = 'content'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff9434080&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_manager_reads_use_one_original_read_session_without_nested_connection[variants]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">read = 'variants'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff93a58e0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_row]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'missing_row'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe002787d10&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc1f2ab0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[replaced_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc1b8b90&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[foreign_row_owner]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc1815e0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_binding]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'missing_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffb55fa70&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[null_binding]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'null_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc1ba2d0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[changed_binding]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'changed_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc142b10&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_row_and_owner_changes_fence_cached_reads_and_content[row_operation]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'row_operation'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc5e2690&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_stale_or_malformed_bound_rows_are_not_restored[missing_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc1bb8f0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_stale_or_malformed_bound_rows_are_not_restored[replaced_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc110200&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_stale_or_malformed_bound_rows_are_not_restored[foreign_row_owner]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003e1d250&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_stale_or_malformed_bound_rows_are_not_restored[null_binding]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'null_binding'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003d50770&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_stale_or_malformed_bound_rows_are_not_restored[row_operation]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'row_operation'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003e1c9b0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_same_url_different_database_object_cannot_restore_bound_rows" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">def test_same_url_different_database_object_cannot_restore_bound_rows():
+        database = _database()
+        other = _database()
+        item = _seed(database)
+        assert database.engine.url == other.engine.url
+        assert database is not other
+    
+&gt;       manager = _manager(database, chapter_database=other)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:231: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe002786720&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[chapter_database]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'chapter_database'
+
+    @pytest.mark.parametrize("change", ["chapter_database", "generation_repository"])
+    def test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003d53b90&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[generation_repository]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'generation_repository'
+
+    @pytest.mark.parametrize("change", ["chapter_database", "generation_repository"])
+    def test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003b5cdd0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_bound_postgres_branch_is_not_inferred_from_mainline_database_identity" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">def test_bound_postgres_branch_is_not_inferred_from_mainline_database_identity():
+        database = _database()
+        item = _seed(database, collaborative=True)
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003d536e0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_bound_persist_retains_private_identity_in_one_original_save_session" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">def test_bound_persist_retains_private_identity_in_one_original_save_session():
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:277: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffc110440&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_save_transaction_rejects_stale_bound_persist_without_writes[missing_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003b5eed0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_save_transaction_rejects_stale_bound_persist_without_writes[replaced_owner]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003b5f8f0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_save_transaction_rejects_stale_bound_persist_without_writes[foreign_row_owner]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003d533b0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_original_save_transaction_rejects_stale_bound_persist_without_writes[changed_binding]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">change = 'changed_binding'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003b5e960&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[cancel]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'cancel'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe0027bf740&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[accept]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'accept'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbd31a60&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[reject]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'reject'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003eac170&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[start_prepared]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = 'start_prepared'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbd30ce0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_start_prepared_validated]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = '_start_prepared_validated'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbdff620&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_run]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = '_run'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbdfd790&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_claimed]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = '_accept_claimed'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbdff5f0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_branch_claimed]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">operation = '_accept_branch_claimed'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe003d50dd0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_existing_restart_recovery_preserves_binding_without_replaying_execution[SETTLING]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe0027d9550&gt;
+status = 'SETTLING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe0027db620&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_existing_restart_recovery_preserves_binding_without_replaying_execution[RUNNING]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe0027da750&gt;
+status = 'RUNNING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe0027d8dd0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_existing_restart_recovery_preserves_binding_without_replaying_execution[GENERATING]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fdffbdc04d0&gt;
+status = 'GENERATING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdffbdfdca0&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_existing_restart_recovery_preserves_binding_without_replaying_execution[QUEUED]" time="0.002"><failure message="AssertionError: passive manager reached downstream service: repository">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fdffbdff440&gt;
+status = 'QUEUED'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fe0027d9700&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_passive_generation_manager_postgres" name="test_existing_restart_recovery_preserves_binding_without_replaying_execution[PREPARED]" time="0.003"><failure message="AssertionError: passive manager reached downstream service: repository">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fdff94374d0&gt;
+status = 'PREPARED'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+&gt;       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:437: in __init__
+    self._file_review_pins = FileReviewPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in __init__
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/file_generation_review.py:31: in &lt;genexpr&gt;
+    self.repositories = tuple(getattr(service, 'repository', None) for service in self.services[:3])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;test_passive_generation_manager_postgres._NoSideEffects object at 0x7fdff9437b00&gt;
+name = 'repository'
+
+    def __getattr__(self, name):
+&gt;       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: repository
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError</failure></testcase><testcase classname="tests.test_generation_restart_recovery" name="test_interrupted_job_becomes_safely_retryable_after_restart" time="0.001" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[archive-before_context-False]" time="0.072" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[archive-before_context-True]" time="0.068" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[archive-before_adapter-False]" time="0.087" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[archive-before_adapter-True]" time="0.085" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[replace_owner-before_context-False]" time="0.079" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[replace_owner-before_context-True]" time="0.091" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[replace_owner-before_adapter-False]" time="0.100" /><testcase classname="tests.test_generation_worker_authority" name="test_live_keyed_authority_fences_initial_context_and_adapter[replace_owner-before_adapter-True]" time="0.100" /><testcase classname="tests.test_generation_worker_authority" name="test_authority_change_during_context_stops_before_snapshot[archive]" time="0.081" /><testcase classname="tests.test_generation_worker_authority" name="test_authority_change_during_context_stops_before_snapshot[replace_owner]" time="0.369" /><testcase classname="tests.test_generation_worker_authority" name="test_authority_change_during_mock_stream_cannot_write_deferred_snapshot[archive]" time="0.129" /><testcase classname="tests.test_generation_worker_authority" name="test_authority_change_during_mock_stream_cannot_write_deferred_snapshot[replace_owner]" time="0.145" /><testcase classname="tests.test_generation_worker_authority" name="test_valid_live_callback_and_no_callback_legacy_complete[False]" time="0.073" /><testcase classname="tests.test_generation_worker_authority" name="test_valid_live_callback_and_no_callback_legacy_complete[True]" time="0.114" /><testcase classname="tests.test_generation_worker_authority" name="test_authorization_rejection_is_safe_and_never_tries_fallback[1]" time="0.055" /><testcase classname="tests.test_generation_worker_authority" name="test_authorization_rejection_is_safe_and_never_tries_fallback[2]" time="0.071" /><testcase classname="tests.test_generation_worker_authority" name="test_valid_callback_does_not_disable_existing_provider_preflight_fallback" time="0.106" /><testcase classname="tests.test_generation_worker_authority" name="test_transient_callback_is_not_reconstructed_by_existing_restart_recovery" time="0.035" /><testcase classname="tests.test_generation_worker_authority" name="test_ordinary_authorization_checks_do_not_duplicate_dispatch_or_terminal_hooks[False]" time="0.068" /><testcase classname="tests.test_generation_worker_authority" name="test_ordinary_authorization_checks_do_not_duplicate_dispatch_or_terminal_hooks[True]" time="0.046" /><testcase classname="tests.test_generation_worker_authority" name="test_registered_branch_keeps_original_required_callback_contract[False]" time="0.078" /><testcase classname="tests.test_generation_worker_authority" name="test_registered_branch_keeps_original_required_callback_contract[True]" time="0.106" /><testcase classname="tests.test_generation_worker_authority" name="test_specialized_worker_domains_still_require_their_private_capability[creative_director_text-CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE]" time="0.035" /><testcase classname="tests.test_generation_worker_authority" name="test_specialized_worker_domains_still_require_their_private_capability[creative_director_image_v3-DIRECTOR_IMAGE_PRIVATE_OWNER_REQUIRED]" time="0.039" /><testcase classname="tests.test_generation_worker_authority" name="test_specialized_worker_domains_still_require_their_private_capability[research_ocr-RESEARCH_OCR_EXECUTION_UNAVAILABLE]" time="0.033" /><testcase classname="tests.test_generation_worker_authority" name="test_reviewed_author_keeps_original_preview_and_required_callback_contract[live]" time="0.109" /><testcase classname="tests.test_generation_worker_authority" name="test_reviewed_author_keeps_original_preview_and_required_callback_contract[absent_at_start]" time="0.051" /><testcase classname="tests.test_generation_worker_authority" name="test_reviewed_author_keeps_original_preview_and_required_callback_contract[absent_at_worker]" time="0.057" /><testcase classname="tests.test_generation_worker_authority" name="test_real_graph_worker_keeps_disjoint_path_and_required_callback_contract[live]" time="0.081" /><testcase classname="tests.test_generation_worker_authority" name="test_real_graph_worker_keeps_disjoint_path_and_required_callback_contract[absent_at_prepare]" time="0.033" /><testcase classname="tests.test_generation_worker_authority" name="test_real_graph_worker_keeps_disjoint_path_and_required_callback_contract[absent_at_start]" time="0.034" /><testcase classname="tests.test_generation_worker_authority" name="test_real_graph_worker_keeps_disjoint_path_and_required_callback_contract[absent_at_worker]" time="0.044" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-midstream-False-continue]" time="0.124" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-midstream-False-polish]" time="0.083" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-midstream-True-continue]" time="0.085" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-midstream-True-polish]" time="0.089" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-before_completed_event-False-continue]" time="0.102" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-before_completed_event-False-polish]" time="0.111" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-before_completed_event-True-continue]" time="0.118" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[archive-before_completed_event-True-polish]" time="0.108" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-midstream-False-continue]" time="0.106" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-midstream-False-polish]" time="0.115" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-midstream-True-continue]" time="0.152" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-midstream-True-polish]" time="0.113" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-before_completed_event-False-continue]" time="0.134" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-before_completed_event-False-polish]" time="0.126" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-before_completed_event-True-continue]" time="0.145" /><testcase classname="tests.test_generation_worker_authority" name="test_revoked_live_source_stops_new_output_and_terminal_publish[replace_owner-before_completed_event-True-polish]" time="0.132" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[final_review-False-continue]" time="0.107" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[final_review-False-polish]" time="0.103" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[final_review-True-continue]" time="0.109" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[final_review-True-polish]" time="0.101" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[terminal_hook-False-continue]" time="0.108" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[terminal_hook-False-polish]" time="0.109" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[terminal_hook-True-continue]" time="0.112" /><testcase classname="tests.test_generation_worker_authority" name="test_final_publication_rechecks_after_review_or_settlement_without_losing_execution_receipts[terminal_hook-True-polish]" time="0.115" /><testcase classname="tests.test_generation_worker_authority" name="test_late_worker_event_does_not_reauthorize_or_rewrite_existing_terminal[CANCELLED]" time="0.083" /><testcase classname="tests.test_generation_worker_authority" name="test_late_worker_event_does_not_reauthorize_or_rewrite_existing_terminal[ACCEPTED]" time="0.095" /><testcase classname="tests.test_generation_worker_authority" name="test_late_worker_event_does_not_reauthorize_or_rewrite_existing_terminal[REJECTED]" time="0.079" /><testcase classname="tests.test_generation_worker_authority" name="test_terminal_hook_cancel_preserves_completed_execution_fact_and_cannot_publish[False]" time="0.110" /><testcase classname="tests.test_generation_worker_authority" name="test_terminal_hook_cancel_preserves_completed_execution_fact_and_cannot_publish[True]" time="0.114" /><testcase classname="tests.test_generation_worker_authority" name="test_late_adapter_guard_refusal_cannot_leave_partial_buffer_reviewable[False]" time="0.077" /><testcase classname="tests.test_generation_worker_authority" name="test_late_adapter_guard_refusal_cannot_leave_partial_buffer_reviewable[True]" time="0.087" /><testcase classname="tests.test_generation_worker_authority" name="test_one_time_late_adapter_refusal_survives_normalized_failure_event" time="0.070" /><testcase classname="tests.test_generation_worker_authority" name="test_no_hook_live_publication_does_not_persist_settlement_recovery_state" time="0.110" /><testcase classname="tests.test_generation_worker_authority" name="test_failed_settlement_keeps_its_receipt_but_discards_revoked_output" time="0.132" /><testcase classname="tests.test_generation_worker_authority" name="test_settlement_persistence_failure_cannot_publish_completed" time="0.208" /><testcase classname="tests.test_generation_worker_authority" name="test_no_hook_final_cancel_preserves_observed_execution" time="0.112" /><testcase classname="tests.test_generation_worker_authority" name="test_late_adapter_refusal_does_not_clear_already_persisted_accepted_result" time="0.092" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_replay_returns_cached_result_without_creating" time="0.073" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_replay_contract_is_stable_across_repeats" time="0.264" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_without_idempotency_key_creates_independently" time="0.040" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_distinct_keys_create_once_each" time="0.094" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_idempotency_is_namespaced_by_operation" time="0.113" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_prepare_failure_is_not_cached_and_releases_lock" time="0.068" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_fresh_store_concurrent_submission_survives_repeated_races" time="6.138" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_same_key_changed_payload_is_rejected_without_overwriting_cache" time="0.067" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_same_key_is_isolated_between_real_projects" time="0.109" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_same_key_is_isolated_by_trusted_actor_and_branch" time="0.402" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_current_authority_and_source[membership-403-FORBIDDEN]" time="0.191" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_current_authority_and_source[role-403-FORBIDDEN]" time="0.179" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_current_authority_and_source[session-401-INVALID_SESSION]" time="0.184" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_current_authority_and_source[source-404-CHAPTER_NOT_FOUND]" time="0.227" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_current_authority_and_source[feature-404-EXPERIMENTAL_FEATURE_DISABLED]" time="0.141" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_replay_rechecks_revocation_after_request_validation[membership]" time="0.127" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_replay_rechecks_revocation_after_request_validation[role]" time="0.134" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_does_not_survive_local_source_deletion" time="0.065" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_request_cannot_use_another_projects_chapter" time="0.077" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rejects_recreated_project_incarnation" time="0.124" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_cached_result_rechecks_source_deleted_during_replay" time="0.152" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[scoped]" time="0.054" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[unscoped]" time="0.065" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-scoped]" time="0.060" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-unscoped]" time="0.055" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[invalid-result]" time="0.063" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_expired_bound_receipt_requires_an_explicit_new_key" time="0.085" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[missing]" time="0.071" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[corrupt]" time="0.067" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{broken json]" time="0.036" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_corrupt_retained_cache_fails_closed_without_overwriting[[]]" time="0.052" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{&quot;unused&quot;: 1, &quot;generate:continue:broken&quot;: null}]" time="0.066" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_keyed_request_rejects_different_repository_roots" time="0.062" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_authority_rejects_registered_branch_store_from_another_root" time="0.064" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[source]" time="0.152" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[project]" time="0.135" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_keyed_replay_rejects_archived_branch_source[before]" time="0.140" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_keyed_replay_rejects_archived_branch_source[during]" time="0.135" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_keyed_replay_rechecks_feature_disabled_during_lookup" time="0.178" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_without_key_and_variants_do_not_create_idempotency_owner_marker" time="0.056" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_idempotency_non_generation_get_keeps_its_original_ttl_contract" time="0.005" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[None]" time="0.000" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[query]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[body]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_late_local_project_recreation_keeps_original_receipt_and_requires_new_key" time="0.113" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_owner_uses_actual_repository_not_decoy_settings_root" time="0.052" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[matching-driver]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[database]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[host]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[port]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[query]" time="0.000" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[user]" time="0.000" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[chapter-database]" time="0.000" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-novels-database]" time="0.001" /><testcase classname="tests.test_generation_idempotency_contracts" name="test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-mainline-database]" time="0.001" /><testcase classname="tests.test_chapter_concurrency" name="test_conflict_has_backend_neutral_details" time="0.038" /><testcase classname="tests.test_chapter_concurrency" name="test_file_two_clients_have_one_deterministic_winner" time="0.055" /><testcase classname="tests.test_chapter_concurrency" name="test_autosave_uses_durable_version_and_preserves_dirty_latest_on_conflict" time="0.040" /><testcase classname="tests.test_chapter_concurrency" name="test_autosave_multiple_editor_generations_increment_one_durable_version" time="0.041" /><testcase classname="tests.test_chapter_concurrency" name="test_postgres_two_clients_atomic_cas_and_single_history_row" time="0.000"><skipped type="pytest.skip" message="NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable">/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_chapter_concurrency.py:93: NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable</skipped></testcase><testcase classname="tests.test_chapter_archive_lifecycle_v070" name="test_file_archive_restore_persists_without_deleting_content" time="0.041" /><testcase classname="tests.test_chapter_archive_lifecycle_v070" name="test_file_archive_is_idempotent" time="0.035" /><testcase classname="tests.test_chapter_archive_lifecycle_v070" name="test_file_archive_restore_audit_is_atomic_and_idempotent" time="0.057" /><testcase classname="tests.test_chapter_markdown_contract" name="test_document_markdown_eof_policy[document0-]" time="0.000" /><testcase classname="tests.test_chapter_markdown_contract" name="test_document_markdown_eof_policy[document1-One\n\n]" time="0.001" /><testcase classname="tests.test_chapter_markdown_contract" name="test_document_markdown_eof_policy[document2-One\n\nTwo\n\n]" time="0.001" /><testcase classname="tests.test_chapter_markdown_contract" name="test_document_markdown_eof_policy[document3-## Title\n\nBody\n\n]" time="0.000" /><testcase classname="tests.test_chapter_markdown_contract" name="test_postgres_chapter_uses_shared_markdown_renderer[document0-]" time="0.000" /><testcase classname="tests.test_chapter_markdown_contract" name="test_postgres_chapter_uses_shared_markdown_renderer[document1-One\n\n]" time="0.001" /><testcase classname="tests.test_chapter_markdown_contract" name="test_postgres_chapter_uses_shared_markdown_renderer[document2-One\n\nTwo\n\n]" time="0.000" /><testcase classname="tests.test_chapter_markdown_contract" name="test_postgres_chapter_uses_shared_markdown_renderer[document3-## Title\n\nBody\n\n]" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_normal_spawn_ready_state_is_cleanup_addressable" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_descendant_listener_and_launcher_are_both_tracked" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_process_exit_before_listener_leaves_launcher_cleanup_target" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_timeout_partial_state_remains_cleanup_addressable" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_partial_startup_cleans_all_recorded_services" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_parent_exited_child_survives_is_still_cleanup_targeted" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_cleanup_target_discovery_is_idempotent" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_unrelated_same_executable_run_is_untouched" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_pid_reuse_protection_rejects_prior_run_record" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_stale_prior_run_manifest_is_not_current" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_verified_cleanup_allows_same_run_same_identity" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_verified_cleanup_rejects_cross_run_manifest" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_verified_cleanup_rejects_reused_pid" time="0.001" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_verified_cleanup_missing_identity_fails_closed" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_verified_cleanup_is_idempotent_after_process_exit" time="0.001" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_direct_listener_launcher_duplicate_is_not_reported_rejected" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_boundary_valid_identity_terminates_same_handle" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_toctou_pid_reuse_after_initial_validation_is_rejected" time="0.001" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_creation_time_mismatch_does_not_terminate" time="0.001" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_executable_mismatch_does_not_terminate" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_argv_mismatch_does_not_terminate" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_run_id_mismatch_does_not_terminate" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_identity_query_failure_fails_closed" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_final_parent_exited_child_identity_can_still_terminate" time="0.000" /><testcase classname="tests.test_v061_acceptance_lifecycle" name="test_process_exiting_during_handle_termination_is_safe_success" time="0.002" /></testsuite></testsuites>

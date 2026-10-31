@@ -1,0 +1,929 @@
+{
+  "capture_contract": "actual-mounted-comic-image-wire/1",
+  "synthetic_provider": true,
+  "live_inference": false,
+  "project_id": "r3-mounted-0b09d663b1c64c07b3c3bf197f811584",
+  "page": {
+    "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+    "version": 1,
+    "status": "DRAFT",
+    "stale": false,
+    "privacy_level": "LOCAL_ONLY",
+    "document": {
+      "title": "SYNTHETIC comic image",
+      "source_mode": "INDEPENDENT",
+      "screenplay_id": null,
+      "expected_screenplay_version": null,
+      "preset": "PAGE",
+      "font_family": "NOTO_SANS_SC_OFL",
+      "width": 800,
+      "height": 1120,
+      "safe_area": 24,
+      "segment_height": 1120,
+      "panels": [
+        {
+          "x": 24,
+          "y": 24,
+          "width": 752,
+          "height": 320,
+          "id": "panel",
+          "shot_id": null,
+          "artwork_mode": "IMAGE",
+          "order": 1,
+          "character_ids": [],
+          "asset_id": null,
+          "expected_asset_version": null,
+          "fit": "CONTAIN",
+          "bubbles": [],
+          "image_brief": "SYNTHETIC quiet harbour",
+          "appearance_references": []
+        }
+      ]
+    },
+    "scene_ids": {
+      "panel": null
+    },
+    "history_versions": [],
+    "automatic_promotion": false
+  },
+  "panel_id": "panel",
+  "request_body": {
+    "expected_version": 1,
+    "request_id": "mounted-comic-image",
+    "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+    "model_id": "local-4c3ffc28953a791c7d9f9b51",
+    "parameters": {
+      "width": 64,
+      "height": 64,
+      "seed": 3
+    }
+  },
+  "providers": {
+    "items": [
+      {
+        "operation_id": "m5.image.t2i",
+        "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+        "model_id": "local-4c3ffc28953a791c7d9f9b51",
+        "local": true,
+        "route_digest": "5d8abb831178c06e69c537d265087f382bd0494fb068e62ae45a0a7eb0d25f92",
+        "capability": "TEXT_TO_IMAGE",
+        "supported_parameters": [
+          "width",
+          "height",
+          "steps",
+          "seed",
+          "negative_prompt"
+        ],
+        "readiness": "CONFIGURED_NOT_VERIFIED",
+        "product_acceptance": "LOCAL_REQUIRED"
+      }
+    ],
+    "automatic_runtime_start": false,
+    "health_probed": false,
+    "credentials_read": false
+  },
+  "prepared": {
+    "contract": "studio-comic-image-request/1",
+    "source_snapshot": {
+      "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+      "kind": "COMIC_PANEL",
+      "version": 1,
+      "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+      "asset_kind": null,
+      "reference_only": true,
+      "comic_panel": {
+        "panel_id": "panel",
+        "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+        "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+        "actor": "local-author",
+        "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+        "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+      }
+    },
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "mounted-comic-image",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "prompt": "SYNTHETIC quiet harbour",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": null,
+        "seed": 3,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": null,
+        "out_ms": null
+      },
+      "source_snapshots": [
+        {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "asset_kind": null,
+          "reference_only": true,
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "automatic_dispatch": false,
+    "model_called": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "product_acceptance": "LOCAL_REQUIRED"
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "r3-mounted-0b09d663b1c64c07b3c3bf197f811584",
+    "branch_id": null,
+    "operation_id": "m5.image.t2i",
+    "request_id": "mounted-comic-image",
+    "request_digest": "a7816f45119f172e13f0de659dadc2a77cd40b0405a4bb303e42a8c015b0bb6f",
+    "provider": {
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "local": true,
+      "route_digest": "5d8abb831178c06e69c537d265087f382bd0494fb068e62ae45a0a7eb0d25f92"
+    },
+    "sources": [
+      {
+        "snapshot": {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        },
+        "measured": null
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "automatic_fallback": false,
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 3,
+            "steps": 28,
+            "cfg": 7,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "SDXL.safetensors"
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 64,
+            "height": 64,
+            "batch_size": 1
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "SYNTHETIC quiet harbour",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "low quality, blurry, artifacts",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "6895da4969e85467a27a5a932ac339c70f0c4948ba4e9f4e0a239ddcb82ae4ec"
+    },
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "mounted-comic-image",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "prompt": "SYNTHETIC quiet harbour",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": null,
+        "seed": 3,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": null,
+        "out_ms": null
+      },
+      "source_snapshots": [
+        {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "asset_kind": null,
+          "reference_only": true,
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "011ef1b9e4f1535027bab4420020c27d9747e05bcda05484760eee2e284d782b"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "12245b97-04b8-4455-ac74-7d384e16d87e",
+    "novel_id": "r3-mounted-0b09d663b1c64c07b3c3bf197f811584",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "a7816f45119f172e13f0de659dadc2a77cd40b0405a4bb303e42a8c015b0bb6f",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-19T00:00:55.713244+00:00",
+    "updated_at": "2026-10-19T00:00:55.713259+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+        "kind": "COMIC_PANEL",
+        "version": 1,
+        "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+        "comic_panel": {
+          "panel_id": "panel",
+          "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+          "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+          "actor": "local-author",
+          "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+          "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+        }
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "mounted-comic-image",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "prompt": "SYNTHETIC quiet harbour",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "source_snapshots": [
+        {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "reference_only": true,
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": {
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "local": true,
+      "route_digest": "5d8abb831178c06e69c537d265087f382bd0494fb068e62ae45a0a7eb0d25f92"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "automatic_fallback": false,
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 3,
+            "steps": 28,
+            "cfg": 7,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "SDXL.safetensors"
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 64,
+            "height": 64,
+            "batch_size": 1
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "SYNTHETIC quiet harbour",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "low quality, blurry, artifacts",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "6895da4969e85467a27a5a932ac339c70f0c4948ba4e9f4e0a239ddcb82ae4ec"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-comic-image",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "candidate": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "12245b97-04b8-4455-ac74-7d384e16d87e",
+    "novel_id": "r3-mounted-0b09d663b1c64c07b3c3bf197f811584",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "a7816f45119f172e13f0de659dadc2a77cd40b0405a4bb303e42a8c015b0bb6f",
+    "receipt_digest": "b8a21a6278ab33c882c53222665ec8984bec9f1944b4e6ad905d87fdf42d946c",
+    "attempt": 1,
+    "created_at": "2026-10-19T00:00:55.713244+00:00",
+    "updated_at": "2026-10-19T00:00:56.104666+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+      "id": "21b88527-903e-443d-9f6b-b60186ca360d",
+      "version": 1,
+      "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+        "kind": "COMIC_PANEL",
+        "version": 1,
+        "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+        "comic_panel": {
+          "panel_id": "panel",
+          "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+          "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+          "actor": "local-author",
+          "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+          "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+        }
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "mounted-comic-image",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "prompt": "SYNTHETIC quiet harbour",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "source_snapshots": [
+        {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "reference_only": true,
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": {
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "local": true,
+      "route_digest": "5d8abb831178c06e69c537d265087f382bd0494fb068e62ae45a0a7eb0d25f92"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "automatic_fallback": false,
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 3,
+            "steps": 28,
+            "cfg": 7,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "SDXL.safetensors"
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 64,
+            "height": 64,
+            "batch_size": 1
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "SYNTHETIC quiet harbour",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "low quality, blurry, artifacts",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "6895da4969e85467a27a5a932ac339c70f0c4948ba4e9f4e0a239ddcb82ae4ec"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-comic-image",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "12245b97-04b8-4455-ac74-7d384e16d87e",
+    "novel_id": "r3-mounted-0b09d663b1c64c07b3c3bf197f811584",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "a7816f45119f172e13f0de659dadc2a77cd40b0405a4bb303e42a8c015b0bb6f",
+    "receipt_digest": "b8a21a6278ab33c882c53222665ec8984bec9f1944b4e6ad905d87fdf42d946c",
+    "attempt": 1,
+    "created_at": "2026-10-19T00:00:55.713244+00:00",
+    "updated_at": "2026-10-19T00:00:56.186435+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+      "id": "21b88527-903e-443d-9f6b-b60186ca360d",
+      "version": 1,
+      "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+        "kind": "COMIC_PANEL",
+        "version": 1,
+        "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+        "comic_panel": {
+          "panel_id": "panel",
+          "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+          "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+          "actor": "local-author",
+          "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+          "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+        }
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "mounted-comic-image",
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "prompt": "SYNTHETIC quiet harbour",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "source_snapshots": [
+        {
+          "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+          "kind": "COMIC_PANEL",
+          "version": 1,
+          "digest": "9228efa839531e563cd02b3541355418c2d531359187a2dfdded4aed3e7b3ec3",
+          "reference_only": true,
+          "comic_panel": {
+            "panel_id": "panel",
+            "panel_digest": "738584e2a8dcedbdd7dae0388dbf4a8e6d5db9716ec5c2f40463180ac9a5e54a",
+            "brief_digest": "c2477e876582f9462e39231ef9054356ccf31149255768c6e15e184d5a9636ff",
+            "actor": "local-author",
+            "scope_key": "ebc2408b22e79cc790e086c81b0d8804da9ed75b80e8d48f0cb2a8cb797933fc",
+            "incarnation": "file:34127889-69ea-47d8-be0f-08d4b16902b7"
+          }
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": {
+      "provider_id": "discovery-local-4c3ffc28953a791c7d9f9b51",
+      "model_id": "local-4c3ffc28953a791c7d9f9b51",
+      "local": true,
+      "route_digest": "5d8abb831178c06e69c537d265087f382bd0494fb068e62ae45a0a7eb0d25f92"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "seed": 3
+      },
+      "automatic_fallback": false,
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 3,
+            "steps": 28,
+            "cfg": 7,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "SDXL.safetensors"
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 64,
+            "height": 64,
+            "batch_size": 1
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "SYNTHETIC quiet harbour",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "low quality, blurry, artifacts",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "6895da4969e85467a27a5a932ac339c70f0c4948ba4e9f4e0a239ddcb82ae4ec"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "mounted-comic-image",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "adoption_body": {
+    "expected_version": 1,
+    "job_id": "12245b97-04b8-4455-ac74-7d384e16d87e",
+    "expected_job_version": 7,
+    "expected_request_digest": "a7816f45119f172e13f0de659dadc2a77cd40b0405a4bb303e42a8c015b0bb6f",
+    "expected_asset_version": 2,
+    "expected_output_digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4"
+  },
+  "adopted": {
+    "id": "7ba07cbd-5ef0-4794-9bd6-6de99e532f84",
+    "version": 2,
+    "status": "DRAFT",
+    "stale": false,
+    "privacy_level": "LOCAL_ONLY",
+    "document": {
+      "title": "SYNTHETIC comic image",
+      "source_mode": "INDEPENDENT",
+      "screenplay_id": null,
+      "expected_screenplay_version": null,
+      "preset": "PAGE",
+      "font_family": "NOTO_SANS_SC_OFL",
+      "width": 800,
+      "height": 1120,
+      "safe_area": 24,
+      "segment_height": 1120,
+      "panels": [
+        {
+          "x": 24,
+          "y": 24,
+          "width": 752,
+          "height": 320,
+          "id": "panel",
+          "shot_id": null,
+          "artwork_mode": "IMAGE",
+          "order": 1,
+          "character_ids": [],
+          "asset_id": "21b88527-903e-443d-9f6b-b60186ca360d",
+          "expected_asset_version": 2,
+          "fit": "CONTAIN",
+          "bubbles": [],
+          "image_brief": "SYNTHETIC quiet harbour",
+          "appearance_references": []
+        }
+      ]
+    },
+    "scene_ids": {
+      "panel": null
+    },
+    "history_versions": [
+      1
+    ],
+    "automatic_promotion": false
+  },
+  "candidate_png_base64": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEElEQVR4nGMQVDIGIgYIBQAKrgGZylPZPAAAAABJRU5ErkJggg=="
+}

@@ -1,0 +1,43 @@
+{
+  "project_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849",
+  "scope": {
+    "mode": "local",
+    "novel_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849"
+  },
+  "graph_id": "55e546ef-f729-4855-a9e5-2d4eae9a6181",
+  "valid": true,
+  "executable": true,
+  "issues": [],
+  "execution_order": [
+    "board",
+    "shot",
+    "video",
+    "review"
+  ],
+  "selected_closure": [
+    "board",
+    "shot",
+    "video",
+    "review"
+  ],
+  "definition_digest": "f3f26169ec38bc5b6592bc678fc55bbf1b9cd087d87ef076686b808ef3b9d4a2",
+  "expected_version": 1,
+  "target_node_ids": [
+    "board",
+    "shot",
+    "video",
+    "review"
+  ],
+  "model_called": false,
+  "external_calls": 0,
+  "graph_schema_version": 5,
+  "reference_states": [
+    {
+      "node_id": "board",
+      "state": "CURRENT"
+    }
+  ],
+  "media_execution": "EXPLICIT_PREVIEW_DISPATCH_REVIEW",
+  "media_evidence": "LOCAL_REQUIRED",
+  "preflight_digest": "b5dbf0f477f171c38f00e29a06dfa9ce2da4d88fac4450aaad750519af8bd213"
+}

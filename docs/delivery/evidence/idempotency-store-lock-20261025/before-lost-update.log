@@ -1,0 +1,1 @@
+{"baseline": "fe90fce950504fded8fb8f3cc8255d0debebf0b9", "independent_processes": 2, "puts_returned_success": 2, "persisted_keys": ["b"], "expected_count": 2, "actual_count": 1, "lost_update_reproduced": true}

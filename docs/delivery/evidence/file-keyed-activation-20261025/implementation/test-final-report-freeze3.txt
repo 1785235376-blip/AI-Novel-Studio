@@ -1,0 +1,22 @@
+FINAL VERIFIED SOURCE:production freeze3 manifest SHA256 0f1b7bd071bd39bbe62656b88e231a983c5f269fccdd4c0d81eeb0cf1a633c93.
+Full no-deselect aggregate:677 passed,3 live-PostgreSQL skipped,0 failed;134.43 seconds.
+All app/tests Python plus command/runner/external-probe hashes identical before/after. Production-freeze-3 manifest checks passed before and immediately after the run (11:38:19UTC). git diff --check clean.
+Separate real three-concurrent keyed request probe:1 passed. Separate portable-runner adaptation+continue+rewrite smoke:3 passed. All app/tests/probe/runner hashes identical before/after supplements. These are not added to aggregate as unique coverage.
+
+Corrected source scope:
+Freeze1 and freeze2 green runs remain historical, not final. Independent final-port review reproduced late global writer COMPLETED, v2 manual ACCEPTED, and bound-memory COMPLETED receipt changes after reentrant owner replacement. Integrator retained existing owner/leaf mechanisms and added final original owner/source/pins validation immediately before persistence, including v2 review owner-only writer expectations and bound-memory final expectations. Current aggregate/supplements were rerun after all these identified corrections.
+No application code was changed by test worker; no source/test changes during this frozen run.
+
+Current final artifacts:
+run_mock_frozen4_regression.sh; mock-final-frozen4-regression.log/XML; mock-final-frozen4-before.sha256/after.sha256/diff.txt/status.txt.
+concurrent-keyed-freeze3.log/XML; portable-runner-smoke-freeze3.log/XML; freeze3-supplements-before.sha256/after.sha256/diff.txt/status.txt.
+production-freeze3-precheck.log; production-freeze3-finalcheck.log; test-commands.txt.
+run_portable_mock_tests.py has repository-root discovery and explicit pre-import Mock/nonpackaged/no-cloud configuration; actual original synthetic predicate printed and asserted before tests.
+
+Live PostgreSQL skips:
+tests.test_chapter_concurrency::test_postgres_two_clients_atomic_cas_and_single_history_row — NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_generation_has_durable_snapshot_foreign_key — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_identical_generation_context_has_distinct_job_snapshots — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+
+Test-owned repository-file changes remain:41 new activation cases; four legacy synthetic fixtures explicitly scoped HYBRID with existing assertions unchanged. No adaptation assertions changed. All prior raw failures/runner corrections retained (runner-correction.txt).
+Limits:real models, paid/network provider calls, live PostgreSQL, Windows and frontend NOT_RUN. Actual File/Mock is not a real-model claim. Embedded original Graph worker and passive specialized roundtrips are covered, not full live Director/image/OCR end-to-end. No commits or GitHub writes by test worker.

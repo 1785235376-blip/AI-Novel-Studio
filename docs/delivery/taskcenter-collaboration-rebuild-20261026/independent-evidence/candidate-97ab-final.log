@@ -1,0 +1,19 @@
+cwd=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_external_adversarial.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/../taskcenter-rebuild-independent-evidence/candidate-97ab-final.xml", "--basetemp=/tmp/independent-taskcenter-yt8g5u00/candidate-97ab-final/pytest-tmp", "-o", "cache_dir=/tmp/independent-taskcenter-yt8g5u00/candidate-97ab-final/pytest-cache"]
+......................                                                   [100%]
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent-evidence/candidate-97ab-final.xml -
+22 passed, 3 warnings in 155.48s (0:02:35)

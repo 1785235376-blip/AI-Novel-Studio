@@ -1,0 +1,53 @@
+{
+  "head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+  "tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+  "source_root": "D:\\PoemSeed-Unified-20261027-94f1c72e\\final-verification-5eec654b",
+  "python": "D:\\PoemSeed-Unified-20261027-94f1c72e\\venv\\Scripts\\python.exe",
+  "chrome": "D:\\PoemSeed-Unified-20261027-94f1c72e\\browsers\\chromium-1234\\chrome-win64\\chrome.exe",
+  "started_utc": "2026-10-28T07:22:15.510504+00:00",
+  "initial_status": "",
+  "mode": "REAL_FRONTEND_BACKEND_FILE_HTTP_PLUS_MOCK_PROVIDER",
+  "acceptance": true,
+  "response_loss": true,
+  "phases": [
+    {
+      "name": "flow",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/pw_unified_image_loop.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.60999999998603,
+      "provider_calls": 1
+    },
+    {
+      "name": "browser-reopen",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/pw_unified_image_loop.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.2959999999729916,
+      "provider_calls": 1
+    },
+    {
+      "name": "backend-restart",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/pw_unified_image_loop.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.312999999965541,
+      "provider_calls": 1
+    }
+  ],
+  "helper_module": "D:\\PoemSeed-Unified-20261027-94f1c72e\\final-verification-5eec654b\\tests\\test_studio_process_reopen_v2.py",
+  "synthetic_project": "synthetic-unified-browser-only",
+  "first_backend": "http://127.0.0.1:51251",
+  "restarted_backend": "http://127.0.0.1:50595",
+  "source_unchanged": true,
+  "final_status": "",
+  "provider_calls": 1,
+  "ended_utc": "2026-10-28T07:22:49.961611+00:00",
+  "passed": true
+}

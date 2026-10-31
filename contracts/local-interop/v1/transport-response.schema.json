@@ -1,0 +1,1869 @@
+{
+  "$defs": {
+    "CancelResult": {
+      "additionalProperties": false,
+      "properties": {
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "status": {
+          "const": "CANCELLED",
+          "default": "CANCELLED",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_name",
+        "protocol_version",
+        "request_id"
+      ],
+      "title": "CancelResult",
+      "type": "object"
+    },
+    "CapabilityNegotiation": {
+      "additionalProperties": false,
+      "properties": {
+        "granted_capabilities": {
+          "default": [],
+          "items": {
+            "enum": [
+              "project.context.read",
+              "project.selection.share",
+              "project.metadata.read",
+              "task.status.read",
+              "task.error.read",
+              "diagnostics.read",
+              "model.registry.read",
+              "model.runtime.status.read",
+              "tutor.guidance.request",
+              "tutor.guidance.receive",
+              "verifier.request",
+              "verifier.result.receive",
+              "case.candidate.create",
+              "handoff.open_feature",
+              "handoff.open_project",
+              "handoff.open_task"
+            ],
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Granted Capabilities",
+          "type": "array"
+        },
+        "hello_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Hello Id",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "requested_capabilities": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Requested Capabilities",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hello_id",
+        "protocol_name",
+        "protocol_version",
+        "requested_capabilities"
+      ],
+      "title": "CapabilityNegotiation",
+      "type": "object"
+    },
+    "ContextEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "enum": [
+            "AUTHORITATIVE",
+            "CONSTRAINING",
+            "SUPPORTING",
+            "ADVISORY"
+          ],
+          "title": "Authority",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 256,
+          "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+          "title": "Locator",
+          "type": "string"
+        },
+        "privacy": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Source Version",
+          "type": "string"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_version",
+        "locator",
+        "content_hash",
+        "timestamp",
+        "authority"
+      ],
+      "title": "ContextEvidence",
+      "type": "object"
+    },
+    "GuidanceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 256,
+          "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+          "title": "Locator",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "label",
+        "locator"
+      ],
+      "title": "GuidanceReference",
+      "type": "object"
+    },
+    "GuidanceStep": {
+      "additionalProperties": false,
+      "properties": {
+        "handoff": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HandoffTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "instruction": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Instruction",
+          "type": "string"
+        },
+        "step_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "instruction"
+      ],
+      "title": "GuidanceStep",
+      "type": "object"
+    },
+    "HandoffResult": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "error_code": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "status": {
+                "const": "REJECTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error_code": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "error_code"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "error_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "PROTOCOL_INCOMPATIBLE",
+                "PRODUCT_NOT_AVAILABLE",
+                "CAPABILITY_NOT_SUPPORTED",
+                "SESSION_REQUIRED",
+                "SESSION_REVOKED",
+                "PERMISSION_DENIED",
+                "CONTEXT_NOT_AUTHORIZED",
+                "CONTEXT_STALE",
+                "SOURCE_CHANGED",
+                "HANDOFF_TARGET_NOT_FOUND",
+                "TUTOR_UNAVAILABLE",
+                "VERIFIER_UNAVAILABLE",
+                "MODEL_NOT_AVAILABLE",
+                "TRANSPORT_ERROR",
+                "TIMEOUT",
+                "CANCELLED",
+                "INVALID_MESSAGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "OPENED",
+            "REJECTED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_name",
+        "protocol_version",
+        "request_id",
+        "session_id",
+        "status"
+      ],
+      "title": "HandoffResult",
+      "type": "object"
+    },
+    "HandoffTarget": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_FEATURE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "feature"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_PROJECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "project_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_TASK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "task_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_CHAPTER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "string"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "chapter_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_SESSION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "session_id"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "OPEN_FEATURE",
+            "OPEN_PROJECT",
+            "OPEN_TASK",
+            "OPEN_CHAPTER",
+            "OPEN_SESSION"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "chapter_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chapter Id"
+        },
+        "feature": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "source_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Version"
+        },
+        "target_product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Target Product Id",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        }
+      },
+      "required": [
+        "action",
+        "target_product_id"
+      ],
+      "title": "HandoffTarget",
+      "type": "object"
+    },
+    "Heartbeat": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "sequence": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_at",
+        "protocol_name",
+        "protocol_version",
+        "sequence",
+        "session_id"
+      ],
+      "title": "Heartbeat",
+      "type": "object"
+    },
+    "HelloResult": {
+      "additionalProperties": false,
+      "properties": {
+        "hello_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Hello Id",
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/$defs/ProductDescriptor"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "session_nonce": {
+          "maxLength": 128,
+          "minLength": 24,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Nonce",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hello_id",
+        "product",
+        "protocol_name",
+        "protocol_version",
+        "session_nonce"
+      ],
+      "title": "HelloResult",
+      "type": "object"
+    },
+    "InteropError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "PROTOCOL_INCOMPATIBLE",
+            "PRODUCT_NOT_AVAILABLE",
+            "CAPABILITY_NOT_SUPPORTED",
+            "SESSION_REQUIRED",
+            "SESSION_REVOKED",
+            "PERMISSION_DENIED",
+            "CONTEXT_NOT_AUTHORIZED",
+            "CONTEXT_STALE",
+            "SOURCE_CHANGED",
+            "HANDOFF_TARGET_NOT_FOUND",
+            "TUTOR_UNAVAILABLE",
+            "VERIFIER_UNAVAILABLE",
+            "MODEL_NOT_AVAILABLE",
+            "TRANSPORT_ERROR",
+            "TIMEOUT",
+            "CANCELLED",
+            "INVALID_MESSAGE"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "protocol_name",
+        "protocol_version"
+      ],
+      "title": "InteropError",
+      "type": "object"
+    },
+    "ModelRecommendation": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "const": "ADVISORY",
+          "default": "ADVISORY",
+          "title": "Authority",
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Runtime Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "runtime_id",
+        "model_id",
+        "reason"
+      ],
+      "title": "ModelRecommendation",
+      "type": "object"
+    },
+    "ProductDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "display_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_role": {
+          "enum": [
+            "AI_TUTOR",
+            "CREATIVE_STUDIO",
+            "DCC",
+            "VIDEO_EDITOR",
+            "GAME_ENGINE",
+            "IMAGE_TOOL",
+            "AUDIO_TOOL"
+          ],
+          "title": "Product Role",
+          "type": "string"
+        },
+        "product_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Product Version",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "protocol_versions": {
+          "default": [
+            "1.0"
+          ],
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Protocol Versions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "display_name",
+        "instance_id",
+        "product_id",
+        "product_role",
+        "product_version",
+        "protocol_name",
+        "protocol_version"
+      ],
+      "title": "ProductDescriptor",
+      "type": "object"
+    },
+    "SessionDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "enum": [
+              "project.context.read",
+              "project.selection.share",
+              "project.metadata.read",
+              "task.status.read",
+              "task.error.read",
+              "diagnostics.read",
+              "model.registry.read",
+              "model.runtime.status.read",
+              "tutor.guidance.request",
+              "tutor.guidance.receive",
+              "verifier.request",
+              "verifier.result.receive",
+              "case.candidate.create",
+              "handoff.open_feature",
+              "handoff.open_project",
+              "handoff.open_task"
+            ],
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "nonce": {
+          "maxLength": 128,
+          "minLength": 24,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Nonce",
+          "type": "string"
+        },
+        "peer_instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Peer Instance Id",
+          "type": "string"
+        },
+        "peer_product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Peer Product Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "NAMED_PIPE",
+            "LOOPBACK_HTTP"
+          ],
+          "title": "Transport",
+          "type": "string"
+        },
+        "user_identity": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "User Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capabilities",
+        "created_at",
+        "expires_at",
+        "instance_id",
+        "nonce",
+        "peer_instance_id",
+        "peer_product_id",
+        "product_id",
+        "protocol_name",
+        "protocol_version",
+        "session_id",
+        "transport",
+        "user_identity"
+      ],
+      "title": "SessionDescriptor",
+      "type": "object"
+    },
+    "SessionOpenResult": {
+      "additionalProperties": false,
+      "properties": {
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "session": {
+          "$ref": "#/$defs/SessionDescriptor"
+        },
+        "session_token": {
+          "maxLength": 128,
+          "minLength": 32,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol_name",
+        "protocol_version",
+        "session",
+        "session_token"
+      ],
+      "title": "SessionOpenResult",
+      "type": "object"
+    },
+    "TutorGuidance": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "const": "ADVISORY",
+          "default": "ADVISORY",
+          "title": "Authority",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "diagnosis": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Diagnosis",
+          "type": "string"
+        },
+        "guidance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Guidance Id",
+          "type": "string"
+        },
+        "privacy_scope": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy Scope",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "recommended_model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModelRecommendation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "references": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GuidanceReference"
+          },
+          "maxItems": 32,
+          "title": "References",
+          "type": "array"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "steps": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GuidanceStep"
+          },
+          "maxItems": 32,
+          "title": "Steps",
+          "type": "array"
+        },
+        "summary": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "verification_condition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VerificationCondition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "created_at",
+        "diagnosis",
+        "guidance_id",
+        "protocol_name",
+        "protocol_version",
+        "request_id",
+        "session_id",
+        "summary"
+      ],
+      "title": "TutorGuidance",
+      "type": "object"
+    },
+    "VerificationCondition": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "runtime_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "READY",
+                  "LOADING",
+                  "UNAVAILABLE",
+                  "ERROR",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "task_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "PENDING",
+                  "QUEUED",
+                  "RUNNING",
+                  "WAITING",
+                  "FAILED",
+                  "COMPLETED",
+                  "CANCELLED",
+                  "BLOCKED",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "project_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "string"
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "chapter_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "expected_value": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "QUEUED",
+                "RUNNING",
+                "WAITING",
+                "FAILED",
+                "COMPLETED",
+                "CANCELLED",
+                "BLOCKED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "READY",
+                "LOADING",
+                "UNAVAILABLE",
+                "ERROR",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "title": "Expected Value"
+        },
+        "field": {
+          "enum": [
+            "runtime_status",
+            "task_status",
+            "project_version",
+            "chapter_version"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "default": "EQ",
+          "enum": [
+            "EQ",
+            "NE",
+            "GTE"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "expected_value",
+        "source_id"
+      ],
+      "title": "VerificationCondition",
+      "type": "object"
+    },
+    "VerifierResult": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "evidence": {
+                "contains": {
+                  "properties": {
+                    "privacy": {
+                      "const": "LOCAL_ONLY"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "evidence"
+            ]
+          },
+          "then": {
+            "properties": {
+              "privacy_scope": {
+                "enum": [
+                  "LOCAL_ONLY"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "evidence": {
+                "contains": {
+                  "properties": {
+                    "privacy": {
+                      "const": "REDACTION_REQUIRED"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "evidence"
+            ]
+          },
+          "then": {
+            "properties": {
+              "privacy_scope": {
+                "enum": [
+                  "LOCAL_ONLY",
+                  "REDACTION_REQUIRED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "VERIFIED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "contains": {
+                  "properties": {
+                    "authority": {
+                      "const": "AUTHORITATIVE"
+                    }
+                  }
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "evidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextEvidence"
+          },
+          "maxItems": 64,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "privacy_scope": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy Scope",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "result_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Result Id",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "PARTIAL",
+            "FAILED",
+            "UNKNOWN"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_at",
+        "protocol_name",
+        "protocol_version",
+        "reason",
+        "request_id",
+        "result_id",
+        "session_id",
+        "status"
+      ],
+      "title": "VerifierResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/transport-response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "HELLO"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/HelloResult"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "CAPABILITY_NEGOTIATION"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CapabilityNegotiation"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "SESSION"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SessionOpenResult"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "TUTOR"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TutorGuidance"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "DIAGNOSTICS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TutorGuidance"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "VERIFY"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/VerifierResult"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "HANDOFF"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/HandoffResult"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "HEARTBEAT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Heartbeat"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "CANCEL"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CancelResult"
+              },
+              {
+                "$ref": "#/$defs/InteropError"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "operation": {
+      "enum": [
+        "HELLO",
+        "CAPABILITY_NEGOTIATION",
+        "SESSION",
+        "TUTOR",
+        "DIAGNOSTICS",
+        "VERIFY",
+        "HANDOFF",
+        "HEARTBEAT",
+        "CANCEL"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "payload": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HelloResult"
+        },
+        {
+          "$ref": "#/$defs/CapabilityNegotiation"
+        },
+        {
+          "$ref": "#/$defs/SessionOpenResult"
+        },
+        {
+          "$ref": "#/$defs/TutorGuidance"
+        },
+        {
+          "$ref": "#/$defs/VerifierResult"
+        },
+        {
+          "$ref": "#/$defs/HandoffResult"
+        },
+        {
+          "$ref": "#/$defs/Heartbeat"
+        },
+        {
+          "$ref": "#/$defs/CancelResult"
+        },
+        {
+          "$ref": "#/$defs/InteropError"
+        }
+      ],
+      "title": "Payload"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "operation",
+    "payload",
+    "protocol_name",
+    "protocol_version"
+  ],
+  "title": "TransportResponse",
+  "type": "object"
+}

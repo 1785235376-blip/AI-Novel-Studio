@@ -1,0 +1,9 @@
+{
+  "archive": "LEGACY_FINAL.zip",
+  "bytes": 293950,
+  "sha256": "d66d85a038a94ade8883349f3796536a5613fa37cb1b8b86776a5d62a475a66d",
+  "files": 3,
+  "raw_bytes": 2358045,
+  "verified_every_payload": true,
+  "omissions": "Dependency links, node_modules, Git, Vite and Python caches excluded; original test sources/config/logs/results retained. FAIL, SKIPPED and development observations preserve original status."
+}

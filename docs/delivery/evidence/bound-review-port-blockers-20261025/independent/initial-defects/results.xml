@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="5.646" timestamp="2026-10-25T18:45:47.583817+09:00" hostname="8a71deb1dd45"><testcase classname=".runtime.bound-memory-independent.test_independent" name="test_failed_same_owner_retry_has_complete_relations" time="0.068"><failure message="AssertionError: COMPLETED after retry with missing evidence relation&#10;assert 0 == 1&#10; +  where 0 = len([])&#10; +    where [] = list_proposal_evidence('d389c7a6-69d5-5db9-aef2-33ff579f5459')&#10; +      where list_proposal_evidence = &lt;app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370&gt;.list_proposal_evidence&#10; +        where &lt;app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370&gt; = RepositoryBundle(novels=&lt;app.repositories.file.novel.FileNovelRepository object at 0x7f956fe29010&gt;, chapters=&lt;app.repo...y object at 0x7f956fe29460&gt;, identity=&lt;app.repositories.file.identity.FileIdentityRepository object at 0x7f956fe294c0&gt;).lore">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-file-bound-review/.runtime/bound-memory-independent/tmp/pytest-of-agent/pytest-0/test_failed_same_owner_retry_h0')
+memory_settings = &lt;module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-bound-review/app/lore/memory_agent.py'&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f956fe29100&gt;
+
+    def test_failed_same_owner_retry_has_complete_relations(tmp_path, memory_settings, monkeypatch):
+        agent,bundle,nid,cid,v,owner,binding=setup(tmp_path)
+        original=bundle.lore.link_evidence
+        def fail(item): raise OSError('synthetic one-time relation write failure')
+        monkeypatch.setattr(bundle.lore,'link_evidence',fail)
+        with pytest.raises(OSError): agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='FAILED'
+        assert len(bundle.lore.list_proposals(nid))==1
+        monkeypatch.setattr(bundle.lore,'link_evidence',original)
+        ids=agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='COMPLETED'
+&gt;       assert len(bundle.lore.list_proposal_evidence(ids[0]))==1, 'COMPLETED after retry with missing evidence relation'
+E       AssertionError: COMPLETED after retry with missing evidence relation
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +    where [] = list_proposal_evidence('d389c7a6-69d5-5db9-aef2-33ff579f5459')
+E        +      where list_proposal_evidence = &lt;app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370&gt;.list_proposal_evidence
+E        +        where &lt;app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370&gt; = RepositoryBundle(novels=&lt;app.repositories.file.novel.FileNovelRepository object at 0x7f956fe29010&gt;, chapters=&lt;app.repo...y object at 0x7f956fe29460&gt;, identity=&lt;app.repositories.file.identity.FileIdentityRepository object at 0x7f956fe294c0&gt;).lore
+
+.runtime/bound-memory-independent/test_independent.py:26: AssertionError</failure></testcase><testcase classname=".runtime.bound-memory-independent.test_independent" name="test_bound_does_not_adopt_legacy_proposal_receipt" time="0.089"><failure message="AssertionError: bound receipt points to legacy proposal provenance&#10;assert 'legacy-existing' == '3839987b-4b9...-1ec59a0759a5'&#10;  &#10;  - 3839987b-4b98-503b-88b2-1ec59a0759a5&#10;  + legacy-existing">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-file-bound-review/.runtime/bound-memory-independent/tmp/pytest-of-agent/pytest-0/test_bound_does_not_adopt_lega0')
+memory_settings = &lt;module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-bound-review/app/lore/memory_agent.py'&gt;
+
+    def test_bound_does_not_adopt_legacy_proposal_receipt(tmp_path,memory_settings):
+        agent,bundle,nid,cid,v,owner,binding=setup(tmp_path)
+        legacy=agent.extract(nid,cid,v,job_id='legacy-existing')
+        ids=agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='COMPLETED'
+&gt;       assert bundle.lore.get_proposal(ids[0])['generation_job_id']==binding['job_id'], 'bound receipt points to legacy proposal provenance'
+E       AssertionError: bound receipt points to legacy proposal provenance
+E       assert 'legacy-existing' == '3839987b-4b9...-1ec59a0759a5'
+E         
+E         - 3839987b-4b98-503b-88b2-1ec59a0759a5
+E         + legacy-existing
+
+.runtime/bound-memory-independent/test_independent.py:33: AssertionError</failure></testcase><testcase classname=".runtime.bound-memory-independent.test_independent" name="test_error_record_original_lease" time="0.199" /></testsuite></testsuites>

@@ -1,0 +1,166 @@
+"""Small synthetic retained-accounting faults; no production edits/disk exhaustion."""
+from pathlib import Path
+import base64
+import json
+import pytest
+from app.repository import FileRepository
+from app.experimental.store import ExperimentalStore
+from app.creative.project_store import CreativeProjectStore
+from app.services.asset_library_service import AssetLibraryService
+from app.services.audio_asset_history_store import AudioHistoryCapacityError
+import app.services.audio_asset_history_store as history_store
+
+RAW = b'RIFF-retained-accounting-synthetic'
+
+class ReviewFault(RuntimeError):
+    pass
+
+def fail_before_current(stage):
+    if stage == 'before_current_commit':
+        raise ReviewFault('review synthetic pre-head fault')
+
+def create(owner, key='retained-probe'):
+    return owner.create('retained-project', 'retained.wav', base64.b64encode(RAW).decode(), 'audio/wav', 'audio', idempotency_key=key)
+
+def retained_files(path):
+    return [p for folder in ('records', 'blobs') for p in (path / folder).iterdir() if p.is_file()]
+
+def disk_bytes(path):
+    return sum(p.stat().st_size for p in retained_files(path))
+
+def test_repeated_same_asset_precommit_failures_cannot_escape_retained_byte_limit(tmp_path, monkeypatch):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._audio_history_store.paths(row['id'])
+    initial = owner.audio_history(row['id'])
+    before_current = owner._meta_path(row['id']).read_bytes()
+    monkeypatch.setattr(history_store, 'MAX_RETAINED_BYTES', 6000)
+    owner._audio_history_store.fault = fail_before_current
+    failures = 0
+    for take in range(12):
+        try:
+            owner.update_metadata(row['id'], {'parameters': {'attempt': take}}, expected_version=1)
+        except ReviewFault:
+            failures += 1
+            assert owner._audio_history_store._usage(path) == disk_bytes(path)
+            assert disk_bytes(path) <= 6000
+            assert owner._meta_path(row['id']).read_bytes() == before_current
+        except AudioHistoryCapacityError as exc:
+            assert str(exc) == 'AUDIO_HISTORY_CAPACITY'
+            break
+    else:
+        pytest.fail('retained-byte admission never closed')
+    assert failures >= 1
+    assert owner.audio_history(row['id']) == initial
+    records = list((path / 'records').iterdir())
+    assert len(records) == 1 + failures
+    print(json.dumps({'case': 'same_asset_retained_bytes', 'injected_failed_writes': failures,
+        'committed_states': len(initial['items']), 'retained_records': len(records),
+        'retained_bytes': disk_bytes(path), 'byte_limit': 6000, 'refusal': str(exc) if False else 'AUDIO_HISTORY_CAPACITY'}))
+
+def test_stale_cas_allocates_no_history_files(tmp_path):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._audio_history_store.paths(row['id'])
+    owner.update_metadata(row['id'], {'parameters': {'committed': 2}}, expected_version=1)
+    before = {p.name: p.read_bytes() for p in retained_files(path)}
+    for attempt in range(4):
+        with pytest.raises(Exception) as caught:
+            owner.update_metadata(row['id'], {'parameters': {'stale': attempt}}, expected_version=1)
+        assert 'version' in str(caught.value).lower() or 'conflict' in str(caught.value).lower()
+    after = {p.name: p.read_bytes() for p in retained_files(path)}
+    assert after == before
+    print(json.dumps({'case': 'stale_cas', 'rejected_calls': 4, 'additional_files': 0, 'additional_bytes': 0}))
+
+def test_temporary_and_unlinked_blob_files_are_in_retained_usage(tmp_path):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._audio_history_store.paths(row['id'])
+    before = owner._audio_history_store._usage(path)
+    leftovers = [(path / 'records' / '.prepared-review.tmp', b'T' * 127),
+                 (path / 'blobs' / ('f' * 64 + '.bin'), b'B' * 251)]
+    for file, content in leftovers:
+        file.write_bytes(content)
+    assert owner._audio_history_store._usage(path) == before + 378 == disk_bytes(path)
+    assert len(owner.audio_history(row['id'])['items']) == 1
+    print(json.dumps({'case': 'prepared_and_orphan_files_counted', 'added_bytes': 378,
+        'usage_increase': owner._audio_history_store._usage(path) - before, 'committed_states': 1}))
+
+def test_orphans_do_not_consume_committed_sequence_but_hit_retained_file_guard(tmp_path, monkeypatch):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._audio_history_store.paths(row['id'])
+    monkeypatch.setattr(history_store, 'MAX_VERSIONS', 2)
+    monkeypatch.setattr(history_store, 'MAX_RETAINED_BYTES', 30000)
+    owner._audio_history_store.fault = fail_before_current
+    rejected = None
+    failures = 0
+    for take in range(10):
+        try:
+            owner.update_metadata(row['id'], {'parameters': {'attempt': take}}, expected_version=1)
+        except ReviewFault:
+            failures += 1
+        except AudioHistoryCapacityError as exc:
+            rejected = str(exc)
+            break
+    assert rejected == 'AUDIO_HISTORY_CAPACITY'
+    current = owner._load(row['id'])
+    assert len(owner._audio_history_store.chain(current)) == 1
+    count = len(retained_files(path))
+    # The existing-file guard is checked before adding one record: it can overshoot by one.
+    assert count == history_store.MAX_VERSIONS * 3 + 1
+    print(json.dumps({'case': 'orphan_file_guard', 'committed_states': 1,
+        'configured_committed_state_limit': 2, 'failed_writes': failures,
+        'retained_file_count': count, 'existing_file_guard': 6, 'refusal': rejected}))
+
+def test_failed_create_ids_and_history_are_outside_current_project_usage(tmp_path, monkeypatch):
+    nid = 'retained-project'
+    FileRepository(tmp_path).create_novel({'id': nid, 'title': 'Synthetic retained accounting'})
+    project = CreativeProjectStore(ExperimentalStore(tmp_path, 'file', ''))
+    scope = {'mode': 'local', 'novel_id': nid}
+    owner = AssetLibraryService(tmp_path)
+    key = project.key(nid, scope)
+    monkeypatch.setattr(history_store, 'MAX_RETAINED_BYTES', 4096)
+    with owner.project_scope(nid, None, lambda: project.owner_lease(nid), scope_key=key):
+        assert owner.project_usage(nid) == {'count': 0, 'bytes': 0}
+        owner._audio_history_store.fault = fail_before_current
+        for attempt in range(4):
+            with pytest.raises(ReviewFault):
+                create(owner, key='same-failed-create-key')
+            assert owner.project_usage(nid) == {'count': 0, 'bytes': 0}
+        paths = list(owner._audio_history_store.root.iterdir())
+        usage = [owner._audio_history_store._usage(path) for path in paths]
+        assert len(paths) == 4 and all(value <= 4096 for value in usage)
+        assert sum(usage) > 4096
+        assert not list(owner.root.glob('*.json')) and not list(owner.root.glob('*.bin'))
+        owner._audio_history_store.fault = lambda stage: None
+        committed = create(owner, key='successful-create-key')
+        expected = {'count': 1, 'bytes': len(RAW)}
+        assert owner.project_usage(nid) == expected
+        owner.delete(committed['id'])
+        assert owner.project_usage(nid) == expected
+        after_history = sum(disk_bytes(path) for path in owner._audio_history_store.root.iterdir())
+        print(json.dumps({'case': 'failed_create_and_project_usage', 'failed_same_key_create_attempts': 4,
+            'distinct_orphan_asset_directories': len(paths), 'orphan_retained_bytes': sum(usage),
+            'per_asset_limit': 4096, 'project_usage_after_failed_creates': {'count': 0, 'bytes': 0},
+            'project_usage_after_committed_soft_delete': owner.project_usage(nid),
+            'all_history_bytes_after_soft_delete': after_history}))
+
+def test_chain_read_budget_excludes_unreachable_prepared_records(tmp_path, monkeypatch):
+    owner = AssetLibraryService(tmp_path)
+    row = create(owner)
+    path = owner._audio_history_store.paths(row['id'])
+    first_record_bytes = sum(p.stat().st_size for p in (path / 'records').iterdir())
+    chain_limit = first_record_bytes * 3
+    monkeypatch.setattr(history_store, 'MAX_CHAIN_BYTES', chain_limit)
+    owner._audio_history_store.fault = fail_before_current
+    for take in range(3):
+        with pytest.raises(ReviewFault):
+            owner.update_metadata(row['id'], {'parameters': {'attempt': take}}, expected_version=1)
+    record_bytes = sum(p.stat().st_size for p in (path / 'records').iterdir())
+    assert record_bytes > chain_limit
+    chain = owner._audio_history_store.chain(owner._load(row['id']))
+    assert len(chain) == 1
+    print(json.dumps({'case': 'chain_budget_is_reachable_chain_only', 'chain_byte_limit': chain_limit,
+        'all_retained_record_bytes': record_bytes, 'reachable_states': len(chain),
+        'reachable_record_bytes': first_record_bytes, 'unreachable_records': 3}))

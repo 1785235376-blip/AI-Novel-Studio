@@ -1,0 +1,61 @@
+/* [HERMIA-FE-20261022 R3] 视频模块 — 按原型 .vid-ws 样式移植，颜色走产品 token；全局左右栏收为 0（无右栏）。 */
+html .app-shell[data-module="VIDEO"] .workspace-body,html .app-shell.is-inspector-collapsed[data-module="VIDEO"] .workspace-body{grid-template-columns:minmax(0,1fr)!important;padding:0;gap:0}
+html .app-shell[data-module="VIDEO"] .workspace-sidebar,html .app-shell[data-module="VIDEO"] .workspace-inspector,html .app-shell[data-module="VIDEO"] .inspector-edge-toggle{display:none!important}
+html .app-shell[data-module="VIDEO"] .main-workspace{padding:0;border:0;border-radius:0;overflow:hidden;background:var(--color-bg-app);display:flex;flex-direction:column}
+html .app-shell[data-module="VIDEO"] .media-ws-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.vid-ws{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;background:var(--color-bg-app);color:var(--color-text-primary);position:relative}
+.vid-ws .mw-head{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);flex-wrap:wrap;flex:none}
+.vid-ws .mw-head h2{margin:0;font-size:14px;font-weight:650}
+.vid-ws .nv-btn[aria-pressed="true"]{border-color:var(--color-accent-primary);color:var(--color-accent-primary);background:var(--color-selection-bg)}
+.vid-body{flex:1;display:grid;grid-template-columns:minmax(148px,176px) minmax(0,1fr);min-height:0;overflow:hidden}
+.vid-rail{display:flex;flex-direction:column;gap:8px;padding:10px;border-right:1px solid var(--color-border-default);background:var(--color-bg-surface);overflow:auto;font-size:12px}
+.vid-rail .eyebrow{font-size:10.5px;font-weight:650;letter-spacing:.04em;color:var(--color-text-muted)}
+.vid-rail strong{font-size:13px}
+.vid-rail ul{margin:0;padding-left:18px;color:var(--color-text-secondary);line-height:1.55}
+.vid-rail .hint{margin:0;font-size:11px;color:var(--color-text-muted);line-height:1.4}
+.vid-rail .vid-rail-lh{margin:4px -10px 0}
+.vid-rail .mw-tree{padding:0}
+.vid-main{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+.vid-layer{flex:none;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default)}
+.vid-layer .vl-h{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--color-bg-subtle);border-bottom:1px solid var(--color-border-default);font-size:12px;flex-wrap:wrap}
+.vid-layer .vl-h .lab{font-weight:650;font-size:11.5px;letter-spacing:.02em;color:var(--color-text-muted)}
+.vid-layer .vl-meta{font-size:11px;color:var(--color-text-muted)}
+.vid-layer--script .shot-row{display:flex;gap:8px;padding:8px 12px;overflow:auto;align-items:stretch}
+.vid-layer .vl-note{margin:0;align-self:center;font-size:12px;color:var(--color-text-secondary)}
+.vid-shot{flex:none;min-width:148px;max-width:180px;text-align:left;border:1px solid var(--color-border-default);border-radius:8px;background:var(--color-bg-elevated,var(--color-bg-surface));padding:8px 10px;cursor:pointer;color:inherit}
+.vid-shot:hover{border-color:var(--color-accent-primary)}
+.vid-shot[aria-current="true"]{border-color:var(--color-accent-primary);box-shadow:0 0 0 1px var(--color-accent-primary);background:var(--color-selection-bg)}
+.vid-shot .shot-num{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--color-text-muted);margin-bottom:2px}
+.vid-shot b{display:block;font-size:12.5px;margin-bottom:2px}
+.vid-shot .meta{font-size:11px;color:var(--color-text-muted);line-height:1.35}
+.vid-add{flex:none}
+.vid-layer--canvas{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--color-canvas-bg,#0b0b0b)}
+.vid-layer--canvas .vl-h{background:var(--color-bg-surface)}
+.vid-canvas-host{flex:1;min-height:160px;position:relative;overflow:hidden;background-color:var(--color-canvas-bg,#0b0b0b);background-image:radial-gradient(var(--cv-dot-soft) 1px,transparent 1px);background-size:22px 22px;display:flex;align-items:center;justify-content:center}
+.vid-canvas-host svg{width:100%;height:100%;display:block}
+.vid-canvas-empty{color:var(--cv-ink-muted-2);font-size:12.5px;margin:0}
+.vid-node{cursor:pointer}
+.vid-node rect{fill:var(--cv-node-2);stroke:var(--stg-line-4);stroke-width:1.25}
+.vid-node[data-sel="true"] rect{stroke:var(--color-accent-primary);stroke-width:2}
+.vid-node text.title{font:650 12px/1.2 system-ui,sans-serif;fill:var(--cv-ink-4)}
+.vid-node text.sub{font:11px/1.2 system-ui,sans-serif;fill:var(--cv-ink-muted-2)}
+.vid-edge{stroke:var(--cv-ink-muted-2);stroke-width:1.5;fill:none;marker-end:url(#vidArrow)}
+.vid-layer--director{max-height:32vh;overflow:auto}
+.vid-layer--director .dir-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px;font-size:12px}
+.vid-layer--director .sugg,.vid-layer--director .note{border:1px solid var(--color-border-default);border-radius:8px;padding:10px;background:var(--color-bg-app);line-height:1.5}
+.vid-layer--director .sugg p{margin:6px 0;color:var(--color-text-secondary)}
+.vid-layer--director .note{color:var(--color-text-secondary)}
+.vid-director-entry{display:none;flex-direction:column;gap:6px;padding:10px 12px;background:var(--color-bg-subtle)}
+.vid-director-entry strong{font-size:13px}.vid-director-entry p{margin:0;font-size:12px;color:var(--color-text-secondary)}
+.vid-ws.director-collapsed .vid-layer--director .dir-grid{display:none}
+.vid-ws.director-collapsed .vid-director-entry{display:flex;align-items:flex-start}
+.vid-ws.director-collapsed .vid-layer--director{max-height:none}
+.vid-ws.script-collapsed .vid-layer--script .shot-row{display:none}
+.vid-sub{padding:16px;overflow:auto;background:var(--color-bg-app)}
+.vid-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.vid-table th,.vid-table td{border-bottom:1px solid var(--color-border-default);padding:8px;text-align:left}
+.vid-sub-foot{margin-top:12px}
+.vid-ws .img-confirm{position:absolute;right:16px;top:56px;z-index:5}
+/* [HERMIA-FE-20261025 LAYOUT-P2] 左栏 display:none 后不再占格；原 "0 1fr" 让主区落进 0 宽列（逐字竖排）。 */
+@media (max-width:1100px){.vid-body{grid-template-columns:minmax(0,1fr)}.vid-rail{display:none}}
+.vid-dual{display:flex;flex-direction:column;min-height:0;padding:0} /* [HERMIA-FE-20261022 U2] */

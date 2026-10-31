@@ -1,0 +1,67 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api]",
+    "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api/v1]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[private_aba]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[row_recreate]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[document_recreate]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[project_recreate]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[unmatched]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[foreign]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[wrong_local_actor]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_empty_bound_document_is_valid_without_provisioning",
+    "tests/test_taskcenter_local_export_external_cases.py::test_missing_or_legacy_source_rejected_zero_write[legacy]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_missing_or_legacy_source_rejected_zero_write[missing]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_mixed_source_stays_unsupported[params0]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_mixed_source_stays_unsupported[params1]",
+    "tests/test_taskcenter_local_export_external_cases.py::test_collaboration_exports_stays_unsupported",
+    "tests/test_taskcenter_local_export_external_cases.py::test_original_reader_permission_exception_not_swallowed",
+    "tests/test_taskcenter_local_export_external_cases.py::test_source_root_switch_after_original_reader_restarts",
+    "tests/test_taskcenter_local_export_external_cases.py::test_original_hundred_row_window_and_overflow_remain_bounded",
+    "tests/test_taskcenter_local_export_external_cases.py::test_hidden_tail_private_change_stable_but_window_reentry_restarts",
+    "tests/test_taskcenter_local_export_external_cases.py::test_original_scope_fence_hides_all_rows_and_overflow",
+    "tests/test_taskcenter_local_export_external_singleton.py::test_actual_singleton_replacement_same_root_cannot_reuse_cursor",
+    "tests/test_taskcenter_local_export_external_singleton.py::test_private_aba_inside_original_reader_aborts_first_page"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_local_export_external.py",
+    "tests/test_taskcenter_local_export_external_cases.py",
+    "tests/test_taskcenter_local_export_external_singleton.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-independent-evidence/candidate-1799-final.xml",
+    "--basetemp=/tmp/tmp_b1c8lxu/candidate-1799-final/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp_b1c8lxu/candidate-1799-final/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-independent",
+  "failed_reports": [
+    {
+      "failure_message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"73bd2b92-7684-41a8-98ee-2d1e424b55dd\"}\nassert 501 == 403\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+      "nodeid": "tests/test_taskcenter_local_export_external_cases.py::test_original_reader_permission_exception_not_swallowed",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_taskcenter_local_export_external_cases",
+        "message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"73bd2b92-7684-41a8-98ee-2d1e424b55dd\"}\nassert 501 == 403\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+        "name": "test_original_reader_permission_exception_not_swallowed",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 22
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

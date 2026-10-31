@@ -1,8 +1,21 @@
 from dataclasses import asdict
+from contextlib import contextmanager, nullcontext
 from ..collaboration import *
 
 class CollaborationScopeService:
  def __init__(self,repository,novels):self.repository=repository;self.novels=novels
+ @contextmanager
+ def _project_write(self,project_id,*,session=None):
+  # New PG owners are not visible to a second connection before their shared
+  # creation transaction commits. Its caller already owns that transaction.
+  if session is not None:
+   yield
+   return
+  lease=getattr(self.repository,"project_authority_lease",None)
+  with lease(project_id) if callable(lease) else nullcontext():
+   try:self.novels.get(project_id)
+   except (FileNotFoundError,KeyError) as exc:raise ValueError("project does not exist") from exc
+   yield
  def create_workspace(self,item):return self.repository.create("workspaces",asdict(item))
  def list_workspaces(self):return self.repository.list("workspaces")
  def get_workspace(self,item_id):return self.repository.get("workspaces",item_id)
@@ -18,20 +31,25 @@ class CollaborationScopeService:
      paths.append({"workspace_id":workspace_id,"project_id":project_id,"storyline_id":storyline["id"],"branch_id":branch["id"],"project_name":project_name,"storyline_name":storyline["name"],"branch_name":branch["name"]})
   return sorted(paths,key=lambda x:(x["project_id"],x["storyline_id"],x["branch_id"]))
  def ensure_default_workspace(self):return self.create_workspace(Workspace(DEFAULT_WORKSPACE_ID,"Default Workspace"))
- def link_project(self,workspace_id,project_id):self.get_workspace(workspace_id);self.novels.get(project_id);return self.repository.link_project(project_id,workspace_id)
+ def link_project(self,workspace_id,project_id,*,session=None):
+  with self._project_write(project_id,session=session):
+   self.get_workspace(workspace_id)
+   if session is None:return self.repository.link_project(project_id,workspace_id)
+   return self.repository.link_project(project_id,workspace_id,session=session)
  def create_storyline(self,item):
-  if self.repository.project_workspace(item.project_id)!=item.workspace_id:raise ValueError("project does not belong to workspace")
-  return self.repository.create("storylines",asdict(item))
+  with self._project_write(item.project_id):
+   if self.repository.project_workspace(item.project_id)!=item.workspace_id:raise ValueError("project does not belong to workspace")
+   return self.repository.create("storylines",asdict(item))
  def list_storylines(self,workspace_id,project_id):
   if self.repository.project_workspace(project_id)!=workspace_id:raise ValueError("project does not belong to workspace")
   return self.repository.list("storylines",workspace_id=workspace_id,project_id=project_id)
  def create_branch(self,item):
-  storyline=self.repository.get("storylines",item.storyline_id)
-  if storyline["workspace_id"]!=item.workspace_id or storyline["project_id"]!=item.project_id:raise ValueError("storyline scope mismatch")
-  if item.parent_branch_id:
-   parent=self.repository.get("branches",item.parent_branch_id)
-   if parent["storyline_id"]!=item.storyline_id:raise ValueError("parent branch scope mismatch")
-  return self.repository.create("branches",asdict(item))
+  with self._project_write(item.project_id):
+   self.validate_scope_parent(item.workspace_id,item.project_id,item.storyline_id)
+   if item.parent_branch_id:
+    parent=self.repository.get("branches",item.parent_branch_id)
+    if (parent["workspace_id"],parent["project_id"],parent["storyline_id"])!=(item.workspace_id,item.project_id,item.storyline_id):raise ValueError("parent branch scope mismatch")
+   return self.repository.create("branches",asdict(item))
  def list_branches(self,workspace_id,project_id,storyline_id):
   self.validate_scope_parent(workspace_id,project_id,storyline_id)
   return self.repository.list("branches",workspace_id=workspace_id,project_id=project_id,storyline_id=storyline_id)

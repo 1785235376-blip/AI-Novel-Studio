@@ -63,6 +63,20 @@ class CollaborationReadService:
             raise _error(403, "FORBIDDEN", str(exc))
         return actor, scope
 
+    def chapters_for(self, scope):
+        owner = getattr(self, "branch_manuscripts", None)
+        if owner is None: return self.chapters
+        from .experimental.flags import require_flag
+        require_flag('branch_manuscript_v1')
+        return owner.for_scope(scope)
+
+    def scoped_snapshots(self, scope, chapter_id):
+        chapters = self.chapters_for(scope)
+        chapters.get(chapter_id)
+        if chapters is not self.chapters:
+            return self.branch_manuscripts.snapshots(scope, chapter_id)
+        return self.snapshots(chapter_id)
+
     def create_chapter(self, actor, scope, title: str) -> dict[str, Any]:
         if self.collaboration_application is None:
             raise _error(501, "COLLABORATION_MUTATION_NOT_CONFIGURED")
@@ -83,21 +97,24 @@ class CollaborationReadService:
         ) for permission in CAPABILITIES}
 
     def snapshots(self, chapter_id: str) -> list[dict[str, Any]]:
+        # Bind every read to the same live, unambiguous chapter authority.
+        self.chapters.get(chapter_id)
         repository = self.lore_repository
         if hasattr(repository, "backend"):
             novel_id = chapter_id.rsplit(":", 1)[0]
             root = Path(repository.backend.novels) / novel_id / "lore" / "context_snapshots"
-            return [json.loads(path.read_text(encoding="utf-8")) for path in sorted(root.glob("*.json"))]
+            rows = [json.loads(path.read_text(encoding="utf-8")) for path in sorted(root.glob("*.json"))]
+            return [row for row in rows if str(row.get("chapter_version_id", "")).startswith(chapter_id + ":v")]
         database = getattr(repository, "database", None)
         if database is None:
             return []
-        slug, number = chapter_id.rsplit(":", 1)
+        from .repositories.postgres.common import chapter_or_raise
         with database.session() as session:
+            _, chapter = chapter_or_raise(session, chapter_id)
             rows = session.execute(text(
                 "SELECT s.snapshot FROM chapter_context_snapshots s "
-                "JOIN chapters c ON c.id=s.chapter_id JOIN novels n ON n.id=c.novel_id "
-                "WHERE n.slug=:slug AND c.chapter_number=:number ORDER BY s.created_at DESC"
-            ), {"slug": slug, "number": int(number)}).all()
+                "WHERE s.chapter_id=:chapter_id ORDER BY s.created_at DESC"
+            ), {"chapter_id": chapter.id}).all()
         return [dict(row[0]) for row in rows]
 
     def visual_text_workflow(self, provider_id: str, model_id: str) -> VisualTextWorkflowView:
@@ -158,8 +175,10 @@ def create_collaboration_router(
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters", response_model=ChapterList)
     def chapter_list(w: str, p: str, s: str, b: str, x_session_token: str | None = Header(None)):
+        _, scope = authorized(x_session_token, w, p, s, b)
+        result = ChapterList(items=[ChapterSummary(**row) for row in service.chapters_for(scope).list(p)])
         authorized(x_session_token, w, p, s, b)
-        return ChapterList(items=[ChapterSummary(**row) for row in service.chapters.list(p)])
+        return result
 
     @router.post("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters", response_model=ChapterView, status_code=201)
     def chapter_create(w: str, p: str, s: str, b: str, body: ChapterCreateRequest,
@@ -194,32 +213,32 @@ def create_collaboration_router(
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions", response_model=RevisionList)
     def revisions(w: str, p: str, s: str, b: str, chapter_id: str, x_session_token: str | None = Header(None)):
-        authorized(x_session_token, w, p, s, b)
-        current = service.chapters.get(chapter_id)
+        _, scope = authorized(x_session_token, w, p, s, b)
+        current = service.chapters_for(scope).get(chapter_id)
         if current["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
-        rows = service.chapters.history(chapter_id)
+        rows = service.chapters_for(scope).history(chapter_id)
         return RevisionList(chapter_id=chapter_id, current_version=current["version"], items=[RevisionSummary(**row) for row in rows])
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions/{version}", response_model=RevisionDetail)
     def revision_detail(w: str, p: str, s: str, b: str, chapter_id: str, version: int, x_session_token: str | None = Header(None)):
-        authorized(x_session_token, w, p, s, b)
-        current = service.chapters.get(chapter_id)
+        _, scope = authorized(x_session_token, w, p, s, b)
+        current = service.chapters_for(scope).get(chapter_id)
         if current["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
-        row = next((item for item in service.chapters.history(chapter_id) if item["version"] == version), None)
+        row = next((item for item in service.chapters_for(scope).history(chapter_id) if item["version"] == version), None)
         if row is None: raise _error(404, "REVISION_NOT_FOUND")
         return RevisionDetail(**row)
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots", response_model=SnapshotList)
     def snapshots(w: str, p: str, s: str, b: str, chapter_id: str, x_session_token: str | None = Header(None)):
-        authorized(x_session_token, w, p, s, b)
-        if service.chapters.get(chapter_id)["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
-        return SnapshotList(items=[SnapshotSummary(**row) for row in service.snapshots(chapter_id)])
+        _, scope = authorized(x_session_token, w, p, s, b)
+        if service.chapters_for(scope).get(chapter_id)["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
+        return SnapshotList(items=[SnapshotSummary(**row) for row in service.scoped_snapshots(scope, chapter_id)])
 
     @router.get("/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots/{snapshot_id}", response_model=SnapshotDetail)
     def snapshot_detail(w: str, p: str, s: str, b: str, chapter_id: str, snapshot_id: str, x_session_token: str | None = Header(None)):
-        authorized(x_session_token, w, p, s, b)
-        if service.chapters.get(chapter_id)["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
-        row = next((item for item in service.snapshots(chapter_id) if item["id"] == snapshot_id), None)
+        _, scope = authorized(x_session_token, w, p, s, b)
+        if service.chapters_for(scope).get(chapter_id)["novel_id"] != p: raise _error(403, "RESOURCE_OUTSIDE_SCOPE")
+        row = next((item for item in service.scoped_snapshots(scope, chapter_id) if item["id"] == snapshot_id), None)
         if row is None: raise _error(404, "SNAPSHOT_NOT_FOUND")
         # SnapshotDetail intentionally excludes the stored context payload.
         return SnapshotDetail(**row)

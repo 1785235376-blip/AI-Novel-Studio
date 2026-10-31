@@ -1,0 +1,201 @@
+{
+  "contract": "studio-production-job/1",
+  "owner": "video",
+  "id": "aa206b3b5292be6b0888f8f47d40b08d54b371f365f0a3fc7fbda18e037a625d",
+  "novel_id": "r3-mounted-e09a87724966445b9097f31e728ef58a",
+  "branch_id": null,
+  "version": 8,
+  "status": "APPROVED",
+  "request_digest": "6893a9c3b02d23495ac0204a6486e5956799cff2fccb21783ae51fbe52fdfdcf",
+  "receipt_digest": "df9c297f4133de7c856ac870c1acf71f2c7be78b17970bb32dbb8302cbcfde3f",
+  "attempt": 1,
+  "created_at": "2026-10-13T17:56:02.906461+00:00",
+  "updated_at": "2026-10-13T17:56:03.250049+00:00",
+  "error_code": null,
+  "review_state": "ORIGINAL_OWNER_REVIEWED",
+  "cancellation_mode": null,
+  "needs_reconciliation": null,
+  "execution_state": null,
+  "operation_id": "m7.video.t2v",
+  "output_candidate": {
+    "id": "009eaf2b-b29d-42e1-b209-f14a325fd391",
+    "version": 1,
+    "digest": "b295d8dde543fe26a2a989d301a10177f6d980a40873feae78974c2add38b218",
+    "kind": "video"
+  },
+  "timeline_snapshot": null,
+  "sources": [],
+  "command": {
+    "operation_id": "m7.video.t2v",
+    "request_id": "mounted-synthetic-video",
+    "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+    "model_id": "local-c7c98852d03292d2d694d9f9",
+    "prompt": "SYNTHETIC PRIVATE VIDEO",
+    "parameters": {
+      "width": 64,
+      "height": 64,
+      "seed": 7,
+      "duration_seconds": 1,
+      "frame_rate": 8
+    },
+    "source_snapshots": [],
+    "allow_cloud": false,
+    "license_note": ""
+  },
+  "provider": {
+    "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+    "model_id": "local-c7c98852d03292d2d694d9f9",
+    "local": true,
+    "route_digest": "4d2c0588694d315b4bd3ce6a99a3efad7d848b64f24ef063c2492ce954da52ad"
+  },
+  "execution_recipe": {
+    "contract": "studio-execution-recipe/1",
+    "operation_id": "m7.video.t2v",
+    "adapter": "COMFYUI_BUILTIN_VIDEO",
+    "parameters": {
+      "width": 64,
+      "height": 64,
+      "seed": 7,
+      "duration_seconds": 1,
+      "frame_rate": 8
+    },
+    "automatic_fallback": false,
+    "video_recipe_id": "comfy-wan22-ti2v5b-v1",
+    "timing": {
+      "width": 64,
+      "height": 64,
+      "frames": 9,
+      "frame_rate": 8,
+      "duration_ms": 1125
+    },
+    "workflow": {
+      "4": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "wan2.2_ti2v_5B_fp16.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "12": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "wan2.2_vae.safetensors"
+        }
+      },
+      "11": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+          "type": "wan",
+          "device": "default"
+        }
+      },
+      "13": {
+        "class_type": "ModelSamplingSD3",
+        "inputs": {
+          "model": [
+            "4",
+            0
+          ],
+          "shift": 8
+        }
+      },
+      "6": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "SYNTHETIC PRIVATE VIDEO",
+          "clip": [
+            "11",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "",
+          "clip": [
+            "11",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "Wan22ImageToVideoLatent",
+        "inputs": {
+          "width": 64,
+          "height": 64,
+          "length": 9,
+          "batch_size": 1,
+          "vae": [
+            "12",
+            0
+          ]
+        }
+      },
+      "3": {
+        "class_type": "KSampler",
+        "inputs": {
+          "seed": 7,
+          "steps": 20,
+          "cfg": 5,
+          "sampler_name": "uni_pc",
+          "scheduler": "simple",
+          "denoise": 1,
+          "model": [
+            "13",
+            0
+          ],
+          "positive": [
+            "6",
+            0
+          ],
+          "negative": [
+            "7",
+            0
+          ],
+          "latent_image": [
+            "5",
+            0
+          ]
+        }
+      },
+      "8": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "3",
+            0
+          ],
+          "vae": [
+            "12",
+            0
+          ]
+        }
+      },
+      "9": {
+        "class_type": "SaveWEBM",
+        "inputs": {
+          "images": [
+            "8",
+            0
+          ],
+          "filename_prefix": "AI-Novel-Studio",
+          "codec": "vp9",
+          "fps": 8,
+          "crf": 18
+        }
+      }
+    },
+    "structural_only": true,
+    "inference_verified": false,
+    "reference_video_execution": false,
+    "recipe_digest": "efe64bd04a81554d671d6d419b4c4dfb44cd3d472367ddd22009c76ea91843e5"
+  },
+  "media_measurement": null,
+  "approved_asset_version": 2,
+  "request_id": "mounted-synthetic-video",
+  "product_acceptance": "LOCAL_REQUIRED",
+  "automatic_replay": false,
+  "remote_compute_may_continue": false
+}

@@ -1,0 +1,62 @@
+--- /workspace/scratch/20a0022d2b33/file-keyed-activation/app/repositories/generation_repository.py	2026-10-25 20:35:10.987451772 +0900
++++ app/repositories/generation_repository.py	2026-10-25 21:06:07.952587797 +0900
+@@ -177,6 +177,29 @@
+             # disk-write failure a changed project identity.
+             yield
+ 
++    def _check_expected_save_owner(self, item, binding, expected_root, file_memory):
++        """Recheck M5's pinned owner at the original final receipt boundary.
++
++        The entry lease is reentrant: a synchronous wrapper can replace the
++        project before yielding. Reenter only that same fixed lifecycle lock,
++        never a rotated root beneath the generation-write leaf.
++        """
++        if expected_root is not None:
++            root = Path(expected_root).resolve()
++            if Path(self.root).resolve() != root:
++                raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
++        if file_memory is not None:
++            from ..lore.file_memory_ports import require_memory_ports
++            require_memory_ports(file_memory, self)
++        elif expected_root is not None:
++            from ..file_project_lifecycle import project_operation
++            if binding is None:
++                raise GenerationProjectIdentityError("GENERATION_REVIEW_PROJECT_OWNER_REQUIRED")
++            with project_operation(root.parent.parent, item["novel_id"],
++                                   expected_root=root.parent.parent,
++                                   expected_incarnation=binding["project_incarnation"]):
++                pass
++
+     @committed_change("TASK")
+     def save(self,item:dict,*,_expected_root=None,_file_memory=None,_file_writer=None):
+         from contextlib import nullcontext
+@@ -210,10 +233,15 @@
+                     saved = preserve_image(previous, preserve_evidence(previous, item))
+                     atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
+                 return
+-            with self._graph_owner(item, binding), workspace_mutation(self.root, self._write_key(path)):
++            # Keep the captured leaf root for every opted-in File receipt.
++            write_root = path.parent if (_expected_root is not None or _file_memory is not None
++                                         or _file_writer is not None) else self.root
++            with self._graph_owner(item, binding), workspace_mutation(write_root, self._write_key(path)):
+                 previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+                 check_graph_job_update(previous, item)
+                 saved = preserve_image(previous, preserve_evidence(previous, item))
++                payload = json.dumps(saved,ensure_ascii=False,indent=2)
++                self._check_expected_save_owner(item, binding, _expected_root, _file_memory)
+                 if _file_writer is not None:
+                     # Nested owner/leaf entry may be wrapped by a reentrant
+                     # lifecycle action. Fence the actual write, not only entry
+@@ -221,11 +249,7 @@
+                     expected_writer = require_writer_ports(_file_writer, self)
+                     expected_writer.check_owner(self)
+                     expected_writer._check_source()
+-                if _file_memory is not None:
+-                    # Bound memory uses its own original expected-port contract,
+-                    # never a writer binding or a newly minted owner.
+-                    require_memory_ports(_file_memory, self)
+-                atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
++                atomic_write(path,payload)
+ 
+     def _publish_director_terminal(self, job, capability, evidence):
+         """Original live worker only. All authority callbacks precede the leaf lock."""

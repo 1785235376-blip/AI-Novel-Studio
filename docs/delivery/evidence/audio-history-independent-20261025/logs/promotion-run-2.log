@@ -1,0 +1,92 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_real_production_publish_promote_history _________________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x7f0ec302dd30>, nid='query-36ed327a1ada4b799b1db21f615933...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0ec6fe5fa0>
+
+    def test_real_production_publish_promote_history(rig, monkeypatch):
+        from app import api, audio_providers
+        monkeypatch.setattr(api, 'authorization_service', rig.grants)
+        scope, headers = shared_scope(rig)
+        rig.grants.assign_permission(PermissionAssignment('probe-other-read', 'no-grants', 'domain.read',
+            ModalityDomain.NOVEL, AuthorizationScope(ScopeKind.PROJECT, scope['workspace_id'], rig.nid), 'fixture'))
+        other = {**headers, 'X-Session-Token': 'token-no-grants'}
+        e = SimpleNamespace(service=rig.workspace, root=rig.root)
+        prod = production(e)
+        rig.workspace.activate(rig.nid, scope, 'reader')
+        raw = synthetic_wav()
+        calls = []
+        class Synthetic:
+            endpoint = 'http://127.0.0.1:19999/v1'
+            local = True
+            supports_dispatch_guard = True
+            def generate(self, request):
+                request.dispatch_guard()
+                calls.append('synthetic_generate')
+                return AudioGenerationResult('synthetic-history', 'synthetic-model',
+                    'data:audio/wav;base64,' + base64.b64encode(raw).decode())
+        provider = Synthetic()
+        monkeypatch.setattr(audio_providers, 'provider_catalog', lambda: [{'provider_id': 'synthetic-history',
+            'default_model': 'synthetic-model', 'endpoint': provider.endpoint, 'local': True,
+            'enabled': True, 'requires_credential': False, 'capabilities': ['TTS']}])
+        monkeypatch.setattr(audio_providers, 'resolve_provider', lambda *a: ('synthetic-history', 'synthetic-model', provider))
+        original_create = rig.assets.create
+        def observed_create(*args, **kwargs):
+            assert kwargs['owner_actor_id'] == 'reader'
+            origin = kwargs['_initial_studio_result']
+            assert origin['contract'] == 'studio-production-result/1'
+            assert origin['actor'] == 'reader'
+            calls.append({'create_owner': kwargs['owner_actor_id'], 'origin': origin})
+            return original_create(*args, **kwargs)
+        monkeypatch.setattr(rig.assets, 'create', observed_create)
+        original_promote = rig.assets.promote_owned
+        def observed_promote(*args, **kwargs):
+            calls.append({'promote_actor': kwargs['actor_id'], 'expected_version': kwargs['expected_version']})
+            return original_promote(*args, **kwargs)
+        monkeypatch.setattr(rig.assets, 'promote_owned', observed_promote)
+        cmd = {'operation_id': 'm8.audio.speech', 'request_id': 'synthetic-history-request',
+            'provider_id': 'synthetic-history', 'model_id': 'synthetic-model',
+            'prompt': 'synthetic-private-prompt-sentinel', 'parameters': {'voice_id': 'synthetic', 'speech_rate': 1.0},
+            'allow_cloud': False, 'source_snapshots': [], 'license_note': ''}
+        preview = prod.preview(rig.nid, scope, 'reader', cmd, lambda: None)[0]
+        queued = prod.create(rig.nid, scope, 'reader', {'command': cmd,
+            'reviewed_preview_digest': preview['preview_digest']}, lambda: None)
+>       finished = prod.execute(rig.nid, scope, 'reader', 'audio', queued['id'], action(queued), lambda: None)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.runtime/promotion-history-review/test_promotion_probe.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/creative/production_execution.py:1767: in execute
+    guard()
+app/creative/production_execution.py:1762: in guard
+    require_execution()
+app/creative/ai_execution.py:33: in require_execution
+    require_flag(flag)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'ai_execution_v2'
+
+    def require_flag(name: str) -> None:
+        if name not in enabled_flags():
+>           raise HTTPException(404, {"code": "EXPERIMENTAL_FEATURE_DISABLED", "feature": name})
+E           fastapi.exceptions.HTTPException: 404: {'code': 'EXPERIMENTAL_FEATURE_DISABLED', 'feature': 'ai_execution_v2'}
+
+app/experimental/flags.py:78: HTTPException
+=============================== warnings summary ===============================
+<MAIN_VENV>/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <MAIN_ROOT>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.runtime/promotion-history-review/test_promotion_probe.py::test_real_production_publish_promote_history
+  <REVIEW_ROOT>/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+.runtime/promotion-history-review/test_promotion_probe.py::test_real_production_publish_promote_history
+  <REVIEW_ROOT>/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED .runtime/promotion-history-review/test_promotion_probe.py::test_real_production_publish_promote_history
+1 failed, 3 warnings in 6.61s

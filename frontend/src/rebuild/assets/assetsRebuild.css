@@ -1,0 +1,44 @@
+/* [HERMIA-FE-20261022 R6] 资产模块 — 按原型 .ast-ws / .ast-grid / .ast-tile 样式移植；全局左右栏收为 0，由模块自画三栏。 */
+html .app-shell[data-module="ASSETS"] .workspace-body,html .app-shell.is-inspector-collapsed[data-module="ASSETS"] .workspace-body{grid-template-columns:minmax(0,1fr)!important;padding:0;gap:0}
+html .app-shell[data-module="ASSETS"] .workspace-sidebar,html .app-shell[data-module="ASSETS"] .workspace-inspector,html .app-shell[data-module="ASSETS"] .inspector-edge-toggle{display:none!important}
+html .app-shell[data-module="ASSETS"] .main-workspace{padding:0;border:0;border-radius:0;overflow:hidden;background:var(--color-bg-app);display:flex;flex-direction:column}
+html .app-shell[data-module="ASSETS"] .media-ws-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.ast-ws{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;background:var(--color-bg-app);color:var(--color-text-primary);position:relative}
+.ast-ws .mw-head{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);flex:none;flex-wrap:wrap}
+.ast-ws .mw-head h2{margin:0;font-size:14px;font-weight:650}
+.ast-ws .nv-btn[aria-pressed="true"]{border-color:var(--color-accent-primary);color:var(--color-accent-primary);background:var(--color-selection-bg)}
+.ast-ws .ref-badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--color-info-bg,rgba(56,139,253,.15));color:var(--color-info,#58a6ff)}
+.ast-ws .mw-hero{display:flex;flex-direction:column;min-width:0;min-height:0}
+.ast-filters{display:flex;gap:6px;padding:8px 12px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);flex-wrap:wrap;align-items:center;flex:none}
+.ast-filters button{border:1px solid var(--color-border-default);background:var(--color-bg-subtle);border-radius:999px;padding:3px 10px;font-size:11.5px;color:var(--color-text-secondary);cursor:pointer}
+.ast-filters button[aria-pressed="true"]{background:var(--color-selection-bg);border-color:var(--color-accent-primary);color:var(--color-accent-primary);font-weight:600}
+.ast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;padding:14px;align-content:start;overflow:auto;flex:1;min-height:0}
+.ast-tile{border:1px solid var(--color-border-default);border-radius:8px;background:var(--color-bg-surface);padding:0;text-align:left;cursor:grab;overflow:hidden;color:inherit;display:flex;flex-direction:column}
+.ast-tile:hover{border-color:var(--color-accent-primary)}
+.ast-tile[aria-selected="true"]{border-color:var(--color-accent-primary);box-shadow:0 0 0 1px var(--color-accent-primary)}
+.ast-tile.is-trash{cursor:default;opacity:.85}
+.ast-ws .th{height:78px;background:linear-gradient(145deg,var(--stg-ph-a),var(--stg-ph-c));display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:6px 6px 0 0}
+.ast-ws .th img{width:100%;height:100%;object-fit:cover;display:block}
+.ast-ws .th--kind span{font-size:22px;color:var(--stg-ink-5);opacity:.8}
+.ast-ws .th[data-kind="音频"]{background:linear-gradient(145deg,var(--stg-ph-aud-a),var(--stg-ph-aud-b))}.ast-ws .th[data-kind="视频"]{background:linear-gradient(145deg,var(--stg-ph-vid-a),var(--stg-ph-vid-b))}.ast-ws .th[data-kind="其他"]{background:linear-gradient(145deg,#2a303c,var(--cv-node))}
+.ast-tile .meta{padding:6px 8px;display:flex;flex-direction:column;gap:2px}
+.ast-tile .meta b{display:block;font-size:12px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ast-tile .meta span{font-size:10.5px;color:var(--color-text-muted)}
+.ast-empty{grid-column:1/-1;display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding:16px;border:1px dashed var(--color-border-default);border-radius:8px}
+.ast-ws .ws-honest-empty{display:flex;flex-direction:column;gap:8px}
+.ast-ws .ws-honest-empty h4{margin:0;font-size:13px}.ast-ws .ws-honest-empty p{margin:0;font-size:12px;color:var(--color-text-secondary)}
+.ast-foot{flex:none;padding:6px 14px;font-size:11px;color:var(--color-text-muted);border-top:1px solid var(--color-border-default)}
+.ast-err{margin:8px 14px 0;font-size:12px;color:var(--color-danger,#f85149)}
+.ast-lineage-facts{display:grid;gap:8px;margin:8px 0}
+.ast-lineage-facts dt{font-size:11px;color:var(--color-text-muted)}
+.ast-lineage-facts dd{margin:0;font-size:12px;overflow-wrap:anywhere}
+.ast-ws .lineage{font-size:12px;border-left:2px solid var(--color-border-strong,var(--color-border-default));padding-left:10px;margin:4px 0}
+.ast-ws .lineage .ln{padding:3px 0;color:var(--color-text-secondary)}.ast-ws .lineage .ln b{color:var(--color-text-primary);font-weight:600}
+.ast-ws .nv-btn--danger{color:var(--color-danger,#f85149)}
+.ast-refs-stage{align-items:stretch!important;justify-content:flex-start!important;padding:20px}
+.ast-refs-card{width:min(100%,520px);border:1px solid var(--color-border-default);border-radius:8px;padding:12px;background:var(--color-bg-surface)}
+.ast-refs-card h4{margin:0 0 6px;font-size:13px}
+.ast-note{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);margin:0;padding:6px 12px;border-radius:6px;background:var(--color-bg-elevated,#222);border:1px solid var(--color-border-default);font-size:12px;z-index:5}
+/* [HERMIA-FE-20261025 DUI P1-7] 浅色主题对比度：引用徽标与空态标题达到 4.5:1 */
+html[data-theme="light"] .ast-ws .ref-badge{color:#0b5cd5}
+html[data-theme="light"] .ast-ws .ast-empty>h4{color:#b42318}

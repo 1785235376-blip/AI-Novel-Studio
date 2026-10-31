@@ -1,0 +1,65 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+F
+================================== FAILURES ===================================
+_ test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api] __
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000150FC7762D0>, nid='query-4f00f36e3661...5', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_rig, prefix):
+        e = usage_rig
+        assert copied_graph_consumers(e,30,16)+copied_timeline_consumers(e,count=2) == 540
+        run = e.rig.root.parent / ('combined-'+e.rig.root.name)
+        shutil.copytree(e.rig.root, run/'data')
+        nid = e.rig.nid
+        url = f'{prefix}/novels/{nid}/experimental/production/assets/{e.asset["id"]}/studio-asset-usages'
+        with application(run) as client:
+            cold = snapshot(run/'data')
+            assert body(asset_page(client,url,strict=True),409)['code'] == 'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE'
+            assert snapshot(run/'data') == cold
+            first = body(asset_page(client,url))
+            next_page = body(asset_page(client,url,first['next_cursor']))
+            replay=body(asset_page(client,url,first['next_cursor']))
+            assert replay['items']==next_page['items'] and replay['total']==next_page['total']
+            pins=[]; page=first; pages=0
+            while True:
+                pages+=1
+                pins.extend((r['owner'],r['id'],r.get('node_id',r.get('clip_id'))) for r in page['items'])
+                assert page['budgets']['authority_reads_in_budget'] and page['other_dependencies']=='UNKNOWN'
+                if not page['has_more']:
+                    assert page['total']==540
+                    break
+>               page=body(asset_page(client,url,page['next_cursor'],strict=True))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_file_backend_safety_http.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [409 Conflict]>, status = 200
+
+    def body(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"STUDIO_ASSET_USAGE_UNAVAILABLE"},"code":"STUDIO_ASSET_USAGE_UNAVAILABLE","message":"STUDIO_ASSET_USAGE_UNAVAILABLE","details":{"code":"STUDIO_ASSET_USAGE_UNAVAILABLE"},"request_id":"2482a744-d68d-41b4-9005-146b5412e3ee"}
+E       assert 409 == 200
+E        +  where 409 = <Response [409 Conflict]>.status_code
+
+tests\test_file_backend_safety_http.py:32: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_file_backend_safety_http.py::test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 87.04s (0:01:27)

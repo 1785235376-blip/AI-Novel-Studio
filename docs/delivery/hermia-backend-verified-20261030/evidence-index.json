@@ -1,0 +1,596 @@
+{
+  "archives": [
+    {
+      "name": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "bytes": 1954174,
+      "sha256": "e1989c134511f0febddce574d716e34ec60248f25a0a8cdad123e278a6416761",
+      "public_evidence_group": "protection"
+    },
+    {
+      "name": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "bytes": 859935,
+      "sha256": "bcdee4431a0710b1c6ba74956a3f7033f0777241e900d034da8d8d76e7fcaba0",
+      "public_evidence_group": "vtt-otio"
+    },
+    {
+      "name": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "bytes": 708973,
+      "sha256": "146b2c2875023362949bd50b72051fe155bb29979b3465bf2c32f688b34a57bd",
+      "public_evidence_group": "external-native"
+    },
+    {
+      "name": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "bytes": 2152482,
+      "sha256": "3886cc63704942146fe15e4ffd8b0fd4abcc2be92302d2410262f56b576b1f1f",
+      "public_evidence_group": "postgres-migrations"
+    },
+    {
+      "name": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "bytes": 3389782,
+      "sha256": "afb3f979702d59a2a606ab8666dbd91b150a6648d7d2b6b8e36947504e38f568",
+      "public_evidence_group": "postgres-fixture"
+    }
+  ],
+  "public_copies": [
+    {
+      "path": "protection/fresh-revalidation/FINAL_REPORT.md",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/FINAL_REPORT.md",
+      "original_sha256": "bd5d32fb2835111f85e6c4c9c511d776d3691466c0e5692a0c90e612c3093339",
+      "published_sha256": "bd5d32fb2835111f85e6c4c9c511d776d3691466c0e5692a0c90e612c3093339",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/JOINT_FILES.txt",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/JOINT_FILES.txt",
+      "original_sha256": "d8a75a430af7bc973466539bf2b00054bedec45ae29959d1d67aa96ee1a430b7",
+      "published_sha256": "d8a75a430af7bc973466539bf2b00054bedec45ae29959d1d67aa96ee1a430b7",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/joint.log",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/joint.log",
+      "original_sha256": "a1ef3116ceee15d2c918ce7acf5b96de561972516726827426fb1674849c053b",
+      "published_sha256": "77677d9a791c765752daf1553085b7fd274aa9f21699ce531577451afd061244",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/joint.exit",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/joint.exit",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/skipped-cases.json",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/skipped-cases.json",
+      "original_sha256": "6314cee810a9b1bc964869b48e1436cbf72086b95b05d0c5cfc710b64bb62066",
+      "published_sha256": "2b76d66b5cb8ee03a3e5fec31cecb6c2c2194eeefb9bf9b1c2dd2c9ffafa52e0",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/source-equality.json",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/source-equality.json",
+      "original_sha256": "ad884ec90d87b65bc27f41b2b0f35872b49b8b248e5f4a46024af13e2971fd2e",
+      "published_sha256": "ad884ec90d87b65bc27f41b2b0f35872b49b8b248e5f4a46024af13e2971fd2e",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/independent/README.md",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/independent/README.md",
+      "original_sha256": "0c14a5163cb6cede57a395f5a355bb3b03eee8a269d5b38765189be59a3789b5",
+      "published_sha256": "d0cab16f031ab02203cb5569596b69d463aa16c57f883be0788c44c8fc53b73c",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/independent/run.log",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/independent/run.log",
+      "original_sha256": "5f87c4ff1f5bf28893135fe480653dba509f75fab4ef0ae20eddfdc8c02794eb",
+      "published_sha256": "df282a3ab05deb87c7a66cf8ccd7d6ccdc5d10653c1ff80e89787c354162671f",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/independent/exit.txt",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/independent/exit.txt",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "protection/fresh-revalidation/independent/source-verification.json",
+      "archive": "protection-upload-recovery-20261030/PoemSeed_public_protection_NEW_integration_20261029(1).zip",
+      "archive_member": "fresh-revalidation/independent/source-verification.json",
+      "original_sha256": "b3677dfa134090beedea8f7e5e539f2eed724c398af204057626ec50e0fecbbb",
+      "published_sha256": "b3677dfa134090beedea8f7e5e539f2eed724c398af204057626ec50e0fecbbb",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/README.txt",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "README.txt",
+      "original_sha256": "c166cce4260921956fa1673774362a73fe8e83827c7e4e67d4f40949524417e5",
+      "published_sha256": "c166cce4260921956fa1673774362a73fe8e83827c7e4e67d4f40949524417e5",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/source-identity.txt",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "source-identity.txt",
+      "original_sha256": "976ad86a2b5bee6abf5f0934be6510c47b06a8b4cc6c1519790c7f640459915f",
+      "published_sha256": "976ad86a2b5bee6abf5f0934be6510c47b06a8b4cc6c1519790c7f640459915f",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/interop-consumer-final-tests.log",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "interop-consumer-final-tests.log",
+      "original_sha256": "6ea6793a43885f685308156facf5cde7c9251daad831ff230981aa96698e4a9d",
+      "published_sha256": "eec6896cc4491473719966f5b91729578f01b6c9c81bd5bd307e78987406f599",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/independent-consumer/REVIEW.md",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "independent-consumer/REVIEW.md",
+      "original_sha256": "523a34fdf84d41783e9abf0e1c543f78608930e7db23c90f66940201810e4632",
+      "published_sha256": "523a34fdf84d41783e9abf0e1c543f78608930e7db23c90f66940201810e4632",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/independent-consumer/fixed-combined.log",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "independent-consumer/fixed-combined.log",
+      "original_sha256": "08d0a26a21108ea5cdb2a76967e554f9b2a1e1d3b71f9d06345e459ad56a7440",
+      "published_sha256": "08d0a26a21108ea5cdb2a76967e554f9b2a1e1d3b71f9d06345e459ad56a7440",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/diagnostic/otio-diagnostic-final-tests.log",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "diagnostic/otio-diagnostic-final-tests.log",
+      "original_sha256": "f7b8d4789f5f0f865a0e856d6d1dfcb48a6b8c6a6510e72465ab765c0bdee354",
+      "published_sha256": "24e800c891158185eb8e92e6c44b84d546a239e265de462a3a65646a8e5dec3b",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/independent-diagnostic/REVIEW.md",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "independent-diagnostic/REVIEW.md",
+      "original_sha256": "c85a7ee446f9211baf5730c88a3d424e0da823eaa4bb5582678ef1a82cdd7909",
+      "published_sha256": "c85a7ee446f9211baf5730c88a3d424e0da823eaa4bb5582678ef1a82cdd7909",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "vtt-otio/independent-diagnostic/fixed-combined93-corrected.log",
+      "archive": "PoemSeed_VTT_external_import_20261030_checkpoint.zip",
+      "archive_member": "independent-diagnostic/fixed-combined93-corrected.log",
+      "original_sha256": "f13a40dc3dffab8d91de969216891c8fc183e52735a60b1b44f6e37384e3590c",
+      "published_sha256": "afba82c7fbe5b8f754c904f4be176bb8d1573f7b965d10b3ff8298e1f7fcd96d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/STATUS.txt",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "STATUS.txt",
+      "original_sha256": "e8feabedb97bd7e7a866fc52d1fac880812cdba5df6b7b6279d1a7be2b786cf9",
+      "published_sha256": "e8feabedb97bd7e7a866fc52d1fac880812cdba5df6b7b6279d1a7be2b786cf9",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/API_INTEGRATION.md",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "API_INTEGRATION.md",
+      "original_sha256": "cf4bdd1828527747251d3259224c324c58d6de3045662187b87838ad0b4707e5",
+      "published_sha256": "cf4bdd1828527747251d3259224c324c58d6de3045662187b87838ad0b4707e5",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/source-identity.txt",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "source-identity.txt",
+      "original_sha256": "68779366d960858c1ee250a229fd79ae65f1d5fd3fa67aef90a790f33a9a8a96",
+      "published_sha256": "68779366d960858c1ee250a229fd79ae65f1d5fd3fa67aef90a790f33a9a8a96",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/otio-external-native-final-tests.log",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "otio-external-native-final-tests.log",
+      "original_sha256": "a31d1e895a76751558e7c85b50abb22846800963ab8ce123e6964e1466a10dae",
+      "published_sha256": "aa2cb475d9756e66772e499d509a3c7fcf34471be290b9cd11b317cef4b15a9c",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/independent/REVIEW.md",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "independent/REVIEW.md",
+      "original_sha256": "3b223d88d67ea701825b9127d7a3a49e65e8e2f03c34de4035fffddfdf22f17d",
+      "published_sha256": "3b223d88d67ea701825b9127d7a3a49e65e8e2f03c34de4035fffddfdf22f17d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "external-native/independent/final9-combined.log",
+      "archive": "Studio_OTIO_external_native_20261030_checkpoint.zip",
+      "archive_member": "independent/final9-combined.log",
+      "original_sha256": "343229181ad3b0ac2170fc22baf8e0a284cd7bc37379861b0992142d27504a8a",
+      "published_sha256": "c2ee2749a5fe2dbad39f6b16e7d5fec5f9f26ce2e8c20a6199b0e6410b00382f",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-independent-20261030/result-report.md",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-independent-20261030/result-report.md",
+      "original_sha256": "b43073dccabeb7a35443729769e435192cf19129605b38bd0f19ce8baeed4e23",
+      "published_sha256": "b43073dccabeb7a35443729769e435192cf19129605b38bd0f19ce8baeed4e23",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-independent-20261030/migration-provenance.md",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-independent-20261030/migration-provenance.md",
+      "original_sha256": "066cea689c2a52e00e8a27122feae28b43745f2d2272e27e11aec735605535a1",
+      "published_sha256": "066cea689c2a52e00e8a27122feae28b43745f2d2272e27e11aec735605535a1",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-independent-20261030/missing-migration-before.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-independent-20261030/missing-migration-before.log",
+      "original_sha256": "71b7de6e6a38278822cbf4ff42c98914bcfe1bc545fe016cf060aa9452b8c8f2",
+      "published_sha256": "71b7de6e6a38278822cbf4ff42c98914bcfe1bc545fe016cf060aa9452b8c8f2",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/original-loader-failure.txt",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/original-loader-failure.txt",
+      "original_sha256": "b01b1a53d7b20e1fabbe09905440fa18c1989f29ce52f9b0ad80f029cb948a17",
+      "published_sha256": "b01b1a53d7b20e1fabbe09905440fa18c1989f29ce52f9b0ad80f029cb948a17",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/contracts_withcrypto/pytest.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/contracts_withcrypto/pytest.log",
+      "original_sha256": "55a09d062ecc9e68777a3917cde6670a9e32ac0f0ea21bb73448725723b109cc",
+      "published_sha256": "9fbd6498cc3e84a2b2d03b857e3caf90ccd5d795750f72c1f187d9455d517ef4",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/contracts_corrected/pytest.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/contracts_corrected/pytest.log",
+      "original_sha256": "0864a8598e7d3305d6c8c77e31add60a5a7098349d9f2265e0e24b1a91f75cc3",
+      "published_sha256": "4c3b6b34b702b6a759ab13c9b36562f9311591e52c52e3ae893e2a2c3fcc3fe1",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/pytest.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/pytest.log",
+      "original_sha256": "4408354c3b41e4633761c220c80433228877a769519f1343c7f3f4aca99367ca",
+      "published_sha256": "afd503e3b76cdb77a5bd3aa06efe93fac52911a4a925a663bdc0a792bfbd9be1",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/result.json",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/result.json",
+      "original_sha256": "7fa925f7c230eb04795809a0719a91504796e2b910586be5e2df0c145e63df6c",
+      "published_sha256": "7fa925f7c230eb04795809a0719a91504796e2b910586be5e2df0c145e63df6c",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/source-comparison.json",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/source-comparison.json",
+      "original_sha256": "89a1bd729816edd75c25b2b3eae07e8aa18a3c4d0b2ff7357b088b79512895d2",
+      "published_sha256": "89a1bd729816edd75c25b2b3eae07e8aa18a3c4d0b2ff7357b088b79512895d2",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/server-proof.json",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/server-proof.json",
+      "original_sha256": "2568e5704a343150cddea17320259f83972cf673ae8470a4f7c150c58840ebc3",
+      "published_sha256": "2568e5704a343150cddea17320259f83972cf673ae8470a4f7c150c58840ebc3",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/packaged-migration-proof.json",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/packaged-migration-proof.json",
+      "original_sha256": "707579f9e5959bf72045a0698254197641930fc458d4354b2143538a2685ac83",
+      "published_sha256": "707579f9e5959bf72045a0698254197641930fc458d4354b2143538a2685ac83",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/shutdown.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/shutdown.log",
+      "original_sha256": "ca19178a35ab4153b75b494963b66ce8243e1b94c173107c87b44d09db23652d",
+      "published_sha256": "ca19178a35ab4153b75b494963b66ce8243e1b94c173107c87b44d09db23652d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/post-cleanup-server-status.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/post-cleanup-server-status.log",
+      "original_sha256": "e138ccb54fdb08283c6eb21159c53207bbbbf07077246e2804e18d22efe6e250",
+      "published_sha256": "e138ccb54fdb08283c6eb21159c53207bbbbf07077246e2804e18d22efe6e250",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/parent_final/cleanup.txt",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/parent_final/cleanup.txt",
+      "original_sha256": "95969f434c0615978aa00365ab5195e8f6fe835eb0875042c6772d0ab0b4dae3",
+      "published_sha256": "95969f434c0615978aa00365ab5195e8f6fe835eb0875042c6772d0ab0b4dae3",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/file-final/pytest.log",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/file-final/pytest.log",
+      "original_sha256": "2829e695c0f8f60f4d5bab8731c983d2c30ec99415128b6cd0d39ee9899dfa75",
+      "published_sha256": "ba0618ead7286231676e8a26993b806bdf70be0f4772c3072f116ebdf814a67c",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/file-final/command.txt",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/file-final/command.txt",
+      "original_sha256": "77c3ce2a4fbf7568ab5c389b57587351e3d3aa125d286d51ae7642e1af62611e",
+      "published_sha256": "13f5a11027253064a2d267e9ae5ba2cb0e3271dd0b9c8014e82893243dc47ad0",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-migrations/evidence/postgres16-20261030/file-final/exit-code.txt",
+      "archive": "Studio_PostgreSQL_OTIO_verified_20261030.zip",
+      "archive_member": "evidence/postgres16-20261030/file-final/exit-code.txt",
+      "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/README.md",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "README.md",
+      "original_sha256": "864e79e5268792bb1d3a4577e2a9b57d803037c374d445ce021478171e49b3e1",
+      "published_sha256": "864e79e5268792bb1d3a4577e2a9b57d803037c374d445ce021478171e49b3e1",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/original-audit/report.md",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/original-audit/report.md",
+      "original_sha256": "904123b8d0cfb874eb922040285362b45b6dce6c99942a10d1fb0e0fbd365f54",
+      "published_sha256": "904123b8d0cfb874eb922040285362b45b6dce6c99942a10d1fb0e0fbd365f54",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/original-audit/no_database_proof.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/original-audit/no_database_proof.log",
+      "original_sha256": "5409f1fb3c60ccb567c44471d4c35df549be28ebcf3608efe5519c451938f5c3",
+      "published_sha256": "5409f1fb3c60ccb567c44471d4c35df549be28ebcf3608efe5519c451938f5c3",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/review.md",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/review.md",
+      "original_sha256": "5b81b7a64912cab8db9be814dc64d7c576c1e69b2ae3804b3b62b2319cce5933",
+      "published_sha256": "5b81b7a64912cab8db9be814dc64d7c576c1e69b2ae3804b3b62b2319cce5933",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/latest-file.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/latest-file.log",
+      "original_sha256": "4a9511309826e49ebc0e54e30707a6c76fd87f2aac2776feaff1a92dd51842e0",
+      "published_sha256": "4c88b903232113ac684e204ebe3fefc23792eb58fc6a6c7cda95b12e447e9493",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-selection-20261030/file-final-neutral-skips.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-selection-20261030/file-final-neutral-skips.log",
+      "original_sha256": "b66b136aa19bacd9a3ca2b4c6bacf8c395e95c79874ede9a6a647ac57a5945dd",
+      "published_sha256": "fcd3ba51f2aee194570b30efde985bfd339917f04a0cd4f55e5046d95db332d3",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/frozen-collect.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/frozen-collect.log",
+      "original_sha256": "b0b3ca967b61fa72d1b01c90516b50fb91c23f747ef7674c1c519574779d2e09",
+      "published_sha256": "db0c662b393df2874d836c21cc1f9b6fbb0ada592878550cb4571009ea317a4d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/frozen-missing.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/frozen-missing.log",
+      "original_sha256": "36f8fa7e6b7bafac0c49773fc13d928d4219149c443aa58bb45d2dfadf46cca8",
+      "published_sha256": "36f8fa7e6b7bafac0c49773fc13d928d4219149c443aa58bb45d2dfadf46cca8",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/frozen-invalid.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/frozen-invalid.log",
+      "original_sha256": "0301421a51b50b3bde58c3917d763a97992d386b631d277af2532625f77a33bd",
+      "published_sha256": "0301421a51b50b3bde58c3917d763a97992d386b631d277af2532625f77a33bd",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-independent-20261030/frozen-validspy.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-independent-20261030/frozen-validspy.log",
+      "original_sha256": "79ffe4f0b36def583fa833f60a50a9f46538d09912d6a1a55dd400eb72e09341",
+      "published_sha256": "79ffe4f0b36def583fa833f60a50a9f46538d09912d6a1a55dd400eb72e09341",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/independent-review.md",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/independent-review.md",
+      "original_sha256": "a29a2d476084e29040ee44bff816236385ee3fe93d297225e45716b26aad3b58",
+      "published_sha256": "a29a2d476084e29040ee44bff816236385ee3fe93d297225e45716b26aad3b58",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/independent-evidence-check.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/independent-evidence-check.json",
+      "original_sha256": "2fa419b9013439dc77d52188fac39c452c1335a62cc1d002488c3678f43390c7",
+      "published_sha256": "2fa419b9013439dc77d52188fac39c452c1335a62cc1d002488c3678f43390c7",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/rounds.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/rounds.json",
+      "original_sha256": "17ba45278d5b84867a95e95bba439b95f03cca203cbc8483750560ac24de1bcf",
+      "published_sha256": "17ba45278d5b84867a95e95bba439b95f03cca203cbc8483750560ac24de1bcf",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/server-proof.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/server-proof.json",
+      "original_sha256": "2568e5704a343150cddea17320259f83972cf673ae8470a4f7c150c58840ebc3",
+      "published_sha256": "2568e5704a343150cddea17320259f83972cf673ae8470a4f7c150c58840ebc3",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/shutdown.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/shutdown.log",
+      "original_sha256": "ca19178a35ab4153b75b494963b66ce8243e1b94c173107c87b44d09db23652d",
+      "published_sha256": "ca19178a35ab4153b75b494963b66ce8243e1b94c173107c87b44d09db23652d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/post-stop-status.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/post-stop-status.log",
+      "original_sha256": "e138ccb54fdb08283c6eb21159c53207bbbbf07077246e2804e18d22efe6e250",
+      "published_sha256": "e138ccb54fdb08283c6eb21159c53207bbbbf07077246e2804e18d22efe6e250",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/cleanup.txt",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/cleanup.txt",
+      "original_sha256": "999f654c38f0e0ca39d2f9116baed5a18b6a21d6bd715c577cc39a3ceab6f459",
+      "published_sha256": "999f654c38f0e0ca39d2f9116baed5a18b6a21d6bd715c577cc39a3ceab6f459",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_initial/pytest.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_initial/pytest.log",
+      "original_sha256": "d72ddec08af635f1361381cd2dd9e5c98de4af47c26aed96cd94e4d35a11b361",
+      "published_sha256": "40b68e217c45a875414d6fdca64d86e8ffa8547df882083af9ee308adec518d0",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_initial/result.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_initial/result.json",
+      "original_sha256": "085d04844ebff40300a4065ffe161bbd16584393196244467ed894d9d6b5680d",
+      "published_sha256": "085d04844ebff40300a4065ffe161bbd16584393196244467ed894d9d6b5680d",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_initial/source.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_initial/source.json",
+      "original_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "published_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_initial/migrations.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_initial/migrations.json",
+      "original_sha256": "1591d06242d7e74e46f0be248b2c365974fc3ee5c70abd2586563b11e7a75102",
+      "published_sha256": "1591d06242d7e74e46f0be248b2c365974fc3ee5c70abd2586563b11e7a75102",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_independent/pytest.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_independent/pytest.log",
+      "original_sha256": "687e50e42395d126560b272f72f8d4c39234e173045a751b12b2d5421022370d",
+      "published_sha256": "43a06dbfe12166b30d7a880b0b9b739fe1e5d580ca49745d76a6f4e68354fefd",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_independent/result.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_independent/result.json",
+      "original_sha256": "c4d39bbf9486ea371ebedc4e4af7c8b22f378f292d151ab25371ff28715d2896",
+      "published_sha256": "c4d39bbf9486ea371ebedc4e4af7c8b22f378f292d151ab25371ff28715d2896",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_independent/source.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_independent/source.json",
+      "original_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "published_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_independent/migrations.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_independent/migrations.json",
+      "original_sha256": "aa9dfa266ea20459ff1dba101eb44dd4de67ac85297646c173ba1f726431a898",
+      "published_sha256": "aa9dfa266ea20459ff1dba101eb44dd4de67ac85297646c173ba1f726431a898",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_parent/pytest.log",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_parent/pytest.log",
+      "original_sha256": "474710bb170a6e4a6a1e5b33b24a612bed44cd3aa425cc8a60567fa5b0daf5ab",
+      "published_sha256": "920ac9bf672013f2c48da52373ee3392ccd6c8153c9be480997027bd7a2d17e5",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_parent/result.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_parent/result.json",
+      "original_sha256": "d3076f022162e236b057dacbbcf7df048dcd2841c2db10e29e8afd22b6ff1f1a",
+      "published_sha256": "d3076f022162e236b057dacbbcf7df048dcd2841c2db10e29e8afd22b6ff1f1a",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_parent/source.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_parent/source.json",
+      "original_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "published_sha256": "42b5998886754be04d996b450bf6ec59c07cd059b167b9bb54b4cd2e22067262",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    },
+    {
+      "path": "postgres-fixture/evidence/postgres-fixture-real-20261030/fixture_parent/migrations.json",
+      "archive": "Studio_PostgreSQL_explicit_fixture_verified_20261030.zip",
+      "archive_member": "evidence/postgres-fixture-real-20261030/fixture_parent/migrations.json",
+      "original_sha256": "bfbd4b2f2ad18e59712f691581618e9d617b7c6cefe0e78163215e77b208c00f",
+      "published_sha256": "bfbd4b2f2ad18e59712f691581618e9d617b7c6cefe0e78163215e77b208c00f",
+      "redaction": "cloud workspace/temp paths and private artifact identifiers only"
+    }
+  ]
+}

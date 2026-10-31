@@ -1,0 +1,32 @@
+{
+  "files": {
+    "local_interop_desktop/__init__.py": "a059aa1ef475ccb5ed39a5c5e23f699367afa998c9886757caf6e48f6fe70cec",
+    "local_interop_desktop/acceptance.py": "ddbac590a120fc3785f4ff4a4260eb0f9b6cb5fdf864b23b964018f90aff4a3f",
+    "local_interop_desktop/diagnostics.py": "0487b5f221a33c324ae0297d343c50b88ed151d48c5d94076fc05c8aae009397",
+    "local_interop_desktop/events.py": "ec9eb0ac18c13319e2e308a3ea0dc83a05ad6ea49fa7cb422b31f34febf2a8dc",
+    "local_interop_desktop/identity.py": "10ad6c01f5276c618433c18dee9a78f4fca3ef0c578034e4a3eb64a65002f3eb",
+    "local_interop_desktop/lifecycle.py": "022897829d2776dd6e5fbb2bb2ff9429f1320288357ee8d89101b1847c86b6bb",
+    "local_interop_desktop/providers.py": "9f313f4d54ae53a83cc1228cf8593849fe7cfbe172399642642be9027c73e1c0",
+    "local_interop_desktop/testing.py": "982d7f5ff66594dbe216ee6df821f871cd602ec77bb93baa5b76bc2a387b7d67",
+    "local_interop_desktop/transport.py": "c90a205dfade5ed7eadc151c806ab1ec39b86dac424aafe202f7bf75e6c884df",
+    "native/local_interop_desktop/.gitignore": "79810615b4063be5474618fd002df934762fe9ccebb448537ce74ce23b319202",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes.Acceptance/PoemSeed.LocalInterop.Pipes.Acceptance.csproj": "bda0c274aaa6b866881258cdb6b5d52736d682b3fb149f6d090cad038eda6c84",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes.Acceptance/Program.cs": "f459890d2642c1e0a12904a679ff66311ac3b7db03a580a61d236f86be5dee07",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/AssemblyInfo.cs": "444cfc5394fee97cfe8b1f72d9b700819aafb30952874d3536c392b2df272487",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/AttestationWorkLimiter.cs": "f1915634db0054bb61e68f747e79dfc04097c6a9277d5f91440979b0189ac2bd",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/CurrentUserPipe.cs": "8da298188135daa7d804cf2ecce1b25e87d63684c503ddfebc916a2386d94a34",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/IdentityMetadata.cs": "21d09d42df444e4541ac1dcda4eccca452713801a46e4e700321c208df726773",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/InteropPeerAttestation.cs": "b6017fabed2b59683122e2e36fd8a1d745a8b1db1e166dd58dbf8d657ee1d24e",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/NamedPipeTransport.cs": "7b4a91d7124a94251b9ee94be8a33fadf7ce3cfe2618b83eb998ba0c38afc858",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/PeerIdentity.cs": "987c6622ac9c92bb0bf99e87baa354e63f80fa70354ca3051ff6c97f78a5f3ac",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/PipeFrames.cs": "985f3763d6d6363ea7eea454c5a6f8bd38a8a5217525dfb0f5f0b65a40b73829",
+    "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/PoemSeed.LocalInterop.Pipes.csproj": "cc2e9287654bb32a5fdcca573bc1acc72254b16a0586098520d2bb55b1f82673",
+    "native/local_interop_desktop/README.md": "519b6e3667238261622f22b6ee91fcd94beb67f968061a017f99a2f60a30a07e",
+    "native/local_interop_desktop/scripts/Invoke-CrossUserPipeAcceptance.ps1": "f539388a8fd796ad6eec3b1bde19e19d0dc9bc1a2999c8cf51f2ec165ac9116e",
+    "scripts/check_desktop_integration.py": "c828934c5ca2267b74907db95f4f87da7f5660710014098772a63918ac869137",
+    "tests/test_local_interop_desktop_acceptance.py": "3f8bdbeb907857f01315c56c7594917488a24b241612efc2b462eebb243b6b0e",
+    "tests/test_local_interop_desktop_core.py": "4be72f7f64363a20621a3775cc9d8f4b5f4e484240159bb54c95abedc1ee1bcc"
+  },
+  "protocol_version": "1.0",
+  "scope": "New shared Desktop Integration SDK and acceptance boundary; original V1 parity is separate and frozen"
+}

@@ -1,0 +1,295 @@
+diff --git a/app/jobs.py b/app/jobs.py
+index c97476e..1e8af24 100644
+--- a/app/jobs.py
++++ b/app/jobs.py
+@@ -447,6 +447,9 @@ class JobManager:
+                 self._restore_job(item)
+ 
+     def _restore_job(self, item):
++        # Bound independent memory operations belong to the original memory
++        # runner, never to a generic writer Job that would erase their identity.
++        if "memory_project_binding" in item: return
+         from .services.generation_project_binding import FIELD
+         if FIELD in item or is_image_job(item) or is_creative_director_job(item) or _is_research_ocr_execution(item):
+             from .repositories.generation_repository import graph_job_binding
+diff --git a/app/lore/memory_agent.py b/app/lore/memory_agent.py
+index bb67fd2..ac25690 100644
+--- a/app/lore/memory_agent.py
++++ b/app/lore/memory_agent.py
+@@ -2,6 +2,9 @@ from __future__ import annotations
+ import hashlib,json,threading,uuid
+ from datetime import datetime,timezone
+ from typing import Any
++from contextlib import contextmanager
++from pathlib import Path
++from .memory_project_binding import FIELD as MEMORY_FIELD, create_binding
+ from pydantic import BaseModel,Field,model_validator
+ from app.agents import AgentRunner
+ from app.document import document_to_markdown
+@@ -48,7 +51,60 @@ def source_bound_memory_schema(data):
+  return schema
+ 
+ class MemoryAgentRunner:
+- def __init__(self,novels,chapters,lore,generations,agent_runner:AgentRunner,runtime):self.novels=novels;self.chapters=chapters;self.lore=lore;self.generations=generations;self.agent_runner=agent_runner;self.runtime=runtime
++ def __init__(self,novels,chapters,lore,generations,agent_runner:AgentRunner,runtime):
++  self.novels=novels;self.chapters=chapters;self.lore=lore;self.generations=generations;self.agent_runner=agent_runner;self.runtime=runtime
++  self._bound_ports=(novels,chapters,lore,generations,getattr(lore,"repository",None),getattr(generations,"repository",None))
++  self._bound_backends=tuple(getattr(port,"backend",None) for port in (novels,chapters,self._bound_ports[4]))
++  root=getattr(self._bound_ports[-1],"root",None)
++  self._bound_data=Path(root).resolve().parent.parent if root is not None else None
++ @contextmanager
++ def _bound_owner(self,binding):
++  if binding is None:
++   yield
++   return
++  from app.repositories.file import FileNovelRepository,FileChapterRepository,FileLoreRepository,FileGenerationRepository
++  from app.repositories.generation_repository import GenerationRepository,GenerationProjectIdentityError
++  from app.services import LoreService,GenerationService
++  from app.creative.project_store import CreativeProjectStore
++  from types import SimpleNamespace
++  ports=(self.novels,self.chapters,self.lore,self.generations,getattr(self.lore,"repository",None),getattr(self.generations,"repository",None))
++  if (any(current is not original for current,original in zip(ports,self._bound_ports))
++      or type(self.novels) is not FileNovelRepository or type(self.chapters) is not FileChapterRepository
++      or type(self.lore) is not LoreService or type(self.generations) is not GenerationService
++      or type(ports[4]) is not FileLoreRepository or type(ports[5]) not in (FileGenerationRepository,GenerationRepository)
++      or self._bound_data is None or Path(ports[5].root).resolve()!=self._bound_data/'runtime/jobs'
++      or any(port.backend is not backend for port,backend in zip((self.novels,self.chapters,ports[4]),self._bound_backends))
++      or any(Path(port.backend.data).resolve()!=self._bound_data or Path(port.backend.novels).resolve()!=self._bound_data/'novels' for port in (self.novels,self.chapters,ports[4]))):
++   raise GenerationProjectIdentityError("MEMORY_BOUND_FILE_STORE_MISMATCH")
++  owner=CreativeProjectStore(SimpleNamespace(backend="file",root=self._bound_data))
++  from app.runtime_events import runtime_events
++  # File mutation decorators publish observer callbacks. Flush only after the
++  # project lease exits; callbacks may acquire authorization/scope locks.
++  with runtime_events.transaction(),owner.existing_owner_only(),owner.owner_lease(binding["project_id"]) as incarnation:
++   if incarnation!=binding["project_incarnation"]:
++    raise GenerationProjectIdentityError("MEMORY_PROJECT_OWNER_CHANGED")
++   yield
++ def _bound_check(self,binding):
++  with self._bound_owner(binding):pass
++ @staticmethod
++ def _same_written_fields(existing,expected):
++  if any(existing.get(key)!=value for key,value in expected.items()):
++   raise ValueError("MEMORY_BOUND_WRITE_IDENTITY_MISMATCH")
++ def _bound_proposal(self,proposal,relations):
++  # Original LoreService owns validation and first creation. A prior attempt
++  # may have created the proposal but stopped before linking all evidence.
++  try:self.lore.create_proposal(proposal,relations)
++  except FileExistsError:
++   self._same_written_fields(self.lore.repository.get_proposal(proposal["id"]),proposal)
++   for relation in relations:
++    row={**relation,"proposal_id":proposal["id"]}
++    try:self.lore.repository.link_evidence(row)
++    except FileExistsError:
++     existing=next((item for item in self.lore.repository.list_proposal_evidence(proposal["id"])
++                    if item["evidence_id"]==row["evidence_id"]),None)
++     if existing is None:raise ValueError("MEMORY_BOUND_RELATION_MISSING")
++     self._same_written_fields(existing,row)
++
+  def _input(self,novel_id,chapter_id,version):
+   chapter=self.chapters.get(chapter_id);versions=self.chapters.history(chapter_id);match={"version":chapter["version"],"document":chapter["document"]} if chapter["version"]==version else next((x for x in versions if x["version"]==version),None)
+   if not match:raise FileNotFoundError(f"chapter version {chapter_id}@{version}")
+@@ -76,7 +132,7 @@ class MemoryAgentRunner:
+    # confined. Only the guarded, no-proxy/no-redirect local adapter is admitted.
+    raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+   return adapter
+- def _local_generation(self,prompt,jid,output_schema=None):
++ def _local_generation(self,prompt,jid,output_schema=None,owner_check=None):
+   registry=getattr(self.runtime,"model_registry",None)
+   if registry is not None:
+    for model in registry.descriptors():
+@@ -87,6 +143,8 @@ class MemoryAgentRunner:
+     def dispatch_guard():
+      if self._verified_local_adapter(model.provider_id,model.model_id) is not adapter:
+       raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,"memory local route changed before dispatch")
++     if owner_check is not None:owner_check()
++    if owner_check is not None:owner_check()
+     request=TextGenerationRequest(model.provider_id,model.model_id,prompt,job_id=jid,
+      parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=4000),
+      structured_output_schema=(output_schema or MemoryAgentOutput.model_json_schema()) if getattr(model,'structured_output',False) else None,
+@@ -94,17 +152,22 @@ class MemoryAgentRunner:
+     # Never fall back after an attempted generation, including to cloud routes.
+     return node.execute(TextModelNodeInput(request)).response
+   raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+- def extract(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",job_id=None):
+-  jid=job_id or str(uuid.uuid4());base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version,"profile":"LOCAL_ONLY"},"created_at":datetime.now(timezone.utc).isoformat()};self.generations.save(base)
++ def extract(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",job_id=None,*,project_incarnation=None):
++  binding=create_binding(novel_id,chapter_id,version,project_incarnation) if project_incarnation is not None else None
++  if binding is not None and job_id not in (None,binding["job_id"]):raise ValueError("MEMORY_BOUND_JOB_ID_MISMATCH")
++  jid=binding["job_id"] if binding is not None else (job_id or str(uuid.uuid4()));base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version,"profile":"LOCAL_ONLY"},"created_at":datetime.now(timezone.utc).isoformat()}
++  if binding is not None:base[MEMORY_FIELD]=binding
++  with self._bound_owner(binding):self.generations.save(base)
+   try:
+-   data=self._input(novel_id,chapter_id,version)
++   with self._bound_owner(binding):data=self._input(novel_id,chapter_id,version)
+    output_schema=source_bound_memory_schema(data)
+    task="Extract durable evidence-backed changes from the accepted chapter. Produce an INSTANCE of the output schema, never repeat the schema itself. Return ONLY JSON, without Markdown fences or commentary, matching this JSON schema: "+json.dumps(output_schema,ensure_ascii=False)
+    task+="\nEvery evidence reference must use chapter_id="+json.dumps(chapter_id)+" and chapter_version="+str(version)+". Copy an exact contiguous excerpt from accepted_chapter.content. Never cite paraphrases as evidence."
+    task+="\nFor CHARACTER_MEMORY payloads, use an existing supplied character_id, memory_type EXPERIENCE|STATE_CHANGE|KNOWLEDGE_CHANGE|RELATIONSHIP_CHANGE and content as a JSON object. Extract at most three important changes with concise payloads and short exact excerpts. Return {\"proposals\":[]} if no durable change can be proven."
+    prompt=self.agent_runner.build_prompt("memory_agent",data,task)
+    prompt+='\n\nOUTPUT TASK: Read the accepted_chapter above and extract its durable changes. The top-level response MUST be {"proposals":[...]}, never {"$defs":...} or {"properties":...}. Each item needs proposal_type, payload, confidence and evidence. Evidence must quote the accepted chapter verbatim, with its provided chapter_id and version. Use only known character IDs for CHARACTER_MEMORY. Return {"proposals":[]} only when no durable change is supported.'
+-   result=self._local_generation(prompt,jid,output_schema);parsed=MemoryAgentOutput.model_validate_json(result.text);ids=[]
++   result=(self._local_generation(prompt,jid,output_schema,owner_check=lambda:self._bound_check(binding))
++           if binding is not None else self._local_generation(prompt,jid,output_schema));parsed=MemoryAgentOutput.model_validate_json(result.text);ids=[]
+    # Validate every reference before the first durable proposal/evidence write.
+    # An LLM's valid JSON is not evidence that a quoted event happened.
+    text=data["accepted_chapter"]["content"]
+@@ -112,31 +175,44 @@ class MemoryAgentRunner:
+     for evidence in item.evidence:
+      if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
+      if evidence.excerpt not in text:raise ValueError("memory evidence quote does not occur in the accepted chapter version")
+-   if canonical(self._input(novel_id,chapter_id,version))!=canonical(data):raise ValueError("memory extraction sources changed during inference")
+-   for index,item in enumerate(parsed.proposals):
+-    seed=f"{novel_id}:{chapter_id}:{version}:{index}:{canonical(item.payload)}";pid=str(uuid.uuid5(NAMESPACE,"proposal:"+seed));relations=[]
+-    for eindex,evidence in enumerate(item.evidence):
+-     if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
+-     eid=str(uuid.uuid5(NAMESPACE,f"evidence:{seed}:{eindex}:{canonical(evidence.model_dump())}"));ev={"id":eid,"novel_id":novel_id,"source_type":"CHAPTER_VERSION","source_id":f"{chapter_id}:v{version}","chapter_id":chapter_id,"chapter_version":version,"excerpt":evidence.excerpt,"locator":evidence.locator,"content_hash":hashlib.sha256((evidence.excerpt+canonical(evidence.locator)).encode()).hexdigest(),"privacy":"LOCAL_ONLY","status":"ACTIVE"}
+-     try:self.lore.create_evidence(ev)
+-     except FileExistsError:self.lore.repository.get_evidence(eid)
+-     relations.append({"evidence_id":eid,"relevance":"PRIMARY" if eindex==0 else "SUPPORTING"})
+-    proposal={"id":pid,"novel_id":novel_id,"proposal_type":item.proposal_type,"payload":item.payload,"status":"PENDING","confidence":item.confidence,"agent_name":"memory_agent","generation_job_id":jid,"source_chapter_id":chapter_id,"source_version":version}
+-    try:self.lore.create_proposal(proposal,relations)
+-    except FileExistsError:self.lore.repository.get_proposal(pid)
+-    ids.append(pid)
+-   self.generations.save({**base,"status":"COMPLETED","provider":result.provider_id,"model":result.model_id,"execution_mode":result.execution_mode,"result":{"proposal_ids":ids}});return ids
++   with self._bound_owner(binding):
++    if canonical(self._input(novel_id,chapter_id,version))!=canonical(data):raise ValueError("memory extraction sources changed during inference")
++    for index,item in enumerate(parsed.proposals):
++     seed=f"{novel_id}:{chapter_id}:{version}:{index}:{canonical(item.payload)}"
++     if binding is not None:seed="bound-memory-v1:"+binding["job_id"]+":"+seed
++     pid=str(uuid.uuid5(NAMESPACE,"proposal:"+seed));relations=[]
++     for eindex,evidence in enumerate(item.evidence):
++      if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
++      eid=str(uuid.uuid5(NAMESPACE,f"evidence:{seed}:{eindex}:{canonical(evidence.model_dump())}"));ev={"id":eid,"novel_id":novel_id,"source_type":"CHAPTER_VERSION","source_id":f"{chapter_id}:v{version}","chapter_id":chapter_id,"chapter_version":version,"excerpt":evidence.excerpt,"locator":evidence.locator,"content_hash":hashlib.sha256((evidence.excerpt+canonical(evidence.locator)).encode()).hexdigest(),"privacy":"LOCAL_ONLY","status":"ACTIVE"}
++      try:self.lore.create_evidence(ev)
++      except FileExistsError:
++       existing=self.lore.repository.get_evidence(eid)
++       if binding is not None:self._same_written_fields(existing,ev)
++      relations.append({"evidence_id":eid,"relevance":"PRIMARY" if eindex==0 else "SUPPORTING"})
++     proposal={"id":pid,"novel_id":novel_id,"proposal_type":item.proposal_type,"payload":item.payload,"status":"PENDING","confidence":item.confidence,"agent_name":"memory_agent","generation_job_id":jid,"source_chapter_id":chapter_id,"source_version":version}
++     if binding is not None:self._bound_proposal(proposal,relations)
++     else:
++      try:self.lore.create_proposal(proposal,relations)
++      except FileExistsError:self.lore.repository.get_proposal(pid)
++     ids.append(pid)
++    self.generations.save({**base,"status":"COMPLETED","provider":result.provider_id,"model":result.model_id,"execution_mode":result.execution_mode,"result":{"proposal_ids":ids}});return ids
+   except Exception as exc:
+    code=exc.code.value if isinstance(exc,ModelRuntimeError) else "MEMORY_EXTRACTION_FAILED"
+-   self.generations.save({**base,"status":"NOT_CONFIGURED" if code=="TEXT_PROVIDER_NOT_CONFIGURED" else "FAILED","error_code":code,"error":f"{type(exc).__name__}: {exc}"});raise
+- def enqueue(self,novel_id,chapter_id,version,profile="LOCAL_ONLY"):
+-  jid=str(uuid.uuid5(NAMESPACE,f"job:{novel_id}:{chapter_id}:{version}"))
+-  try:
+-   existing=self.generations.get(jid)
+-   if existing.get("status") in {"QUEUED","GENERATING","COMPLETED"}:return jid
+-  except KeyError:pass
+-  self.generations.save({"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"QUEUED","request":{"chapter_version":version}})
+-  threading.Thread(target=lambda:self._quiet_extract(novel_id,chapter_id,version,profile,jid),daemon=True).start();return jid
+- def _quiet_extract(self,*args):
+-  try:self.extract(*args)
++   with self._bound_owner(binding):self.generations.save({**base,"status":"NOT_CONFIGURED" if code=="TEXT_PROVIDER_NOT_CONFIGURED" else "FAILED","error_code":code,"error":f"{type(exc).__name__}: {exc}"});raise
++ def enqueue(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",*,project_incarnation=None):
++  binding=create_binding(novel_id,chapter_id,version,project_incarnation) if project_incarnation is not None else None
++  jid=binding["job_id"] if binding is not None else str(uuid.uuid5(NAMESPACE,f"job:{novel_id}:{chapter_id}:{version}"))
++  with self._bound_owner(binding):
++   try:
++    existing=self.generations.get(jid)
++    if binding is not None and existing.get(MEMORY_FIELD)!=binding:raise ValueError("MEMORY_BOUND_RECEIPT_MISMATCH")
++    if existing.get("status") in {"QUEUED","GENERATING","COMPLETED"}:return jid
++   except KeyError:pass
++   queued={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"QUEUED","request":{"chapter_version":version}}
++   if binding is not None:queued[MEMORY_FIELD]=binding
++   self.generations.save(queued)
++  kwargs={"project_incarnation":project_incarnation} if binding is not None else {}
++  threading.Thread(target=lambda:self._quiet_extract(novel_id,chapter_id,version,profile,jid,**kwargs),daemon=True).start();return jid
++ def _quiet_extract(self,*args,**kwargs):
++  try:self.extract(*args,**kwargs)
+   except Exception:pass
+diff --git a/app/repositories/generation_repository.py b/app/repositories/generation_repository.py
+index 08eb457..50327ae 100644
+--- a/app/repositories/generation_repository.py
++++ b/app/repositories/generation_repository.py
+@@ -12,6 +12,12 @@ class GenerationProjectIdentityError(ValueError):
+ 
+ 
+ def graph_job_binding(item):
++    from ..lore.memory_project_binding import FIELD as MEMORY_FIELD, memory_job_binding
++    if MEMORY_FIELD in item:
++        try:
++            return memory_job_binding(item)
++        except (ValueError, TypeError, KeyError, AttributeError):
++            raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_INVALID") from None
+     # Compatibility name: specialized contracts below remain unchanged. The
+     # ordinary domain has its own strict, disjoint passive identity contract.
+     from ..services.generation_project_binding import FIELD, ordinary_job_binding
+@@ -79,6 +85,13 @@ def graph_job_binding(item):
+ 
+ 
+ def check_graph_job_update(previous, item):
++    from ..lore.memory_project_binding import FIELD as MEMORY_FIELD
++    if MEMORY_FIELD in item or (previous is not None and MEMORY_FIELD in previous):
++        current = graph_job_binding(item)
++        if previous is not None and (MEMORY_FIELD not in previous or MEMORY_FIELD not in item
++                                     or graph_job_binding(previous) != current):
++            raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_CHANGED")
++        return
+     from ..services.generation_project_binding import FIELD
+     if FIELD in item or (previous is not None and FIELD in previous):
+         current = graph_job_binding(item)
+@@ -255,7 +268,7 @@ class GenerationRepository:
+             try:
+                 item = json.loads(p.read_text(encoding="utf-8"))
+                 from ..services.generation_project_binding import FIELD
+-                if FIELD in item and item.get("id") != p.stem:
++                if (FIELD in item or "memory_project_binding" in item) and item.get("id") != p.stem:
+                     continue
+                 binding = graph_job_binding(item)
+                 if binding is None:
+@@ -270,12 +283,12 @@ class GenerationRepository:
+         if not path.exists():raise KeyError(jid)
+         item = json.loads(path.read_text(encoding="utf-8"))
+         from ..services.generation_project_binding import FIELD
+-        if FIELD in item and item.get("id") != jid:
++        if (FIELD in item or "memory_project_binding" in item) and item.get("id") != jid:
+             raise KeyError(jid)
+         try:
+             binding = graph_job_binding(item)
+         except GenerationProjectIdentityError:
+-            if FIELD in item:
++            if FIELD in item or "memory_project_binding" in item:
+                 raise KeyError(jid) from None
+             raise
+         if binding is None: return item
+diff --git a/app/repositories/postgres/generation.py b/app/repositories/postgres/generation.py
+index 35abe18..ff20b1b 100644
+--- a/app/repositories/postgres/generation.py
++++ b/app/repositories/postgres/generation.py
+@@ -25,6 +25,8 @@ class PostgresGenerationRepository:
+         return saved
+     @staticmethod
+     def _graph_owner(session, item, binding):
++        if "memory_project_binding" in item:
++            raise GenerationProjectIdentityError("GENERATION_MEMORY_POSTGRES_UNSUPPORTED")
+         try:
+             # Lock the original project row through the same save transaction.
+             # DELETE cannot pass validation and then replace this slug midway.
+@@ -41,6 +43,8 @@ class PostgresGenerationRepository:
+ 
+     @committed_change("TASK")
+     def save(self,item):
++        if "memory_project_binding" in item:
++            raise GenerationProjectIdentityError("GENERATION_MEMORY_POSTGRES_UNSUPPORTED")
+         from ...creative.director_image_terminal import preserve as preserve_image
+         from ...creative.director_terminal_evidence import FIELD, preserve_evidence
+         if FIELD in item:
+diff --git a/app/services/generation_project_binding.py b/app/services/generation_project_binding.py
+index 5b46757..ac12cfb 100644
+--- a/app/services/generation_project_binding.py
++++ b/app/services/generation_project_binding.py
+@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
+ 
+ FIELD = "ordinary_project_binding"
+ Identifier = Annotated[str, Field(min_length=1, max_length=240)]
+-SPECIALIZED_FIELDS = ("graph_binding", "adaptation_binding", "creative_director_binding",
++SPECIALIZED_FIELDS = ("memory_project_binding", "graph_binding", "adaptation_binding", "creative_director_binding",
+                       "director_image_binding", "research_ocr_binding", "research_ocr_output_evidence",
+                       "_creative_director_terminal_evidence", "director_image_terminal_v3")
+ IDENTITY_FIELDS = ("chapter_id", "operation", "actor_id", "workspace_id", "scope", "scope_type", "scope_id", "experimental_origin")

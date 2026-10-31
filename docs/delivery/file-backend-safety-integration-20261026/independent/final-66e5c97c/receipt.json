@@ -1,0 +1,21 @@
+{
+  "source_head": "66e5c97c22ff719aa75f036988073bc24ebf9c57",
+  "source_root": "D:\\PoemSeed\\Worktrees\\file-safety-independent-final-66e5c97c",
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "D:\\PoemSeed\\Worktrees\\file-safety-independent-final-66e5c97c\\scripts\\run_studio_backend_tests.py",
+    "tests/test_file_backend_safety_independent.py",
+    "-q",
+    "-ra",
+    "--junitxml=D:\\PoemSeed\\Worktrees\\file-safety-independent-20261026\\docs\\delivery\\file-backend-safety-integration-20261026\\independent\\final-66e5c97c\\results.xml"
+  ],
+  "timeout_seconds": 600,
+  "timed_out": false,
+  "process_exit_code": 0,
+  "started_unix": 1793029087.7355607,
+  "ended_unix": 1793029098.5766156,
+  "source_manifest_unchanged": true,
+  "foreign_loaded_modules": [],
+  "pytest_terminal_ok": true,
+  "passed": true
+}

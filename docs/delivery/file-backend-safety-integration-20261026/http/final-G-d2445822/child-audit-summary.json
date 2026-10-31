@@ -1,0 +1,253 @@
+{
+  "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+  "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+  "process_exit_code": 0,
+  "timed_out": false,
+  "complete_pass": true,
+  "source_unchanged": true,
+  "elapsed_seconds": 221.44033319997834,
+  "child_process_count": 10,
+  "all_child_modules_verified": true,
+  "totals": {
+    "get_count": 142,
+    "command_calls": 0,
+    "actual_write_calls": 2,
+    "business_write_calls": 0,
+    "coordinator_write_calls": 2,
+    "strict_write_calls": 0,
+    "strict_file_creations": 0,
+    "strict_directory_creations": 0
+  },
+  "children": [
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team0-normal-receipt.json",
+      "sha256": "1ae5fa3a49ff10c82cc84d179949d41cd306de3eac4e870dcff2966050fe4566",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 16,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team0-reopened-receipt.json",
+      "sha256": "fe42b02216261b665fc82f021bfb3c578241711443c527328abf88a1d5ae333e",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team1-normal-receipt.json",
+      "sha256": "1744c0cce79814956b42acfad09e4cc00aac223f4a4f8b9a4e8966f6435e424b",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 16,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team1-reopened-receipt.json",
+      "sha256": "d2e7937770ff64c5d5728ab3ded6d82a203ffb7ca591e1f34c665e2f97574f13",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+      "sha256": "cec3902fb739064738221abf56a8dd64b7ecd8f46a8d857eef54d7f6119fc5cc",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 2528
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+      "sha256": "18779fcc985e990dd7e4b0167d25a6e76e28260e15659aca1237f9f38a41ebec",
+      "loaded_modules": 480,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 31,
+        "command_calls": 0,
+        "actual_write_calls": 1,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 1,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 3,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 48593156
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+      "sha256": "dc2405367d676a8c7394c614595a342450a511600ff343875253ce3a2a031033",
+      "loaded_modules": 479,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 12,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 44265742
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-exhausted-receipt.json",
+      "sha256": "492be806536d31939d86eee607fef276ddfae66b766916bbe8d8e9777b93729c",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 2528
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-normal-receipt.json",
+      "sha256": "371009e5b78cc07a0566a850247911682ef63736ef5ba024ed055c371fd235ba",
+      "loaded_modules": 480,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 31,
+        "command_calls": 0,
+        "actual_write_calls": 1,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 1,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 3,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 48593156
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-reopened-receipt.json",
+      "sha256": "a254f799157b1462de3cfdd6bffc285b7c74f0ea2ce4da5313588da2c3d5566f",
+      "loaded_modules": 479,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 12,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 44265742
+    }
+  ]
+}

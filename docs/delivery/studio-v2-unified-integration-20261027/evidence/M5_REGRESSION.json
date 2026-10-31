@@ -1,0 +1,9 @@
+{
+  "archive": "M5_REGRESSION.zip",
+  "bytes": 10821471,
+  "sha256": "f80c55c0bfef6b2d0d480b41662864957dac0c5f0d24b3f70b6a37a9cecebf27",
+  "files": 157,
+  "raw_bytes": 32727608,
+  "verified_every_payload": true,
+  "omissions": "Dependency links, node_modules, Git, Vite and Python caches excluded; original test sources/config/logs/results retained. FAIL, SKIPPED and development observations preserve original status."
+}

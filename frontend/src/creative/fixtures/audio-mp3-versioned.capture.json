@@ -1,0 +1,409 @@
+{
+  "command": {
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "parameters": {
+      "in_ms": 100,
+      "out_ms": 800,
+      "output_format": "MP3",
+      "sample_rate": 22050,
+      "channels": 1,
+      "gain_db": -6.020599913279624
+    },
+    "allow_cloud": false,
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "audio",
+        "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+        "version": 1,
+        "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545"
+      }
+    ],
+    "license_note": "",
+    "audio_profile": "studio-audio-mp3/1"
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "v2-independent-d7ea311fee594f309555848097d25b90",
+    "branch_id": null,
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "request_digest": "ef448814226b99f208eadd9a52d1964d5f3e9d1b47ba43e7db1015eeb57db337",
+    "provider": null,
+    "sources": [
+      {
+        "snapshot": {
+          "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+          "asset_kind": "audio"
+        },
+        "measured": {
+          "media_type": "audio/wav",
+          "extension": "wav",
+          "duration_ms": 1000,
+          "sample_rate": 48000,
+          "channels": 1,
+          "sample_width": 2,
+          "validation": "PCM_DECODED"
+        }
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "automatic_fallback": false,
+      "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+      "audio_profile": "studio-audio-mp3/1",
+      "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+    },
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "width": null,
+        "height": null,
+        "steps": null,
+        "seed": null,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "source_snapshots": [
+        {
+          "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "audio_profile": "studio-audio-mp3/1"
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "08ca21b2b478e3ed3d8ba240266c8045f36921a24405ea980015ce610d5e600e"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-d067dc5c-e671-4484-b0f0-8d8d709185d6",
+    "novel_id": "v2-independent-d7ea311fee594f309555848097d25b90",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "ef448814226b99f208eadd9a52d1964d5f3e9d1b47ba43e7db1015eeb57db337",
+    "receipt_digest": "b2ad5002aa356dcf225ec6fe97d07f41313b2a9c862e9bfa5c67d0b31bb704fb",
+    "attempt": 0,
+    "created_at": "2026-10-16T22:30:39.843702+00:00",
+    "updated_at": "2026-10-16T22:30:39.843702+00:00",
+    "error_code": null,
+    "review_state": "NOT_READY",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "source_snapshots": [
+        {
+          "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "audio_profile": "studio-audio-mp3/1"
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "automatic_fallback": false,
+      "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+      "audio_profile": "studio-audio-mp3/1",
+      "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-d067dc5c-e671-4484-b0f0-8d8d709185d6",
+    "novel_id": "v2-independent-d7ea311fee594f309555848097d25b90",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "ef448814226b99f208eadd9a52d1964d5f3e9d1b47ba43e7db1015eeb57db337",
+    "receipt_digest": "f249da07b8254ab257698cb5ce27ed37c48244e9c8ba721b7df31607af44259b",
+    "attempt": 1,
+    "created_at": "2026-10-16T22:30:39.843702+00:00",
+    "updated_at": "2026-10-16T22:30:40.252589+00:00",
+    "error_code": null,
+    "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "e7c59558-32fe-46d2-9575-5cbd653bca82",
+      "version": 1,
+      "digest": "e39de2e70b25da743d2caf2fdee62be19ca1e911e8baa15246e081e65eeeab4e",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "source_snapshots": [
+        {
+          "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "audio_profile": "studio-audio-mp3/1"
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "automatic_fallback": false,
+      "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+      "audio_profile": "studio-audio-mp3/1",
+      "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+    },
+    "media_measurement": {
+      "duration_ms": 700,
+      "byte_count": 6312,
+      "sample_rate": 22050,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "mp3",
+      "audio_codec": "mp3",
+      "profile_validation": "MP3_GAPLESS_PCM_VERIFIED",
+      "output_sha256": "e39de2e70b25da743d2caf2fdee62be19ca1e911e8baa15246e081e65eeeab4e",
+      "total_samples": 15435,
+      "decoded_pcm_bytes": 30870,
+      "decoded_pcm_sha256": "4a55df032a41e23c34470865b23681a04cb251f6c04b694269afca8a5acde379",
+      "bit_rate": 64000,
+      "container_duration_ms": 758
+    },
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-d067dc5c-e671-4484-b0f0-8d8d709185d6",
+    "novel_id": "v2-independent-d7ea311fee594f309555848097d25b90",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "ef448814226b99f208eadd9a52d1964d5f3e9d1b47ba43e7db1015eeb57db337",
+    "receipt_digest": "2738daf12ce7ede9b7eae9312422339d405ecba3f577c9f6fc65aca79f95ef6a",
+    "attempt": 1,
+    "created_at": "2026-10-16T22:30:39.843702+00:00",
+    "updated_at": "2026-10-16T22:30:40.431432+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "e7c59558-32fe-46d2-9575-5cbd653bca82",
+      "version": 1,
+      "digest": "e39de2e70b25da743d2caf2fdee62be19ca1e911e8baa15246e081e65eeeab4e",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "source_snapshots": [
+        {
+          "id": "56c70294-98a7-4110-bcac-4cbc763f0f8c",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d9a9bc746582bc81f0ea23cc9ee8dac5ab25bb132ee2d80d60defeb8719e2545",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "audio_profile": "studio-audio-mp3/1"
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 100,
+        "out_ms": 800,
+        "gain_db": -6.020599913279624,
+        "sample_rate": 22050,
+        "channels": 1,
+        "output_format": "MP3"
+      },
+      "automatic_fallback": false,
+      "output_profile": "MP3_LIBMP3LAME_22050_MONO_CBR64",
+      "audio_profile": "studio-audio-mp3/1",
+      "recipe_digest": "653c33584911fbcd02bb41b3c46f42c3f45f176b6c6df4506a765b2c530114e4"
+    },
+    "media_measurement": {
+      "duration_ms": 700,
+      "byte_count": 6312,
+      "sample_rate": 22050,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "mp3",
+      "audio_codec": "mp3",
+      "profile_validation": "MP3_GAPLESS_PCM_VERIFIED",
+      "output_sha256": "e39de2e70b25da743d2caf2fdee62be19ca1e911e8baa15246e081e65eeeab4e",
+      "total_samples": 15435,
+      "decoded_pcm_bytes": 30870,
+      "decoded_pcm_sha256": "4a55df032a41e23c34470865b23681a04cb251f6c04b694269afca8a5acde379",
+      "bit_rate": 64000,
+      "container_duration_ms": 758
+    },
+    "approved_asset_version": 2,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "candidate_base64": "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"
+}

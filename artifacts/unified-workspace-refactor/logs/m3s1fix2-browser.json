@@ -1,0 +1,406 @@
+{
+ "1366_k1": {
+  "checks": [
+   {
+    "sent": 1,
+    "nodes": 2,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-4,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     235,
+     458,
+     295
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 6,
+    "nodes": 6,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-210,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     305,
+     458,
+     365
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 12,
+    "nodes": 12,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-320,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     580,
+     305,
+     760,
+     365
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 13,
+    "nodes": 13,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-320,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     786,
+     165,
+     966,
+     225
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   }
+  ],
+  "dragHit": [
+   637,
+   486.65,
+   "svg"
+  ],
+  "manual": {
+   "manual": "translate(-1670,40) scale(1)",
+   "afterTab": "translate(-1670,40) scale(1)",
+   "afterTab2": "translate(-1670,40) scale(1)",
+   "afterResize": "translate(-1670,40) scale(1)",
+   "notPulledBack": true,
+   "lastStillOff": true
+  },
+  "pass": true,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ },
+ "1366_k1.1": {
+  "checks": [
+   {
+    "sent": 1,
+    "nodes": 2,
+    "before": "translate(-319.9999938964844,40.00000610351563) scale(1.1)",
+    "after": "translate(-6,40.00000610351563) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     244,
+     476,
+     310
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 6,
+    "nodes": 6,
+    "before": "translate(-320,40.00000610351563) scale(1.1)",
+    "after": "translate(-232.60000000000002,40.00000610351563) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     321,
+     476,
+     387
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 12,
+    "nodes": 12,
+    "before": "translate(-320.0000244140625,40.00000610351563) scale(1.1)",
+    "after": "translate(-320.0000244140625,40.00000610351563) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     644,
+     321,
+     842,
+     387
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   },
+   {
+    "sent": 13,
+    "nodes": 13,
+    "before": "translate(-320.0000244140625,40.00000610351563) scale(1.1)",
+    "after": "translate(-399.0000000000001,40.00000610351563) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     791,
+     167,
+     989,
+     233
+    ],
+    "svg": [
+     262,
+     105,
+     1012,
+     554
+    ]
+   }
+  ],
+  "dragHit": [
+   637,
+   486.65,
+   "svg"
+  ],
+  "manual": {
+   "manual": "translate(-1749,40.00000610351563) scale(1.1)",
+   "afterTab": "translate(-1749,40.00000610351563) scale(1.1)",
+   "afterTab2": "translate(-1749,40.00000610351563) scale(1.1)",
+   "afterResize": "translate(-1749,40.00000610351563) scale(1.1)",
+   "notPulledBack": true,
+   "lastStillOff": true
+  },
+  "pass": true,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ },
+ "1920_k1": {
+  "checks": [
+   {
+    "sent": 1,
+    "nodes": 2,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-4,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     235,
+     458,
+     295
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 6,
+    "nodes": 6,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-210,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     305,
+     458,
+     365
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 12,
+    "nodes": 12,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-320,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     580,
+     305,
+     760,
+     365
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 13,
+    "nodes": 13,
+    "before": "translate(-320,40) scale(1)",
+    "after": "translate(-320,40) scale(1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     786,
+     165,
+     966,
+     225
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   }
+  ],
+  "dragHit": [
+   914,
+   751.85,
+   "svg"
+  ],
+  "manual": {
+   "manual": "translate(-1670,40) scale(1)",
+   "afterTab": "translate(-1670,40) scale(1)",
+   "afterTab2": "translate(-1670,40) scale(1)",
+   "afterResize": "translate(-1670,40) scale(1)",
+   "notPulledBack": true,
+   "lastStillOff": true
+  },
+  "pass": true,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ },
+ "1920_k1.1": {
+  "checks": [
+   {
+    "sent": 1,
+    "nodes": 2,
+    "before": "translate(-320.0000244140625,40.000036621093756) scale(1.1)",
+    "after": "translate(-6,40.000036621093756) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     244,
+     476,
+     310
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 6,
+    "nodes": 6,
+    "before": "translate(-320,40.000036621093756) scale(1.1)",
+    "after": "translate(-232.60000000000002,40.000036621093756) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     278,
+     321,
+     476,
+     387
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 12,
+    "nodes": 12,
+    "before": "translate(-320.0000244140625,40.000036621093756) scale(1.1)",
+    "after": "translate(-320.0000244140625,40.000036621093756) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     644,
+     321,
+     842,
+     387
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   },
+   {
+    "sent": 13,
+    "nodes": 13,
+    "before": "translate(-320.0000244140625,40.000036621093756) scale(1.1)",
+    "after": "translate(-320.0000244140625,40.000036621093756) scale(1.1)",
+    "zoomKept": true,
+    "lastInView": true,
+    "lastBox": [
+     870,
+     167,
+     1068,
+     233
+    ],
+    "svg": [
+     262,
+     105,
+     1566,
+     866
+    ]
+   }
+  ],
+  "dragHit": [
+   914,
+   751.85,
+   "svg"
+  ],
+  "manual": {
+   "manual": "translate(-1670.0000244140624,40.000036621093756) scale(1.1)",
+   "afterTab": "translate(-1670.0000244140624,40.000036621093756) scale(1.1)",
+   "afterTab2": "translate(-1670.0000244140624,40.000036621093756) scale(1.1)",
+   "afterResize": "translate(-1670.0000244140624,40.000036621093756) scale(1.1)",
+   "notPulledBack": true,
+   "lastStillOff": true
+  },
+  "pass": true,
+  "nonGet": [],
+  "modelReqs": [],
+  "pageErrors": []
+ }
+}

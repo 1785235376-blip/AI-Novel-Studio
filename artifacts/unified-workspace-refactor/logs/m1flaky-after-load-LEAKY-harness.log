@@ -1,0 +1,5 @@
+run 1 failedTotal 12 protects IMAGE cost=p:9472ms after invalid preview=p:58ms authoritative download=p:234ms authors a director in =p:5555ms asset-B-ABA=p:28ms
+run 2 failedTotal 12 protects IMAGE cost=p:15120ms after invalid preview=p:62ms authoritative download=p:520ms authors a director in =p:10554ms asset-B-ABA=p:65ms
+run 3 failedTotal 12 protects IMAGE cost=p:23514ms after invalid preview=p:73ms authoritative download=p:581ms authors a director in =p:19847ms asset-B-ABA=p:90ms
+run 4 failedTotal 14 protects IMAGE cost=f:31068ms after invalid preview=p:110ms authoritative download=p:1229ms authors a director in =p:26447ms asset-B-ABA=p:89ms
+run 5 failedTotal 15 protects IMAGE cost=f:37643ms after invalid preview=p:66ms authoritative download=p:1112ms authors a director in =f:30592ms asset-B-ABA=p:103ms

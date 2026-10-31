@@ -1,0 +1,44 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_owner_independent_serialization.py::test_existing_row_accepts_nested_mixed_json_object_keys"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_owner_independent_serialization.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-export-independent-evidence/candidate-08fe-json-probe.xml",
+    "--basetemp=/tmp/tmp9pnqtshe/candidate-08fe-json-probe/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp9pnqtshe/candidate-08fe-json-probe/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-export-independent",
+  "failed_reports": [
+    {
+      "failure_message": "TypeError: '<' not supported between instances of 'str' and 'int'",
+      "nodeid": "tests/test_export_owner_independent_serialization.py::test_existing_row_accepts_nested_mixed_json_object_keys",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_export_owner_independent_serialization",
+        "message": "TypeError: '<' not supported between instances of 'str' and 'int'",
+        "name": "test_existing_row_accepts_nested_mixed_json_object_keys",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 1
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

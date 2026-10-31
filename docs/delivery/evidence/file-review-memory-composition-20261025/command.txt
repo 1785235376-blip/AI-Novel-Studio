@@ -1,0 +1,4 @@
+source .runtime/activate-backend.sh
+python docs/delivery/evidence/memory-final-port-fences-20261025/run_tests.py -q tests/test_file_local_bound_review.py tests/test_memory_final_port_fences.py tests/test_bound_memory_project_owner.py tests/test_phase7_adaptation.py tests/test_phase7_adaptation_authorization.py --junitxml=.runtime/final-manual-memory-adaptation.xml
+
+Run in primary checkout; wrapper isolates File state and blocks sockets. Portable log/XML replaces the primary checkout absolute path with <CHECKOUT>.

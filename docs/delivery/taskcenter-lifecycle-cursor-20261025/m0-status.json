@@ -1,0 +1,40 @@
+{
+  "schema": "TASKCENTER_LIFECYCLE_M0_V1",
+  "client_date": "2026-10-26",
+  "timezone": "Asia/Shanghai",
+  "baseline_sha": "1587b57791cbdc3e46f0c09fedea83072e6a8d28",
+  "baseline_tree": "826d0b2917720dacf72ecbccbf3f961b9172f5b9",
+  "comparison_baseline": "ffe1937911cff32d4ebd4770b350674627501d3a",
+  "branch": "work/taskcenter-lifecycle-cursor-20261025",
+  "status": "M0_EXECUTOR_BLOCKED",
+  "scope": "READ_ONLY_AUDIT_AND_INTERFACE_PREPARATION",
+  "product_code_changed": false,
+  "new_unwired_component_added": false,
+  "ci_triggered": false,
+  "local_backend_execution": false,
+  "replacement_codex_task_created": false,
+  "command_attempt": {
+    "command": "Get-Location",
+    "status": "FAILED_BEFORE_PROCESS_CREATION",
+    "error": "exec-server rejected request (-32603): helper_unknown_error: setup refresh had errors"
+  },
+  "cloud_environment_status_tool_exposed": false,
+  "python_probe": "NOT_RUN",
+  "minimum_original_test": "NOT_RUN",
+  "verification_script": "NOT_RUN",
+  "http_cursor_tests": "NOT_RUN",
+  "two_process_and_force_kill": "NOT_RUN",
+  "performance_measurements": "NOT_RUN",
+  "workspace_checkout_status": "UNINSPECTED_NO_CLOUD_CHECKOUT",
+  "prior_external_verification": {
+    "source": "USER_PROVIDED_NOT_INDEPENDENTLY_RETRIEVED_THIS_ROUND",
+    "baseline_focused_passed": 65,
+    "baseline_regression_passed": 198,
+    "expected_red_failures": 12,
+    "candidate_focused_passed": 190,
+    "candidate_regression_passed": 198,
+    "overlapping_groups": true
+  },
+  "git_readback": "BASE_COMMIT_AND_TREE_VERIFIED",
+  "completion_claim": false
+}

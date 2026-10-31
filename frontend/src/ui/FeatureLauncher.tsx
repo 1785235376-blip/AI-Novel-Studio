@@ -2,11 +2,16 @@ import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import type {KeyboardEvent as ReactKeyboardEvent,ReactNode} from 'react';
 import {Activity,BookMarked,BookOpen,ChevronDown,ChevronUp,ClipboardList,Download,FileInput,Film,FolderOpen,History,LayoutDashboard,Map,Menu,PenLine,ScanSearch,ScrollText,Settings2,Shield,Users,UsersRound,WandSparkles,Workflow} from 'lucide-react';
 import {Badge,Button,Tooltip} from './primitives';
+import {t as i18nT} from '../i18n'; // [HERMIA-FE-20261025 I18N P2] rail feature launcher toggle
 
 export interface FeatureItemDefinition {
   id:string;
   label:string;
   icon:ReactNode;
+  /** Optional author-facing hint under the label (N-UX-02 / N-UX-05). */
+  hint?:string;
+  /** LUMEN_NOVEL_IA first-tier mark — discovery only; does not invent FL ids. */
+  tier?:'t1'|'t2'|'t3';
 }
 
 export interface FeatureGroupDefinition {
@@ -19,16 +24,19 @@ export interface FeatureGroupDefinition {
 /**
  * The feature IDs are part of the existing panel contract. Keep them stable:
  * App.tsx and its domain panels use these values to select the active surface.
+ * [HERMIA-FE-20261022 N-UX-02/05/10/11] hints + T1 marks — no new FL ids.
+ * N-UX-10: story = novel 设定/World* path; ≠ storyboard BibleWorkspace.
  */
 export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   {id:'create',label:'创作',icon:<PenLine aria-hidden="true"/>,items:[
-    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>},
-    {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>},
-    {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>},
-    {id:'workflow',label:'AI 写作流程',icon:<Workflow aria-hidden="true"/>},
+    {id:'creation',label:'创作方案与风格',icon:<PenLine aria-hidden="true"/>,tier:'t1',hint:'方案审阅后可用于写作'},
+    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>,tier:'t1',hint:'故事规划 · 人物 · 世界观'},
+    {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>,tier:'t1',hint:'本书是什么'},
+    {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>,tier:'t1',hint:'版本 / 恢复'},
+    {id:'workflow',label:'工作流编排',icon:<Workflow aria-hidden="true"/>,tier:'t3',hint:'多步骤编排'},
   ]},
   {id:'production',label:'制作与分析',icon:<Film aria-hidden="true"/>,items:[
-    {id:'check',label:'一致性检查',icon:<ScanSearch aria-hidden="true"/>},
+    {id:'check',label:'一致性检查',icon:<ScanSearch aria-hidden="true"/>,tier:'t1',hint:'一致性与待审设定'},
     {id:'adaptation',label:'智能改编',icon:<WandSparkles aria-hidden="true"/>},
     {id:'screenplay',label:'影视剧本',icon:<Film aria-hidden="true"/>},
     {id:'assets',label:'资产库',icon:<FolderOpen aria-hidden="true"/>},
@@ -37,7 +45,8 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
     {id:'research',label:'研究资料',icon:<BookMarked aria-hidden="true"/>},
   ]},
   {id:'collaboration',label:'协作',icon:<UsersRound aria-hidden="true"/>,items:[
-    {id:'agents',label:'Agent 团队',icon:<Users aria-hidden="true"/>},
+    {id:'comments',label:'评论与审核',icon:<ClipboardList aria-hidden="true"/>},
+    {id:'agents',label:'AI 团队',icon:<Users aria-hidden="true"/>},
     {id:'members',label:'团队成员',icon:<UsersRound aria-hidden="true"/>},
     {id:'permissions',label:'权限设置',icon:<Shield aria-hidden="true"/>},
   ]},
@@ -50,6 +59,10 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   ]},
 ];
 
+/** First-tier panel ids (LUMEN_NOVEL_IA §2–3) — discoverability only; stable FL ids. */
+// [HERMIA-FE-20261022 REBUILD-W3] hints 去掉内部英文名
+export const NOVEL_TIER1_FEATURE_IDS = ['story','check','creation','overview','history'] as const;
+
 export const FEATURE_GROUP_DEFAULTS:Record<string,boolean>={create:true,production:true,collaboration:false,system:false};
 
 interface FeatureLauncherProps {
@@ -57,6 +70,7 @@ interface FeatureLauncherProps {
   expandedGroups:Readonly<Record<string,boolean>>;
   onSelect:(id:string)=>void;
   onToggleGroup:(id:string)=>void;
+  extraGroups?:readonly FeatureGroupDefinition[];
 }
 
 function focusableElements(root:HTMLElement|null){
@@ -65,14 +79,22 @@ function focusableElements(root:HTMLElement|null){
     : [];
 }
 
-export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGroup}:FeatureLauncherProps){
+function tier1Items(groups:readonly FeatureGroupDefinition[]){
+  const byId: Record<string, FeatureItemDefinition> = {};
+  for (const g of groups) for (const it of g.items) byId[it.id] = it;
+  return NOVEL_TIER1_FEATURE_IDS.map(id => byId[id]).filter(Boolean) as FeatureItemDefinition[];
+}
+
+export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGroup,extraGroups=[]}:FeatureLauncherProps){
   const [open,setOpen]=useState(false);
   const launcherRef=useRef<HTMLDivElement>(null);
   const overlayRef=useRef<HTMLElement>(null);
   const toggleRef=useRef<HTMLButtonElement>(null);
   const wasOpen=useRef(false);
-  const activeGroup=FEATURE_GROUPS.find(group=>group.items.some(item=>item.id===selectedId));
+  const groups=[...FEATURE_GROUPS,...extraGroups];
+  const activeGroup=groups.find(group=>group.items.some(item=>item.id===selectedId));
   const activeItem=activeGroup?.items.find(item=>item.id===selectedId);
+  const t1 = tier1Items(groups);
 
   const openLauncher=()=>{
     // Keep the selected feature reachable when its group was collapsed in the
@@ -132,18 +154,18 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
   };
 
   return <div className="feature-launcher" ref={launcherRef}>
-    <Tooltip label={open?'关闭功能导航':'打开功能导航'}>
+    <Tooltip label={i18nT(open?'fl.close':'fl.open')}>
       <Button
         ref={toggleRef}
         type="button"
         variant="ghost"
         className="feature-launcher__toggle"
-        aria-label={open?'关闭功能导航':'打开功能导航'}
+        aria-label={i18nT(open?'fl.close':'fl.open')}
         aria-expanded={open}
         aria-controls="feature-launcher-overlay"
         onClick={()=>open?closeLauncher():openLauncher()}
       >
-        <Menu aria-hidden="true"/><span>功能导航</span>{open?<ChevronDown aria-hidden="true"/>:<ChevronUp aria-hidden="true"/>}
+        <Menu aria-hidden="true"/><span>{i18nT('fl.label')}</span>{open?<ChevronDown aria-hidden="true"/>:<ChevronUp aria-hidden="true"/>}
       </Button>
     </Tooltip>
     {open&&<nav
@@ -157,8 +179,28 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
         <strong>功能面板</strong>
         <span>{activeItem?`当前：${activeItem.label}`:'选择一个功能'}</span>
       </header>
+      {/* [HERMIA-FE-20261022 N-UX-05] First-tier discoverability strip — existing FL ids only */}
+      <div className="feature-launcher__tier1" role="group" aria-label="第一梯队面板">
+        <span className="feature-launcher__tier1-label">常用</span>
+        <div className="feature-launcher__tier1-items">
+          {t1.map(item=>(
+            <button
+              type="button"
+              key={`t1-${item.id}`}
+              className={`feature-launcher__tier1-btn${selectedId===item.id?' is-active':''}`}
+              data-feature-focusable="true"
+              data-feature-id={`tier1-${item.id}`}
+              data-feature-tier="t1"
+              aria-label={`第一梯队：${item.label}`}
+              aria-current={selectedId===item.id?'page':undefined}
+              onClick={()=>onSelect(item.id)}
+            >{item.label}</button>
+          ))}
+        </div>
+        <p className="feature-launcher__tier1-note">一致性检查里可同时处理待审设定；AI 写作在右栏。</p>
+      </div>
       <div className="feature-launcher__scroll">
-        {FEATURE_GROUPS.map(group=>{
+        {groups.map(group=>{
           const expanded=!!expandedGroups[group.id];
           const active=activeGroup?.id===group.id;
           const groupItemsId=`feature-group-items-${group.id}`;
@@ -179,13 +221,21 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
               {group.items.map(item=><button
                 type="button"
                 key={item.id}
-                className={`feature-item${selectedId===item.id?' is-active':''}`}
+                className={`feature-item${selectedId===item.id?' is-active':''}${item.tier==='t1'?' feature-item--t1':''}${item.id==='workflow'?' feature-item--workflow':''}`}
                 aria-current={selectedId===item.id?'page':undefined}
                 data-feature-item="true"
                 data-feature-id={item.id}
+                data-feature-tier={item.tier||undefined}
                 data-feature-focusable="true"
+                title={item.hint}
                 onClick={()=>onSelect(item.id)}
-              >{item.icon}<span>{item.label}</span></button>)}
+              >
+                {item.icon}
+                <span className="feature-item__text">
+                  <span className="feature-item__label">{item.label}{item.tier==='t1'?<span className="feature-item__t1" aria-hidden="true">T1</span>:null}</span>
+                  {item.hint?<small className="feature-item__hint" aria-hidden="true">{item.hint}</small>:null}
+                </span>
+              </button>)}
             </div>}
           </section>;
         })}

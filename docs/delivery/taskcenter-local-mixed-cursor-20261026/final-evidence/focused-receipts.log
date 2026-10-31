@@ -1,0 +1,47 @@
+cwd=/workspace/shared/taskcenter-local-mixed-verify-c688
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_reader_receipts.py", "tests/test_taskcenter_local_mixed_http.py", "-k", "reader_receipts or exact_aggregate or denied_empty", "-vv", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-mixed-receipt-evidence/focused-receipts.xml", "--basetemp=/tmp/tmpbm0yx_oo/focused-receipts/pytest-tmp", "-o", "cache_dir=/tmp/tmpbm0yx_oo/focused-receipts/pytest-cache"]
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.6.0 -- /workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python
+cachedir: /tmp/tmpbm0yx_oo/focused-receipts/pytest-cache
+rootdir: /workspace/shared/taskcenter-local-mixed-verify-c688
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 35 items / 15 deselected / 20 selected
+
+tests/test_taskcenter_reader_receipts.py::test_only_selected_actual_instances_and_default_result_identical PASSED [  5%]
+tests/test_taskcenter_reader_receipts.py::test_default_denial_contract_unchanged_but_receipt_false[403] PASSED [ 10%]
+tests/test_taskcenter_reader_receipts.py::test_default_denial_contract_unchanged_but_receipt_false[404] PASSED [ 15%]
+tests/test_taskcenter_reader_receipts.py::test_default_denial_contract_unchanged_but_receipt_false[500] PASSED [ 20%]
+tests/test_taskcenter_reader_receipts.py::test_observer_error_is_not_swallowed_as_source_availability[False] PASSED [ 25%]
+tests/test_taskcenter_reader_receipts.py::test_observer_error_is_not_swallowed_as_source_availability[True] PASSED [ 30%]
+tests/test_taskcenter_reader_receipts.py::test_projector_failure_is_not_completed_read PASSED [ 35%]
+tests/test_taskcenter_reader_receipts.py::test_request_receipts_remain_local_on_same_service PASSED [ 40%]
+tests/test_taskcenter_local_mixed_http.py::test_denied_empty_source_never_contributes_cursor_binding[False-semantic_import] PASSED [ 45%]
+tests/test_taskcenter_local_mixed_http.py::test_denied_empty_source_never_contributes_cursor_binding[False-exports] PASSED [ 50%]
+tests/test_taskcenter_local_mixed_http.py::test_denied_empty_source_never_contributes_cursor_binding[True-semantic_import] PASSED [ 55%]
+tests/test_taskcenter_local_mixed_http.py::test_denied_empty_source_never_contributes_cursor_binding[True-exports] PASSED [ 60%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[False-403-semantic_import] PASSED [ 65%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[False-403-exports] PASSED [ 70%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[False-404-semantic_import] PASSED [ 75%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[False-404-exports] PASSED [ 80%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[True-403-semantic_import] PASSED [ 85%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[True-403-exports] PASSED [ 90%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[True-404-semantic_import] PASSED [ 95%]
+tests/test_taskcenter_local_mixed_http.py::test_exact_aggregate_only_denial_cannot_bind_source[True-404-exports] PASSED [100%]
+
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_reader_receipts.py::test_only_selected_actual_instances_and_default_result_identical
+  /workspace/shared/taskcenter-local-mixed-verify-c688/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_reader_receipts.py::test_only_selected_actual_instances_and_default_result_identical
+  /workspace/shared/taskcenter-local-mixed-verify-c688/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-mixed-receipt-evidence/focused-receipts.xml -
+========== 20 passed, 15 deselected, 3 warnings in 151.83s (0:02:31) ===========

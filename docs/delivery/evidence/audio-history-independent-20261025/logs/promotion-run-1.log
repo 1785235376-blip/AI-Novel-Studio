@@ -1,0 +1,56 @@
+E                                                                        [100%]
+==================================== ERRORS ====================================
+________ ERROR at setup of test_real_production_publish_promote_history ________
+
+tmp_path = PosixPath('<REVIEW_ROOT>/.runtime/promotion-history-review/pytest-tmp-1/test_real_production_publish_p0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f75d41f45c0>
+
+    @pytest.fixture
+    def rig(tmp_path, monkeypatch):
+>       from app import api, main
+
+tests/test_studio_asset_query.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/api.py:21: in <module>
+    from .jobs import jobs
+app/jobs.py:8: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+<PYTHON_RUNTIME>/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('<EXECUTOR_HOME>/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '<EXECUTOR_HOME>/.local/share/AI-Novel-Studio'
+
+<PYTHON_RUNTIME>/lib/python3.12/pathlib.py:1311: OSError
+=============================== warnings summary ===============================
+<MAIN_VENV>/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <MAIN_ROOT>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR .runtime/promotion-history-review/test_promotion_probe.py::test_real_production_publish_promote_history
+1 warning, 1 error in 1.57s

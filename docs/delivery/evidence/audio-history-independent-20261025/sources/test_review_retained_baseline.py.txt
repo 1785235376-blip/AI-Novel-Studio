@@ -1,0 +1,40 @@
+"""Fixed-base control: same pre-metadata-commit create failure and usage semantics."""
+import base64
+import json
+import pytest
+from app.repository import FileRepository
+from app.experimental.store import ExperimentalStore
+from app.creative.project_store import CreativeProjectStore
+from app.services.asset_library_service import AssetLibraryService
+
+RAW = b'RIFF-retained-accounting-synthetic'
+
+def test_base_create_precommit_failure_has_no_retained_payload_and_deleted_assets_count(tmp_path, monkeypatch):
+    nid = 'retained-project'
+    FileRepository(tmp_path).create_novel({'id': nid, 'title': 'Synthetic base retained control'})
+    project = CreativeProjectStore(ExperimentalStore(tmp_path, 'file', ''))
+    scope = {'mode': 'local', 'novel_id': nid}
+    owner = AssetLibraryService(tmp_path)
+    scope_key = project.key(nid, scope)
+    original = owner._write_meta
+    def fail_before_current(meta):
+        raise RuntimeError('review synthetic pre-head fault')
+    def create(key):
+        return owner.create(nid, 'retained.wav', base64.b64encode(RAW).decode(), 'audio/wav', 'audio', idempotency_key=key)
+    with owner.project_scope(nid, None, lambda: project.owner_lease(nid), scope_key=scope_key):
+        monkeypatch.setattr(owner, '_write_meta', fail_before_current)
+        for attempt in range(4):
+            with pytest.raises(RuntimeError, match='pre-head fault'):
+                create('same-failed-create-key')
+            assert owner.project_usage(nid) == {'count': 0, 'bytes': 0}
+        payloads = list(owner.root.glob('*.json')) + list(owner.root.glob('*.bin')) + list(owner.root.glob('*.tmp'))
+        assert payloads == []
+        assert not (owner.root / '.audio-history').exists()
+        monkeypatch.setattr(owner, '_write_meta', original)
+        row = create('successful-create-key')
+        owner.delete(row['id'])
+        assert owner.project_usage(nid) == {'count': 1, 'bytes': len(RAW)}
+        print(json.dumps({'case': 'fixed_base_retention_control', 'failed_same_key_creates': 4,
+            'retained_payload_files_after_failures': 0, 'history_root_exists': False,
+            'usage_after_failed_creates': {'count': 0, 'bytes': 0},
+            'usage_after_committed_softdelete': owner.project_usage(nid)}))

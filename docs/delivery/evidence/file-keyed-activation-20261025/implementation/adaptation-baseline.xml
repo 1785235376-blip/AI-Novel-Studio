@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.599" timestamp="2026-10-25T20:18:42.958973+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_phase7_adaptation" name="test_model_adaptation_draft_validates_contract_and_fails_closed" time="0.538"><failure message="AssertionError: assert ('NOT_CONFIGURED' == 'AWAITING_REVIEW'&#10;  &#10;  - AWAITING_REVIEW&#10;  + NOT_CONFIGURED)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fc9a960b2c0&gt;
+
+    def test_model_adaptation_draft_validates_contract_and_fails_closed(monkeypatch):
+        client=TestClient(app);novel=setup_novel(client);url=f"/api/novels/{novel['id']}/adaptations";created=client.post(url,json={'target':'SCREEN','title':f'模型改编-{uuid4()}'}).json();client.post(f"{url}/{created['id']}/approve");materialized=client.post(f"{url}/{created['id']}/materialize");assert materialized.status_code==201,materialized.text;stored=next(item for item in client.get(url).json() if item['id']==created['id']);task=stored['execution_manifest'][0]
+        class ValidNode:
+            def execute(self,_):
+                text='{"schema":"adaptation_chapter_draft","summary":"影视化重写","content":"改编后的可拍摄正文","source_chapter_id":"'+task['source_chapter_id']+'","source_version":'+str(task['source_version'])+'}'
+                response=TextGenerationResponse(text,'completed','deepseek','deepseek-chat');return TextModelNodeOutput(text,response,task['id'])
+        monkeypatch.setattr(adaptation_service.runtime,'prepare_text_route',lambda *_:ValidNode())
+        generated=client.post(f"{url}/{created['id']}/tasks/{task['id']}/generate",json={'mode':'model','provider_id':'deepseek','model_id':'deepseek-chat'}).json()
+&gt;       assert generated['status']=='AWAITING_REVIEW' and generated['draft']['content']=='改编后的可拍摄正文'
+E       AssertionError: assert ('NOT_CONFIGURED' == 'AWAITING_REVIEW'
+E         
+E         - AWAITING_REVIEW
+E         + NOT_CONFIGURED)
+
+tests/test_phase7_adaptation.py:68: AssertionError</failure></testcase></testsuite></testsuites>

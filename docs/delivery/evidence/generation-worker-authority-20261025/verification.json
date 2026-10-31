@@ -1,0 +1,121 @@
+{
+  "base_commit": "4fd956e461d3632b55a3b7e84a7ab344b8abc91f",
+  "reviewed_worker_base": "e9830fc4c24fe8b0b08f2fbba03d3f4dbf35a86e",
+  "preconditions": {
+    "primary_clean": true,
+    "jobs_unchanged_since_reviewed_worker_base": true,
+    "three_reviewed_input_hashes_matched": true
+  },
+  "runs": {
+    "combined-tracked": {
+      "passed": 216,
+      "skipped": 2,
+      "failed": 0,
+      "exit_code": 0,
+      "network_attempts": 0,
+      "warnings": 4,
+      "verified_primary_imports": true,
+      "hashes_unchanged_after_run": true,
+      "suites": {
+        "tests.test_generation_worker_authority": {
+          "passed": 69,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_generation_admission_receipts": {
+          "passed": 39,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_generation_idempotency_contracts": {
+          "passed": 55,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_generation_variants_phase3": {
+          "passed": 10,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_generation_restart_recovery": {
+          "passed": 1,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_idempotency_store_multiprocess": {
+          "passed": 18,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_generation_snapshot_runtime_v056": {
+          "passed": 3,
+          "skipped": 2,
+          "failed": 0
+        },
+        "tests.test_jobs_v03": {
+          "passed": 2,
+          "skipped": 0,
+          "failed": 0
+        },
+        "tests.test_model_runtime_v070": {
+          "passed": 19,
+          "skipped": 0,
+          "failed": 0
+        }
+      }
+    },
+    "combined-review-probes": {
+      "passed": 52,
+      "skipped": 0,
+      "failed": 0,
+      "exit_code": 0,
+      "network_attempts": 0,
+      "warnings": 4,
+      "verified_primary_imports": true,
+      "hashes_unchanged_after_run": true,
+      "suites": {
+        ".runtime.worker-admission-combo-review-20261025.test_independent_admission": {
+          "passed": 6,
+          "skipped": 0,
+          "failed": 0
+        },
+        ".runtime.worker-admission-combo-review-20261025.test_review_live_worker": {
+          "passed": 4,
+          "skipped": 0,
+          "failed": 0
+        },
+        ".runtime.worker-admission-combo-review-20261025.test_review_live_publication_v2": {
+          "passed": 31,
+          "skipped": 0,
+          "failed": 0
+        },
+        ".runtime.worker-admission-combo-review-20261025.test_review_controls": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        }
+      }
+    }
+  },
+  "files": {
+    "app/jobs.py": "71b6d2d20ce51df5cf1d52ca1d51562e1ae1326c1dbadb8164e733395de44c34",
+    "app/api.py": "fb24d6de2a6ec0475257b48b2f5e4939b1a64f8c87938ba1c0b12af20a622670",
+    "app/idempotency.py": "4212aeb54b37d230efbd3bac26a0687274700a51c017fae3b736a41b3e923c3d",
+    "app/services/generation_admission_receipt.py": "9109bd2f4de5dee99f0ea5fb308e8150773b72e81484b199f9fce5673f39b227",
+    "tests/test_generation_worker_authority.py": "9b03821ad7dd30172f4dcd070bc84925e71f16cd1ac6ca5682e0066716cd9406",
+    "tests/test_generation_admission_receipts.py": "aa8b083a210d134fe71e68821c999a3892ff5a0db6214b2dea3357a0b00da4c1",
+    "tests/test_generation_idempotency_contracts.py": "99274bba9e27ddeccba7b0aae505d0f9c7a258e1a9f9bb66a8bb111e1855c87d"
+  },
+  "limits": [
+    "Linux File/Mock tests only; no real provider, PostgreSQL, Windows, packaging or external CI.",
+    "Counts are executed test nodes, not distinct vulnerabilities.",
+    "No commit or push performed.",
+    "No universal owner lease, check-to-write atomicity or restart authorization claim."
+  ],
+  "review_probe_hashes": {
+    "test_review_controls.py": "dda3c4dbb97e686963dec251841a0e516d4da7db49e090bc684648b58492e7fd",
+    "test_review_live_publication_v2.py": "5f12fdd9173447951ab669e0ccc4e2a03fe60aceae831cf8528f969d72be39f0",
+    "test_independent_admission.py": "5843d2076ab604394d532b3b3e536451719fe31e18f9f4c254e74262eb4f50e8",
+    "test_review_live_worker.py": "b62bdb32a02c1d69121e9d534a4dbccb5515c3e8113bb29f0180fa3ec0ce1573"
+  }
+}

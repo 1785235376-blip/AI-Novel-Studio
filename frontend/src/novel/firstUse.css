@@ -1,0 +1,10 @@
+.first-use { margin-block: var(--space-3); }
+.first-use p { color: var(--color-text-secondary); }
+.first-use__scenarios { display: grid; gap: var(--space-3); }
+.first-use__scenarios > section, .first-use__scenarios > details { border-bottom: var(--border-default); padding-block: var(--space-2); }
+.first-use__scenarios h3, .first-use__sample h3 { margin-block: var(--space-2); }
+.first-use summary { cursor: pointer; }
+.first-use summary:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.first-use__sample { padding-top: var(--space-3); }
+.first-use__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block: var(--space-2); }
+.first-use--journey li { margin-block: var(--space-1); }

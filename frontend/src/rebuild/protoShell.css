@@ -1,0 +1,92 @@
+/* [HERMIA-FE-20261022 REBUILD-W2] 原型外壳 — 以 PoemSeed_V2_HiFi_Prototype.html 为准：
+   56px 顶栏 / 44px 上下文条 / 248·1fr·340 三栏贴边 / 32px 状态栏；13px 字号；紧凑分段导航；不折行。
+   仅换外壳视觉，不改数据、hooks 与模块功能。`html .app-shell` 前缀保证覆盖旧外壳样式。 */
+html .app-shell{font:13px/1.5 "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;grid-template-rows:52px 40px minmax(0,1fr) 32px;background:var(--color-bg-app)}
+
+/* ---------- 顶栏 header.gh ---------- */
+html .app-shell .global-header{display:flex;align-items:center;gap:12px;padding:0 16px;min-width:0;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);box-shadow:none;white-space:nowrap}
+html .app-shell .global-header *{white-space:nowrap}
+html .app-shell .product-mark{display:flex;align-items:center;gap:6px;flex:none}
+html .app-shell .product-mark__icon{width:22px;height:22px;border:0;border-radius:6px;background:var(--color-accent-primary);color:var(--color-text-inverse)}
+html .app-shell .product-mark__icon svg{width:13px;height:13px}
+html .app-shell .product-mark__name strong{font-size:15px;font-weight:700;letter-spacing:0}
+html .app-shell .product-mark__name small{display:none}
+html .app-shell .proto-spacer{flex:1 1 0;min-width:0}
+/* 模块分段 .modsw */
+html .app-shell .module-switcher{display:flex;flex:none;align-self:center;height:auto;gap:0;border:1px solid var(--color-border-default);border-radius:6px;overflow:hidden}
+html .app-shell .module-switcher button{min-width:0;justify-content:center;display:inline-flex;align-items:center;gap:0;height:auto;min-height:0;padding:6px 12px;border:0;border-radius:0;background:none;color:var(--color-text-secondary);font-size:13px;font-weight:400;transition:background var(--motion-fast) var(--ease-standard),color var(--motion-fast) var(--ease-standard)}
+html .app-shell .module-switcher button svg{display:none}
+html .app-shell .module-switcher button:hover{background:var(--color-bg-subtle);color:var(--color-text-primary)}
+html .app-shell .module-switcher button.is-active,html .app-shell .module-switcher button[aria-selected="true"]{background:var(--color-accent-subtle);color:var(--color-accent-primary);font-weight:600;border-bottom:0}
+html .app-shell .module-switcher button::after{display:none}
+/* 溢出 / 设置 / 工具 → .btn.ghost */
+html .app-shell .module-overflow>button,html .app-shell .shell-settings>button,html .app-shell .rb-header-tools button,html .app-shell .rb-trigger{display:inline-flex;align-items:center;gap:4px;min-height:0;height:auto;padding:5px 10px;border:1px solid transparent;border-radius:6px;background:none;color:var(--color-text-primary);font-size:13px;line-height:1.5}
+html .app-shell .module-overflow>button:hover,html .app-shell .shell-settings>button:hover,html .app-shell .rb-header-tools button:hover{background:var(--color-bg-subtle)}
+html .app-shell .module-overflow>button svg,html .app-shell .shell-settings>button svg{width:14px;height:14px}
+html .app-shell .module-overflow,html .app-shell .shell-settings,html .app-shell .rb-header-tools{flex:none}
+html .app-shell .rb-header-tools{gap:2px!important}
+/* 搜索 .search */
+html .app-shell .global-search{flex:0 1 260px;min-width:180px;margin-left:0;display:flex;align-items:center;gap:8px;padding:5px 10px 5px 30px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-bg-subtle);color:var(--color-text-muted);font-size:13px;height:auto;min-height:0}
+html .app-shell .global-search svg{left:10px;width:14px;height:14px}
+html .app-shell .global-search kbd{margin-left:auto;padding:0 4px;border:1px solid var(--color-border-default);border-radius:3px;background:transparent;font:11px inherit;font-family:inherit}
+/* 分段：普通/专业 + 浅色/深色 (.seg / .theme-toggle) */
+html .app-shell .global-header .shell-mode-toggle{display:inline-flex;flex:none;gap:0;padding:0;border:1px solid var(--color-border-strong);border-radius:6px;overflow:hidden;background:var(--color-bg-subtle)}
+html .app-shell .global-header .shell-mode-toggle button{min-height:0;height:auto;padding:4px 10px;border:0;border-radius:0;background:transparent;color:var(--color-text-secondary);font-size:13px;line-height:1.3;box-shadow:none}
+html .app-shell .global-header .shell-mode-toggle button:hover:not([aria-pressed="true"]){background:var(--color-bg-elevated);color:var(--color-text-primary)}
+html .app-shell .global-header .shell-mode-toggle button[aria-pressed="true"]{background:var(--color-accent-primary);color:var(--color-text-inverse);font-weight:600}
+/* 身份不进原型顶栏：保留可读 DOM，视觉收起 */
+html .app-shell .current-actor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- 上下文条 .ctx ---------- */
+html .app-shell .context-bar{display:flex;align-items:center;gap:6px;min-width:0;padding:0 16px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);color:var(--color-text-secondary);font-size:13px;white-space:nowrap;overflow:hidden}
+html .app-shell .context-bar i{font-style:normal;margin:0 2px;color:var(--color-text-muted)}
+html .app-shell .context-bar__cta{padding:2px 10px;min-height:0;font-size:12px;border-radius:6px}
+
+/* ---------- 三栏 .body：贴边、无圆角、边框分隔 ---------- */
+html .app-shell .workspace-body{padding:0;gap:0;grid-template-columns:248px minmax(480px,1fr) var(--layout-inspector-width,340px);background:var(--color-bg-app)}
+html .app-shell.is-inspector-collapsed .workspace-body{grid-template-columns:248px minmax(480px,1fr) 0}
+html .app-shell .workspace-sidebar{padding:12px;border:0;border-right:1px solid var(--color-border-default);border-radius:0;background:var(--color-bg-surface);box-shadow:none}
+html .app-shell .workspace-sidebar--novel{padding:0}
+html .app-shell .workspace-body>.workspace-sidebar{width:auto;max-width:none;justify-self:stretch}
+html .app-shell .main-workspace{border:0;border-radius:0;background:var(--color-bg-app);box-shadow:none}
+html .app-shell .workspace-inspector{padding:12px;border:0;border-left:1px solid var(--color-border-default);border-radius:0;background:var(--color-bg-surface);box-shadow:none}
+html .app-shell .workspace-inspector__controls{font-size:12px;font-weight:600;color:var(--color-text-muted)}
+html .app-shell .workspace-sidebar h3,html .app-shell .workspace-inspector h3{font-size:12px;font-weight:600;color:var(--color-text-muted);letter-spacing:0;text-transform:none}
+
+/* ---------- 状态栏 footer.sb ---------- */
+html .app-shell .status-bar{display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--color-bg-surface);border-top:1px solid var(--color-border-default);color:var(--color-text-secondary);font-size:12px;white-space:nowrap;overflow:hidden}
+
+/* ---------- 动效（原型 motion polish）---------- */
+html .app-shell .workspace-inspector{transition:width var(--motion-panel) var(--ease-emphasized),opacity var(--motion-standard) var(--ease-standard)}
+
+/* 窄屏：与原型 @media 1100 一致 */
+@media (max-width:1100px){
+  html .app-shell .workspace-body,html .app-shell.is-inspector-collapsed .workspace-body{grid-template-columns:200px minmax(420px,1fr)}
+  html .app-shell .global-search{min-width:120px}
+  html .app-shell .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0} /* [HERMIA-FE-20261025 P1-HDR] clip 而非 display:none */
+}
+/* [HERMIA-FE-20261025 P1-HDR] 窄屏隐藏搜索文字改为视觉隐藏（clip），可访问名仍含「搜索…」而非仅「Ctrl K」 */
+@media (max-width:1360px){html .app-shell .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell .global-search{flex:0 0 auto;min-width:0}}
+
+/* [HERMIA-FE-20261025 P1-HDR] 专业模式头部收紧：≤1600 取消 logo 220px 最小宽；≤1500 产品名视觉隐藏（仍保留 aria-label），保证设置等头部项不被裁切、无横向溢出 */
+@media (max-width:1600px){html .app-shell[data-shell-mode=pro] .product-mark{min-width:0;padding-right:8px}}
+@media (max-width:1500px){html .app-shell[data-shell-mode=pro] .product-mark__name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell[data-shell-mode=pro] .global-header{gap:8px}}
+/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1280 顶栏收紧（Vera 4b1b82d8 P1/P2）：按宽度降序排在 ≤1180/≤1060 之前，后者仍可再收紧；
+   搜索框与 logo 作为唯一可收缩项吸收溢出，设置/模式/工具均 flex:none，保证「设置」始终在视口内。zh 保留 Ctrl K 至 1181。 */
+@media (max-width:1280px){
+html .app-shell .global-header{gap:8px;padding:0 10px}
+html[lang] .app-shell .global-header .global-search{flex:0 1 auto;min-width:32px;height:28px;box-sizing:border-box;overflow:hidden}
+html[lang] .app-shell .global-header .product-mark{flex:0 1 auto;min-width:32px;overflow:hidden}
+html[lang="en"] .app-shell .global-search>kbd{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+html .app-shell .module-switcher button{padding:6px 9px}
+html .app-shell .global-header .shell-mode-toggle button{padding:4px 7px}
+html .app-shell .module-overflow>button,html .app-shell .shell-settings>button,html .app-shell .rb-header-tools button{padding:5px 6px}
+html .app-shell .shell-settings,html .app-shell .shell-mode-toggle,html .app-shell .rb-header-tools{flex:none}
+}
+/* [HERMIA-FE-20261025 VERA-097 MF2] ≤1180（含 1100/1024）：所有模式收紧头部——产品名、搜索框里的 Ctrl K 视觉隐藏（仍在可访问名中），搜索收成图标按钮，间距 6px，模块分段内边距 8px，保证所有头部项与可 Tab 聚焦项都在视口内 */
+@media (max-width:1180px){html .app-shell .product-mark{min-width:0;padding-right:6px}html .app-shell .product-mark__name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell .global-header{gap:6px;padding:0 10px}html .app-shell .global-search{min-width:0;flex:0 0 auto;width:32px;padding:5px 0 5px 30px}html .app-shell .global-search>kbd{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell .module-switcher button{padding:6px 8px}}
+/* [HERMIA-FE-20261025 VERA-097 MF2] ≤1060：模块分段再收 3px（en 专业 1024 余量） */
+@media (max-width:1060px){html .app-shell .module-switcher button{padding:6px 5px}html .app-shell .global-header{gap:5px}}
+/* [HERMIA-FE-20261025 LAYOUT-P3] 窄屏替代入口：仅在左栏被隐藏（≤1100）时显示 */
+html .app-shell .narrow-nav{display:none;max-width:180px;min-width:0;height:28px;min-height:0;padding:2px 6px;line-height:1.2;text-overflow:ellipsis}
+@media (max-width:1100px){html .app-shell .narrow-nav{display:inline-block}}

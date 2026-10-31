@@ -1,0 +1,20 @@
+{
+  "product_baseline": "c6ec9529043dd63e4b96a34de558939bf2efd848",
+  "product_baseline_tree": "d3d39ce5dbd602f7fabc7fab4357709af61da8f5",
+  "harness_commit": "e5ec0fae16c53ec4945bf2ddc9534af426ecb76c",
+  "harness_tree": "567bf80f6bb7166818028a0b0e31a5d5c69a0b01",
+  "baseline_app_diff_empty": true,
+  "final_harness_files_equal_candidate": true,
+  "harness_source_sha256": {
+    "tests/studio_asset_usage_resource_meter.py": "28a27c1fc5939a2d201d128d3d7e1203f33721c503e3e535d2d970c9909eebcd",
+    "tests/test_studio_asset_usage_resource_costs.py": "ab126a3e1638db660dfd4195cb78f68c63740e00e3baf686663db6fbfbfe044d",
+    "scripts/measure_asset_usage_resource_process.py": "bb196129f2d323279035b0ace81a125a22471b72a3a3561b6dbde20da9dd6014"
+  },
+  "raw_metrics_sha256": {
+    "resource-costs-fresh-process.json": "1417b5cb6ac00d88b32cd5a72f28c6a16dbc88e01af84185e5a3a3812ceee938",
+    "resource-costs-initialized-http.json": "69d9901a4c467184ffc9cea7586f8f1a7f66675461eda9f89937970ff36c4299",
+    "resource-costs-real-authority.json": "a2eaf5ff0ef8336008d5ad7ebc47caa48ff40af2073a3e8e7fc3b4d63349dd84",
+    "resource-costs-schema3-binary.json": "295716d48aca1b2629cc77c1ea94fa9f0f199a345fcc4de68a615e2884af2e49",
+    "summary.json": "1a9fa29c9f6306050e4419510806a412d5e68dc01792a99df3b0b047611341d3"
+  }
+}

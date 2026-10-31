@@ -1,0 +1,23 @@
+from pathlib import Path
+import json, os, sys
+
+def block_network(event, args):
+    if event in ('socket.connect', 'socket.getaddrinfo', 'socket.gethostbyname', 'socket.gethostbyaddr'):
+        raise RuntimeError('INDEPENDENT_REVIEW_NETWORK_FORBIDDEN: ' + event)
+sys.addaudithook(block_network)
+
+if __name__ == '__main__':
+    import app.config
+    import app.services.asset_library_service as asset_owner
+    import app.services.audio_asset_history_store as history_store
+    root = Path(os.environ['PROJECT_ROOT']).resolve()
+    for module in (app.config, asset_owner, history_store):
+        actual = Path(module.__file__).resolve()
+        assert actual.is_relative_to(root), (actual, root)
+    assert app.config.settings.storage_backend == 'file'
+    assert app.config.settings.mock_provider is True
+    assert app.config.settings.enable_cloud is False
+    assert app.config.settings.database_url == ''
+    print(json.dumps({'cwd': os.getcwd(), 'python': sys.executable, 'project_root': str(root), 'module_files': [m.__file__ for m in (app.config, asset_owner, history_store)], 'data_path': str(app.config.settings.data_path()), 'home': os.environ['HOME'], 'tmp': os.environ['TMPDIR'], 'file_mock_only': True, 'network_audit_deny': True}), flush=True)
+    from scripts.run_audio_history_tests import main
+    raise SystemExit(main())

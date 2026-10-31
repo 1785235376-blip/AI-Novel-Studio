@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import stat
 import threading
 import uuid
 from contextlib import contextmanager
@@ -30,6 +31,48 @@ class IdentityIntegrityError(ValueError):
 
 class IdentityMutationError(IdentityIntegrityError):
     """An ordinary update attempted to mutate an authoritative identity."""
+
+
+_REPARSE_POINT_ATTRIBUTE = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+
+
+def _unsafe_lock_entry(entry: os.stat_result) -> bool:
+    """The lock file must be an ordinary file, never a link or reparse point."""
+    return stat.S_ISLNK(entry.st_mode) or bool(
+        getattr(entry, "st_file_attributes", 0) & _REPARSE_POINT_ATTRIBUTE
+    )
+
+
+def _open_lock_file(lock_path: Path):
+    """Open the coordination lock without following a replaced entry.
+
+    The lock file lives inside the server-owned state directory. POSIX enforces
+    ``O_NOFOLLOW`` in the kernel; Windows has no direct equivalent, so the entry
+    is rejected when it is already a link/reparse point and the opened file
+    identity is compared with the pre-open entry, which detects a replacement
+    between the check and the open. Any unsafe or unreadable lock state fails
+    closed as an integrity error before the caller mutates durable identity data.
+    """
+    try:
+        expected = lock_path.lstat()
+    except FileNotFoundError:
+        expected = None
+    except OSError as exc:
+        raise IdentityIntegrityError("IDENTITY_STORE_LOCK_UNSAFE") from exc
+    if expected is not None and _unsafe_lock_entry(expected):
+        raise IdentityIntegrityError("IDENTITY_STORE_LOCK_UNSAFE")
+    flags = os.O_RDWR | getattr(os, "O_BINARY", 0) | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(lock_path, flags)
+    except OSError as exc:
+        raise IdentityIntegrityError("IDENTITY_STORE_LOCK_UNREADABLE") from exc
+    opened = os.fstat(descriptor)
+    if _unsafe_lock_entry(opened) or (
+        expected is not None and (opened.st_dev, opened.st_ino) != (expected.st_dev, expected.st_ino)
+    ):
+        os.close(descriptor)
+        raise IdentityIntegrityError("IDENTITY_STORE_LOCK_UNSAFE")
+    return os.fdopen(descriptor, "r+b")
 
 
 @dataclass(frozen=True, slots=True)
@@ -221,7 +264,7 @@ class StableIdentityStore:
                 pass
             except OSError:
                 pass
-            with lock_path.open("r+b") as handle:
+            with _open_lock_file(lock_path) as handle:
                 if handle.seek(0, os.SEEK_END) == 0:
                     handle.write(b"0")
                     handle.flush()

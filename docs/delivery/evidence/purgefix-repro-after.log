@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ✓ src/workspace/state/u1.purge.host.test.tsx (1 test) 182ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  11:15:30
+   Duration  1.92s (transform 843ms, setup 18ms, collect 1.25s, tests 182ms, environment 280ms, prepare 42ms)
+

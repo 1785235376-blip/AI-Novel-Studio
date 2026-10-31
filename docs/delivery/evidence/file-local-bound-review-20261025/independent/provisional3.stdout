@@ -1,0 +1,41 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-file-adoption-independent/run.py /workspace/scratch/20a0022d2b33/review-file-adoption-independent/test_independent.py -q --junitxml=/workspace/scratch/20a0022d2b33/review-file-adoption-independent/provisional3.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+ M app/file_project_lifecycle.py
+ M app/jobs.py
+ M app/repositories/file/canon.py
+ M app/repositories/file/chapter.py
+ M app/repositories/generation_repository.py
+ M app/services/canon_service.py
+ M app/services/chapter_service.py
+?? app/services/file_generation_review.py
+?? docs/delivery/evidence/file-local-bound-review-20261025/
+?? tests/test_file_local_bound_review.py
+........................                                                 [100%]
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_passive_generation_manager_binding.py:28
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_passive_generation_manager_binding.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_memory_agent_contract.py:107
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:107: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+tests/test_memory_agent_contract.py:132
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-file-adoption-independent/provisional3.xml -
+24 passed, 6 warnings in 7.44s

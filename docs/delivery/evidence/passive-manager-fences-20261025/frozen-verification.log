@@ -1,0 +1,6 @@
+app/jobs.py: OK
+app/api.py: OK
+tests/test_passive_generation_manager_binding.py: OK
+tests/test_passive_generation_manager_postgres.py: OK
+docs/backend/passive-generation-manager-binding.md: OK
+docs/backend/ordinary-project-binding-foundation.md: OK

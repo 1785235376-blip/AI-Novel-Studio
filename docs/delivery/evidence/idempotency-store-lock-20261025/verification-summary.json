@@ -1,0 +1,17 @@
+{
+  "base": "fe90fce950504fded8fb8f3cc8255d0debebf0b9",
+  "new_linux_process_tests": 18,
+  "test_counts": {
+    "tests.test_idempotency_store_multiprocess": 18,
+    "tests.test_generation_idempotency_contracts": 55,
+    "tests.test_generation_variants_phase3": 10,
+    "tests.test_generation_restart_recovery": 1
+  },
+  "total": 84,
+  "pytest_exit": "0",
+  "sha256": {
+    "app/idempotency.py": "f3923db03921f379e2488866240b24285c3a90c843a8614e2bcb97648bddd8e1",
+    "tests/test_idempotency_store_multiprocess.py": "2d9791cf2f5a63b268df57e24e432f94bcc7084519b1800664c028095c2ebfcc"
+  },
+  "junit_sha256": "f10fc03a4dfce586d832841bd02c6ec1d97d34acdb839b484073b6a18b41aa7a"
+}

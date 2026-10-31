@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="3" failures="0" skipped="0" tests="3" time="3.694" timestamp="2026-10-26T10:37:29.656851+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_original_executor_manual_writeback_reopens" time="2.890"><error message="failed on setup with &quot;AssertionError: assert None == 'no-store'&#10; +  where None = get('cache-control')&#10; +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '0b6cb29a-73fe-45d3-86a5-919cf2942a38'}).get&#10; +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '0b6cb29a-73fe-45d3-86a5-919cf2942a38'}) = &lt;Response [200 OK]&gt;.headers&quot;">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002053356B810&gt;, nid='query-374b2c5766bd4305b499cbab07...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000205342BA510&gt;
+
+    @pytest.fixture
+    def studio(rig, monkeypatch):
+        from app.actor_context import SessionContext
+        from app.asset_providers import AssetProviderRegistry, AssetGenerationResult
+        from app import dependencies, asset_provider_config
+        from app.audio_production_store import AudioProductionStore
+        from app.creative.production_execution import ProductionExecutionService
+        from app.creative.service import CreativeService
+        from app.creative.workspace import IndependentWorkspaceService
+        from app.experimental import api
+        from app.experimental.media import MediaService
+        from app.experimental.production_lineage import ProductionLineageService
+        from app.experimental.store import ExperimentalStore
+        from app.services.asset_library_service import AssetLibraryService
+        from app.services.image_job_service import ImageJobService
+        from app.services.video_assembly_service import VideoAssemblyService
+    
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2")
+        e = SimpleNamespace(rig=rig, client=rig.client, nid=rig.nid, scope=rig.scope,
+            actor="local-author", headers={"X-Session-Token": "studio-integration-host"}, calls=[])
+        rig.sessions.register("studio-integration-host", SessionContext("studio-session", "studio-client", e.actor, "studio-workspace"))
+        image = BytesIO()
+        Image.new("RGB", (64, 64), (20, 110, 170)).save(image, format="PNG")
+        e.png = image.getvalue()
+        registry = AssetProviderRegistry()
+        e.config_path = rig.root / "asset-providers.json"
+        monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(e.config_path))
+        monkeypatch.setattr(dependencies, "asset_provider_registry", registry)
+        e.configuration = {"endpoint": "http://127.0.0.1:7860", "default_model": "synthetic.safetensors",
+            "api_style": "automatic1111", "enabled": True, "local": True, "requires_credential": False}
+&gt;       saved = check(e.client.put("/api/asset-providers/automatic1111", headers=e.headers, json=e.configuration))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_backend_integration_v2.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [200 OK]&gt;, status = 200
+
+    def check(response, status=200):
+        assert response.status_code == status, response.text
+&gt;       assert response.headers.get("cache-control") == "no-store"
+E       AssertionError: assert None == 'no-store'
+E        +  where None = get('cache-control')
+E        +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '0b6cb29a-73fe-45d3-86a5-919cf2942a38'}).get
+E        +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '0b6cb29a-73fe-45d3-86a5-919cf2942a38'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_studio_backend_integration_v2.py:100: AssertionError</error></testcase><testcase classname="tests.test_studio_backend_integration_v2" name="test_revocation_while_waiting_for_queue_owner_does_not_persist" time="0.090"><error message="failed on setup with &quot;AssertionError: assert None == 'no-store'&#10; +  where None = get('cache-control')&#10; +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '91f474ad-11b2-4e37-806e-d7c583dc10ec'}).get&#10; +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '91f474ad-11b2-4e37-806e-d7c583dc10ec'}) = &lt;Response [200 OK]&gt;.headers&quot;">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002053578EA90&gt;, nid='query-fc9fabd0708c4342aa57c60448...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000020533C021D0&gt;
+
+    @pytest.fixture
+    def studio(rig, monkeypatch):
+        from app.actor_context import SessionContext
+        from app.asset_providers import AssetProviderRegistry, AssetGenerationResult
+        from app import dependencies, asset_provider_config
+        from app.audio_production_store import AudioProductionStore
+        from app.creative.production_execution import ProductionExecutionService
+        from app.creative.service import CreativeService
+        from app.creative.workspace import IndependentWorkspaceService
+        from app.experimental import api
+        from app.experimental.media import MediaService
+        from app.experimental.production_lineage import ProductionLineageService
+        from app.experimental.store import ExperimentalStore
+        from app.services.asset_library_service import AssetLibraryService
+        from app.services.image_job_service import ImageJobService
+        from app.services.video_assembly_service import VideoAssemblyService
+    
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2")
+        e = SimpleNamespace(rig=rig, client=rig.client, nid=rig.nid, scope=rig.scope,
+            actor="local-author", headers={"X-Session-Token": "studio-integration-host"}, calls=[])
+        rig.sessions.register("studio-integration-host", SessionContext("studio-session", "studio-client", e.actor, "studio-workspace"))
+        image = BytesIO()
+        Image.new("RGB", (64, 64), (20, 110, 170)).save(image, format="PNG")
+        e.png = image.getvalue()
+        registry = AssetProviderRegistry()
+        e.config_path = rig.root / "asset-providers.json"
+        monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(e.config_path))
+        monkeypatch.setattr(dependencies, "asset_provider_registry", registry)
+        e.configuration = {"endpoint": "http://127.0.0.1:7860", "default_model": "synthetic.safetensors",
+            "api_style": "automatic1111", "enabled": True, "local": True, "requires_credential": False}
+&gt;       saved = check(e.client.put("/api/asset-providers/automatic1111", headers=e.headers, json=e.configuration))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_backend_integration_v2.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [200 OK]&gt;, status = 200
+
+    def check(response, status=200):
+        assert response.status_code == status, response.text
+&gt;       assert response.headers.get("cache-control") == "no-store"
+E       AssertionError: assert None == 'no-store'
+E        +  where None = get('cache-control')
+E        +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '91f474ad-11b2-4e37-806e-d7c583dc10ec'}).get
+E        +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': '91f474ad-11b2-4e37-806e-d7c583dc10ec'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_studio_backend_integration_v2.py:100: AssertionError</error></testcase><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_change_after_preview_cannot_enter_queue" time="0.093"><error message="failed on setup with &quot;AssertionError: assert None == 'no-store'&#10; +  where None = get('cache-control')&#10; +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': 'e9b164fe-f446-42fe-8456-cec5b0a238d7'}).get&#10; +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': 'e9b164fe-f446-42fe-8456-cec5b0a238d7'}) = &lt;Response [200 OK]&gt;.headers&quot;">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002053570F710&gt;, nid='query-3784ff1e87b547029bce4526d6...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000020533BC07D0&gt;
+
+    @pytest.fixture
+    def studio(rig, monkeypatch):
+        from app.actor_context import SessionContext
+        from app.asset_providers import AssetProviderRegistry, AssetGenerationResult
+        from app import dependencies, asset_provider_config
+        from app.audio_production_store import AudioProductionStore
+        from app.creative.production_execution import ProductionExecutionService
+        from app.creative.service import CreativeService
+        from app.creative.workspace import IndependentWorkspaceService
+        from app.experimental import api
+        from app.experimental.media import MediaService
+        from app.experimental.production_lineage import ProductionLineageService
+        from app.experimental.store import ExperimentalStore
+        from app.services.asset_library_service import AssetLibraryService
+        from app.services.image_job_service import ImageJobService
+        from app.services.video_assembly_service import VideoAssemblyService
+    
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2")
+        e = SimpleNamespace(rig=rig, client=rig.client, nid=rig.nid, scope=rig.scope,
+            actor="local-author", headers={"X-Session-Token": "studio-integration-host"}, calls=[])
+        rig.sessions.register("studio-integration-host", SessionContext("studio-session", "studio-client", e.actor, "studio-workspace"))
+        image = BytesIO()
+        Image.new("RGB", (64, 64), (20, 110, 170)).save(image, format="PNG")
+        e.png = image.getvalue()
+        registry = AssetProviderRegistry()
+        e.config_path = rig.root / "asset-providers.json"
+        monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(e.config_path))
+        monkeypatch.setattr(dependencies, "asset_provider_registry", registry)
+        e.configuration = {"endpoint": "http://127.0.0.1:7860", "default_model": "synthetic.safetensors",
+            "api_style": "automatic1111", "enabled": True, "local": True, "requires_credential": False}
+&gt;       saved = check(e.client.put("/api/asset-providers/automatic1111", headers=e.headers, json=e.configuration))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_backend_integration_v2.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [200 OK]&gt;, status = 200
+
+    def check(response, status=200):
+        assert response.status_code == status, response.text
+&gt;       assert response.headers.get("cache-control") == "no-store"
+E       AssertionError: assert None == 'no-store'
+E        +  where None = get('cache-control')
+E        +    where get = Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': 'e9b164fe-f446-42fe-8456-cec5b0a238d7'}).get
+E        +      where Headers({'content-length': '226', 'content-type': 'application/json', 'x-request-id': 'e9b164fe-f446-42fe-8456-cec5b0a238d7'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_studio_backend_integration_v2.py:100: AssertionError</error></testcase></testsuite></testsuites>

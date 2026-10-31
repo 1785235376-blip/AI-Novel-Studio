@@ -1,0 +1,110 @@
+<CHECKOUT>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+  class GlossaryDocument(StrictModel):
+<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+  class VerificationReceipt(Frozen):
+{
+  "baseline": "e99e91ed84763224638b80ffb83ae7880fa4f1a0",
+  "module_paths": {
+    "app.api": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/api.py",
+    "app.jobs": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/jobs.py",
+    "app.lore.memory_agent": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/lore/memory_agent.py",
+    "app.model_runtime": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/model_runtime.py",
+    "test_generation_variants_phase3": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/tests/test_generation_variants_phase3.py",
+    "test_memory_agent_contract": "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/tests/test_memory_agent_contract.py"
+  },
+  "source_sha256": {
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/api.py": "f4c86099235c55bfa919bf27aa07c2ff0b342c2ec4d64aca247f9c1ae339644c",
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/jobs.py": "5a5803f53173752b31471e3649fb134a76d1267b6e45418157634db8a8553ba9",
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/lore/memory_agent.py": "00449fdafa51de7790400fa083cd69fa1e9cf92f2ce524cd80c6c4c40d53031b",
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/app/model_runtime.py": "7c3196f542ebc5ec03291544e653e732b4b381cb0a84e8441bad2d8e297aeac4",
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/tests/test_generation_variants_phase3.py": "c54bfb222839e8a73003a091ebed07ba0608147fab1df444c397c7ea35331755",
+    "<CHECKOUT>/.runtime/variant-memory-review-20261025/baseline-tree/tests/test_memory_agent_contract.py": "140de9e8167b80bc21b28f601bf4bced759e357d0a40435b1fb8fcba2c81dd38"
+  },
+  "blocked_side_effects": [],
+  "probes": [
+    {
+      "probe": "concurrent-repeat-01",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-02",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-03",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-04",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-05",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-06",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-07",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-08",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-09",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "concurrent-repeat-10",
+      "outcome": "PASSED"
+    },
+    {
+      "probe": "duplicate-dispatch-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "AssertionError",
+      "detail": ""
+    },
+    {
+      "probe": "cancel-siblings-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "AssertionError",
+      "detail": ""
+    },
+    {
+      "probe": "nonpersistent-reject-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "AssertionError",
+      "detail": ""
+    },
+    {
+      "probe": "retry-instruction-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "AssertionError",
+      "detail": ""
+    },
+    {
+      "probe": "memory-remote-trust-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "Failed",
+      "detail": "DID NOT RAISE <class 'app.model_runtime.ModelRuntimeError'>"
+    },
+    {
+      "probe": "memory-dispatch-guard-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "Failed",
+      "detail": "DID NOT RAISE <class 'app.model_runtime.ModelRuntimeError'>"
+    },
+    {
+      "probe": "memory-idempotency-mutant",
+      "outcome": "MUTANT_KILLED",
+      "exception": "AssertionError",
+      "detail": ""
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+ "1366": {
+  "tasksGetsOnMount": [
+   "/api/novels/73586d65/experimental/workspace/tasks?q=&failed_only=false"
+  ],
+  "palette": [
+   "显示面板（切到下一个主区面板）:-",
+   "送到执行画布:true",
+   "打开执行画布:-",
+   "打开创作画布:-",
+   "打开任务:-"
+  ],
+  "sent": [
+   {
+    "n": 1,
+    "inside": true,
+    "node": [
+     60,
+     60,
+     186
+    ],
+    "svg": [
+     750,
+     449
+    ]
+   }
+  ],
+  "focusAfterT": "tasks",
+  "tabBeforeP": "execution",
+  "tabAfterP": "creative",
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440": {
+  "tasksGetsOnMount": [
+   "/api/novels/73586d65/experimental/workspace/tasks?q=&failed_only=false"
+  ],
+  "palette": [
+   "显示面板（切到下一个主区面板）:-",
+   "送到执行画布:true",
+   "打开执行画布:-",
+   "打开创作画布:-",
+   "打开任务:-"
+  ],
+  "sent": [
+   {
+    "n": 1,
+    "inside": true,
+    "node": [
+     60,
+     60,
+     186
+    ],
+    "svg": [
+     824,
+     581
+    ]
+   }
+  ],
+  "focusAfterT": "tasks",
+  "tabBeforeP": "execution",
+  "tabAfterP": "creative",
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920": {
+  "tasksGetsOnMount": [
+   "/api/novels/73586d65/experimental/workspace/tasks?q=&failed_only=false"
+  ],
+  "palette": [
+   "显示面板（切到下一个主区面板）:-",
+   "送到执行画布:true",
+   "打开执行画布:-",
+   "打开创作画布:-",
+   "打开任务:-"
+  ],
+  "sent": [
+   {
+    "n": 1,
+    "inside": true,
+    "node": [
+     60,
+     60,
+     186
+    ],
+    "svg": [
+     1304,
+     761
+    ]
+   }
+  ],
+  "focusAfterT": "tasks",
+  "tabBeforeP": "execution",
+  "tabAfterP": "creative",
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": []
+ }
+}

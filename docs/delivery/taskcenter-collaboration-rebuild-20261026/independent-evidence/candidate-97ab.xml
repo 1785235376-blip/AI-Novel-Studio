@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="22" time="135.093" timestamp="2026-10-26T20:59:51.827577+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_taskcenter_external_adversarial" name="test_real_post_and_repeated_pages_are_private_zero_write[/api]" time="78.949"><failure message="AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}&#10;  &#10;  Omitting 13 identical items, use -vv to show&#10;  Differing items:&#10;  {'next_cursor': 'tc1.XER_Fx9bj8euHEXowrFv1jV5zRRRnw9oMCU6rotmBP0.1.p1yQBLHhBEStYpPGjzjP6MYZlkMXrK7HT3BLaVH8drc'} != {'next_cursor': 'tc1.fVVJTNVqBAXF70IXqwwAvXE4JaZR5MIhFT6RlZl1rKM.1.R89sp_wOEzfr01APTXdyolDSQihpliYtfn5brQbl4Qc'}&#10;  Use -v to get more diff">env = namespace(r=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f14ea0081a0&gt;, nid='query-85cf14e56b8446b799...t': '2026-10-26T12:00:40.616757+00:00', 'history': []}], mp=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f14eedafec0&gt;)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+            r=read(e,token,prefix); assert r.status_code==200,r.text
+            b=r.json(); seen.extend(x['id'] for x in b['items'])
+            assert b['observed_total']==3 and r.headers['cache-control']=='no-store'
+            assert 'private-manuscript' not in r.text and str(e.r.root) not in r.text
+            assert 'row_lifecycles' not in r.text and 'token-reader' not in r.text
+&gt;           assert read(e,token,prefix).json()==b
+E           AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}
+E             
+E             Omitting 13 identical items, use -vv to show
+E             Differing items:
+E             {'next_cursor': 'tc1.XER_Fx9bj8euHEXowrFv1jV5zRRRnw9oMCU6rotmBP0.1.p1yQBLHhBEStYpPGjzjP6MYZlkMXrK7HT3BLaVH8drc'} != {'next_cursor': 'tc1.fVVJTNVqBAXF70IXqwwAvXE4JaZR5MIhFT6RlZl1rKM.1.R89sp_wOEzfr01APTXdyolDSQihpliYtfn5brQbl4Qc'}
+E             Use -v to get more diff
+
+tests/test_taskcenter_external_adversarial.py:64: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_external_adversarial" name="test_real_post_and_repeated_pages_are_private_zero_write[/api/v1]" time="11.077"><failure message="AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}&#10;  &#10;  Omitting 13 identical items, use -vv to show&#10;  Differing items:&#10;  {'next_cursor': 'tc1.1Ao7Z2Om_jtDozPiChROgW0N5HJO5qwZDPSnzV874-s.1.o4uMhGtRMo3uAAwzo2hvnz4rAf7zX0J96W5VppGdRu0'} != {'next_cursor': 'tc1.qLzsmed1AbZvuLhafLxFoJ-_hdJuUIYzO3vY6HDsSAA.1.__qBjUFBET3IR3M6VCeJqwu4FdxnskpEs1RAoLeOxhY'}&#10;  Use -v to get more diff">env = namespace(r=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f14e8b98380&gt;, nid='query-f856cae1129e41869f...t': '2026-10-26T12:01:13.585294+00:00', 'history': []}], mp=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f14e856da60&gt;)
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+            r=read(e,token,prefix); assert r.status_code==200,r.text
+            b=r.json(); seen.extend(x['id'] for x in b['items'])
+            assert b['observed_total']==3 and r.headers['cache-control']=='no-store'
+            assert 'private-manuscript' not in r.text and str(e.r.root) not in r.text
+            assert 'row_lifecycles' not in r.text and 'token-reader' not in r.text
+&gt;           assert read(e,token,prefix).json()==b
+E           AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}
+E             
+E             Omitting 13 identical items, use -vv to show
+E             Differing items:
+E             {'next_cursor': 'tc1.1Ao7Z2Om_jtDozPiChROgW0N5HJO5qwZDPSnzV874-s.1.o4uMhGtRMo3uAAwzo2hvnz4rAf7zX0J96W5VppGdRu0'} != {'next_cursor': 'tc1.qLzsmed1AbZvuLhafLxFoJ-_hdJuUIYzO3vY6HDsSAA.1.__qBjUFBET3IR3M6VCeJqwu4FdxnskpEs1RAoLeOxhY'}
+E             Use -v to get more diff
+
+tests/test_taskcenter_external_adversarial.py:64: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_external_adversarial" name="test_same_token_same_session_revoke_register_invalidates" time="4.686" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_resolver_replacement_equal_first_generation_rejected" time="1.426" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_membership_inactive_active_direct_service_invalidates" time="3.244" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_grant_exact_payload_restore_via_repository_invalidates" time="2.414" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_unrelated_membership_and_irrelevant_grant_preserve_cursor" time="1.363" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_revocation_inside_original_source_reader_rejects_whole_response[False]" time="0.666" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_revocation_inside_original_source_reader_rejects_whole_response[True]" time="2.152" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_scope_retire_and_same_topology_recreation_invalidates" time="1.986" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_observed_private_field_aba_invalidates_even_unchanged_projection" time="3.048" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_other_collection_changes_preserve_cursor" time="2.350" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_recreated_project_never_claims_old_source_document" time="3.865" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_admin_cross_domain_grant_semantics_and_direct_recreation" time="1.702" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_other_actor_cannot_reuse_token_even_with_same_permissions" time="7.633" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_branch_revision_and_presentation_changes_do_not_create_global_epoch" time="6.389" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-identity-_identity_lifecycle_v1]" time="0.011" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-scope-_scope_lifecycle_v1]" time="0.005" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-grants-_grant_lifecycle_v1]" time="0.010" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-identity-_identity_lifecycle_v1]" time="0.017" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-scope-_scope_lifecycle_v1]" time="0.007" /><testcase classname="tests.test_taskcenter_external_adversarial" name="test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-grants-_grant_lifecycle_v1]" time="0.007" /></testsuite></testsuites>

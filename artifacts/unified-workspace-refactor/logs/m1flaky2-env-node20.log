@@ -1,0 +1,13 @@
+v20.19.2
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/experimental/ComicLayoutsPanel.duplicate.test.tsx > ID collisions fail atomically and displayed pixels and consent disappear on successful copy
+ FAIL  src/experimental/ComicLayoutsPanel.framing.test.tsx > revokes displayed pixels warning consent and approval on framing edits
+ FAIL  src/experimental/ComicLayoutsPanel.framing.test.tsx > drops pending old pixels on client replacement and starts new controls at the new document
+ FAIL  src/experimental/ComicLayoutsPanel.geometry.test.tsx > blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview
+ FAIL  src/experimental/ComicLayoutsPanel.layers.test.tsx > ORA download assertion rejects stringified jsdom Blob
+ FAIL  src/experimental/ComicLayoutsPanel.test.tsx > explicit raster preview is required for image review and double clicks submit once
+ FAIL  src/experimental/ComicLayoutsPanel.test.tsx > approved-review ticket clears when geometry changes; preview widths do not rerender geometry
+ FAIL  src/experimental/ComicLayoutsPanel.test.tsx > approves only displayed current pixels with exact digest and downloads only the approved version
+ FAIL  src/experimental/ComicLayoutsPanel.typography.test.tsx > retires preview pixels and review consent after a typography edit
+ FAIL  src/experimental/VoiceSubtitlePanels.test.tsx > explicit measured mix captures versions, avoids duplicate sends and keeps approval separate from preview
+      Tests  10 failed | 70 passed (80)

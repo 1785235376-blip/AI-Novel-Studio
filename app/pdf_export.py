@@ -25,6 +25,8 @@ import threading
 from pathlib import Path
 from typing import Iterable, Mapping
 
+from .document import chapter_body_text
+
 
 class PDFExportError(RuntimeError):
     """A safe, user-facing PDF export failure.
@@ -179,14 +181,37 @@ def pdf_font_status() -> dict[str, object]:
     }
 
 
+def _assert_pdf_characters(values, *, font_name=None, embedded=False):
+    """Fail before producing an artifact if the selected font drops glyphs.
+
+    The CID fallback uses a UCS-2 CMap and cannot represent astral text. For a
+    selected embedded TrueType font, check its actual character-to-glyph table.
+    No manuscript fragments or local font paths are exposed in the error.
+    """
+    glyphs = None
+    if embedded:
+        from reportlab.pdfbase import pdfmetrics
+        glyphs = pdfmetrics.getFont(font_name).face.charToGlyph
+    unsupported = any(
+        ord(char) > 0xFFFF if glyphs is None else not glyphs.get(ord(char))
+        for value in values for char in str(value) if not char.isspace()
+    )
+    if unsupported:
+        raise PDFExportError(
+            "PDF_UNSUPPORTED_CHARACTERS",
+            "当前 PDF 字体不能完整表示正文字符，请使用包含所需字符的字体或导出 DOCX/EPUB。",
+            details={"font_mode": "embedded" if embedded else "cid-fallback"},
+        )
+
+
 def _pdf_hex_text(value: object) -> bytes:
     """Encode text for the PDF ``UniGB-UCS2-H`` CMap."""
 
     text = _clean_text(value).replace("\r\n", "\n").replace("\r", "\n")
-    # The built-in Adobe GB CMap is UCS-2.  Replace astral code points with a
-    # visible placeholder instead of writing an invalid odd-length string.
-    text = "".join(char if ord(char) <= 0xFFFF else "□" for char in text)
-    return text.encode("utf-16-be", "replace").hex().encode("ascii")
+    # This CMap cannot represent astral characters; never replace manuscript
+    # text with a placeholder in a successful artifact.
+    _assert_pdf_characters([text])
+    return text.encode("utf-16-be").hex().encode("ascii")
 
 
 def _fallback_line_width(text: str, font_size: float) -> float:
@@ -274,6 +299,7 @@ def _novel_to_pdf_cid_fallback(
     clean_title = _clean_text(title).strip() or "AI Novel Studio"
     clean_version = _clean_text(version).strip()
     normalized = _normalise_chapters(chapters)
+    _assert_pdf_characters([clean_title, clean_version] + [value for chapter in normalized for value in chapter.values()])
     page_width, page_height = 595.28, 841.89  # A4 points
     left, right, top, bottom = 62.36, 62.36, 62.36, 56.69
     content_width = page_width - left - right
@@ -390,7 +416,7 @@ def _normalise_chapters(chapters: Iterable[Mapping[str, object]] | None) -> list
         if not isinstance(item, Mapping):
             continue
         title = _clean_text(item.get("title", "")).strip()
-        content = _clean_text(item.get("content", ""))
+        content = _clean_text(chapter_body_text(item))
         result.append({"title": title, "content": content})
     return result
 
@@ -462,6 +488,8 @@ def novel_to_pdf(
     clean_title = _clean_text(title).strip() or "AI Novel Studio"
     clean_version = _clean_text(version).strip()
     normalized = _normalise_chapters(chapters)
+    _assert_pdf_characters([clean_title, clean_version] + [value for chapter in normalized for value in chapter.values()],
+                           font_name=font_name, embedded=embedded)
 
     if progress_callback:
         progress_callback(35, "准备 PDF 排版")
@@ -629,3 +657,72 @@ def novel_to_pdf(
     if progress_callback:
         progress_callback(92, "PDF 文件已生成")
     return payload
+
+
+class RasterPDFCopy:
+    """ReportLab reading-copy sink for already flattened, bounded RGB PNG pages.
+
+    The caller must admit ALL pages with ``raster_pdf_bounds`` before creating
+    this sink, and account for PNG decoding and the reserved PDF work separately.
+    No manuscript/font exporter, files, global ReportLab settings or queue is used.
+    """
+
+    def __init__(self, stream, *, title: str, receipt: str):
+        from reportlab.pdfgen.canvas import Canvas
+        self._canvas = Canvas(stream, invariant=1, pageCompression=0, pdfVersion=(1, 4))
+        self._canvas.setTitle(title)
+        self._canvas.setAuthor('AI Novel Studio')
+        self._canvas.setSubject(receipt)
+        self._canvas.setCreator('AI Novel Studio raster reading copy')
+        self._page_number = 0
+
+    def page(self, png: bytes, width: int, height: int, dpi: int):
+        from PIL import Image
+        from reportlab.lib.utils import ImageReader
+        from reportlab.pdfbase.pdfdoc import PDFImageXObject
+        with Image.open(io.BytesIO(png)) as image:
+            if image.format != 'PNG' or image.mode != 'RGB' or image.size != (width, height):
+                raise ValueError('COMIC_PUBLICATION_SEGMENTS_INVALID')
+            image.load()
+            points = (width * 72 / dpi, height * 72 / dpi)
+            self._canvas.setPageSize(points)
+            # Canvas.drawImage deduplicates by raw RGB bytes WITHOUT geometry.
+            # Equal byte strings at 320x640 and 640x320 are different rasters!
+            # Register a unique image XObject per ordered page using ReportLab's
+            # same PDFImageXObject encoder; no cache, global settings or paths.
+            self._page_number += 1
+            name = f'ComicPage{self._page_number}'
+            image_object = PDFImageXObject(name, ImageReader(image), mask=None)
+            self._canvas._doc.addForm(name, image_object)
+            self._canvas.saveState()
+            self._canvas.scale(*points)
+            self._canvas.doForm(name)
+            self._canvas.restoreState()
+            self._canvas.showPage()
+
+    def finish(self):
+        self._canvas.save()
+
+
+def raster_pdf_bounds(dimensions):
+    """Conservative whole-request work/output admission for the raster sink.
+
+    ReportLab 4's RGB path retains zlib (optionally ASCII85) image streams and
+    serializes before writing to the destination. A bounded destination alone
+    therefore does NOT bound its work. For P pixels, RGB/Pillow, tobytes, digest
+    concatenation, zlib worst-case expansion, ASCII85 (including Python fallback
+    objects), retained streams, PDFStream/indirect-object concatenations, final
+    PDFFile join and destination/getvalue copies are reserved together at 192P.
+    One MiB/page plus 4 MiB covers bounded dictionaries, xref, page commands and
+    receipt metadata. This is cumulative allocation-work admission, not an RSS
+    guarantee for Python/the renderer. No fonts, text layout or attachments occur.
+
+    Zlib's worst-case RGB size followed by ASCII85 stays below 4P+1KiB per
+    page at the owner's supported geometries. 64KiB/page + 4MiB also bounds
+    structural/metadata bytes; it is checked before serialization, not after.
+    """
+    dimensions = tuple(dimensions)
+    pixels = sum(width * height for width, height in dimensions)
+    count = len(dimensions)
+    return (192 * pixels + count * 1024 * 1024 + 4 * 1024 * 1024,
+            4 * pixels + count * 65536 + 4 * 1024 * 1024)

@@ -1,0 +1,9 @@
+[HERMIA-FE-20261024 M3-s1fix2] count note: each line ran m3s1fix.test.tsx (5) + m3s1.test.tsx (7) = 12 tests, hence '(12)'; the new M3-s1fix file has 5 tests.
+== reveal: no pan ->       Tests  2 failed | 10 passed (12)
+== host does not pass revealLast ->       Tests  1 failed | 11 passed (12)
+== viewport memory not keyed by novel (single bucket) ->       Tests  2 failed | 10 passed (12)
+== setter writes single bucket ->       Tests  2 failed | 10 passed (12)
+== static inspector title ->       Tests  1 failed | 11 passed (12)
+== dirty notice says 章节属性 ->       Tests  1 failed | 11 passed (12)
+== no re-report on re-click ->       Tests  1 failed | 11 passed (12)
+== no blocked notice in inspector ->       Tests  1 failed | 11 passed (12)

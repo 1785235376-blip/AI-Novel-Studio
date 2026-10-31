@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError, type Chapter } from "../api";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
 
+import {PendingCanonReviewPanel} from "./PendingCanonReviewPanel";
+import {FindingReviewPanel} from "./FindingReviewPanel";
+
 type Finding = {
   id: string;
   finding_type?: string;
@@ -57,6 +60,7 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
   const overdue = result?.foreshadowing?.overdue || [];
   if (!projectId) return <EmptyState title="未选择小说" detail="先打开一部小说再做一致性检查。" />;
   return (
+    <div data-novel-anchor="continuity">
     <Panel title="一致性检查" actions={<Badge tone="info">{result?.execution_label || "契约校验，未调用模型"}</Badge>}>
       {!chapter ? (
         <EmptyState title="请先选择章节" detail="主路径会读取当前章节正文和故事资料库，不再要求粘贴 JSON。" />
@@ -119,6 +123,8 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
           </p>
         ))}
       </div>
+      <FindingReviewPanel projectId={projectId} chapter={chapter}/>
+      <PendingCanonReviewPanel projectId={projectId} chapterId={chapter?.id}/>
       <details>
         <summary>高级：粘贴事实 JSON</summary>
         <p className="novel-help">仅在需要手工注入时间线/地点/知识事实时使用。日常检查请点「检查当前章节」。</p>
@@ -126,5 +132,6 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
         <Button onClick={runJson} disabled={!projectId}>运行 JSON 检查</Button>
       </details>
     </Panel>
+    </div>
   );
 }

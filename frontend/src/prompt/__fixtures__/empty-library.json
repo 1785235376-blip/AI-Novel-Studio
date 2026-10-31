@@ -1,0 +1,62 @@
+{
+  "contract": "studio-prompt-library/1",
+  "schema_version": 1,
+  "advisory_only": true,
+  "execution_authority": false,
+  "auto_modify": false,
+  "required_fields": [
+    "text",
+    "negative_prompt",
+    "model_reference",
+    "parameters",
+    "seed",
+    "reference_assets",
+    "output_assets",
+    "purpose",
+    "origin",
+    "binding",
+    "version"
+  ],
+  "purposes": [
+    "IMAGE",
+    "VIDEO",
+    "AUDIO",
+    "TEXT"
+  ],
+  "origins": [
+    "MANUAL",
+    "AI_GENERATED",
+    "IMPORTED"
+  ],
+  "binding_kinds": [
+    "CHARACTER",
+    "SCENE",
+    "SHOT",
+    "ASSET"
+  ],
+  "entries": [],
+  "prompt_count": 0,
+  "revision_count": 0,
+  "malformed": [],
+  "malformed_count": 0,
+  "conflicted": [],
+  "conflicted_count": 0,
+  "scanned_assets": 0,
+  "projected_families": 0,
+  "returned": 0,
+  "limit": 200,
+  "truncated": false,
+  "has_more": false,
+  "total_known": false,
+  "read_complete": true,
+  "unknown_is_explicit": true,
+  "bible_index_supplied": true,
+  "project_id": "fixture-empty-d6afebf8ab7747689cb2943a6837507b",
+  "scope": {
+    "mode": "local",
+    "novel_id": "fixture-empty-d6afebf8ab7747689cb2943a6837507b"
+  },
+  "generated_at": "2026-10-15T01:17:35.115108+00:00",
+  "asset_owner": "AssetLibraryService",
+  "bible_owner": "bible_projection"
+}

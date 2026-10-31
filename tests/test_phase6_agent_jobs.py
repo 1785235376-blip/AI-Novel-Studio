@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+import pytest
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -18,9 +20,9 @@ def setup_novel(client):
     client.headers.update(trusted_agent_headers())
     novel=client.post('/api/novels',json={'title':f'Agent Job {uuid4()}'}).json();client.post(f"/api/novels/{novel['id']}/chapters",json={'title':'第一章','content':'雾港封锁。'});return novel['id']
 
-def trusted_agent_headers():
+def trusted_agent_headers(actor_id="agent-job-test", workspace_id="workspace-a"):
     token=f'agent-job-test-{uuid4()}'
-    trusted_session_resolver.register(token,SessionContext(actor_id='agent-job-test',workspace_id='workspace-a',session_id='session',client_id='test'))
+    trusted_session_resolver.register(token,SessionContext(actor_id=actor_id,workspace_id=workspace_id,session_id='session',client_id='test'))
     return {'X-Session-Token':token}
 
 def create_agent_job(client,payload):
@@ -144,10 +146,54 @@ def test_completed_agent_job_cannot_execute_twice():
 
 
 def test_agent_job_review_accepts_without_applying_output(monkeypatch):
-    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
-    accepted=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','note':'方向可用'}).json()
-    assert accepted['status']=='ACCEPTED' and accepted['review']['applied'] is False
-    assert accepted['review']['reviewed_by']=='author-1' and len(accepted['review']['output_hash'])==64
+    client = TestClient(app)
+    nid = setup_novel(client)
+    reviewer = f"review-owner-{uuid4()}"
+    client.headers.update(trusted_agent_headers(actor_id=reviewer))
+    created = complete_model_job(client, monkeypatch, nid)
+    chapters_before = client.get(f"/api/novels/{nid}/chapters").json()
+    assert created["owner"]["actor_id"] == reviewer
+
+    response = client.post(
+        f"/api/agent-jobs/{created['id']}/review",
+        json={"decision": "ACCEPTED", "reviewed_by": "author-1", "note": "方向可用"},
+    )
+
+    assert response.status_code == 200
+    accepted = response.json()
+    assert accepted["status"] == "ACCEPTED" and accepted["review"]["applied"] is False
+    # The payload is compatibility input, not authority to impersonate an actor.
+    assert accepted["review"]["reviewed_by"] == reviewer
+    assert accepted["review"]["reviewed_by"] != "author-1"
+    assert len(accepted["review"]["output_hash"]) == 64
+    assert agent_job_service.get(created["id"])["review"] == accepted["review"]
+    assert client.get(f"/api/novels/{nid}/chapters").json() == chapters_before
+
+
+@pytest.mark.parametrize(
+    ("requester", "workspace", "status"),
+    [(None, "workspace-a", 401), ("invalid", "workspace-a", 401),
+     ("other-actor", "workspace-a", 403), ("agent-job-test", "other-workspace", 403)],
+)
+def test_agent_job_review_cannot_impersonate_owner(monkeypatch, requester, workspace, status):
+    client = TestClient(app)
+    nid = setup_novel(client)
+    created = complete_model_job(client, monkeypatch, nid)
+    before = agent_job_service.get(created["id"])
+    if requester == "invalid":
+        headers = {"X-Session-Token": "invalid"}
+    elif requester is None:
+        headers = {}
+    else:
+        headers = trusted_agent_headers(actor_id=requester, workspace_id=workspace)
+
+    response = TestClient(app).post(
+        f"/api/agent-jobs/{created['id']}/review", headers=headers,
+        json={"decision": "ACCEPTED", "reviewed_by": created["owner"]["actor_id"]},
+    )
+
+    assert response.status_code == status
+    assert agent_job_service.get(created["id"]) == before
 
 
 def test_agent_job_review_rejects_and_prevents_second_decision(monkeypatch):

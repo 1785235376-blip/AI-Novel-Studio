@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="10.600" timestamp="2026-10-25T20:34:28.207171+09:00" hostname="8a71deb1dd45"><testcase classname=".runtime.independent-keyed-review.test_adoption_owner_window" name="test_adoption_chain_final_receipt_owner_entry_replacement[manual]" time="5.830"><failure message="AssertionError: late manual receipt was durably written after owner replacement&#10;assert b'{\n  &quot;id&quot;: ...gin&quot;: null\n}' == b'{\n  &quot;id&quot;: ...gin&quot;: null\n}'&#10;  &#10;  At index 321 diff: b'E' != b'I'&#10;  Use -v to get more diff">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/tmp/...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+stage = 'manual'
+
+    @pytest.mark.parametrize('stage',['manual','memory'])
+    def test_adoption_chain_final_receipt_owner_entry_replacement(keyed,stage):
+        f=keyed
+        _,job=queued(f); finish(f,job)
+        repository=f.bundle.generations; original=repository._graph_owner
+        replaced=[]; retained={}; replacement={}
+        @contextmanager
+        def scheduled(row,binding):
+            with original(row,binding):
+                match=(stage=='manual' and row.get('status')=='ACCEPTED' and FIELD in row) or (stage=='memory' and row.get('status')=='COMPLETED' and 'memory_project_binding' in row)
+                if match and not replaced:
+                    path=repository.root/(row['id']+'.json')
+                    retained['path']=path; retained['bytes']=path.read_bytes()
+                    replace_owner(f); replaced.append(True); replacement.update(files(f))
+                yield
+        f.monkeypatch.setattr(repository,'_graph_owner',scheduled)
+        response=f.client.post(f'/api/generation/{job.id}/accept',json={'expected_version':1})
+        if stage=='memory': assert f.memory_finished.wait(10)
+        assert replaced, (stage,response.status_code,response.text)
+        assert files(f)==replacement
+&gt;       assert retained['path'].read_bytes()==retained['bytes'], f'late {stage} receipt was durably written after owner replacement'
+E       AssertionError: late manual receipt was durably written after owner replacement
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ...gin": null\n}'
+E         
+E         At index 321 diff: b'E' != b'I'
+E         Use -v to get more diff
+
+.runtime/independent-keyed-review/test_adoption_owner_window.py:27: AssertionError</failure></testcase><testcase classname=".runtime.independent-keyed-review.test_adoption_owner_window" name="test_adoption_chain_final_receipt_owner_entry_replacement[memory]" time="2.243"><failure message="AssertionError: late memory receipt was durably written after owner replacement&#10;assert b'{\n  &quot;id&quot;: ...&quot;: []\n  }\n}' == b'{\n  &quot;id&quot;: ...caa8&quot;\n  }\n}'&#10;  &#10;  At index 169 diff: b'C' != b'G'&#10;  Use -v to get more diff">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/tmp/...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+stage = 'memory'
+
+    @pytest.mark.parametrize('stage',['manual','memory'])
+    def test_adoption_chain_final_receipt_owner_entry_replacement(keyed,stage):
+        f=keyed
+        _,job=queued(f); finish(f,job)
+        repository=f.bundle.generations; original=repository._graph_owner
+        replaced=[]; retained={}; replacement={}
+        @contextmanager
+        def scheduled(row,binding):
+            with original(row,binding):
+                match=(stage=='manual' and row.get('status')=='ACCEPTED' and FIELD in row) or (stage=='memory' and row.get('status')=='COMPLETED' and 'memory_project_binding' in row)
+                if match and not replaced:
+                    path=repository.root/(row['id']+'.json')
+                    retained['path']=path; retained['bytes']=path.read_bytes()
+                    replace_owner(f); replaced.append(True); replacement.update(files(f))
+                yield
+        f.monkeypatch.setattr(repository,'_graph_owner',scheduled)
+        response=f.client.post(f'/api/generation/{job.id}/accept',json={'expected_version':1})
+        if stage=='memory': assert f.memory_finished.wait(10)
+        assert replaced, (stage,response.status_code,response.text)
+        assert files(f)==replacement
+&gt;       assert retained['path'].read_bytes()==retained['bytes'], f'late {stage} receipt was durably written after owner replacement'
+E       AssertionError: late memory receipt was durably written after owner replacement
+E       assert b'{\n  "id": ...": []\n  }\n}' == b'{\n  "id": ...caa8"\n  }\n}'
+E         
+E         At index 169 diff: b'C' != b'G'
+E         Use -v to get more diff
+
+.runtime/independent-keyed-review/test_adoption_owner_window.py:27: AssertionError</failure></testcase></testsuite></testsuites>

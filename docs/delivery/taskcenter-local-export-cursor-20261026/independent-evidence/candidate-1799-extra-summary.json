@@ -1,0 +1,56 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_local_export_external_singleton.py::test_actual_singleton_replacement_same_root_cannot_reuse_cursor",
+    "tests/test_taskcenter_local_export_external_singleton.py::test_private_aba_inside_original_reader_aborts_first_page"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_local_export_external_singleton.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-independent-evidence/candidate-1799-extra.xml",
+    "--basetemp=/tmp/tmp7_mtud34/candidate-1799-extra/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp7_mtud34/candidate-1799-extra/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-independent",
+  "failed_reports": [
+    {
+      "failure_message": "file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_singleton.py, line 6\n  def test_actual_singleton_replacement_same_root_cannot_reuse_cursor(export_rig,monkeypatch):\nfile /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15\n  @pytest.fixture\n  def export_rig(rig,monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15",
+      "nodeid": "tests/test_taskcenter_local_export_external_singleton.py::test_actual_singleton_replacement_same_root_cannot_reuse_cursor",
+      "when": "setup"
+    },
+    {
+      "failure_message": "file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_singleton.py, line 13\n  def test_private_aba_inside_original_reader_aborts_first_page(export_rig,monkeypatch):\nfile /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15\n  @pytest.fixture\n  def export_rig(rig,monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15",
+      "nodeid": "tests/test_taskcenter_local_export_external_singleton.py::test_private_aba_inside_original_reader_aborts_first_page",
+      "when": "setup"
+    }
+  ],
+  "junit": {
+    "errors": [
+      {
+        "classname": "tests.test_taskcenter_local_export_external_singleton",
+        "message": "failed on setup with \"file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_singleton.py, line 6\n  def test_actual_singleton_replacement_same_root_cannot_reuse_cursor(export_rig,monkeypatch):\nfile /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15\n  @pytest.fixture\n  def export_rig(rig,monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15\"",
+        "name": "test_actual_singleton_replacement_same_root_cannot_reuse_cursor",
+        "type": null
+      },
+      {
+        "classname": "tests.test_taskcenter_local_export_external_singleton",
+        "message": "failed on setup with \"file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_singleton.py, line 13\n  def test_private_aba_inside_original_reader_aborts_first_page(export_rig,monkeypatch):\nfile /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15\n  @pytest.fixture\n  def export_rig(rig,monkeypatch):\nE       fixture 'rig' not found\n>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory\n>       use 'pytest --fixtures [testpath]' for help on them.\n\n/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15\"",
+        "name": "test_private_aba_inside_original_reader_aborts_first_page",
+        "type": null
+      }
+    ],
+    "failures": [],
+    "present": true,
+    "tests": 2
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

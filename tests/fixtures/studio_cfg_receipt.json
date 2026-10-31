@@ -1,0 +1,444 @@
+{
+  "project": "v2-independent-bf422288e0e348469646c537b0eb1eeb",
+  "providers": {
+    "items": [
+      {
+        "operation_id": "m5.image.t2i",
+        "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+        "model_id": "local-8d3041ad54b52890b98ff2bd",
+        "local": true,
+        "route_digest": "415a2bd3b4be5ef959c77c79f0ed626a557ce619e658642463a5c253646e7e20",
+        "capability": "TEXT_TO_IMAGE",
+        "supported_parameters": [
+          "width",
+          "height",
+          "steps",
+          "seed",
+          "negative_prompt",
+          "cfg"
+        ],
+        "readiness": "CONFIGURED_NOT_VERIFIED",
+        "product_acceptance": "LOCAL_REQUIRED",
+        "image_capabilities": {
+          "recipe_id": "comfy-sd-checkpoint-v1",
+          "reference_limit": 5,
+          "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+          "mask_semantics": "WHITE_KEEP_BLACK_REPAINT",
+          "structural_only": true,
+          "inference_verified": false,
+          "cfg": {
+            "min": 0,
+            "max": 100,
+            "default": 7
+          }
+        }
+      },
+      {
+        "operation_id": "m5.image.i2i",
+        "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+        "model_id": "local-8d3041ad54b52890b98ff2bd",
+        "local": true,
+        "route_digest": "12bca4f2bbdbe0e3d7942a94a65ea171d92c4d34f439dd8a52de933edf44de4f",
+        "capability": "IMAGE_EDIT",
+        "supported_parameters": [
+          "steps",
+          "seed",
+          "negative_prompt",
+          "denoising_strength"
+        ],
+        "readiness": "CONFIGURED_NOT_VERIFIED",
+        "product_acceptance": "LOCAL_REQUIRED",
+        "image_capabilities": {
+          "recipe_id": "comfy-sd-checkpoint-v1",
+          "reference_limit": 5,
+          "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+          "mask_semantics": "WHITE_KEEP_BLACK_REPAINT",
+          "structural_only": true,
+          "inference_verified": false,
+          "cfg": {
+            "min": 0,
+            "max": 100,
+            "default": 7
+          }
+        }
+      },
+      {
+        "operation_id": "m5.image.reference",
+        "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+        "model_id": "local-8d3041ad54b52890b98ff2bd",
+        "local": true,
+        "route_digest": "12bca4f2bbdbe0e3d7942a94a65ea171d92c4d34f439dd8a52de933edf44de4f",
+        "capability": "IMAGE_EDIT",
+        "supported_parameters": [
+          "steps",
+          "seed",
+          "negative_prompt",
+          "denoising_strength"
+        ],
+        "readiness": "CONFIGURED_NOT_VERIFIED",
+        "product_acceptance": "LOCAL_REQUIRED",
+        "image_capabilities": {
+          "recipe_id": "comfy-sd-checkpoint-v1",
+          "reference_limit": 5,
+          "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+          "mask_semantics": "WHITE_KEEP_BLACK_REPAINT",
+          "structural_only": true,
+          "inference_verified": false,
+          "cfg": {
+            "min": 0,
+            "max": 100,
+            "default": 7
+          }
+        }
+      },
+      {
+        "operation_id": "m5.image.inpaint",
+        "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+        "model_id": "local-8d3041ad54b52890b98ff2bd",
+        "local": true,
+        "route_digest": "12bca4f2bbdbe0e3d7942a94a65ea171d92c4d34f439dd8a52de933edf44de4f",
+        "capability": "IMAGE_EDIT",
+        "supported_parameters": [
+          "steps",
+          "seed",
+          "negative_prompt",
+          "denoising_strength"
+        ],
+        "readiness": "CONFIGURED_NOT_VERIFIED",
+        "product_acceptance": "LOCAL_REQUIRED",
+        "image_capabilities": {
+          "recipe_id": "comfy-sd-checkpoint-v1",
+          "reference_limit": 5,
+          "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+          "mask_semantics": "WHITE_KEEP_BLACK_REPAINT",
+          "structural_only": true,
+          "inference_verified": false,
+          "cfg": {
+            "min": 0,
+            "max": 100,
+            "default": 7
+          }
+        }
+      }
+    ],
+    "automatic_runtime_start": false,
+    "health_probed": false,
+    "credentials_read": false
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "v2-independent-bf422288e0e348469646c537b0eb1eeb",
+    "branch_id": null,
+    "operation_id": "m5.image.t2i",
+    "request_id": "graph-media-7d422a4f1ef08388099f62f20e8fae00aebbb1d245fd82a49899b30f332994e1",
+    "request_digest": "40a72c86b670f3c214092dce7812eeef16261e587f4bd408d46adb7e64243fff",
+    "provider": {
+      "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+      "model_id": "local-8d3041ad54b52890b98ff2bd",
+      "local": true,
+      "route_digest": "415a2bd3b4be5ef959c77c79f0ed626a557ce619e658642463a5c253646e7e20"
+    },
+    "sources": [],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 512,
+        "height": 512,
+        "steps": 37,
+        "seed": 0,
+        "cfg": 0.0,
+        "negative_prompt": "synthetic negative"
+      },
+      "automatic_fallback": false,
+      "image_recipe_id": "comfy-sd-checkpoint-v1",
+      "reference_weights": [],
+      "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+      "mask_semantics": null,
+      "workflow": {
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "sdxl-fixture.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Synthetic explicit sampling prompt",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "synthetic negative",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 512,
+            "height": 512,
+            "batch_size": 1
+          }
+        },
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 0,
+            "steps": 37,
+            "cfg": 0.0,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "e0472ea74f8f1b4b3adf947850dc8e88de9b0624937deb0648661616223ebb59"
+    },
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "graph-media-7d422a4f1ef08388099f62f20e8fae00aebbb1d245fd82a49899b30f332994e1",
+      "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+      "model_id": "local-8d3041ad54b52890b98ff2bd",
+      "prompt": "Synthetic explicit sampling prompt",
+      "parameters": {
+        "width": 512,
+        "height": 512,
+        "steps": 37,
+        "seed": 0,
+        "cfg": 0.0,
+        "negative_prompt": "synthetic negative",
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": null,
+        "out_ms": null
+      },
+      "source_snapshots": [],
+      "allow_cloud": false,
+      "license_note": "Synthetic author declaration"
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "4e25cac19090328b1443773eb397e68c2aa31e206380e0726338fc1294505449"
+  },
+  "job": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7289960c-7172-424a-a729-ef5e90da7bb3",
+    "novel_id": "v2-independent-bf422288e0e348469646c537b0eb1eeb",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "40a72c86b670f3c214092dce7812eeef16261e587f4bd408d46adb7e64243fff",
+    "receipt_digest": "df3bf345429f7567699c39bba531d336404cd0a8500dd69fb1a594cde95b6597",
+    "attempt": 1,
+    "created_at": "2026-10-20T17:34:32.606006+00:00",
+    "updated_at": "2026-10-20T17:34:33.567563+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+      "id": "d61bf4d7-6ebf-49ce-8d87-7268c662f1ed",
+      "version": 1,
+      "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "graph-media-7d422a4f1ef08388099f62f20e8fae00aebbb1d245fd82a49899b30f332994e1",
+      "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+      "model_id": "local-8d3041ad54b52890b98ff2bd",
+      "prompt": "Synthetic explicit sampling prompt",
+      "parameters": {
+        "width": 512,
+        "height": 512,
+        "steps": 37,
+        "seed": 0,
+        "cfg": 0.0,
+        "negative_prompt": "synthetic negative"
+      },
+      "source_snapshots": [],
+      "allow_cloud": false,
+      "license_note": "Synthetic author declaration"
+    },
+    "provider": {
+      "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
+      "model_id": "local-8d3041ad54b52890b98ff2bd",
+      "local": true,
+      "route_digest": "415a2bd3b4be5ef959c77c79f0ed626a557ce619e658642463a5c253646e7e20"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "COMFYUI_BUILTIN_IMAGE",
+      "parameters": {
+        "width": 512,
+        "height": 512,
+        "steps": 37,
+        "seed": 0,
+        "cfg": 0.0,
+        "negative_prompt": "synthetic negative"
+      },
+      "automatic_fallback": false,
+      "image_recipe_id": "comfy-sd-checkpoint-v1",
+      "reference_weights": [],
+      "reference_semantics": "WEIGHTED_PIXEL_INITIALIZATION",
+      "mask_semantics": null,
+      "workflow": {
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "sdxl-fixture.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Synthetic explicit sampling prompt",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "synthetic negative",
+            "clip": [
+              "4",
+              1
+            ]
+          }
+        },
+        "5": {
+          "class_type": "EmptyLatentImage",
+          "inputs": {
+            "width": 512,
+            "height": 512,
+            "batch_size": 1
+          }
+        },
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 0,
+            "steps": 37,
+            "cfg": 0.0,
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "5",
+              0
+            ]
+          }
+        },
+        "8": {
+          "class_type": "VAEDecode",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "9": {
+          "class_type": "SaveImage",
+          "inputs": {
+            "filename_prefix": "AI-Novel-Studio",
+            "images": [
+              "8",
+              0
+            ]
+          }
+        }
+      },
+      "recipe_digest": "e0472ea74f8f1b4b3adf947850dc8e88de9b0624937deb0648661616223ebb59"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "graph-media-7d422a4f1ef08388099f62f20e8fae00aebbb1d245fd82a49899b30f332994e1",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "cfg": 0,
+  "models_or_GPU": 0
+}

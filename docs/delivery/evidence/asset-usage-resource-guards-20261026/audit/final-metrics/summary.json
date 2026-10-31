@@ -1,0 +1,796 @@
+[
+  {
+    "file": "resource-costs-fresh-process.json",
+    "request_phase": "first_page",
+    "read_calls": 389,
+    "read_bytes": 241066,
+    "json_decodes": 389,
+    "mkdir_attempts": 368,
+    "created_directories": 0,
+    "write_opens": 368,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 27979751,
+    "elapsed_seconds": 6.623410500003956,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 241066,
+        "charged_file_attempts": 389
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 49,
+        "read_bytes": 186298,
+        "json_decodes": 49,
+        "guarded_read_calls": 49,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 147,
+        "read_bytes": 34104,
+        "json_decodes": 147,
+        "guarded_read_calls": 147,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-fresh-process.json",
+    "request_phase": "continuation_page",
+    "read_calls": 420,
+    "read_bytes": 263740,
+    "json_decodes": 420,
+    "mkdir_attempts": 398,
+    "created_directories": 0,
+    "write_opens": 398,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 579273,
+    "elapsed_seconds": 1.3225669999956153,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 263740,
+        "charged_file_attempts": 420
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 203,
+        "read_bytes": 17052,
+        "json_decodes": 203,
+        "guarded_read_calls": 203,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 54,
+        "read_bytes": 205308,
+        "json_decodes": 54,
+        "guarded_read_calls": 54,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 157,
+        "read_bytes": 36424,
+        "json_decodes": 157,
+        "guarded_read_calls": 157,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-fresh-process.json",
+    "request_phase": "repeat_continuation_page",
+    "read_calls": 420,
+    "read_bytes": 263740,
+    "json_decodes": 420,
+    "mkdir_attempts": 398,
+    "created_directories": 0,
+    "write_opens": 398,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 407464,
+    "elapsed_seconds": 1.3682605999929365,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 263740,
+        "charged_file_attempts": 420
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 203,
+        "read_bytes": 17052,
+        "json_decodes": 203,
+        "guarded_read_calls": 203,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 54,
+        "read_bytes": 205308,
+        "json_decodes": 54,
+        "guarded_read_calls": 54,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 157,
+        "read_bytes": 36424,
+        "json_decodes": 157,
+        "guarded_read_calls": 157,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-fresh-process.json",
+    "request_phase": "repeat_first_page",
+    "read_calls": 389,
+    "read_bytes": 241066,
+    "json_decodes": 389,
+    "mkdir_attempts": 368,
+    "created_directories": 0,
+    "write_opens": 368,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 403830,
+    "elapsed_seconds": 1.2169505000056233,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 241066,
+        "charged_file_attempts": 389
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 49,
+        "read_bytes": 186298,
+        "json_decodes": 49,
+        "guarded_read_calls": 49,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 147,
+        "read_bytes": 34104,
+        "json_decodes": 147,
+        "guarded_read_calls": 147,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-initialized-http.json",
+    "request_phase": "first_page",
+    "read_calls": 389,
+    "read_bytes": 241066,
+    "json_decodes": 389,
+    "mkdir_attempts": 368,
+    "created_directories": 0,
+    "write_opens": 368,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 490753,
+    "elapsed_seconds": 1.3348536000121385,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 241066,
+        "charged_file_attempts": 389
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 49,
+        "read_bytes": 186298,
+        "json_decodes": 49,
+        "guarded_read_calls": 49,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 147,
+        "read_bytes": 34104,
+        "json_decodes": 147,
+        "guarded_read_calls": 147,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-initialized-http.json",
+    "request_phase": "continuation_page",
+    "read_calls": 420,
+    "read_bytes": 263740,
+    "json_decodes": 420,
+    "mkdir_attempts": 398,
+    "created_directories": 0,
+    "write_opens": 398,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 615809,
+    "elapsed_seconds": 1.3467451000178698,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 263740,
+        "charged_file_attempts": 420
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 203,
+        "read_bytes": 17052,
+        "json_decodes": 203,
+        "guarded_read_calls": 203,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 54,
+        "read_bytes": 205308,
+        "json_decodes": 54,
+        "guarded_read_calls": 54,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 157,
+        "read_bytes": 36424,
+        "json_decodes": 157,
+        "guarded_read_calls": 157,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-initialized-http.json",
+    "request_phase": "repeat_continuation_page",
+    "read_calls": 420,
+    "read_bytes": 263740,
+    "json_decodes": 420,
+    "mkdir_attempts": 398,
+    "created_directories": 0,
+    "write_opens": 398,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 452895,
+    "elapsed_seconds": 1.3492219000181649,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 263740,
+        "charged_file_attempts": 420
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 203,
+        "read_bytes": 17052,
+        "json_decodes": 203,
+        "guarded_read_calls": 203,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 54,
+        "read_bytes": 205308,
+        "json_decodes": 54,
+        "guarded_read_calls": 54,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 157,
+        "read_bytes": 36424,
+        "json_decodes": 157,
+        "guarded_read_calls": 157,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-initialized-http.json",
+    "request_phase": "repeat_first_page",
+    "read_calls": 389,
+    "read_bytes": 241066,
+    "json_decodes": 389,
+    "mkdir_attempts": 368,
+    "created_directories": 0,
+    "write_opens": 368,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 453475,
+    "elapsed_seconds": 1.2425069999881089,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 241066,
+        "charged_file_attempts": 389
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 49,
+        "read_bytes": 186298,
+        "json_decodes": 49,
+        "guarded_read_calls": 49,
+        "observed_sizes": [
+          3802
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 147,
+        "read_bytes": 34104,
+        "json_decodes": 147,
+        "guarded_read_calls": 147,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 6,
+        "read_bytes": 4956,
+        "json_decodes": 6,
+        "guarded_read_calls": 6,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-real-authority.json",
+    "request_phase": "first_page",
+    "read_calls": 1931,
+    "read_bytes": 2444563,
+    "json_decodes": 1931,
+    "mkdir_attempts": 1521,
+    "created_directories": 0,
+    "write_opens": 1521,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 606962,
+    "elapsed_seconds": 4.411936799995601,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 2444563,
+        "charged_file_attempts": 1931
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 50,
+        "read_bytes": 159900,
+        "json_decodes": 50,
+        "guarded_read_calls": 50,
+        "observed_sizes": [
+          3198
+        ]
+      },
+      "authority_json": {
+        "read_calls": 1536,
+        "read_bytes": 2227840,
+        "json_decodes": 1536,
+        "guarded_read_calls": 1536,
+        "observed_sizes": [
+          1052,
+          1455,
+          2206
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 151,
+        "read_bytes": 35032,
+        "json_decodes": 151,
+        "guarded_read_calls": 151,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 7,
+        "read_bytes": 6083,
+        "json_decodes": 7,
+        "guarded_read_calls": 7,
+        "observed_sizes": [
+          869
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-real-authority.json",
+    "request_phase": "continuation_page",
+    "read_calls": 1931,
+    "read_bytes": 2444563,
+    "json_decodes": 1931,
+    "mkdir_attempts": 1521,
+    "created_directories": 0,
+    "write_opens": 1521,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 601769,
+    "elapsed_seconds": 4.4043161000008695,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 2444563,
+        "charged_file_attempts": 1931
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 50,
+        "read_bytes": 159900,
+        "json_decodes": 50,
+        "guarded_read_calls": 50,
+        "observed_sizes": [
+          3198
+        ]
+      },
+      "authority_json": {
+        "read_calls": 1536,
+        "read_bytes": 2227840,
+        "json_decodes": 1536,
+        "guarded_read_calls": 1536,
+        "observed_sizes": [
+          1052,
+          1455,
+          2206
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 151,
+        "read_bytes": 35032,
+        "json_decodes": 151,
+        "guarded_read_calls": 151,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 7,
+        "read_bytes": 6083,
+        "json_decodes": 7,
+        "guarded_read_calls": 7,
+        "observed_sizes": [
+          869
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-real-authority.json",
+    "request_phase": "repeat_continuation_page",
+    "read_calls": 1931,
+    "read_bytes": 2444563,
+    "json_decodes": 1931,
+    "mkdir_attempts": 1521,
+    "created_directories": 0,
+    "write_opens": 1521,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 597346,
+    "elapsed_seconds": 4.496191399986856,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 2444563,
+        "charged_file_attempts": 1931
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 50,
+        "read_bytes": 159900,
+        "json_decodes": 50,
+        "guarded_read_calls": 50,
+        "observed_sizes": [
+          3198
+        ]
+      },
+      "authority_json": {
+        "read_calls": 1536,
+        "read_bytes": 2227840,
+        "json_decodes": 1536,
+        "guarded_read_calls": 1536,
+        "observed_sizes": [
+          1052,
+          1455,
+          2206
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 151,
+        "read_bytes": 35032,
+        "json_decodes": 151,
+        "guarded_read_calls": 151,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 7,
+        "read_bytes": 6083,
+        "json_decodes": 7,
+        "guarded_read_calls": 7,
+        "observed_sizes": [
+          869
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-real-authority.json",
+    "request_phase": "repeat_first_page",
+    "read_calls": 1931,
+    "read_bytes": 2444563,
+    "json_decodes": 1931,
+    "mkdir_attempts": 1521,
+    "created_directories": 0,
+    "write_opens": 1521,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 600506,
+    "elapsed_seconds": 4.425173099996755,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 2444563,
+        "charged_file_attempts": 1931
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 187,
+        "read_bytes": 15708,
+        "json_decodes": 187,
+        "guarded_read_calls": 187,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 50,
+        "read_bytes": 159900,
+        "json_decodes": 50,
+        "guarded_read_calls": 50,
+        "observed_sizes": [
+          3198
+        ]
+      },
+      "authority_json": {
+        "read_calls": 1536,
+        "read_bytes": 2227840,
+        "json_decodes": 1536,
+        "guarded_read_calls": 1536,
+        "observed_sizes": [
+          1052,
+          1455,
+          2206
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 151,
+        "read_bytes": 35032,
+        "json_decodes": 151,
+        "guarded_read_calls": 151,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 7,
+        "read_bytes": 6083,
+        "json_decodes": 7,
+        "guarded_read_calls": 7,
+        "observed_sizes": [
+          869
+        ]
+      }
+    }
+  },
+  {
+    "file": "resource-costs-schema3-binary.json",
+    "request_phase": "first_page_schema3",
+    "read_calls": 250,
+    "read_bytes": 124850,
+    "json_decodes": 249,
+    "mkdir_attempts": 236,
+    "created_directories": 0,
+    "write_opens": 236,
+    "write_calls": 0,
+    "instrumented_python_peak_bytes": 413316,
+    "elapsed_seconds": 0.7232057999935932,
+    "usage_budgets": [
+      {
+        "charged_read_bytes": 124850,
+        "charged_file_attempts": 250
+      }
+    ],
+    "categories": {
+      "incarnation_marker": {
+        "read_calls": 120,
+        "read_bytes": 10080,
+        "json_decodes": 120,
+        "guarded_read_calls": 120,
+        "observed_sizes": [
+          84
+        ]
+      },
+      "scope_json": {
+        "read_calls": 34,
+        "read_bytes": 70516,
+        "json_decodes": 34,
+        "guarded_read_calls": 34,
+        "observed_sizes": [
+          2074
+        ]
+      },
+      "project_metadata": {
+        "read_calls": 90,
+        "read_bytes": 20880,
+        "json_decodes": 90,
+        "guarded_read_calls": 90,
+        "observed_sizes": [
+          232
+        ]
+      },
+      "asset_binary": {
+        "read_calls": 1,
+        "read_bytes": 19244,
+        "json_decodes": 0,
+        "guarded_read_calls": 1,
+        "observed_sizes": [
+          19244
+        ]
+      },
+      "asset_metadata": {
+        "read_calls": 5,
+        "read_bytes": 4130,
+        "json_decodes": 5,
+        "guarded_read_calls": 5,
+        "observed_sizes": [
+          826
+        ]
+      }
+    }
+  }
+]

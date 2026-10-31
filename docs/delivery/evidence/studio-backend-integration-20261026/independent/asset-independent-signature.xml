@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="4.555" timestamp="2026-10-26T10:46:12.232530+08:00" hostname="SYNTHETIC_HOST"><testcase classname=".runtime.test_asset_signature_probe" name="test_byte_preserving_external_metadata_edit" time="4.010"><failure message="AssertionError: {&quot;items&quot;:[],&quot;total&quot;:0,&quot;limit&quot;:10,&quot;offset&quot;:0,&quot;has_more&quot;:false}&#10;assert [] == ['ef0e11a8-55...749a585f4350']&#10;  &#10;  Right contains one more item: 'ef0e11a8-5510-4a99-ac7a-749a585f4350'&#10;  Use -v to get more diff">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000001B5903252D0&gt;, nid='query-d0c6093c7a6441f4bf03f5e52f...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_byte_preserving_external_metadata_edit(rig):
+        row = rig.seed('before.png')
+        endpoint = f'/api/projects/{rig.nid}/studio/assets'
+        cold = rig.client.get(endpoint, params={'q': 'before', 'limit': 10})
+        assert cold.status_code == 200, cold.text
+        assert [item['id'] for item in cold.json()['items']] == [row['id']]
+        path = rig.assets.root / (row['id'] + '.json')
+        old = path.stat()
+        original = path.read_bytes()
+        changed = original.replace(b'"before.png"', b'"afters.png"')
+        assert changed != original and len(changed) == len(original)
+        path.write_bytes(changed)
+        os.utime(path, ns=(old.st_atime_ns, old.st_mtime_ns))
+        new = path.stat()
+        fields = ('st_dev', 'st_ino', 'st_mode', 'st_size', 'st_mtime_ns', 'st_ctime_ns')
+        print('SIGNATURE_UNCHANGED', all(getattr(old, field) == getattr(new, field) for field in fields))
+        result = rig.client.get(endpoint, params={'q': 'afters', 'limit': 10})
+        assert result.status_code == 200, result.text
+&gt;       assert [item['id'] for item in result.json()['items']] == [row['id']], result.text
+E       AssertionError: {"items":[],"total":0,"limit":10,"offset":0,"has_more":false}
+E       assert [] == ['ef0e11a8-55...749a585f4350']
+E         
+E         Right contains one more item: 'ef0e11a8-5510-4a99-ac7a-749a585f4350'
+E         Use -v to get more diff
+
+.runtime\test_asset_signature_probe.py:22: AssertionError</failure></testcase></testsuite></testsuites>

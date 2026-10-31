@@ -1,0 +1,32 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_external_window.py::test_source_document_replacement_same_payload_invalidates",
+    "tests/test_taskcenter_external_window.py::test_unmatched_private_row_change_does_not_invalidate_filtered_window"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_external_window.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/../taskcenter-rebuild-independent-evidence/candidate-97ab-extra-final.xml",
+    "--basetemp=/tmp/independent-taskcenter-1cfknjyz/candidate-97ab-extra-final/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/independent-taskcenter-1cfknjyz/candidate-97ab-extra-final/pytest-cache"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 2
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

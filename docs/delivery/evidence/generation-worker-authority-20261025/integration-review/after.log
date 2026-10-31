@@ -1,0 +1,7 @@
+app/jobs.py: OK
+app/api.py: OK
+app/idempotency.py: OK
+app/services/generation_admission_receipt.py: OK
+tests/test_generation_worker_authority.py: OK
+tests/test_generation_admission_receipts.py: OK
+tests/test_generation_idempotency_contracts.py: OK

@@ -1,0 +1,26 @@
+[
+  {
+    "phase": "first-read-warm-os-cache",
+    "pages": 6,
+    "returned": 540,
+    "actual_read_bytes": 222626838,
+    "actual_chunk_read_calls": 11000,
+    "file_read_opens": 7739,
+    "instrumented_seconds": 92.26903599998332,
+    "largest_page_python_peak_bytes": 3748438,
+    "largest_response_bytes": 60234,
+    "actual_write_calls": 0
+  },
+  {
+    "phase": "repeat-read-warm-process",
+    "pages": 6,
+    "returned": 540,
+    "actual_read_bytes": 222626838,
+    "actual_chunk_read_calls": 11000,
+    "file_read_opens": 7739,
+    "instrumented_seconds": 95.6571100000001,
+    "largest_page_python_peak_bytes": 3485948,
+    "largest_response_bytes": 60234,
+    "actual_write_calls": 0
+  }
+]

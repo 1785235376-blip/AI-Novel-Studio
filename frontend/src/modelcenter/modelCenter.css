@@ -1,0 +1,171 @@
+/**
+ * UX-07 模型中心与存储 —— 只为 `frontend/src/modelcenter/` 的只读视图提供布局。
+ * 只用 `frontend/src/ui/tokens.css` 的既有 token：没有裸 hex / rgb() / hsl()。
+ * 不重定义、不覆盖任何受保护表面（AppShell / GlobalHeader / StatusBar / primitives）。
+ */
+
+.model-center-panel,
+.model-center__detail-panel,
+.model-center__storage,
+.model-center__keys {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.model-center-panel > header,
+.model-center__detail-panel > header,
+.model-center__storage > header,
+.model-center__keys > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.model-center__hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.model-center__matrix {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.model-center__matrix table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.model-center__matrix th,
+.model-center__matrix td {
+  padding: var(--space-2);
+  border: var(--border-default);
+  text-align: left;
+  vertical-align: top;
+}
+
+.model-center__matrix thead th {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.model-center__matrix tbody tr[aria-selected='true'] {
+  background: var(--color-selection-bg);
+}
+
+.model-center__caption {
+  caption-side: top;
+  padding-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+
+.model-center__detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.model-center__detail section {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.model-center__detail h3,
+.model-center__storage h3,
+.model-center__keys h3 {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.model-center__detail p,
+.model-center__storage p,
+.model-center__keys p,
+.model-center__readiness {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.model-center__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.model-center__facts > div {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+}
+
+.model-center__facts dt {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.model-center__facts dd {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.model-center__blockers,
+.model-center__key-list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.model-center__blockers li,
+.model-center__key-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+}
+
+.model-center__owner-fact {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.model-center__storage ul {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+.model-center__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

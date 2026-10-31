@@ -1,0 +1,71 @@
+{
+  "verified": true,
+  "groups_not_summed": true,
+  "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+  "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+  "receipts": [
+    {
+      "receipt": "coordinator/final-regressions.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "461c695c23f2abd0baa2e12220178b6f687786705bde1a6b89225d061f9bf4bc",
+      "pytest_summary": "192 passed, 3 warnings in 157.36s (0:02:37)",
+      "elapsed_seconds": 159.21780939999735
+    },
+    {
+      "receipt": "coordinator/final-resource-guards.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "ec323d888a99fbd79d3b0bef891f0a215c4cafdfac01da051b3b765161c99650",
+      "pytest_summary": "73 passed, 3 warnings in 16.39s",
+      "elapsed_seconds": 18.371220000000903
+    },
+    {
+      "receipt": "coordinator/final-loopback.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "841eeb58e752dc32444c793da932bd9e66bc3c63f8f8c339229bdfdecc1ca7bf",
+      "pytest_summary": "1 passed, 3 warnings in 81.70s (0:01:21)",
+      "elapsed_seconds": 83.40834850000101
+    },
+    {
+      "receipt": "coordinator/final-scale-mixed-measurements.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "589dd591ed966bd5fef44b75f184c828e5079644db13574d987615bfc93d4e8f",
+      "pytest_summary": "1 passed, 3 warnings in 193.75s (0:03:13)",
+      "elapsed_seconds": 195.3903246000118
+    },
+    {
+      "receipt": "independent/final-independent-resource.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "1a74fa347842122c210c610fbe1204f7500b846a8639732ac4e60dd1fae67b9b",
+      "pytest_summary": "39 passed, 3 warnings in 69.37s (0:01:09)",
+      "elapsed_seconds": 71.23418780000065
+    },
+    {
+      "receipt": "independent/final-independent-legacy.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "11e13f3af342b1ed3e8323c9cc63161776e87e78600aa6fe480158dc579ebafb",
+      "pytest_summary": "51 passed, 3 warnings in 115.16s (0:01:55)",
+      "elapsed_seconds": 116.96988680001232
+    },
+    {
+      "receipt": "audit/audit-final-frozen-authority-costs.receipt.json",
+      "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+      "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+      "verified_source_hashes": 147,
+      "log_sha256": "5fe2ad5ebfc0c913e02ad74ec49e20a36ec8cdb3c351a1892c60a7ec50def940",
+      "pytest_summary": "16 passed, 3 warnings in 46.72s",
+      "elapsed_seconds": 48.629087300010724
+    }
+  ]
+}

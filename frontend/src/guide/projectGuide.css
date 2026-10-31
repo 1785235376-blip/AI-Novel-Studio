@@ -1,0 +1,46 @@
+/*
+ * UX-08 项目提示助手样式。
+ *
+ * 只用 `frontend/src/ui/tokens.css` 的设计令牌：没有原始 hex、没有 rgb()/hsl()、
+ * 没有任意间距（`pnpm run lint` 会检查）。面板本身是 border-first 的共享 `Panel`，
+ * 这里只补充列表 / 详情 / 阻塞块的排版。
+ */
+.project-guide { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.project-guide p { margin: 0; color: var(--color-text-secondary); }
+.project-guide h3, .project-guide h4 { margin: 0; }
+.project-guide code { font-family: var(--font-mono); overflow-wrap: anywhere; }
+
+.project-guide__list { display: flex; flex-direction: column; gap: var(--space-3); border-top: var(--border-default); padding-top: var(--space-3); }
+.project-guide__list > ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.project-guide__hint-scope { color: var(--color-text-muted); }
+
+.project-guide-hint { display: flex; flex-direction: column; gap: var(--space-2); border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3); background: var(--color-bg-surface); min-width: 0; }
+.project-guide-hint > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.project-guide-hint__owner { color: var(--color-text-muted); }
+.project-guide-hint__sources { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-text-muted); }
+.project-guide-hint__sources code { padding: 0 var(--space-1); border: var(--border-default); border-radius: var(--radius-sm); background: var(--color-bg-subtle); }
+.project-guide-hint__action { color: var(--color-text-primary); }
+
+.project-guide-detail { display: flex; flex-direction: column; gap: var(--space-3); border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3); background: var(--color-bg-subtle); min-width: 0; }
+.project-guide-detail > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.project-guide-detail > section { display: flex; flex-direction: column; gap: var(--space-2); }
+.project-guide-detail__claim { color: var(--color-text-primary); }
+.project-guide-detail__sources, .project-guide-detail__facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.project-guide-detail__facts > li { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.project-guide-detail__reason { color: var(--color-text-muted); }
+
+.project-guide-blocked { display: flex; flex-direction: column; gap: var(--space-2); border: var(--border-strong); border-radius: var(--radius-lg); padding: var(--space-3); background: var(--color-bg-surface); min-width: 0; }
+.project-guide-blocked dl { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.project-guide-blocked dl > div { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.project-guide-blocked dt { color: var(--color-text-muted); }
+.project-guide-blocked dd { margin: 0; overflow-wrap: anywhere; }
+.project-guide-blocked__no-retry { color: var(--color-text-muted); }
+
+.project-guide__boundary { display: flex; flex-direction: column; gap: var(--space-2); border-top: var(--border-default); padding-top: var(--space-3); }
+.project-guide__boundary > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.project-guide[data-guide-state='FAILED'] .project-guide__list,
+.project-guide[data-guide-state='DENIED'] .project-guide__list { display: none; }
+
+@media (max-width: 1100px) {
+  .project-guide-detail > section { gap: var(--space-1); }
+}

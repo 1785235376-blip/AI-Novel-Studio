@@ -1,0 +1,446 @@
+[
+  {
+    "path": "candidate-F/asset-independent-existing-loaded-modules.json",
+    "sha256": "8b50ea46297b769dd5deff7a8163af4fbde29341ced229cb35763b0a004a79de"
+  },
+  {
+    "path": "candidate-F/asset-independent-existing.log",
+    "sha256": "54e25475c2e989358749225eb69d51077c8b86f6538c4c7b406273377503951e"
+  },
+  {
+    "path": "candidate-F/asset-independent-existing.receipt.json",
+    "sha256": "1c0d173aebc992334525687bdea5d6de0d5b4396005a9e6882fde6a844291dda"
+  },
+  {
+    "path": "candidate-F/asset-independent-existing.xml",
+    "sha256": "234bae81b75cb1f482bb748d8a74253cb8833df268f181b0ef0caa45d25aa5c7"
+  },
+  {
+    "path": "candidate-F/asset-regressions-loaded-modules.json",
+    "sha256": "59008184a95ce7b234424a9d01136ad63a6cfcd4d33470729b15c12f633c7416"
+  },
+  {
+    "path": "candidate-F/asset-regressions.log",
+    "sha256": "4b37544366f8a6994b4223eccec4c0a5e74b704d62670ac4d89da30cbea869fb"
+  },
+  {
+    "path": "candidate-F/asset-regressions.receipt.json",
+    "sha256": "674c19a774d0a78f591a23002c2b59bf6b73f92ba5963ebe4358a6a2632323e3"
+  },
+  {
+    "path": "candidate-F/asset-regressions.xml",
+    "sha256": "cc6b88dd770cb4c9257f95710ca8085e4a9f7648c6f89c8043bde58f51c45f83"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-order-loaded-modules.json",
+    "sha256": "9af962802945680dfadb31724bc902742cc9b6baf336034d81ff0a4c1101b6ab"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-order.log",
+    "sha256": "666adafafdfc22791c7dadf35d5c36401fc9dba395e2e2262875f7456949f8a8"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-order.receipt.json",
+    "sha256": "f3e4cc8ba60326c62e3670b9c90e1d77d26602ad9efccbe8f5293c9390fc1df3"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-query-loaded-modules.json",
+    "sha256": "63fe4eca2fbbf2e26620381dab7d494eba24847a0d4a9a1ed8be5b9848814825"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-query.log",
+    "sha256": "fc29c254e7711ca85e871de569899e657d771af9b0d3dd80bba47957ad6e8b0b"
+  },
+  {
+    "path": "candidate-F/diagnostic-asset-query.receipt.json",
+    "sha256": "e6de665f2b23f1202173aaeb4066dcb923231855d8f5945a669e92b1d7153f78"
+  },
+  {
+    "path": "candidate-F/export-consumers-corrected-loaded-modules.json",
+    "sha256": "3ca7d63c03850af954126ce2295aac6ec989827941b21074f78ccba71e1a62d2"
+  },
+  {
+    "path": "candidate-F/export-consumers-corrected.log",
+    "sha256": "5fec2ab477500a4052c67a552c1679a1b57e2f516adb596f5626ff5681008ca3"
+  },
+  {
+    "path": "candidate-F/export-consumers-corrected.receipt.json",
+    "sha256": "483237227a99b0ff77ed2f2e0ac3024a41957e9c45bd7b2d905b70f634b458da"
+  },
+  {
+    "path": "candidate-F/export-consumers-corrected.xml",
+    "sha256": "83f2694f46871a65bd3d754ac805f2298a7ede337273ccb510746ac08a4bf642"
+  },
+  {
+    "path": "candidate-F/export-consumers-loaded-modules.json",
+    "sha256": "3487f783fbedb26dcf7b37710c4d41400c92b3f9e6521221bdc37f7b9f5c2e22"
+  },
+  {
+    "path": "candidate-F/export-consumers.log",
+    "sha256": "0055fc4a06938f733896b5fac671e5d2cbd8c21fe2ca53ef2a13054866cce8ed"
+  },
+  {
+    "path": "candidate-F/export-consumers.receipt.json",
+    "sha256": "b0acca741a863343274f2ad46f9808d71147d206245461aa26c1a3c32ab2e854"
+  },
+  {
+    "path": "candidate-F/export-consumers.xml",
+    "sha256": "4841c4c2d8459cf0d6ff92e78a270026fb16affcbb07fc507db2308c36e9934d"
+  },
+  {
+    "path": "candidate-F/resource-core-loaded-modules.json",
+    "sha256": "c42d06db5183e034c6e5945519face8defb3f221127f9ffc559b1f320b9274aa"
+  },
+  {
+    "path": "candidate-F/resource-core.log",
+    "sha256": "d12ffe694016ecf9b3c24a01f9601a0f2e862bf8ae680e47e3292d55bcbeeebc"
+  },
+  {
+    "path": "candidate-F/resource-core.receipt.json",
+    "sha256": "abf86f5e42d53116e07b4bd1c900e8c4e430443a0ee7272cae4e9aca30deabac"
+  },
+  {
+    "path": "candidate-F/resource-core.xml",
+    "sha256": "24070073ec6ee26fd0d25958953d22a6dbc9684fc47b87377bb1adaa2ae2832c"
+  },
+  {
+    "path": "candidate-F/resource-measurements-loaded-modules.json",
+    "sha256": "8b0860518f8dc3d8066b335cf00bd3957c65586c930a2ec99917e496671123b4"
+  },
+  {
+    "path": "candidate-F/resource-measurements.log",
+    "sha256": "1c4f964930df5b42e178ab6d775f2759a9a3b27e64ef0b8a50c70eedc8e579df"
+  },
+  {
+    "path": "candidate-F/resource-measurements.receipt.json",
+    "sha256": "16dc7052a76b71df90bf4e2c36e2273d7332bc31d189fc008870c9c23a4521ea"
+  },
+  {
+    "path": "candidate-F/resource-measurements.xml",
+    "sha256": "16b2b015362c814eec8b1a15d264dfb2b789eb24a5cf824ee53fc8a0d224ad70"
+  },
+  {
+    "path": "candidate-F/taskcenter-lifecycle-loaded-modules.json",
+    "sha256": "0915efc5cbc0176f0d1b4945bfa390973e3beea86c1d40c0b8402322dcb3d6f8"
+  },
+  {
+    "path": "candidate-F/taskcenter-lifecycle.log",
+    "sha256": "966a8f785a535faf8337a4d3a10ab2d767003ec2bf4da364deea320f6e43cca2"
+  },
+  {
+    "path": "candidate-F/taskcenter-lifecycle.receipt.json",
+    "sha256": "c52b4c0b6b1f9b385ad04a701e0965a631f93f6fdd758b70c650f73cdb128653"
+  },
+  {
+    "path": "candidate-F/taskcenter-lifecycle.xml",
+    "sha256": "d8f42db735e527304cec37c2ba054002d0e03f4e96b98ac128955d3501adbe9d"
+  },
+  {
+    "path": "candidate-F/windows-process-loaded-modules.json",
+    "sha256": "9ba06bbf0bce7a1b7ea43077fa3212a63f5aee5f67f425525929229c82f7acf5"
+  },
+  {
+    "path": "candidate-F/windows-process.log",
+    "sha256": "f932147386bde15d0ef7eea1551801f8df9aa0c633d75ab6e9082299ff38a457"
+  },
+  {
+    "path": "candidate-F/windows-process.receipt.json",
+    "sha256": "5287a03760efa34db44f674145a23a963a01879bb8d8587b8e5d6e5ab184426a"
+  },
+  {
+    "path": "candidate-F/windows-process.xml",
+    "sha256": "e858b29ec0ca01a3990ace75f584302fc1d3f3cdd2c010b978742fbd9d8e1ce4"
+  },
+  {
+    "path": "coordinator-final-G/asset-independent-existing-loaded-modules.json",
+    "sha256": "c28db876825bc2ae24b254dc75fc198985e796de6854591ed4efeb859222cfa8"
+  },
+  {
+    "path": "coordinator-final-G/asset-independent-existing.log",
+    "sha256": "d0decc1db53857bce7d1fd54010f2e8a6eae9f7133b99b861096b4e37f8a7e73"
+  },
+  {
+    "path": "coordinator-final-G/asset-independent-existing.receipt.json",
+    "sha256": "a2150100fe85fef9e54ed84e2af9b0482ef3070f64b73bc892884d5e51848003"
+  },
+  {
+    "path": "coordinator-final-G/asset-independent-existing.xml",
+    "sha256": "9b44bd9e2d200f8fe5708aa220f69235b2265c64a54bd990a0de2354944451ea"
+  },
+  {
+    "path": "coordinator-final-G/asset-regressions-loaded-modules.json",
+    "sha256": "e8c38ac2e18794a702dd9984a3aa8ab7bec6d5c857305be4a0af334ee063ba59"
+  },
+  {
+    "path": "coordinator-final-G/asset-regressions.log",
+    "sha256": "3c33a28812772a3231ec2eebc2695b9487a3f063590b3ee3245e2f79c1a4aa2f"
+  },
+  {
+    "path": "coordinator-final-G/asset-regressions.receipt.json",
+    "sha256": "01ec072756f31d845b9aa0a757bbf2c236d5e03ec9f40a71eadc7da312156699"
+  },
+  {
+    "path": "coordinator-final-G/asset-regressions.xml",
+    "sha256": "9f8354994319b9b8296ddf8a341ae494bd1274a8e7ef58ad934aaacda38b2fc0"
+  },
+  {
+    "path": "coordinator-final-G/export-consumers-corrected-loaded-modules.json",
+    "sha256": "7aad7859bb7c39b5dcc22395ed4d9fef1ce1f2082bc86046dc64ff1a22b8f0c2"
+  },
+  {
+    "path": "coordinator-final-G/export-consumers-corrected.log",
+    "sha256": "2dfc50a68fb2250e0a0752c4c5ee355737421f3f886a3cad1f85dd9bcfddcf37"
+  },
+  {
+    "path": "coordinator-final-G/export-consumers-corrected.receipt.json",
+    "sha256": "1e0b6488c3119374cf28735d5e2d8e530816017f05ebe9705f6ee4825df25102"
+  },
+  {
+    "path": "coordinator-final-G/export-consumers-corrected.xml",
+    "sha256": "6250a2916dbe009e3d221adfade9f83e37e3cf66131ac0c5f43c542c708d293a"
+  },
+  {
+    "path": "coordinator-final-G/known-windows-asset-list-loaded-modules.json",
+    "sha256": "ff18ffbeea92c2e91d53c2dfd537d0433f38132d5a35078fbc6b00f064d7b7d6"
+  },
+  {
+    "path": "coordinator-final-G/known-windows-asset-list.log",
+    "sha256": "574fe57a71a3485bfe0b06b59d77326c18af4bfe337127fc91157de90e1005a9"
+  },
+  {
+    "path": "coordinator-final-G/known-windows-asset-list.receipt.json",
+    "sha256": "a356c79c581a926fa796ab2c7d7213080b33a017d17288aef757d69978ee6221"
+  },
+  {
+    "path": "coordinator-final-G/known-windows-asset-list.xml",
+    "sha256": "c57aaa77b9ffe1092c3fdaabd09dbf63788ec541f960a2acdaede243f17d91d0"
+  },
+  {
+    "path": "coordinator-final-G/original-scale-loopback-loaded-modules.json",
+    "sha256": "6deb6d05af1bd3834abf0c29406cf4a4e9b2c9cb635896e4de28b9f05847a7eb"
+  },
+  {
+    "path": "coordinator-final-G/original-scale-loopback.log",
+    "sha256": "56eadc1ba51858b4061aa40833c03aae2de7ad649edd241d28efd40cbdcd152c"
+  },
+  {
+    "path": "coordinator-final-G/original-scale-loopback.receipt.json",
+    "sha256": "6779bdaa1d65ebf3af82a153ebe6659406e4b2975b3244d8bcb495ecab1c9a3b"
+  },
+  {
+    "path": "coordinator-final-G/original-scale-loopback.xml",
+    "sha256": "10438ab0731f9b8ec28db1be4750d0fa835dfd1b5837e15780c2a82c5995307f"
+  },
+  {
+    "path": "coordinator-final-G/resource-core-loaded-modules.json",
+    "sha256": "a0343c7633a7040eda018a08a9b2fb96448d07bf010f45f8cd4850e01d71848f"
+  },
+  {
+    "path": "coordinator-final-G/resource-core.log",
+    "sha256": "74f2ae4a58ba533b1d80ffc4d3e223008ac820332784a7b453d5e6324ad3fc8a"
+  },
+  {
+    "path": "coordinator-final-G/resource-core.receipt.json",
+    "sha256": "37c96987114f31f20e3dddfdcd17da9b9e1fef813039d4f51b2d014608875845"
+  },
+  {
+    "path": "coordinator-final-G/resource-core.xml",
+    "sha256": "602d09e3bdeea3ac1e2a8140ddd1cdea18517de1f63411437fbdd3df013a75eb"
+  },
+  {
+    "path": "coordinator-final-G/resource-measurements-loaded-modules.json",
+    "sha256": "c130a63dddc48aa79e7514a8c74235ab898cda41f8694bb8e597b9ead5b91aeb"
+  },
+  {
+    "path": "coordinator-final-G/resource-measurements.log",
+    "sha256": "6e525173e2f3c75185cc0cad8a3220bbf2acc8db56d39104bc8c78453a2a946e"
+  },
+  {
+    "path": "coordinator-final-G/resource-measurements.receipt.json",
+    "sha256": "af86498d406fbdf4987b8ba59c52556414ec1a1ab46d924dc6e19450ab439604"
+  },
+  {
+    "path": "coordinator-final-G/resource-measurements.xml",
+    "sha256": "2cc7be5ac4900bbce26cac46304f1c760b41ce66892b88f1a2a3502a0978fc87"
+  },
+  {
+    "path": "coordinator-final-G/taskcenter-lifecycle-loaded-modules.json",
+    "sha256": "74cea368b3a29c52613f08a8d5dd4d20a2c43b62ef093edd9ab4e2d13663c8b4"
+  },
+  {
+    "path": "coordinator-final-G/taskcenter-lifecycle.log",
+    "sha256": "a770485ab824906632aa601f74593bfe5c21636ac0b4ffdc90e99d31ae9adb45"
+  },
+  {
+    "path": "coordinator-final-G/taskcenter-lifecycle.receipt.json",
+    "sha256": "267320c54c9f9eb97f610104c17a8e302be1b15de9e25ae14f923e3833e7dc39"
+  },
+  {
+    "path": "coordinator-final-G/taskcenter-lifecycle.xml",
+    "sha256": "ba16ea2942e4f95a3b28a4d0904922f514c302c081ebc36f48ff4af5069d8edf"
+  },
+  {
+    "path": "coordinator-final-G/windows-process-loaded-modules.json",
+    "sha256": "632e6347b3b75c7abd562d4357e877393a752d970c831bf69873f2c6c1cf34ff"
+  },
+  {
+    "path": "coordinator-final-G/windows-process.log",
+    "sha256": "f990f575779d1897e51a0034213b3ef43caf379cbd6c0945279d73aa0c12e18c"
+  },
+  {
+    "path": "coordinator-final-G/windows-process.receipt.json",
+    "sha256": "d941b072dae11ff8b87eebed1d88d53f5c7610bc797c02898aad5d6c8fdcfc82"
+  },
+  {
+    "path": "coordinator-final-G/windows-process.xml",
+    "sha256": "baaae1b22327e44ba2a96db2297ca84969803667e63451ebe4728e0c2cdae97f"
+  },
+  {
+    "path": "coordinator-development/development-process/development-integrated-process-corrected-loaded-modules.json",
+    "sha256": "9ef8da109ce9a974fa54f59b930337982de0d8954fbd2639b1235d12b5f6199b"
+  },
+  {
+    "path": "coordinator-development/development-process/development-integrated-process-corrected.log",
+    "sha256": "18b91be5e3b0720632eee5e381a643b748922838c160e97656947d2601b4340b"
+  },
+  {
+    "path": "coordinator-development/development-process/development-integrated-process-corrected.receipt.json",
+    "sha256": "57127e035fe50315abe3d7abdbfab25943b93c8873506c64e3da650a54e5fd9d"
+  },
+  {
+    "path": "coordinator-development/development-process/development-integrated-process.log",
+    "sha256": "383fae81904ff3c5e3ca01adfab7350a2180703e7184f3925beed45c636a9ed9"
+  },
+  {
+    "path": "coordinator-development/development-process/development-integrated-process.receipt.json",
+    "sha256": "28c8e8b95e71067421ced5c6c51d31b4f5b74f225191ed1e596699f6c4b91366"
+  },
+  {
+    "path": "coordinator-development/development-process/development-windows-process-corrected.log",
+    "sha256": "49b0a68f102a8436af8c1a1af60aad2e8168179d2a7b3136aa4e181240969ae9"
+  },
+  {
+    "path": "coordinator-development/development-process/development-windows-process-corrected.receipt.json",
+    "sha256": "ad45df1e192ec84daf97968e82a1dc715ad19d1682e73aaf17a7687f522f2e52"
+  },
+  {
+    "path": "coordinator-development/development-process/development-windows-process.log",
+    "sha256": "a70c51bc406795082f7df1fe88547cc380fca902beb6f2f72aa9153be0bb2c67"
+  },
+  {
+    "path": "coordinator-development/development-process/development-windows-process.receipt.json",
+    "sha256": "ebae743b91cf53ee1677b385212ce4ce5d1c2b37388c2eb1a8a820af23135795"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory-corrected-loaded-modules.json",
+    "sha256": "9188828abd2d325ba6e8d8f2417dcd73b818dfd5ea0fc89f69c1e52f30544fc0"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory-corrected.log",
+    "sha256": "4e1003c7af4a669969b73d6ff67d11e1eaa098ba46362842bddbbed9c81b68d2"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory-corrected.receipt.json",
+    "sha256": "514e04d41e4329cb33a6d4814943659eacd750de3a6fef6dedd007158eeb8484"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory-loaded-modules.json",
+    "sha256": "ff336129ea950e42d377177ce581cbd87fffc08dc25b55c031f2d650f5480f0d"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory.log",
+    "sha256": "6ee563a9c39f03c7c552507ac01ba21cb4c472c660d9089ec8f5fbbfc067786b"
+  },
+  {
+    "path": "coordinator-development/development-memory/development-integrated-memory.receipt.json",
+    "sha256": "a0b84537f2c1996729f9c1a151d7e6285a67a4478d8a570dbb8a38f3671ead12"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-A-full.log",
+    "sha256": "2be1b6ed188a9958882de0b09d17346e9152f327d7d2e87e3b724abfeec5ec70"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-A-pair.log",
+    "sha256": "4857607966f2316540738be6794f3ce268668cbe339ed60d785e1db249e849e4"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-F-collection-corrected.log",
+    "sha256": "745323e968927f7ae8e641d6b3be1a1a9f1fd6b1673f2035784ff45744e6045f"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-F-collection.log",
+    "sha256": "a48a85f9039c829bb4b2a00324f694dbb5625f1690ff65107314581f8ea1db18"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-F-full.log",
+    "sha256": "5fa9876918be4b8c9c25d00a0f6d2d43672cfac18387bfd17e1665dd714afe87"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-F-pair.log",
+    "sha256": "aea8c77028c0ab87f8e9acf3f10d2f765225874f14d1d03a1ae20ec805a12894"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-index.py",
+    "sha256": "247d47f8406d0b9fda8c31d079f11171be6ef832c1119c8d7ba5619f7414aae2"
+  },
+  {
+    "path": "owner-diagnostics/diagnostic-owner-summary.json",
+    "sha256": "3589a85ea7b765325e68f3ae01caeb3b9d13fa59614ac08101f7c968167b902c"
+  },
+  {
+    "path": "owner-diagnostics/receipts/diagnostic-owner-F-original-loaded-modules.json",
+    "sha256": "2d51e821ee24551bca0d7d424058f95ee5f6eec420a38a5f11edb96d3b9b674a"
+  },
+  {
+    "path": "owner-diagnostics/receipts/diagnostic-owner-F-original.log",
+    "sha256": "81b3417f338f0783749bd483f874c38838c984e6f34fffb500f7257f88e44202"
+  },
+  {
+    "path": "owner-diagnostics/receipts/diagnostic-owner-F-original.receipt.json",
+    "sha256": "e80510bb75d40966b38b171a8997b476304d348ced274216f8e52660824652f8"
+  },
+  {
+    "path": "candidate-F-metrics/combined-windows-memory.json",
+    "sha256": "7090fbd2229e9dcb0a76698386bdba4ea1695d69ef60b8ad96cbdd5dd5e3c1e7"
+  },
+  {
+    "path": "candidate-F-metrics/resource-costs-fresh-process.json",
+    "sha256": "823ec5984eeb181ccaae9886345fbcda1d846354e6148fb367e85512fd8f5be1"
+  },
+  {
+    "path": "candidate-F-metrics/resource-costs-initialized-http.json",
+    "sha256": "01d376eb10d1512bf75e7065c1329495fca8b736a831785a54eee7068b93f93e"
+  },
+  {
+    "path": "candidate-F-metrics/resource-costs-real-authority.json",
+    "sha256": "f38194f21fbdb81c206ece074a5d1c1290d114f4496fc3e6a576d0f76f7afcbf"
+  },
+  {
+    "path": "candidate-F-metrics/resource-costs-schema3-binary.json",
+    "sha256": "2e81cfc4978586e9a8c0f30e2bb0f01040347b11db1a8b09d092e8a9ba1ab60d"
+  },
+  {
+    "path": "metrics-final-G/combined-windows-memory.json",
+    "sha256": "8cd45f6ef2dd48cd453f39c1943e10e9fb7b3132f74dcad32c9dd206341ee6bc"
+  },
+  {
+    "path": "metrics-final-G/resource-costs-fresh-process.json",
+    "sha256": "5d398b4501b957a6095b866ce898eb1a4715d3feae6c4c93208cf312ea1ddff9"
+  },
+  {
+    "path": "metrics-final-G/resource-costs-initialized-http.json",
+    "sha256": "683d209b6c73d9c72dbe865b28d28f98991af7f76c8a290f0436a4428fe5e2fd"
+  },
+  {
+    "path": "metrics-final-G/resource-costs-real-authority.json",
+    "sha256": "807ea75b94e74da236d1e07a7a77b19ead9804a58270c6077351735ccd4ced15"
+  },
+  {
+    "path": "metrics-final-G/resource-costs-schema3-binary.json",
+    "sha256": "dafb19cb03405b6d60d06a37f0c096b4c7c2824a5d20766698d7db6b84cebb37"
+  },
+  {
+    "path": "scale-final-G/paged-usage-metrics-mixed-owners-HTTP.json",
+    "sha256": "13350220eac7d5fa7311f34b995dbd01ba2b8fe8cc79ee4ea37b59ac43f62bb9"
+  }
+]

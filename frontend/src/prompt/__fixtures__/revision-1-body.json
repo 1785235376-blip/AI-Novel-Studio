@@ -1,0 +1,19 @@
+{
+  "contract": "prompt-revision-body/1",
+  "project_id": "fixture-28ba07df4e4b4268863a2f56c3a514e3",
+  "family_id": "f81767d3-9725-449a-b4c4-f0675bdf0652",
+  "asset_id": "22c9827e-01d4-4a99-ab39-1fc3922c684a",
+  "revision": 1,
+  "asset_version": 2,
+  "state": "COMPLETE",
+  "value": "合成测试正文第一版\n第二行 🙂\n",
+  "truncated": false,
+  "decodable": true,
+  "digest": "a1f442fd2e98de434e0399c614509b1104013ba57aa218c9e8b48ef01ff86916",
+  "digest_of": "ORIGINAL_BYTES",
+  "original_length": 43,
+  "available": true,
+  "verified": true,
+  "read_complete": true,
+  "generated_at": "2026-10-15T01:17:34.949910+00:00"
+}

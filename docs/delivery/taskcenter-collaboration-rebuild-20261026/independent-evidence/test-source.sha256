@@ -1,0 +1,4 @@
+9deb0260e7a3c7949aabc4915093cb1e471538fd887fd94a85f35c7e20e3915e  tests/test_taskcenter_external_adversarial.py
+427dd1cf2af9792eb9c489ef916ddcb5648c50e9bc94e8f5e21b304837c21585  tests/test_taskcenter_external_window.py
+222cf28ae0ab1c3c13ba4c1401686c40648c3b34ee61a6218bcf1919b2c7a1da  ../taskcenter-rebuild-independent-evidence/run-extra.py
+a1edb7bd52ea215444e29afe59b05fdab480bfb9170f9b7b8e2285af809033fe  ../taskcenter-rebuild-independent-evidence/run.py

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 
 import pytest
 
-from tests.conftest import pytest_collection_modifyitems
+from tests.conftest import pytest_collection_modifyitems, pytest_configure
 
 
 @dataclass
@@ -20,6 +21,12 @@ class Item:
         self.added.append(marker)
 
 
+def captured_config():
+    config = SimpleNamespace(stash=pytest.Stash())
+    pytest_configure(config)
+    return config
+
+
 def skipped(item: Item) -> bool:
     return any(marker.name == "skip" for marker in item.added)
 
@@ -27,7 +34,7 @@ def skipped(item: Item) -> bool:
 def test_default_file_collection_skips_only_postgres_contracts(monkeypatch):
     monkeypatch.setenv("STORAGE_BACKEND", "file")
     file_item, postgres_item = Item({"file_backend_only"}), Item({"postgres_backend_only"})
-    pytest_collection_modifyitems([file_item, postgres_item])
+    pytest_collection_modifyitems(captured_config(), [file_item, postgres_item])
     assert not skipped(file_item)
     assert skipped(postgres_item)
 
@@ -35,7 +42,7 @@ def test_default_file_collection_skips_only_postgres_contracts(monkeypatch):
 def test_postgres_collection_skips_only_file_contracts(monkeypatch):
     monkeypatch.setenv("STORAGE_BACKEND", "postgres")
     file_item, postgres_item = Item({"file_backend_only"}), Item({"postgres_backend_only"})
-    pytest_collection_modifyitems([file_item, postgres_item])
+    pytest_collection_modifyitems(captured_config(), [file_item, postgres_item])
     assert skipped(file_item)
     assert not skipped(postgres_item)
 
@@ -44,11 +51,21 @@ def test_postgres_collection_skips_only_file_contracts(monkeypatch):
 def test_unmarked_cross_backend_contract_executes_in_both_matrices(monkeypatch, backend):
     monkeypatch.setenv("STORAGE_BACKEND", backend)
     item = Item(set())
-    pytest_collection_modifyitems([item])
+    pytest_collection_modifyitems(captured_config(), [item])
     assert not skipped(item)
 
 
 def test_contradictory_backend_markers_fail_fast(monkeypatch):
     monkeypatch.setenv("STORAGE_BACKEND", "file")
     with pytest.raises(pytest.UsageError, match="contradictory backend-only markers"):
-        pytest_collection_modifyitems([Item({"file_backend_only", "postgres_backend_only"})])
+        pytest_collection_modifyitems(captured_config(), [Item({"file_backend_only", "postgres_backend_only"})])
+
+
+def test_collection_uses_captured_backend_not_later_environment(monkeypatch):
+    monkeypatch.setenv("STORAGE_BACKEND", "file")
+    config = captured_config()
+    monkeypatch.setenv("STORAGE_BACKEND", "postgres")
+    file_item, postgres_item = Item({"file_backend_only"}), Item({"postgres_backend_only"})
+    pytest_collection_modifyitems(config, [file_item, postgres_item])
+    assert not skipped(file_item)
+    assert skipped(postgres_item)

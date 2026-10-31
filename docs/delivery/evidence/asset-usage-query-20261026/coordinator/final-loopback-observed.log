@@ -1,0 +1,5 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+LOOPBACK_USAGE /api saved_consumers=32 references=540 pages=6 duplicate_or_missing=0 business_files_unchanged=true operational_lock_files_created=1
+LOOPBACK_USAGE /api/v1 saved_consumers=32 references=540 pages=6 duplicate_or_missing=0 business_files_unchanged=true operational_lock_files_created=0
+.
+1 passed, 3 warnings in 59.70s

@@ -10,6 +10,8 @@ the same boundary later without changing the export queue contract.
 
 from __future__ import annotations
 
+from .document import chapter_body_text
+
 from datetime import datetime, timezone
 from io import BytesIO
 from typing import Iterable, Mapping
@@ -57,7 +59,8 @@ def _clean_text(value: object) -> str:
     return "".join(
         char
         for char in text
-        if char in "\t\n\r" or (ord(char) >= 0x20 and not 0xD800 <= ord(char) <= 0xDFFF)
+        if char in "\t\n\r" or 0x20 <= ord(char) <= 0xD7FF
+        or 0xE000 <= ord(char) <= 0xFFFD or 0x10000 <= ord(char) <= 0x10FFFF
     )
 
 
@@ -134,7 +137,7 @@ def _document_xml(title: object, chapters: Iterable[Mapping[str, object]]) -> by
         chapter_title = _clean_text(chapter.get("title", "")).strip()
         if chapter_title:
             _paragraph(body, chapter_title, "Heading1")
-        content = _clean_text(chapter.get("content", ""))
+        content = _clean_text(chapter_body_text(chapter))
         # Keep blank lines as blank paragraphs so the exported manuscript does
         # not collapse intentional paragraph spacing.
         for line in content.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
@@ -263,7 +266,7 @@ def _xhtml_body(parent: ET.Element, title: str, chapters: list[Mapping[str, obje
         chapter_title = _clean_text(chapter.get("title", "")).strip()
         if chapter_title:
             ET.SubElement(section, _q(XHTML_NS, "h2")).text = chapter_title
-        content = _clean_text(chapter.get("content", ""))
+        content = _clean_text(chapter_body_text(chapter))
         for line in content.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
             ET.SubElement(section, _q(XHTML_NS, "p")).text = line
 

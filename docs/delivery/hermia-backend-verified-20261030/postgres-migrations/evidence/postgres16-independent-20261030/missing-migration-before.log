@@ -1,0 +1,3 @@
+default FileNotFoundError database/migrations/018_context_privacy.sql
+experimental FileNotFoundError database/migrations/018_context_privacy.sql
+identity FileNotFoundError database/migrations/020_stable_chapter_identity.sql

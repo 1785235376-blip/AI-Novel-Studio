@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import uuid
 from threading import Barrier, Lock, Thread
 
@@ -13,7 +12,6 @@ from app.config import Settings
 from app.document import markdown_to_document
 from app.repositories.chapter_repository import VersionConflict
 from app.repositories.factory import create_repository_bundle
-from app.repositories.postgres.session import Database
 from app.services import ChapterService, NovelService
 
 
@@ -90,13 +88,9 @@ def test_autosave_multiple_editor_generations_increment_one_durable_version(chap
     assert service.get(chapter_id)["version"] == original["version"] + 1
 
 
-@pytest.mark.skipif(
-    not os.getenv("TEST_POSTGRES_DATABASE_URL")
-    or not Database(os.getenv("TEST_POSTGRES_DATABASE_URL", "postgresql://invalid")).health_check(),
-    reason="NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable",
-)
-def test_postgres_two_clients_atomic_cas_and_single_history_row():
-    url = os.environ["TEST_POSTGRES_DATABASE_URL"]
+@pytest.mark.postgres_backend_only
+def test_postgres_two_clients_atomic_cas_and_single_history_row(isolated_postgres_url):
+    url = isolated_postgres_url
     first_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     second_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     first = ChapterService(first_bundle.chapters)

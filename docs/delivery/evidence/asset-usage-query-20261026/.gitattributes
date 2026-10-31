@@ -1,0 +1,5 @@
+# Preserve raw evidence bytes and receipt hashes on Windows and in Git blobs.
+# Pytest failure excerpts intentionally retain their original whitespace.
+*.log -text -whitespace
+*.json -text
+*.py -text

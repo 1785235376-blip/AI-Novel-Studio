@@ -1,0 +1,63 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+..F
+================================== FAILURES ===================================
+__ test_socket_collaboration_team_original_no_chapters_and_revocation[/api] ___
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000286C4FFFF50>, nid='query-d13bae713280...8', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_socket_collaboration_team_original_no_chapters_and_revocation(usage_rig, prefix):
+        from test_studio_asset_query import shared_scope
+        from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+        from app.identity import IdentityStatus
+        e=usage_rig
+        scope,headers=shared_scope(e.rig)
+        e.rig.grants.assign_permission(PermissionAssignment('http-write','reader','domain.write',ModalityDomain.NOVEL,
+            AuthorizationScope(ScopeKind.PROJECT,'query-workspace',e.rig.nid),'synthetic fixture'))
+        body(e.client.post(e.base+'/activate',headers=headers))
+        asset=e.rig.seed('collaboration-synthetic.png',scope_value=scope)
+        pin={'asset_id':asset['id'],'version':asset['version'],'digest':asset['sha256'],'kind':'image'}
+        body(e.client.post(e.base+'/graphs',headers=headers,json={'request_id':'http-collaboration-graph',
+            'definition':{'title':'Synthetic scoped pins','nodes':[{'id':f'pin-{i}','definition_id':'asset_reference','parameters':pin} for i in range(3)]}}),201)
+        run=e.rig.root.parent/('collaboration-'+e.rig.root.name)
+        shutil.copytree(e.rig.root,run/'data')
+        nid=e.rig.nid
+        url=f'{prefix}/novels/{nid}/experimental/production/assets/{asset["id"]}/studio-asset-usages'
+        with application(run,collaboration=True) as client:
+            rows=[body(client.post(f'{prefix}/novels/{nid}/experimental/teams/runs',headers=headers,
+                json={'recipe_id':'outline_chapter_editor','source_text':f'private-source-{i}'}),201) for i in range(3)]
+            before=snapshot(run/'data')
+>           asset_first=body(asset_page(client,url,headers=headers))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_file_backend_safety_http.py:237: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [403 Forbidden]>, status = 200
+
+    def body(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","message":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","details":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"request_id":"6eadb8ab-0a2d-41c4-85dc-e2d881997b7e"}
+E       assert 403 == 200
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests\test_file_backend_safety_http.py:32: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_file_backend_safety_http.py::test_socket_collaboration_team_original_no_chapters_and_revocation[/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 2 passed, 3 warnings in 160.86s (0:02:40)

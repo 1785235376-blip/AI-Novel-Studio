@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="4.834" timestamp="2026-10-26T10:56:27.795090+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_frontend_alignment_v2" name="test_confirmed_frontend_admits_formal_image_node_job_command" time="1.773"><failure message="AssertionError: Confirmed frontend 03e8034a41adc18ab0e32a35688e6ec2ff889d9f rejects original backend command fields: ['canvas_image_node']&#10;assert not {'canvas_image_node'}">resume_source = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x0000019E0F316D10&gt;, nid='query-7f39ccc181cd...tudio', resolve_url='/api/projects/query-7f39ccc181cd4ec195563fda657c7ca9/studio/production/jobs/image/resolve-create')
+
+    @pytest.mark.xfail(strict=True, reason="FRONTEND_BLOCKED: confirmed 03e8034a rejects canvas_image_node provenance")
+    def test_confirmed_frontend_admits_formal_image_node_job_command(resume_source):
+        e = resume_source
+        row = formal_image_job_wire(e)
+        assert "canvas_image_node" in row["command"]  # Original authority must remain intact.
+        unknown = set(row["command"]) - FRONTEND_COMMAND_KEYS
+&gt;       assert not unknown, f"Confirmed frontend {FRONTEND_TARGET_SHA} rejects original backend command fields: {sorted(unknown)}"
+E       AssertionError: Confirmed frontend 03e8034a41adc18ab0e32a35688e6ec2ff889d9f rejects original backend command fields: ['canvas_image_node']
+E       assert not {'canvas_image_node'}
+
+tests\test_studio_frontend_alignment_v2.py:178: AssertionError</failure></testcase></testsuite></testsuites>

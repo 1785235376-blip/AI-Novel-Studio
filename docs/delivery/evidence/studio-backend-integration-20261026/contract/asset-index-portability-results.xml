@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="8.353" timestamp="2026-10-26T10:43:15.450524+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_asset_query_indexed" name="test_cold_hot_deep_low_hit_and_exact_total_file_read_costs" time="5.662" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_index_corpus_budget_is_explicit_and_never_returns_partial_total" time="0.326" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_content_budget_rejects_whole_page_and_is_request_local" time="0.291" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_matching_off_page_invalid_revision_keeps_owner_failure" time="0.213" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_metadata_rename_type_and_deletion_refresh_real_index" time="0.334" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_query_detects_actual_source_change_before_return" time="0.258" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_damaged_derived_filter_cannot_silently_hide_source_match" time="0.321"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;8c2ae737-1275-4ef0-9626-eb45c7126e79&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000001AEC0E1B590&gt;, nid='query-cf3113531e7e450ebd4b88ff07...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_damaged_derived_filter_cannot_silently_hide_source_match(rig):
+        row = rig.seed("needle.png")
+        assert ids(get(rig, {"q": "needle", "limit": 1})) == [row["id"]]
+        before = source_snapshot(rig.root)
+        with sqlite3.connect(rig.workspace.query_index.path) as connection:
+            connection.execute("UPDATE sources SET filename_folded=? WHERE asset_id=?",
+                               ("nonmatching damage", row["id"]))
+        response = get(rig, {"q": "needle", "limit": 1})
+&gt;       assert ids(response) == [row["id"]] and response.json()["total"] == 1
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:204: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"8c2ae737-1275-4ef0-9626-eb45c7126e79"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_offset_total_rejects_feature_visibility_change_before_return" time="0.216" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_injected_content_io_failure_returns_fixed_error_without_path" time="0.232" /></testsuite></testsuites>

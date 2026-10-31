@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.582" timestamp="2026-10-25T20:14:00.904944+09:00" hostname="8a71deb1dd45"><testcase classname=".runtime.independent-keyed-review.test_independent" name="test_cold_restore_after_last_delta_fences_deferred_snapshot" time="4.525"><failure message="AssertionError: late deferred snapshot appeared after durable cold FAILED&#10;assert {'canon.json'...': b'[]', ...} == {'canon.json'...': b'[]', ...}&#10;  &#10;  Omitting 18 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'lore/context_snapshots/251eebd6-61b7-4347-97ad-eb84d8652670.json': b'{\n  '&#10;                                                                       b'&quot;id&quot;: &quot;2'&#10;                                                                       b'51eebd6-'&#10;                                                                       b'61b7-434'...&#10;  &#10;  ...Full output truncated (233 lines hidden), use '-vv' to show">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/tmp/...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_restore_after_last_delta_fences_deferred_snapshot(keyed):
+        from threading import Event
+        f=keyed
+        reached,release=Event(),Event()
+        node=f.runtime.generation_runtime.text_node; original=node.stream
+        def stream(request):
+            for event in original(request):
+                if event.event_type=='generation.completed':
+                    reached.set(); assert release.wait(10)
+                yield event
+        f.monkeypatch.setattr(node,'stream',stream)
+        try:
+            _,job=queued(f)
+            f.release.set(); assert reached.wait(5)
+            cold=f.reopen()
+            assert cold.get(job.id).status=='FAILED'
+            before=files(f); record=deepcopy(f.persistence.get(job.id))
+            release.set(); assert f.finished.wait(10)
+            assert f.persistence.get(job.id)==record
+&gt;           assert files(f)==before, 'late deferred snapshot appeared after durable cold FAILED'
+E           AssertionError: late deferred snapshot appeared after durable cold FAILED
+E           assert {'canon.json'...': b'[]', ...} == {'canon.json'...': b'[]', ...}
+E             
+E             Omitting 18 identical items, use -vv to show
+E             Left contains 1 more item:
+E             {'lore/context_snapshots/251eebd6-61b7-4347-97ad-eb84d8652670.json': b'{\n  '
+E                                                                                  b'"id": "2'
+E                                                                                  b'51eebd6-'
+E                                                                                  b'61b7-434'...
+E             
+E             ...Full output truncated (233 lines hidden), use '-vv' to show
+
+.runtime/independent-keyed-review/test_independent.py:188: AssertionError</failure></testcase></testsuite></testsuites>

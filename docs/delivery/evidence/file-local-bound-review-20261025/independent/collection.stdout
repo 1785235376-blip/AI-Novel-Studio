@@ -1,0 +1,32 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-file-adoption-independent/run.py /workspace/scratch/20a0022d2b33/review-file-adoption-independent/test_independent.py --collect-only -q 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+
+==================================== ERRORS ====================================
+____ ERROR collecting review-file-adoption-independent/test_independent.py _____
+../review-file-adoption-independent/test_independent.py:10: in <module>
+    from app import jobs as jobs_module
+app/jobs.py:8: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+=========================== short test summary info ============================
+ERROR ../review-file-adoption-independent/test_independent.py - OSError: [Err...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+no tests collected, 1 error in 0.40s

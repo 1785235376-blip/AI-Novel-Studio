@@ -1,7 +1,5 @@
 import {describe,expect,it} from 'vitest';
-// @ts-expect-error Node built-ins are provided by the Vitest runtime.
 import {readFileSync} from 'node:fs';
-// @ts-expect-error Node built-ins are provided by the Vitest runtime.
 import {fileURLToPath} from 'node:url';
 
 const css=readFileSync(fileURLToPath(new URL('./FeatureLauncher.css',import.meta.url)),'utf8').replace(/\s+/g,'');
@@ -27,6 +25,7 @@ describe('feature launcher layout contract',()=>{
   it('keeps the existing feature-group persistence key and panel callback',()=>{
     expect(app).toContain('localStorage.getItem("studio-feature-groups")');
     expect(app).toContain('localStorage.setItem("studio-feature-groups",JSON.stringify(featureGroups))');
-    expect(app).toContain('onSelect={setPanel}');
+    // [HERMIA-FE-20261022] FL select routes through workbench.open → legacySelectPanel (stable FL ids)
+    expect(app).toContain('workbench.open(next,legacySelectPanel)');
   });
 });

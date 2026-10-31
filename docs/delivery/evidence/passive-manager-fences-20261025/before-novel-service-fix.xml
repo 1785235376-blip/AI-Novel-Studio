@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="58" time="8.890" timestamp="2026-10-25T17:00:21.327115+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[COMPLETED]" time="0.057" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[FAILED]" time="0.053" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[RUNNING]" time="0.050" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[GENERATING]" time="0.046" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[QUEUED]" time="0.053" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cold_restore_keeps_binding_separate_from_public_and_never_dispatches[PREPARED]" time="0.048" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_persistence_projection_retains_binding_on_original_manager_save" time="0.041" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_restore_reconstructs_only_read_verifier_and_ignores_persisted_callbacks" time="0.053" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_preparation_does_not_capture_or_consume_client_supplied_binding" time="0.031" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_restore_refuses_same_slug_chapters_from_another_file_root[COMPLETED]" time="0.051" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_restore_refuses_same_slug_chapters_from_another_file_root[RUNNING]" time="0.052" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[None]" time="0.027" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid1]" time="0.032" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid2]" time="0.033" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_present_invalid_binding_never_serializes_as_legacy[invalid3]" time="0.035" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_unbound_public_and_record_are_exact_original_projection" time="0.035" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[replace_owner]" time="0.080" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[missing_marker]" time="0.051" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[missing_record]" time="0.045" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[malformed_json]" time="0.046" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_removed]" time="0.036" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_null]" time="0.049" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[binding_unknown_version]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[outer_identity_missing]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[identity_changed]" time="0.041" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_cached_reads_content_variants_and_diff_recheck_original_durable_owner[owner_changed]" time="0.058" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[replace_owner]" time="0.058" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[missing_marker]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[missing_record]" time="0.043" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[malformed_json]" time="0.032" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_removed]" time="0.041" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_null]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[binding_unknown_version]" time="0.056" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[outer_identity_missing]" time="0.047" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[identity_changed]" time="0.035" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_held_event_iterator_stops_before_next_chunk_when_durable_identity_changes[owner_changed]" time="0.039" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_bound_events_never_hold_condition_during_original_repository_read" time="0.046" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_variant_filter_preserves_unbound_legacy_compatibility" time="0.081" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[accept]" time="0.045" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[reject]" time="0.037" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[cancel]" time="0.038" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_passive_bound_mutations_fail_before_side_effects[start_prepared]" time="0.036" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_run]" time="0.060" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_cancel_execution]" time="0.040" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[_start_prepared_validated]" time="0.049" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_direct_passive_execution_and_variant_staging_have_zero_side_effects[stage_reviewed_variants]" time="0.049" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[retry-FAILED]" time="0.799" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[cancel-COMPLETED]" time="0.051" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[accept-COMPLETED]" time="0.057" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_mutations_are_explicit_409_and_never_dispatch[reject-COMPLETED]" time="0.052" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_bound_read_has_original_public_shape_without_internal_identity" time="0.086" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_mounted_cached_reads_and_original_taskcenter_hide_replaced_owner" time="0.098" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_unbound_retry_runs_original_mock_worker_and_accepts_without_binding" time="0.300" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_collaborative_retry_keeps_original_preview_guard_before_passive_guard[False]" time="0.103" /><testcase classname="tests.test_passive_generation_manager_binding" name="test_collaborative_retry_keeps_original_preview_guard_before_passive_guard[True]" time="0.093"><failure message="KeyError: '6abb71de-6341-4a0f-9048-323206a8d39d'">collaboration_generation = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f76593a4380&gt;, bundle=RepositoryBundle(novels=&lt;app.repos...t at 0x7f7657d45580&gt;, authorization=&lt;app.services.authorization_service.AuthorizationService object at 0x7f7658840380&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f76586d55e0&gt;
+bound = True
+
+    @pytest.mark.parametrize("bound", [False, True])
+    def test_collaborative_retry_keeps_original_preview_guard_before_passive_guard(
+            collaboration_generation, monkeypatch, bound):
+        source = collaboration_generation
+&gt;       row, reopened, job = _collaborative_record(source, monkeypatch, bound=bound)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_binding.py:533: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_binding.py:526: in _collaborative_record
+    return row, reopened, reopened.get(job.id)
+                          ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.jobs.JobManager object at 0x7f76586a5bb0&gt;
+jid = '6abb71de-6341-4a0f-9048-323206a8d39d'
+
+    def get(self,jid):
+&gt;       if jid not in self.jobs:raise KeyError(jid)
+                                ^^^^^^^^^^^^^^^^^^^
+E       KeyError: '6abb71de-6341-4a0f-9048-323206a8d39d'
+
+app/jobs.py:1361: KeyError</failure></testcase><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[unregistered]" time="0.059"><failure message="KeyError: '304ea85b-0fb9-4bc0-a12c-0194031dee52'">collaboration_generation = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f7657a00f50&gt;, bundle=RepositoryBundle(novels=&lt;app.repos...t at 0x7f76588435c0&gt;, authorization=&lt;app.services.authorization_service.AuthorizationService object at 0x7f7658843830&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7657a008f0&gt;
+change = 'unregistered'
+
+    @pytest.mark.parametrize("change", ["unregistered", "foreign_store", "foreign_mainline"])
+    def test_registered_branch_passive_reads_require_the_original_registered_owner(
+            collaboration_generation, monkeypatch, change):
+        from app.experimental.store import ExperimentalStore
+        from app.services.branch_manuscript_service import BranchManuscriptService
+    
+        source = collaboration_generation
+&gt;       row, manager, job = _collaborative_record(source, monkeypatch, bound=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_binding.py:555: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_binding.py:526: in _collaborative_record
+    return row, reopened, reopened.get(job.id)
+                          ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.jobs.JobManager object at 0x7f7657a09ee0&gt;
+jid = '304ea85b-0fb9-4bc0-a12c-0194031dee52'
+
+    def get(self,jid):
+&gt;       if jid not in self.jobs:raise KeyError(jid)
+                                ^^^^^^^^^^^^^^^^^^^
+E       KeyError: '304ea85b-0fb9-4bc0-a12c-0194031dee52'
+
+app/jobs.py:1361: KeyError</failure></testcase><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[foreign_store]" time="0.067"><failure message="KeyError: 'f576136a-4946-4afd-9544-b643425c7f34'">collaboration_generation = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f7657a03980&gt;, bundle=RepositoryBundle(novels=&lt;app.repos...t at 0x7f76588426c0&gt;, authorization=&lt;app.services.authorization_service.AuthorizationService object at 0x7f7658841b50&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7657a02390&gt;
+change = 'foreign_store'
+
+    @pytest.mark.parametrize("change", ["unregistered", "foreign_store", "foreign_mainline"])
+    def test_registered_branch_passive_reads_require_the_original_registered_owner(
+            collaboration_generation, monkeypatch, change):
+        from app.experimental.store import ExperimentalStore
+        from app.services.branch_manuscript_service import BranchManuscriptService
+    
+        source = collaboration_generation
+&gt;       row, manager, job = _collaborative_record(source, monkeypatch, bound=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_binding.py:555: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_binding.py:526: in _collaborative_record
+    return row, reopened, reopened.get(job.id)
+                          ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.jobs.JobManager object at 0x7f7657a024e0&gt;
+jid = 'f576136a-4946-4afd-9544-b643425c7f34'
+
+    def get(self,jid):
+&gt;       if jid not in self.jobs:raise KeyError(jid)
+                                ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'f576136a-4946-4afd-9544-b643425c7f34'
+
+app/jobs.py:1361: KeyError</failure></testcase><testcase classname="tests.test_passive_generation_manager_binding" name="test_registered_branch_passive_reads_require_the_original_registered_owner[foreign_mainline]" time="0.057"><failure message="KeyError: '0d931172-5740-4890-8f67-f57a6aa2cf65'">collaboration_generation = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f7658678a10&gt;, bundle=RepositoryBundle(novels=&lt;app.repos...t at 0x7f7658678140&gt;, authorization=&lt;app.services.authorization_service.AuthorizationService object at 0x7f76586783b0&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f76586c2990&gt;
+change = 'foreign_mainline'
+
+    @pytest.mark.parametrize("change", ["unregistered", "foreign_store", "foreign_mainline"])
+    def test_registered_branch_passive_reads_require_the_original_registered_owner(
+            collaboration_generation, monkeypatch, change):
+        from app.experimental.store import ExperimentalStore
+        from app.services.branch_manuscript_service import BranchManuscriptService
+    
+        source = collaboration_generation
+&gt;       row, manager, job = _collaborative_record(source, monkeypatch, bound=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_binding.py:555: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_binding.py:526: in _collaborative_record
+    return row, reopened, reopened.get(job.id)
+                          ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.jobs.JobManager object at 0x7f7657a09fa0&gt;
+jid = '0d931172-5740-4890-8f67-f57a6aa2cf65'
+
+    def get(self,jid):
+&gt;       if jid not in self.jobs:raise KeyError(jid)
+                                ^^^^^^^^^^^^^^^^^^^
+E       KeyError: '0d931172-5740-4890-8f67-f57a6aa2cf65'
+
+app/jobs.py:1361: KeyError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,39 @@
+cwd=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_external_adversarial.py", "-x", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent-evidence/baseline-red.xml", "--basetemp=/tmp/independent-taskcenter-n92e33wd/baseline-red/pytest-tmp", "-o", "cache_dir=/tmp/independent-taskcenter-n92e33wd/baseline-red/pytest-cache"]
+F
+=================================== FAILURES ===================================
+________ test_real_post_and_repeated_pages_are_private_zero_write[/api] ________
+
+env = namespace(r=namespace(client=<starlette.testclient.TestClient object at 0x7f2fa40c6b10>, nid='query-7bb561e4b4654cceab...t': '2026-10-26T11:53:07.821019+00:00', 'history': []}], mp=<_pytest.monkeypatch.MonkeyPatch object at 0x7f2fa8f3fbf0>)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+>           r=read(e,token,prefix); assert r.status_code==200,r.text
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"2a085086-ce65-4be2-a6c8-6f05a2846816"}
+E           assert 501 == 200
+E            +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests/test_taskcenter_external_adversarial.py:59: AssertionError
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent-evidence/baseline-red.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 74.40s (0:01:14)

@@ -1,0 +1,109 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/handoff-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "error_code": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "REJECTED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error_code"
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "PROTOCOL_INCOMPATIBLE",
+            "PRODUCT_NOT_AVAILABLE",
+            "CAPABILITY_NOT_SUPPORTED",
+            "SESSION_REQUIRED",
+            "SESSION_REVOKED",
+            "PERMISSION_DENIED",
+            "CONTEXT_NOT_AUTHORIZED",
+            "CONTEXT_STALE",
+            "SOURCE_CHANGED",
+            "HANDOFF_TARGET_NOT_FOUND",
+            "TUTOR_UNAVAILABLE",
+            "VERIFIER_UNAVAILABLE",
+            "MODEL_NOT_AVAILABLE",
+            "TRANSPORT_ERROR",
+            "TIMEOUT",
+            "CANCELLED",
+            "INVALID_MESSAGE"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "OPENED",
+        "REJECTED"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_name",
+    "protocol_version",
+    "request_id",
+    "session_id",
+    "status"
+  ],
+  "title": "HandoffResult",
+  "type": "object"
+}

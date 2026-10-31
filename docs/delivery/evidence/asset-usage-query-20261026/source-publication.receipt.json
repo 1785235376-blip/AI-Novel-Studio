@@ -1,0 +1,10 @@
+{
+  "checked_at_utc": "2026-10-26T12:58:54.439181+00:00",
+  "branch": "work/asset-usage-query-20261026",
+  "remote_commit": "554de521fb2640152408bcede62cbd21d3eaab49",
+  "tree": "9a1ad60c58b42bf7d0b740048e7a34b5f997c642",
+  "command": "git ls-remote --heads origin refs/heads/work/asset-usage-query-20261026",
+  "phase": "frozen-source checkpoint; subsequent evidence-only commit is reported in the final delivery",
+  "no_force_push": true,
+  "actions": "NOT_RUN; uploaded checkpoint commit uses skip-ci marker; no workflow dispatched"
+}

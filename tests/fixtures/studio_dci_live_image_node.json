@@ -1,0 +1,2417 @@
+{
+ "fixture_kind": "REAL_API_PLUS_MOCK_PROVIDER",
+ "limitations": "Original app.main (File storage, isolated env) over loopback HTTP; only the local Automatic1111 endpoint is a synthetic PNG mock. Synthetic project data only.",
+ "backend_sha": "8ea45399816bf74783c4f01247b440ce4a82b5ba",
+ "api": {
+  "novel": {
+   "status": 201,
+   "body": {
+    "id": "dci-synthetic-ap",
+    "title": "DCI synthetic ap",
+    "genre": "",
+    "status": "Writing",
+    "created_at": "2026-10-26T03:16:14.357131+00:00",
+    "updated_at": "2026-10-26T03:16:14.357145+00:00"
+   }
+  },
+  "activate": {
+   "status": 200,
+   "body": {
+    "project": {
+     "id": "dci-synthetic-ap",
+     "title": "DCI synthetic ap",
+     "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+     "entry_kind": "NEUTRAL_STUDIO"
+    },
+    "preferences": {
+     "version": 1,
+     "intents": [],
+     "preset": "BLANK",
+     "custom_intent": ""
+    },
+    "capabilities": {
+     "manual_import": true,
+     "manual_export": true,
+     "model_required": false,
+     "chapter_required": false,
+     "media_validator_configured": true,
+     "asset_kinds": [
+      "image",
+      "video",
+      "audio"
+     ],
+     "intent_is_permission": false
+    }
+   }
+  },
+  "overview": {
+   "status": 200,
+   "body": {
+    "project": {
+     "id": "dci-synthetic-ap",
+     "title": "DCI synthetic ap",
+     "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+     "entry_kind": "NEUTRAL_STUDIO"
+    },
+    "preferences": {
+     "version": 1,
+     "intents": [],
+     "preset": "BLANK",
+     "custom_intent": ""
+    },
+    "capabilities": {
+     "manual_import": true,
+     "manual_export": true,
+     "model_required": false,
+     "chapter_required": false,
+     "media_validator_configured": true,
+     "asset_kinds": [
+      "image",
+      "video",
+      "audio"
+     ],
+     "intent_is_permission": false,
+     "can_mutate": true,
+     "can_review": true
+    }
+   }
+  },
+  "canvas.create": {
+   "status": 201,
+   "body": {
+    "id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+    "version": 1,
+    "definition": {
+     "cards": [],
+     "schema_version": 1,
+     "title": "DCI image node target",
+     "viewport": {
+      "x": 0.0,
+      "y": 0.0,
+      "zoom": 1.0
+     }
+    },
+    "definition_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+    "project_id": "dci-synthetic-ap",
+    "scope": {
+     "mode": "local",
+     "novel_id": "dci-synthetic-ap"
+    },
+    "created_at": "2026-10-26T03:16:14.402124+00:00",
+    "updated_at": "2026-10-26T03:16:14.402124+00:00",
+    "reference_states": [],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+     "history_used": 0,
+     "record_bytes": 733
+    }
+   }
+  },
+  "preview": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "operation_id": "m5.image.t2i",
+    "request_id": "dci-node-one",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "sources": [],
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42,
+      "cfg": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": null,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "02290a67b815477e76f8172c5b88d8a2d9af7ece264b7a1edede1bd331247b3e"
+   }
+  },
+  "create": {
+   "status": 201,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.440035+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "create.duplicate": {
+   "status": 201,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.440035+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "list": {
+   "status": 200,
+   "body": {
+    "items": [
+     {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+      "novel_id": "dci-synthetic-ap",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-26T03:16:14.440026+00:00",
+      "updated_at": "2026-10-26T03:16:14.440035+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+       "operation_id": "m5.image.t2i",
+       "request_id": "dci-node-one",
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "prompt": "A synthetic node intent; mock provider only",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "source_snapshots": [],
+       "allow_cloud": false,
+       "license_note": "Synthetic",
+       "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "dci-synthetic-ap",
+        "scope": {
+         "mode": "local",
+         "novel_id": "dci-synthetic-ap"
+        },
+        "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+        "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+        "canvas_version": 1,
+        "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+        "node_id": "generation-node-one",
+        "title": "Explicit generation node",
+        "position": {
+         "x": 48.0,
+         "y": 80.0
+        },
+        "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+       }
+      },
+      "provider": {
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "local": true,
+       "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+      },
+      "execution_recipe": {
+       "contract": "studio-execution-recipe/1",
+       "operation_id": "m5.image.t2i",
+       "adapter": "AUTOMATIC1111_IMAGE",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "automatic_fallback": false,
+       "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+       },
+       "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "dci-node-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+     }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED"
+   }
+  },
+  "list.page": {
+   "status": 200,
+   "body": {
+    "items": [
+     {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+      "novel_id": "dci-synthetic-ap",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-26T03:16:14.440026+00:00",
+      "updated_at": "2026-10-26T03:16:14.440035+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+       "operation_id": "m5.image.t2i",
+       "request_id": "dci-node-one",
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "prompt": "A synthetic node intent; mock provider only",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "source_snapshots": [],
+       "allow_cloud": false,
+       "license_note": "Synthetic",
+       "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "dci-synthetic-ap",
+        "scope": {
+         "mode": "local",
+         "novel_id": "dci-synthetic-ap"
+        },
+        "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+        "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+        "canvas_version": 1,
+        "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+        "node_id": "generation-node-one",
+        "title": "Explicit generation node",
+        "position": {
+         "x": 48.0,
+         "y": 80.0
+        },
+        "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+       }
+      },
+      "provider": {
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "local": true,
+       "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+      },
+      "execution_recipe": {
+       "contract": "studio-execution-recipe/1",
+       "operation_id": "m5.image.t2i",
+       "adapter": "AUTOMATIC1111_IMAGE",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "automatic_fallback": false,
+       "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+       },
+       "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "dci-node-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+     }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED",
+    "total": 1,
+    "limit": 1,
+    "offset": 0,
+    "has_more": false
+   }
+  },
+  "get": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.440035+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "execute": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": "7e0e3fab1b436ee83d9c64bc67ad2bd13d5cf53d84b22e2f2f0a96e5dddc7307",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.700837+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "af95481f-f326-432a-9e54-90985eda03d5",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "candidate": {
+   "status": 200,
+   "bytes": 156
+  },
+  "get.after_execute": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": "7e0e3fab1b436ee83d9c64bc67ad2bd13d5cf53d84b22e2f2f0a96e5dddc7307",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.700837+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "af95481f-f326-432a-9e54-90985eda03d5",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "review": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": "7e0e3fab1b436ee83d9c64bc67ad2bd13d5cf53d84b22e2f2f0a96e5dddc7307",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.766367+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "af95481f-f326-432a-9e54-90985eda03d5",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "review.duplicate": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": "7e0e3fab1b436ee83d9c64bc67ad2bd13d5cf53d84b22e2f2f0a96e5dddc7307",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.766367+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "af95481f-f326-432a-9e54-90985eda03d5",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "image-node-result": {
+   "status": 403,
+   "body": {
+    "detail": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "message": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "details": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "request_id": "d80b85ba-1a56-49f0-b07f-8a9357a07705"
+   }
+  },
+  "image-node-result.duplicate": {
+   "status": 403,
+   "body": {
+    "detail": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "message": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "details": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "request_id": "d54bd336-0b2a-4796-b85c-950ffd0cc32c"
+   }
+  },
+  "canvas.get": {
+   "status": 200,
+   "body": {
+    "id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+    "version": 1,
+    "definition": {
+     "cards": [],
+     "schema_version": 1,
+     "title": "DCI image node target",
+     "viewport": {
+      "x": 0.0,
+      "y": 0.0,
+      "zoom": 1.0
+     }
+    },
+    "definition_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+    "project_id": "dci-synthetic-ap",
+    "scope": {
+     "mode": "local",
+     "novel_id": "dci-synthetic-ap"
+    },
+    "created_at": "2026-10-26T03:16:14.402124+00:00",
+    "updated_at": "2026-10-26T03:16:14.402124+00:00",
+    "reference_states": [],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+     "history_used": 0,
+     "record_bytes": 733
+    }
+   }
+  },
+  "get.final": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "7bc2c106-7c99-4feb-a3c3-9d808737df70",
+    "novel_id": "dci-synthetic-ap",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "e0c6f0290c1c1feadb3e52a39cb98ec617841866cc4da68b299b221ada7815e8",
+    "receipt_digest": "7e0e3fab1b436ee83d9c64bc67ad2bd13d5cf53d84b22e2f2f0a96e5dddc7307",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.440026+00:00",
+    "updated_at": "2026-10-26T03:16:14.766367+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "af95481f-f326-432a-9e54-90985eda03d5",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-ap",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-ap"
+      },
+      "incarnation": "file:55557c10-241d-4756-a845-bcd486710d42",
+      "canvas_id": "48741673-0228-4f03-a7e9-98ac8c94fa93",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  }
+ },
+ "v1": {
+  "novel": {
+   "status": 201,
+   "body": {
+    "id": "dci-synthetic-v1",
+    "title": "DCI synthetic v1",
+    "genre": "",
+    "status": "Writing",
+    "created_at": "2026-10-26T03:16:14.914543+00:00",
+    "updated_at": "2026-10-26T03:16:14.914553+00:00"
+   }
+  },
+  "activate": {
+   "status": 200,
+   "body": {
+    "project": {
+     "id": "dci-synthetic-v1",
+     "title": "DCI synthetic v1",
+     "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+     "entry_kind": "NEUTRAL_STUDIO"
+    },
+    "preferences": {
+     "version": 1,
+     "intents": [],
+     "preset": "BLANK",
+     "custom_intent": ""
+    },
+    "capabilities": {
+     "manual_import": true,
+     "manual_export": true,
+     "model_required": false,
+     "chapter_required": false,
+     "media_validator_configured": true,
+     "asset_kinds": [
+      "image",
+      "video",
+      "audio"
+     ],
+     "intent_is_permission": false
+    }
+   }
+  },
+  "overview": {
+   "status": 200,
+   "body": {
+    "project": {
+     "id": "dci-synthetic-v1",
+     "title": "DCI synthetic v1",
+     "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+     "entry_kind": "NEUTRAL_STUDIO"
+    },
+    "preferences": {
+     "version": 1,
+     "intents": [],
+     "preset": "BLANK",
+     "custom_intent": ""
+    },
+    "capabilities": {
+     "manual_import": true,
+     "manual_export": true,
+     "model_required": false,
+     "chapter_required": false,
+     "media_validator_configured": true,
+     "asset_kinds": [
+      "image",
+      "video",
+      "audio"
+     ],
+     "intent_is_permission": false,
+     "can_mutate": true,
+     "can_review": true
+    }
+   }
+  },
+  "canvas.create": {
+   "status": 201,
+   "body": {
+    "id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+    "version": 1,
+    "definition": {
+     "cards": [],
+     "schema_version": 1,
+     "title": "DCI image node target",
+     "viewport": {
+      "x": 0.0,
+      "y": 0.0,
+      "zoom": 1.0
+     }
+    },
+    "definition_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+    "project_id": "dci-synthetic-v1",
+    "scope": {
+     "mode": "local",
+     "novel_id": "dci-synthetic-v1"
+    },
+    "created_at": "2026-10-26T03:16:14.955988+00:00",
+    "updated_at": "2026-10-26T03:16:14.955988+00:00",
+    "reference_states": [],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+     "history_used": 0,
+     "record_bytes": 733
+    }
+   }
+  },
+  "preview": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "operation_id": "m5.image.t2i",
+    "request_id": "dci-node-one",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "sources": [],
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42,
+      "cfg": null,
+      "negative_prompt": null,
+      "size": null,
+      "quality": null,
+      "duration_seconds": null,
+      "frame_rate": null,
+      "voice_id": null,
+      "speech_rate": null,
+      "in_ms": null,
+      "out_ms": null
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "48c637fbb9f00a669bcded9980fece86487414ba4232e73d51d0698b6564d7c6"
+   }
+  },
+  "create": {
+   "status": 201,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:14.997829+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "create.duplicate": {
+   "status": 201,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:14.997829+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "list": {
+   "status": 200,
+   "body": {
+    "items": [
+     {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+      "novel_id": "dci-synthetic-v1",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-26T03:16:14.997819+00:00",
+      "updated_at": "2026-10-26T03:16:14.997829+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+       "operation_id": "m5.image.t2i",
+       "request_id": "dci-node-one",
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "prompt": "A synthetic node intent; mock provider only",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "source_snapshots": [],
+       "allow_cloud": false,
+       "license_note": "Synthetic",
+       "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "dci-synthetic-v1",
+        "scope": {
+         "mode": "local",
+         "novel_id": "dci-synthetic-v1"
+        },
+        "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+        "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+        "canvas_version": 1,
+        "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+        "node_id": "generation-node-one",
+        "title": "Explicit generation node",
+        "position": {
+         "x": 48.0,
+         "y": 80.0
+        },
+        "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+       }
+      },
+      "provider": {
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "local": true,
+       "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+      },
+      "execution_recipe": {
+       "contract": "studio-execution-recipe/1",
+       "operation_id": "m5.image.t2i",
+       "adapter": "AUTOMATIC1111_IMAGE",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "automatic_fallback": false,
+       "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+       },
+       "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "dci-node-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+     }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED"
+   }
+  },
+  "list.page": {
+   "status": 200,
+   "body": {
+    "items": [
+     {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+      "novel_id": "dci-synthetic-v1",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-26T03:16:14.997819+00:00",
+      "updated_at": "2026-10-26T03:16:14.997829+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+       "operation_id": "m5.image.t2i",
+       "request_id": "dci-node-one",
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "prompt": "A synthetic node intent; mock provider only",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "source_snapshots": [],
+       "allow_cloud": false,
+       "license_note": "Synthetic",
+       "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "dci-synthetic-v1",
+        "scope": {
+         "mode": "local",
+         "novel_id": "dci-synthetic-v1"
+        },
+        "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+        "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+        "canvas_version": 1,
+        "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+        "node_id": "generation-node-one",
+        "title": "Explicit generation node",
+        "position": {
+         "x": 48.0,
+         "y": 80.0
+        },
+        "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+       }
+      },
+      "provider": {
+       "provider_id": "automatic1111",
+       "model_id": "synthetic.safetensors",
+       "local": true,
+       "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+      },
+      "execution_recipe": {
+       "contract": "studio-execution-recipe/1",
+       "operation_id": "m5.image.t2i",
+       "adapter": "AUTOMATIC1111_IMAGE",
+       "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+       },
+       "automatic_fallback": false,
+       "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+       },
+       "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "dci-node-one",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+     }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED",
+    "total": 1,
+    "limit": 1,
+    "offset": 0,
+    "has_more": false
+   }
+  },
+  "get": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:14.997829+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "execute": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": "70e9e4bd11806dfc03d058c66f257a17f5a055b0fc80e7d383a050042e369c8e",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:15.252774+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "80d911c1-8254-4483-b2b8-bf53ba10cb8c",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "candidate": {
+   "status": 200,
+   "bytes": 156
+  },
+  "get.after_execute": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 5,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": "70e9e4bd11806dfc03d058c66f257a17f5a055b0fc80e7d383a050042e369c8e",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:15.252774+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "80d911c1-8254-4483-b2b8-bf53ba10cb8c",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "review": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": "70e9e4bd11806dfc03d058c66f257a17f5a055b0fc80e7d383a050042e369c8e",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:15.310131+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "80d911c1-8254-4483-b2b8-bf53ba10cb8c",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "review.duplicate": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": "70e9e4bd11806dfc03d058c66f257a17f5a055b0fc80e7d383a050042e369c8e",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:15.310131+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "80d911c1-8254-4483-b2b8-bf53ba10cb8c",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  },
+  "image-node-result": {
+   "status": 403,
+   "body": {
+    "detail": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "message": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "details": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "request_id": "9484d02f-142c-4ff5-888e-ff398cd36788"
+   }
+  },
+  "image-node-result.duplicate": {
+   "status": 403,
+   "body": {
+    "detail": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "message": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN",
+    "details": {
+     "code": "CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN"
+    },
+    "request_id": "1f7abf2c-000c-405b-95fa-c665ec377745"
+   }
+  },
+  "canvas.get": {
+   "status": 200,
+   "body": {
+    "id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+    "version": 1,
+    "definition": {
+     "cards": [],
+     "schema_version": 1,
+     "title": "DCI image node target",
+     "viewport": {
+      "x": 0.0,
+      "y": 0.0,
+      "zoom": 1.0
+     }
+    },
+    "definition_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+    "project_id": "dci-synthetic-v1",
+    "scope": {
+     "mode": "local",
+     "novel_id": "dci-synthetic-v1"
+    },
+    "created_at": "2026-10-26T03:16:14.955988+00:00",
+    "updated_at": "2026-10-26T03:16:14.955988+00:00",
+    "reference_states": [],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+     "history_used": 0,
+     "record_bytes": 733
+    }
+   }
+  },
+  "get.final": {
+   "status": 200,
+   "body": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "0f5b9475-2323-4109-ac5e-1ea564491202",
+    "novel_id": "dci-synthetic-v1",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "4282e3303ab58afb9eba370e174a7a9affaf957cbe02a46379ca126990a4af6b",
+    "receipt_digest": "70e9e4bd11806dfc03d058c66f257a17f5a055b0fc80e7d383a050042e369c8e",
+    "attempt": 1,
+    "created_at": "2026-10-26T03:16:14.997819+00:00",
+    "updated_at": "2026-10-26T03:16:15.310131+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": {
+     "id": "80d911c1-8254-4483-b2b8-bf53ba10cb8c",
+     "version": 1,
+     "digest": "6d0886eac9d2e5540de9baadd6166c7a21a738acec4b82be7d761a9b92f7e6f0",
+     "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+     "operation_id": "m5.image.t2i",
+     "request_id": "dci-node-one",
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "prompt": "A synthetic node intent; mock provider only",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "source_snapshots": [],
+     "allow_cloud": false,
+     "license_note": "Synthetic",
+     "canvas_image_node": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "dci-synthetic-v1",
+      "scope": {
+       "mode": "local",
+       "novel_id": "dci-synthetic-v1"
+      },
+      "incarnation": "file:fdf6c10b-2328-49d0-9149-6d9bb0580d04",
+      "canvas_id": "f18b8c93-00ae-49ff-9c35-2c04c0f6d643",
+      "canvas_version": 1,
+      "canvas_digest": "0bd19760e77ed2db7d9e912323b83edc2f787c9a3ca70a69ad630ac51db3f20a",
+      "node_id": "generation-node-one",
+      "title": "Explicit generation node",
+      "position": {
+       "x": 48.0,
+       "y": 80.0
+      },
+      "prompt_digest": "2b601fef198eb8ac0d0f210fc77da870a8245a2f4e8367cc363f56a19485f2f4"
+     }
+    },
+    "provider": {
+     "provider_id": "automatic1111",
+     "model_id": "synthetic.safetensors",
+     "local": true,
+     "route_digest": "93e8cc3403ff0cddec48431ecd2e1390bd174823d2273ce6769d037a374eb0f6"
+    },
+    "execution_recipe": {
+     "contract": "studio-execution-recipe/1",
+     "operation_id": "m5.image.t2i",
+     "adapter": "AUTOMATIC1111_IMAGE",
+     "parameters": {
+      "width": 64,
+      "height": 64,
+      "steps": 1,
+      "seed": 42
+     },
+     "automatic_fallback": false,
+     "defaults": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 28
+     },
+     "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "dci-node-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+   }
+  }
+ }
+}

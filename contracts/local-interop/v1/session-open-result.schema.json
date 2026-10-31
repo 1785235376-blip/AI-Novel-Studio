@@ -1,0 +1,166 @@
+{
+  "$defs": {
+    "SessionDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "enum": [
+              "project.context.read",
+              "project.selection.share",
+              "project.metadata.read",
+              "task.status.read",
+              "task.error.read",
+              "diagnostics.read",
+              "model.registry.read",
+              "model.runtime.status.read",
+              "tutor.guidance.request",
+              "tutor.guidance.receive",
+              "verifier.request",
+              "verifier.result.receive",
+              "case.candidate.create",
+              "handoff.open_feature",
+              "handoff.open_project",
+              "handoff.open_task"
+            ],
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "nonce": {
+          "maxLength": 128,
+          "minLength": 24,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Nonce",
+          "type": "string"
+        },
+        "peer_instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Peer Instance Id",
+          "type": "string"
+        },
+        "peer_product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Peer Product Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "NAMED_PIPE",
+            "LOOPBACK_HTTP"
+          ],
+          "title": "Transport",
+          "type": "string"
+        },
+        "user_identity": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "User Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capabilities",
+        "created_at",
+        "expires_at",
+        "instance_id",
+        "nonce",
+        "peer_instance_id",
+        "peer_product_id",
+        "product_id",
+        "protocol_name",
+        "protocol_version",
+        "session_id",
+        "transport",
+        "user_identity"
+      ],
+      "title": "SessionDescriptor",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/session-open-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "session": {
+      "$ref": "#/$defs/SessionDescriptor"
+    },
+    "session_token": {
+      "maxLength": 128,
+      "minLength": 32,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Session Token",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_name",
+    "protocol_version",
+    "session",
+    "session_token"
+  ],
+  "title": "SessionOpenResult",
+  "type": "object"
+}

@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workbench/capabilityBadge.test.ts (4 tests) 7ms
+ ✓ src/workbench/revisionRestore.test.ts (5 tests) 5ms
+ ✓ src/workbench/novelCta.test.ts (3 tests) 3ms
+ ✓ src/workbench/novelSecondaryEntries.test.ts (2 tests) 4ms
+ ✓ src/workbench/workbench.test.ts (18 tests) 32ms
+ ✓ src/rebuild/canvas/RebuildCanvas.test.tsx (2 tests) 116ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (10 tests) 148ms
+ ✓ src/workbench/CommandSearch.test.tsx (12 tests) 422ms
+ ✓ src/ui/AppShell.test.tsx (35 tests) 458ms
+
+ Test Files  9 passed (9)
+      Tests  91 passed (91)
+   Start at  17:29:58
+   Duration  1.59s (transform 636ms, setup 112ms, collect 1.87s, tests 1.19s, environment 1.72s, prepare 584ms)
+
+EXIT 0

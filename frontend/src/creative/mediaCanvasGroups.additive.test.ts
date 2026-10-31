@@ -1,0 +1,13 @@
+import { expect, it } from 'vitest';
+import { checkedCanvasDefinition, type CanvasDefinition } from './studioCanvasViewClient';
+import { assignCanvasCard, canvasGroupFrames, canvasHiddenCards, dissolveCanvasGroup, removeCanvasCard, replaceCanvasGroups } from './mediaCanvasGroups';
+function definition(): CanvasDefinition { return { schema_version: 1, title: 'Groups', viewport: { x: 0, y: 0, zoom: 1 }, cards: [{ id: 'A', position: { x: 0, y: 0 } }, { id: 'B', position: { x: 300, y: 0 } }], groups: [{ id: 'Root', name: 'Root', card_ids: ['A'], collapsed: false }, { id: 'Child', name: 'Child', card_ids: ['B'], collapsed: false, parent_id: 'Root' }] }; }
+it('keeps legacy shape and validates an optional nested display hierarchy', () => { const d = definition(); expect(checkedCanvasDefinition(d)).toEqual(d); const { groups, ...legacy } = d; expect(checkedCanvasDefinition(legacy)).not.toHaveProperty('groups'); expect(() => checkedCanvasDefinition({ ...d, groups: null })).toThrow(); });
+it.each(['cycle', 'orphan', 'duplicate-member', 'duplicate-group', 'unknown', 'depth'])('rejects %s without mutating input', mode => { const d = definition(), before = structuredClone(d); const groups = structuredClone(d.groups!);
+ if (mode === 'cycle') groups[0].parent_id = 'Child'; if (mode === 'orphan') groups[0].parent_id = 'missing'; if (mode === 'duplicate-member') groups[1].card_ids = ['A']; if (mode === 'duplicate-group') groups.push(groups[0]); if (mode === 'unknown') groups[0].card_ids = ['missing']; if (mode === 'depth') groups.splice(0, groups.length, ...Array.from({ length: 9 }, (_, i) => ({ id: `G${i}`, name: 'Group', card_ids: [], collapsed: false, ...(i ? { parent_id: `G${i-1}` } : {}) })));
+ expect(() => replaceCanvasGroups(d, groups)).toThrow(); expect(d).toEqual(before);
+});
+it('moves membership uniquely, dissolves hierarchy without losing cards and cleans removed-card memberships', () => { const d = definition(), assigned = assignCanvasCard(d, 'A', 'Child'); expect(assigned.groups![0].card_ids).toEqual([]); expect(assigned.groups![1].card_ids).toEqual(['B', 'A']);
+ const dissolved = dissolveCanvasGroup(d, 'Root'); expect(dissolved.cards).toEqual(d.cards); expect(dissolved.groups![0]).not.toHaveProperty('parent_id'); expect(removeCanvasCard(d, 'A').groups![0].card_ids).toEqual([]);
+});
+it('collapsed ancestors hide all descendant cards but preserve a single reopen frame', () => { const d = definition(); d.groups![0].collapsed = true; expect([...canvasHiddenCards(d)].sort()).toEqual(['A', 'B']); const frames = canvasGroupFrames(d); expect(frames).toHaveLength(1); expect(frames[0].group.id).toBe('Root'); expect(frames[0].members).toBe(2); expect(frames[0].width).toBe(240); });

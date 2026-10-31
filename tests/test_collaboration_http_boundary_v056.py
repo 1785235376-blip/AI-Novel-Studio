@@ -88,28 +88,113 @@ def test_multimodal_production_routes_reach_the_session_boundary(monkeypatch):
         assert response.json()["detail"]["code"]=="SESSION_REQUIRED"
 
 
-def test_collaboration_mode_allows_authorized_project_delete(monkeypatch):
+@pytest.fixture
+def collaboration_project_delete(monkeypatch, tmp_path):
+    """Use the real atomic retirement owner, not the pre-retirement delete stub."""
     import app.main as main_module
+    from app.authorization import AuthorizationScope, DomainRole, DomainRoleAssignment, ModalityDomain, ScopeKind
+    from app.collaboration import Branch, Storyline, Workspace
+    from app.identity import User, WorkspaceMembership
+    from app.repositories.factory import create_repository_bundle
+    from app.services.authorization_service import AuthorizationService
+    from app.services.collaboration_scope_service import CollaborationScopeService
+    from app.services.identity_service import IdentityService
+    from app.services.membership_authorization_service import MembershipAuthorizationService
+    from app.services.novel_service import NovelService
+
+    bundle = create_repository_bundle(config=SimpleNamespace(storage_backend="file"), data_root=tmp_path)
+    novels = NovelService(bundle.novels, bundle.chapters)
+    novels.create({"id": "book", "title": "Project deletion fixture"})
+    scopes = CollaborationScopeService(bundle.scope, bundle.novels)
+    scopes.create_workspace(Workspace("workspace", "Workspace"))
+    scopes.create_workspace(Workspace("other-workspace", "Other workspace"))
+    scopes.link_project("workspace", "book")
+    scopes.create_storyline(Storyline("story", "workspace", "book", "Main"))
+    scopes.create_branch(Branch("branch", "workspace", "book", "story", "main"))
+    identity = IdentityService(bundle.identity, scopes)
+    authorization = AuthorizationService(bundle.authorization, scopes)
     resolver = TrustedSessionResolver()
-    resolver.register("owner", SessionContext("session", "client", "user", "workspace"))
-    deleted = []
-    scope_service = SimpleNamespace(
-        repository=SimpleNamespace(project_workspace=lambda project_id: "workspace"),
-        validate_scope=lambda scope: None,
-    )
-    collaboration_settings = SimpleNamespace(enable_collaboration_runtime=True, enable_packaged_runtime=False)
-    monkeypatch.setattr(main_module, "settings", collaboration_settings)
-    monkeypatch.setattr(api, "settings", collaboration_settings)
+    for user, workspace in (("owner", "workspace"), ("member", "workspace"), ("outsider", "other-workspace")):
+        identity.create_user(User(user, user.title()))
+        identity.add_membership(WorkspaceMembership(f"membership:{user}", user, workspace))
+        resolver.register(user, SessionContext(f"session:{user}", "client", user, workspace))
+    scope = AuthorizationScope(ScopeKind.PROJECT, "workspace", "book")
+    authorization.assign_role(DomainRoleAssignment(
+        "owner-role", "owner", DomainRole.DOMAIN_LEAD, ModalityDomain.NOVEL, scope, "owner",
+    ))
+    settings = SimpleNamespace(enable_collaboration_runtime=True, enable_packaged_runtime=False)
+    monkeypatch.setattr(main_module, "settings", settings)
+    monkeypatch.setattr(api, "settings", settings)
     monkeypatch.setattr(main_module, "trusted_session_resolver", resolver)
     monkeypatch.setattr(api, "trusted_session_resolver", resolver)
-    monkeypatch.setattr(api, "collaboration_scope_service", scope_service)
-    monkeypatch.setattr(api, "membership_authorization_service", AllowRead())
-    monkeypatch.setattr(api, "novel_service", SimpleNamespace(delete=lambda novel_id: deleted.append(novel_id)))
+    monkeypatch.setattr(api, "collaboration_scope_service", scopes)
+    monkeypatch.setattr(api, "authorization_service", authorization)
+    monkeypatch.setattr(api, "membership_authorization_service", MembershipAuthorizationService(identity, authorization))
+    monkeypatch.setattr(api, "novel_service", novels)
+    return SimpleNamespace(
+        client=TestClient(app), bundle=bundle, identity=identity,
+        audit_before=bundle.authorization.list_audit_events(),
+    )
 
-    response = TestClient(app).delete("/api/novels/book", headers={"X-Session-Token": "owner"})
+
+def test_collaboration_mode_allows_authorized_project_delete(collaboration_project_delete):
+    fixture = collaboration_project_delete
+
+    response = fixture.client.delete("/api/novels/book", headers={"X-Session-Token": "owner"})
 
     assert response.status_code == 204
-    assert deleted == ["book"]
+    with pytest.raises(FileNotFoundError):
+        fixture.bundle.novels.get("book")
+    assert fixture.bundle.scope.project_workspace("book") is None
+    assert fixture.bundle.scope.list("storylines", project_id="book") == []
+    assert fixture.bundle.scope.list("branches", project_id="book") == []
+    assert fixture.bundle.authorization.list_role_assignments("owner") == []
+    events = fixture.bundle.authorization.list_audit_events()
+    prior_ids = {event["id"] for event in fixture.audit_before}
+    assert [event for event in events if event["id"] in prior_ids] == fixture.audit_before
+    deleted = [event for event in events if event["id"] not in prior_ids]
+    assert len(deleted) == 1
+    assert deleted[0]["action"] == "PROJECT_DELETED"
+    assert deleted[0]["actor_id"] == "owner"
+    assert deleted[0]["target_id"] == "book"
+    assert deleted[0]["scope"]["workspace_id"] == "workspace"
+
+
+@pytest.mark.parametrize(("token", "status"), [(None, 401), ("invalid", 401), ("member", 403), ("outsider", 403)])
+def test_collaboration_project_delete_rejects_unauthorized_actor_without_retiring(collaboration_project_delete, token, status):
+    fixture = collaboration_project_delete
+    before = fixture.bundle.novels.get("book")
+    headers = {"X-Session-Token": token} if token else {}
+
+    response = fixture.client.delete("/api/novels/book", headers=headers)
+
+    assert response.status_code == status
+    assert fixture.bundle.novels.get("book") == before
+    assert fixture.bundle.scope.project_workspace("book") == "workspace"
+    assert fixture.bundle.scope.get("branches", "branch")["project_id"] == "book"
+    assert len(fixture.bundle.authorization.list_role_assignments("owner")) == 1
+    assert fixture.bundle.authorization.list_audit_events() == fixture.audit_before
+
+
+def test_collaboration_project_delete_revalidates_membership_at_commit(collaboration_project_delete, monkeypatch):
+    from app.identity import IdentityStatus
+
+    fixture = collaboration_project_delete
+    original_delete = fixture.bundle.novels.delete
+
+    def revoke_before_commit(novel_id, **lifecycle):
+        fixture.identity.set_membership_status("owner", "workspace", IdentityStatus.INACTIVE)
+        return original_delete(novel_id, **lifecycle)
+
+    monkeypatch.setattr(fixture.bundle.novels, "delete", revoke_before_commit)
+    response = fixture.client.delete("/api/novels/book", headers={"X-Session-Token": "owner"})
+
+    assert response.status_code == 403
+    assert fixture.bundle.novels.get("book")["id"] == "book"
+    assert fixture.bundle.scope.project_workspace("book") == "workspace"
+    assert fixture.bundle.scope.get("branches", "branch")["project_id"] == "book"
+    assert len(fixture.bundle.authorization.list_role_assignments("owner")) == 1
+    assert fixture.bundle.authorization.list_audit_events() == fixture.audit_before
 
 
 class GenerationJobs:

@@ -1,0 +1,99 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+F
+================================== FAILURES ===================================
+_ test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api] __
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x0000015B766EB990>, nid='query-2316c8b342ad...0', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_rig, prefix):
+        e = usage_rig
+        assert copied_graph_consumers(e,30,16)+copied_timeline_consumers(e,count=2) == 540
+        run = e.rig.root.parent / ('combined-'+e.rig.root.name)
+        shutil.copytree(e.rig.root, run/'data')
+        nid = e.rig.nid
+        url = f'{prefix}/novels/{nid}/experimental/production/assets/{e.asset["id"]}/studio-asset-usages'
+>       with application(run) as client:
+
+tests\test_file_backend_safety_http.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\contextlib.py:144: in __exit__
+    next(self.gen)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+run = WindowsPath('D:/PoemSeed/Worktrees/file-safety-http-20261026/.runtime/http-dev-5/tmp/pytest-of-admin/pytest-0/combined-test_socket_local_asset_and_tw0')
+collaboration = False, budget = None, label = 'normal'
+
+    @contextmanager
+    def application(run, *, collaboration=False, budget=None, label='normal'):
+        root = Path(__file__).resolve().parents[1]
+        port = unused_port()
+        env = os.environ.copy()
+        for key in tuple(env):
+            if key.endswith('_API_KEY') or key in {'DATABASE_URL', 'TEST_POSTGRES_DATABASE_URL', 'E2E_DATABASE_URL'}:
+                env.pop(key, None)
+        for folder in ('home', 'data', 'tmp', 'appdata', 'localappdata'):
+            (run / folder).mkdir(parents=True, exist_ok=True)
+        receipt = run / (label + '-receipt.json')
+        env.update(PROJECT_ROOT=str(root), PYTHONPATH=str(root), NOVEL_DATA_PATH=str(run/'data'),
+            HOME=str(run/'home'), USERPROFILE=str(run/'home'), APPDATA=str(run/'appdata'), LOCALAPPDATA=str(run/'localappdata'),
+            TMP=str(run/'tmp'), TEMP=str(run/'tmp'), STORAGE_BACKEND='file', MOCK_PROVIDER='true', ENABLE_CLOUD='false',
+            ENABLE_PACKAGED_RUNTIME='false', ENABLE_COLLABORATION_RUNTIME=str(collaboration).lower(),
+            CREDENTIAL_VAULT_BACKEND='memory', CREATION_PROFILE='LOCAL_ONLY', EXPERIMENTAL_FEATURES=FLAGS,
+            FILE_SAFETY_RECEIPT=str(receipt), COLLABORATION_DEV_SESSIONS_JSON=json.dumps([
+                {'token':'token-local','session_id':'session-local','client_id':'client','actor_id':'local-author','workspace_id':'local-workspace'},
+                {'token':'token-reader','session_id':'session-reader','client_id':'client','actor_id':'reader','workspace_id':'query-workspace'}]))
+        env.pop('FILE_SAFETY_MAX_READ_BYTES', None)
+        if budget is not None:
+            env['FILE_SAFETY_MAX_READ_BYTES'] = str(budget)
+        with (run/(label+'.log')).open('w', encoding='utf-8') as log:
+            process = subprocess.Popen([sys.executable, str(root/'tests/file_safety_http_server.py'), str(port)], cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT)
+            try:
+                with httpx.Client(base_url=f'http://127.0.0.1:{port}', trust_env=False, timeout=60, headers={'X-Session-Token':'token-local'}) as client:
+                    deadline = time.monotonic()+45
+                    while True:
+                        assert process.poll() is None, (run/(label+'.log')).read_text(encoding='utf-8')
+                        try:
+                            if client.get('/health').status_code == 200:
+                                break
+                        except httpx.TransportError:
+                            pass
+                        assert time.monotonic() < deadline, 'original app startup timeout'
+                        time.sleep(.05)
+                    yield client
+            finally:
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=10)
+        observed = json.loads(receipt.read_text(encoding='utf-8'))
+        gets = [r for r in observed['gets'] if r['path'] != '/health']
+        assert all(not r['command_calls'] for r in gets), gets
+        assert all(not r['filesystem_mutations'] for r in gets), gets
+>       assert all(not [p for p in r['write_opens'] if not p.startswith('.workspace-mutation-locks/')] for r in gets), gets
+E       AssertionError: [{'path': '/api/novels/query-2316c8b342ad404b90cb84eecd5f3082/experimental/production/assets/08a0abb5-107f-4a7e-9056-5...e7c0ddb4ed5bfdd531129e906323fe526189320703a271.lock', ...], 'filesystem_mutations': [], 'command_calls': [], ...}, ...]
+E       assert False
+E        +  where False = all(<generator object application.<locals>.<genexpr> at 0x0000015B7803E5E0>)
+
+tests\test_file_backend_safety_http.py:84: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\file-safety-http-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_file_backend_safety_http.py::test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 61.84s (0:01:01)

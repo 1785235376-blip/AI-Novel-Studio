@@ -1,0 +1,203 @@
+/*
+ * Round2-B 角色与场景圣经样式。
+ *
+ * 只用 DS-v1.0 tokens（`frontend/src/ui/tokens.css`）：没有裸色值、没有任意间距、
+ * 没有任意圆角、没有新阴影。面板边框优先，卡片不嵌套装饰卡片。
+ * 不触碰 AppShell / ModuleSwitcher / ContextBar / StatusBar / 主题 tokens。
+ */
+
+.bible-workspace__scope {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--space-3);
+  line-height: 1.6;
+}
+
+.bible-workspace__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.bible-workspace__context,
+.bible-workspace__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bible-workspace__context {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-subtle);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.bible-workspace__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bible-workspace__section h3 {
+  margin: 0;
+  font-size: var(--space-3);
+  color: var(--color-text-primary);
+}
+
+/* --- 一个角色 / 场景条目 ------------------------------------------------- */
+
+.bible-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.bible-entry__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bible-entry__head h4 {
+  margin: 0;
+  font-size: var(--space-3);
+  color: var(--color-text-primary);
+}
+
+.bible-entry__id {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--space-3);
+}
+
+.bible-entry__dimensions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+}
+
+.bible-entry__usage h5,
+.bible-entry__refs h5 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.bible-entry__usage ul,
+.bible-entry__refs ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bible-entry__usage li,
+.bible-entry__refs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--space-3);
+}
+
+.bible-entry__note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--space-3);
+}
+
+/* --- 单个维度 ----------------------------------------------------------- */
+
+.bible-dimension {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+/* 未 authoring 的维度用中性底色，让"未知"在视觉上也是一等状态。 */
+.bible-dimension[data-state='UNKNOWN'] {
+  background: var(--color-bg-subtle);
+  border-style: dashed;
+}
+
+.bible-dimension[data-canon='DRAFT'] {
+  border-left: 3px solid var(--color-status-warning);
+}
+
+.bible-dimension__label {
+  color: var(--color-text-muted);
+  font-size: var(--space-3);
+}
+
+.bible-dimension__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.bible-dimension__unknown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.bible-dimension__unknown code {
+  font-family: var(--font-mono);
+  color: var(--color-status-warning);
+}
+
+.bible-dimension__value {
+  overflow-wrap: anywhere;
+}
+
+.bible-dimension__badges,
+.bible-dimension__references li,
+.bible-dimension__relationships li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bible-dimension__references,
+.bible-dimension__relationships {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--space-3);
+}
+
+.bible-dimension__source,
+.bible-dimension__note {
+  color: var(--color-text-muted);
+  font-size: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bible-dimension,
+  .bible-entry {
+    transition: none;
+  }
+}

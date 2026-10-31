@@ -1,0 +1,28 @@
+{
+  "baseline_commit": "8ea45399816bf74783c4f01247b440ce4a82b5ba",
+  "baseline_tree": "3372d4742f0de3f5ec96f2f7c3b505f3d968a107",
+  "source_commit": "554de521fb2640152408bcede62cbd21d3eaab49",
+  "source_tree": "9a1ad60c58b42bf7d0b740048e7a34b5f997c642",
+  "hash_scope": "exact working-tree bytes of changed implementation, test and script files at the source freeze; Git tree is the repository identity",
+  "files": {
+    "app/creative/asset_usage_budget.py": "701acfaaa06b3bf9555b1a469f95bfca7b56cd119fed83089376d2df6732c0f6",
+    "app/creative/asset_usage_paging.py": "590dcf3396dbf9adb0425b1c2d84f94923e5724cda59464e23cac313c32ff98d",
+    "app/creative/asset_usages.py": "3cb73294d28634090be1c5a1e2a1fcc778ad018df1472f437e10e63ee0bd4fdd",
+    "app/creative/graph.py": "f81053fd469b212dd7208eb78709f4c6d072c6f530110bddd597ef3e01bc0aa5",
+    "app/creative/graph_api.py": "0e084006450e91eed8fba4905b2a372c93bcb0b9e104ea0a670576b8c593e26a",
+    "app/creative/production_execution.py": "988f6b8fe9b53eef89c1777788c810e8f2cc932d233615df25a85b125f7e856b",
+    "app/creative/production_execution_api.py": "cb60da3b64f519ae32c2ab6465aed331dad149b9df3bfc80f932ecbf92661948",
+    "app/creative/workspace_api.py": "402f890a6020d40a5d6f1f80c96acd0793a51af26f4c94060954d5d2c8778b5f",
+    "app/experimental/store.py": "a7f46e93e6f319d89213fbf3e76676587a0c0246c92f160e4ef5ebb6dd3a6bde",
+    "app/services/asset_library_service.py": "0ed1b3b0c77f8ecdf7be2444c19996ff4f495f1cc3efb75ee332e347cab8b7e2",
+    "scripts/measure_asset_usage_process.py": "c07395d3e661ae383acc01bab56cc93c2b2c7a457a163ec7a1674520d4f7e90b",
+    "scripts/record_asset_usage_validation.py": "48dcafe9309c660bb2e64a7bfa9d1d1b47ec9b081562b04bbd98c7343175f357",
+    "tests/studio_asset_usage_fixture.py": "7057e81a5e343f5fefcb873ddd81557713bf2d1a6764f8a81cd93376316e3bd4",
+    "tests/studio_asset_usage_meter.py": "6a983b562c2dd1e08ed81ce90b09f5d8c7f076456a54b05fa96ce27157f51dd3",
+    "tests/test_studio_asset_usage_budget.py": "245ffdd0b2779c53462333c4f6314d242f8a6dc262d3a8eb3beed9656c5e3f1c",
+    "tests/test_studio_asset_usage_compat.py": "ac50f47c054a87d458e2dcfdc125897861ba4199a42547f077d4d1775c92d7f8",
+    "tests/test_studio_asset_usage_independent.py": "ceb420054890fade6789ad97c84f15a82e3a603ef2fa942c486552e7ce93e58f",
+    "tests/test_studio_asset_usage_independent_mixed.py": "5db1fe7c9478e834292a25afbf0074f44d6aa91fe43353458ca51e66873639d0",
+    "tests/test_studio_asset_usage_measurements.py": "1f2a1358790a406ada02df97c72615b76d053a629d9515e378cd2671afcb9c96"
+  }
+}

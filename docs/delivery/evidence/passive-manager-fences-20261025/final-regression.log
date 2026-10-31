@@ -1,0 +1,26 @@
+........................................................................ [ 14%]
+........................................................................ [ 29%]
+........................................................................ [ 44%]
+................................................................ss...... [ 59%]
+........................................................................ [ 74%]
+........................................................................ [ 89%]
+....................................................                     [100%]
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  $EXISTING_VENV/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  $WORKTREE/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  $WORKTREE/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: $WORKTREE/docs/delivery/evidence/passive-manager-fences-20261025/final-regression.xml -
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_generation_snapshot_runtime_v056.py:106: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+SKIPPED [1] tests/test_generation_snapshot_runtime_v056.py:125: PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+482 passed, 2 skipped, 3 warnings in 81.51s (0:01:21)

@@ -1,0 +1,115 @@
+{
+  "base": "c2bb1d5e81dc7d15036c40a8aa9409e4c5bc71f6",
+  "code_freeze": "97ab69b40435b18b1b5b946ad0e73774aa6da103",
+  "groups": {
+    "m0": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 65
+      },
+      "outside_source_modules": []
+    },
+    "store-new": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 57
+      },
+      "outside_source_modules": []
+    },
+    "http-candidate2": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 64
+      },
+      "outside_source_modules": []
+    },
+    "freeze-core": {
+      "returncode": 124,
+      "timed_out": true,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": false,
+        "tests": 0
+      },
+      "outside_source_modules": [
+        "EVIDENCE_MISSING"
+      ]
+    },
+    "freeze-core-retry": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 291
+      },
+      "outside_source_modules": []
+    },
+    "freeze-original-regression": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 198
+      },
+      "outside_source_modules": []
+    },
+    "candidate-97ab-final": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 22
+      },
+      "outside_source_modules": []
+    },
+    "candidate-97ab-extra-final": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 2
+      },
+      "outside_source_modules": []
+    }
+  },
+  "group_provenance": {
+    "m0": "baseline before collaboration integration",
+    "store-new": "working candidate store bytes; original-owner integration completed during run",
+    "http-candidate2": "candidate integration; capabilities description/golden updated during run, no behavioral edits",
+    "freeze-core": "97ab unchanged; bounded240s timeout, not PASS",
+    "freeze-core-retry": "97ab unchanged; bounded900s rerun",
+    "freeze-original-regression": "97ab unchanged; original9-file REGRESSION; bounded900s"
+  },
+  "counts_overlap": true,
+  "new_owner_process_crash_suite": {
+    "status": "20_PASS_NEW_RUN",
+    "local_commit": "85c870724e4bacca7c97b3c8af149755c8647bcd",
+    "evidence": "../taskcenter-rebuild-20261026/process-evidence",
+    "limits": "8 SIGKILL + 4 two-process concurrency (16 children total), 8 in-process faults; not cross-file/powerloss atomicity"
+  },
+  "PG_real_model_hosted_deployment_CI_actions": "NOT_RUN",
+  "execution_environment": "dot native cloud workspace",
+  "app_tree_frozen_and_integrated": "0ae3341234aa582b2d0ef6143c04e56e06aa46a5",
+  "external_publication": "PENDING_ROOT_REVIEW"
+}

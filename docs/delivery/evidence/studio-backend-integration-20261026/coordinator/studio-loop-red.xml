@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="5.863" timestamp="2026-10-26T10:36:09.678409+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_original_executor_manual_writeback_reopens" time="4.646" /><testcase classname="tests.test_studio_backend_integration_v2" name="test_revocation_while_waiting_for_queue_owner_does_not_persist" time="0.293"><failure message="AssertionError: assert [{'contract':...': None, ...}] == []&#10;  &#10;  Left contains one more item: {'contract': 'studio-image-execution/1', 'id': 'dd75d5d8-261a-4b06-a8e6-196bed43487c', 'novel_id': 'query-117d0e62bfd04a70954f1bdbd47ddc2c', 'branch_id': None, ...}&#10;  Use -v to get more diff">studio = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x000001431B871010&gt;, nid='query-117d0e62bfd0...s': []}, 'image_asset': None}], 'director_sources': [], 'model_called': False, 'product_acceptance': 'LOCAL_REQUIRED'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001431C1B0610&gt;
+
+    def test_revocation_while_waiting_for_queue_owner_does_not_persist(studio, monkeypatch):
+        from app.services.image_job_service import ImageJobService
+        e = studio
+        prepared = request(e)
+        preview = check(e.client.post(e.base + "/production/preview", headers=e.headers, json=prepared["command"]))
+        original = ImageJobService._mutate
+        def revoke_at_owner(owner, nid, branch, operation):
+            def late(rows):
+                e.rig.sessions.revoke("studio-integration-host")
+                return operation(rows)
+            return original(owner, nid, branch, late)
+        monkeypatch.setattr(ImageJobService, "_mutate", revoke_at_owner)
+        response = e.client.post(e.base + "/production/jobs", headers=e.headers, json={
+            "command": prepared["command"], "reviewed_preview_digest": preview["preview_digest"]})
+        assert response.status_code == 401, response.text
+&gt;       assert e.production._image(e.actor)._load(e.nid, None) == []
+E       AssertionError: assert [{'contract':...': None, ...}] == []
+E         
+E         Left contains one more item: {'contract': 'studio-image-execution/1', 'id': 'dd75d5d8-261a-4b06-a8e6-196bed43487c', 'novel_id': 'query-117d0e62bfd04a70954f1bdbd47ddc2c', 'branch_id': None, ...}
+E         Use -v to get more diff
+
+tests\test_studio_backend_integration_v2.py:177: AssertionError</failure></testcase><testcase classname="tests.test_studio_backend_integration_v2" name="test_storyboard_change_after_preview_cannot_enter_queue" time="0.333"><failure message="AssertionError: {&quot;contract&quot;:&quot;studio-production-job/1&quot;,&quot;owner&quot;:&quot;image&quot;,&quot;id&quot;:&quot;f283dfea-0012-4209-a866-b4ec059c0218&quot;,&quot;novel_id&quot;:&quot;query-956432f5724f4918bd9cbad798e9e75d&quot;,&quot;branch_id&quot;:null,&quot;version&quot;:1,&quot;status&quot;:&quot;QUEUED&quot;,&quot;request_digest&quot;:&quot;f5a2274106f25abe4481e509c481df766ddc902d72b322873bda6ecde9fedb7b&quot;,&quot;receipt_digest&quot;:null,&quot;attempt&quot;:0,&quot;created_at&quot;:&quot;2026-10-26T02:36:15.521774+00:00&quot;,&quot;updated_at&quot;:&quot;2026-10-26T02:36:15.521774+00:00&quot;,&quot;error_code&quot;:null,&quot;review_state&quot;:null,&quot;cancellation_mode&quot;:null,&quot;needs_reconciliation&quot;:null,&quot;execution_state&quot;:null,&quot;operation_id&quot;:&quot;m5.image.t2i&quot;,&quot;output_candidate&quot;:null,&quot;timeline_snapshot&quot;:null,&quot;sources&quot;:[{&quot;id&quot;:&quot;78b92dd4-1a5b-4ec7-aa26-69bbc14d3753&quot;,&quot;kind&quot;:&quot;CREATIVE_DOCUMENT&quot;,&quot;version&quot;:1,&quot;digest&quot;:&quot;c591534e855884843adf0cafeb2a6c7fa268c18c65ba099806185a3ca4070865&quot;}],&quot;command&quot;:{&quot;operation_id&quot;:&quot;m5.image.t2i&quot;,&quot;request_id&quot;:&quot;storyboard-one&quot;,&quot;provider_id&quot;:&quot;automatic1111&quot;,&quot;model_id&quot;:&quot;synthetic.safetensors&quot;,&quot;prompt&quot;:&quot;A blue courtyard&quot;,&quot;parameters&quot;:{&quot;width&quot;:64,&quot;height&quot;:64,&quot;steps&quot;:1,&quot;seed&quot;:42},&quot;source_snapshots&quot;:[{&quot;id&quot;:&quot;78b92dd4-1a5b-4ec7-aa26-69bbc14d3753&quot;,&quot;kind&quot;:&quot;CREATIVE_DOCUMENT&quot;,&quot;version&quot;:1,&quot;digest&quot;:&quot;c591534e855884843adf0cafeb2a6c7fa268c18c65ba099806185a3ca4070865&quot;,&quot;reference_only&quot;:true}],&quot;allow_cloud&quot;:false,&quot;license_note&quot;:&quot;&quot;},&quot;provider&quot;:{&quot;provider_id&quot;:&quot;automatic1111&quot;,&quot;model_id&quot;:&quot;synthetic.safetensors&quot;,&quot;local&quot;:true,&quot;route_digest&quot;:&quot;f9ee92eba578f7dec232f9a36ae05ec13827eb1f0fb4c84f4c26347dc2a4c365&quot;},&quot;execution_recipe&quot;:{&quot;contract&quot;:&quot;studio-execution-recipe/1&quot;,&quot;operation_id&quot;:&quot;m5.image.t2i&quot;,&quot;adapter&quot;:&quot;AUTOMATIC1111_IMAGE&quot;,&quot;parameters&quot;:{&quot;width&quot;:64,&quot;height&quot;:64,&quot;steps&quot;:1,&quot;seed&quot;:42},&quot;automatic_fallback&quot;:false,&quot;defaults&quot;:{&quot;width&quot;:1024,&quot;height&quot;:1024,&quot;steps&quot;:28},&quot;recipe_digest&quot;:&quot;6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8&quot;},&quot;media_measurement&quot;:null,&quot;approved_asset_version&quot;:null,&quot;request_id&quot;:&quot;storyboard-one&quot;,&quot;product_acceptance&quot;:&quot;LOCAL_REQUIRED&quot;,&quot;automatic_replay&quot;:false,&quot;remote_compute_may_continue&quot;:false}&#10;assert 201 == 409&#10; +  where 201 = &lt;Response [201 Created]&gt;.status_code">studio = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x000001431BEE16D0&gt;, nid='query-956432f5724f...s': []}, 'image_asset': None}], 'director_sources': [], 'model_called': False, 'product_acceptance': 'LOCAL_REQUIRED'})
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001431A4F3450&gt;
+
+    def test_storyboard_change_after_preview_cannot_enter_queue(studio, monkeypatch):
+        from app.creative.production_execution import ProductionExecutionService
+        e = studio
+        prepared = request(e)
+        preview = check(e.client.post(e.base + "/production/preview", headers=e.headers, json=prepared["command"]))
+        original = ProductionExecutionService.preview
+        def change_after_preview(owner, *args, **kwargs):
+            result = original(owner, *args, **kwargs)
+            payload = deepcopy(e.document_input)
+            payload["shots"][0]["frame_prompt"] = "Changed after the reviewed preview"
+            check(e.client.put(e.doc_url, headers=e.headers, json={**payload, "expected_version": e.document["version"]}))
+            return result
+        monkeypatch.setattr(ProductionExecutionService, "preview", change_after_preview)
+        response = e.client.post(e.base + "/production/jobs", headers=e.headers, json={
+            "command": prepared["command"], "reviewed_preview_digest": preview["preview_digest"]})
+&gt;       assert response.status_code == 409, response.text
+E       AssertionError: {"contract":"studio-production-job/1","owner":"image","id":"f283dfea-0012-4209-a866-b4ec059c0218","novel_id":"query-956432f5724f4918bd9cbad798e9e75d","branch_id":null,"version":1,"status":"QUEUED","request_digest":"f5a2274106f25abe4481e509c481df766ddc902d72b322873bda6ecde9fedb7b","receipt_digest":null,"attempt":0,"created_at":"2026-10-26T02:36:15.521774+00:00","updated_at":"2026-10-26T02:36:15.521774+00:00","error_code":null,"review_state":null,"cancellation_mode":null,"needs_reconciliation":null,"execution_state":null,"operation_id":"m5.image.t2i","output_candidate":null,"timeline_snapshot":null,"sources":[{"id":"78b92dd4-1a5b-4ec7-aa26-69bbc14d3753","kind":"CREATIVE_DOCUMENT","version":1,"digest":"c591534e855884843adf0cafeb2a6c7fa268c18c65ba099806185a3ca4070865"}],"command":{"operation_id":"m5.image.t2i","request_id":"storyboard-one","provider_id":"automatic1111","model_id":"synthetic.safetensors","prompt":"A blue courtyard","parameters":{"width":64,"height":64,"steps":1,"seed":42},"source_snapshots":[{"id":"78b92dd4-1a5b-4ec7-aa26-69bbc14d3753","kind":"CREATIVE_DOCUMENT","version":1,"digest":"c591534e855884843adf0cafeb2a6c7fa268c18c65ba099806185a3ca4070865","reference_only":true}],"allow_cloud":false,"license_note":""},"provider":{"provider_id":"automatic1111","model_id":"synthetic.safetensors","local":true,"route_digest":"f9ee92eba578f7dec232f9a36ae05ec13827eb1f0fb4c84f4c26347dc2a4c365"},"execution_recipe":{"contract":"studio-execution-recipe/1","operation_id":"m5.image.t2i","adapter":"AUTOMATIC1111_IMAGE","parameters":{"width":64,"height":64,"steps":1,"seed":42},"automatic_fallback":false,"defaults":{"width":1024,"height":1024,"steps":28},"recipe_digest":"6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"},"media_measurement":null,"approved_asset_version":null,"request_id":"storyboard-one","product_acceptance":"LOCAL_REQUIRED","automatic_replay":false,"remote_compute_may_continue":false}
+E       assert 201 == 409
+E        +  where 201 = &lt;Response [201 Created]&gt;.status_code
+
+tests\test_studio_backend_integration_v2.py:196: AssertionError</failure></testcase></testsuite></testsuites>

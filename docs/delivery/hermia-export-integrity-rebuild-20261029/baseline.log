@@ -1,0 +1,63 @@
+FFF...F.........FF                                                       [100%]
+=================================== FAILURES ===================================
+______________ test_missing_artifact_still_binds_receipt[content] ______________
+tests/test_export_integrity_rebuild.py:43: in test_missing_artifact_still_binds_receipt
+    with pytest.raises(ExportJobResultInvalid):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.services.export_job_service.ExportJobResultInvalid'>
+_______________ test_missing_artifact_still_binds_receipt[size] ________________
+tests/test_export_integrity_rebuild.py:43: in test_missing_artifact_still_binds_receipt
+    with pytest.raises(ExportJobResultInvalid):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.services.export_job_service.ExportJobResultInvalid'>
+_______________ test_missing_artifact_still_binds_receipt[hash] ________________
+tests/test_export_integrity_rebuild.py:43: in test_missing_artifact_still_binds_receipt
+    with pytest.raises(ExportJobResultInvalid):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE <class 'app.services.export_job_service.ExportJobResultInvalid'>
+______________ test_encoded_limit_checked_before_decoder[content] ______________
+tests/test_export_integrity_rebuild.py:78: in test_encoded_limit_checked_before_decoder
+    ExportJobService._result_bytes({key: 'YWJjYWJj', 'content_encoding': 'base64'})
+app/services/export_job_service.py:687: in _result_bytes
+    content_bytes = base64.b64decode(content.encode("ascii"), validate=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_export_integrity_rebuild.py:75: in decoder
+    def decoder(*_args, **_kwargs): pytest.fail('oversize reached decoder')
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: oversize reached decoder
+____________________ test_directory_is_stable_result_error _____________________
+tests/test_export_integrity_rebuild.py:95: in test_directory_is_stable_result_error
+    with pytest.raises(ExportJobResultInvalid): service.download(row['id'])
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/export_job_service.py:620: in download
+    with target.open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   IsADirectoryError: [Errno 21] Is a directory: '/tmp/pytest-of-agent/pytest-1/test_directory_is_stable_resul0/export_artifacts/b4be89a4-baa3-4560-aaa7-95f39dd82320.artifact'
+_______________________ test_fifo_download_never_blocks ________________________
+tests/test_export_integrity_rebuild.py:117: in test_fifo_download_never_blocks
+    assert not child.is_alive(), 'FIFO download exceeded watchdog'
+E   AssertionError: FIFO download exceeded watchdog
+E   assert not True
+E    +  where True = is_alive()
+E    +    where is_alive = <SpawnProcess name='SpawnProcess-1' pid=16 parent=6 started>.is_alive
+=============================== warnings summary ===============================
+tests/test_export_integrity_rebuild.py::test_missing_artifact_still_binds_receipt[content]
+  /workspace/scratch/20a0022d2b33/studio-export-rebuild-20261029/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_integrity_rebuild.py::test_missing_artifact_still_binds_receipt[content]
+  /workspace/scratch/20a0022d2b33/studio-export-rebuild-20261029/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_export_integrity_rebuild.py::test_missing_artifact_still_binds_receipt[content]
+FAILED tests/test_export_integrity_rebuild.py::test_missing_artifact_still_binds_receipt[size]
+FAILED tests/test_export_integrity_rebuild.py::test_missing_artifact_still_binds_receipt[hash]
+FAILED tests/test_export_integrity_rebuild.py::test_encoded_limit_checked_before_decoder[content]
+FAILED tests/test_export_integrity_rebuild.py::test_directory_is_stable_result_error
+FAILED tests/test_export_integrity_rebuild.py::test_fifo_download_never_blocks
+6 failed, 12 passed, 2 warnings in 10.02s

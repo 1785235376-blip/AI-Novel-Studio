@@ -1,0 +1,98 @@
+.........                                                                [100%]
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.runtime/independent-keyed-review/test_independent.py::test_outer_source_base_has_strict_type[base_chapter_version-True]
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+.runtime/independent-keyed-review/test_independent.py::test_outer_source_base_has_strict_type[base_chapter_version-True]
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+.runtime/independent-keyed-review/test_independent.py::test_live_route_rotation_refuses[provider]
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-10 (run)
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/tests/test_file_keyed_activation.py", line 95, in run
+      try: return original_run(job)
+                  ^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/jobs.py", line 1098, in _run
+      return run(self, job)
+             ^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 318, in run
+      capability = require_capability(manager, job, started=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 265, in require_capability
+      capability.check()
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 106, in check
+      raise ValueError('GENERATION_WRITER_ROUTE_CHANGED')
+  ValueError: GENERATION_WRITER_ROUTE_CHANGED
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+.runtime/independent-keyed-review/test_independent.py::test_live_route_rotation_refuses[model_registry]
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-12 (run)
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/tests/test_file_keyed_activation.py", line 95, in run
+      try: return original_run(job)
+                  ^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/jobs.py", line 1098, in _run
+      return run(self, job)
+             ^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 318, in run
+      capability = require_capability(manager, job, started=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 265, in require_capability
+      capability.check()
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 97, in check
+      raise ValueError('GENERATION_WRITER_CAPABILITY_CHANGED')
+  ValueError: GENERATION_WRITER_CAPABILITY_CHANGED
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+.runtime/independent-keyed-review/test_independent.py::test_live_route_rotation_refuses[node]
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-14 (run)
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/tests/test_file_keyed_activation.py", line 95, in run
+      try: return original_run(job)
+                  ^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/jobs.py", line 1098, in _run
+      return run(self, job)
+             ^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 318, in run
+      capability = require_capability(manager, job, started=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 265, in require_capability
+      capability.check()
+    File "/workspace/scratch/20a0022d2b33/file-keyed-activation/app/services/file_generation_execution.py", line 97, in check
+      raise ValueError('GENERATION_WRITER_CAPABILITY_CHANGED')
+  ValueError: GENERATION_WRITER_CAPABILITY_CHANGED
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/wip1/results.xml -
+9 passed, 6 warnings in 15.25s

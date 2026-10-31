@@ -1,0 +1,16 @@
+## mutation 1: removed '&& c.title === i.title'
+   × novel preview panels > rename with higher version but different title → unconfirmed, never 已保存, stays dirty 1058ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/novelPreviewPanels.test.tsx > novel preview panels > rename with higher version but different title → unconfirmed, never 已保存, stays dirty
+      Tests  1 failed | 15 passed (16)
+## mutation 2: reverted double-period fix
+   × novel preview panels > close confirm save error has no double period 60ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/novelPreviewPanels.test.tsx > novel preview panels > close confirm save error has no double period
+      Tests  1 failed | 15 passed (16)
+## restored
+      Tests  16 passed (16)
+ frontend/src/workspace/layout/DockLayout.tsx       |  2 +-
+ .../workspace/panels/novelPreviewPanels.test.tsx   | 34 ++++++++++++++++++++++
+ .../src/workspace/panels/novelPreviewPanels.tsx    | 12 ++++++--
+ 3 files changed, 45 insertions(+), 3 deletions(-)

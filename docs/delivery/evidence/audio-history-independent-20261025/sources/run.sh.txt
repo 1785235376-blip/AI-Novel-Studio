@@ -1,0 +1,7 @@
+#!/bin/bash
+set -o pipefail
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+RT="$ROOT/.runtime/audio-history-20261025"; REV="$ROOT/.runtime/independent-review"
+PY=<MAIN_ROOT>/.venv/bin/python
+cd "$ROOT"
+env -i PATH="$(dirname "$PY"):/usr/bin:/bin" LANG=C.UTF-8 HOME="$REV/home" USERPROFILE="$RT/profile" LOCALAPPDATA="$RT/local" APPDATA="$RT/roaming" XDG_DATA_HOME="$RT/xdg-data" XDG_CONFIG_HOME="$RT/xdg-config" XDG_CACHE_HOME="$RT/xdg-cache" TMPDIR="$REV/tmp" TMP="$REV/tmp" TEMP="$REV/tmp" PYTHONPATH="$ROOT" PROJECT_ROOT="$ROOT" NOVEL_DATA_PATH="$RT/data" STORAGE_BACKEND=file ENABLE_CLOUD=false ENABLE_PROVIDER_FALLBACK=false MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 "$PY" "$REV/review_launch.py" "$@"

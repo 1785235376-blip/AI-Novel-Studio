@@ -1,0 +1,2 @@
+app/repositories/generation_repository.py: OK
+tests/test_m5_generation_receipt_fence.py: OK

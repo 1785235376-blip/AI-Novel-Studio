@@ -1,0 +1,10 @@
+src/App.tsx(1963,80): error TS2554: Expected 1 arguments, but got 0.
+src/creative/GraphCanvas.tsx(577,31): error TS2339: Property 'contains' does not exist on type 'readonly string[]'.
+src/ui/ModuleStartGate.tsx(43,21): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/ui/handoffSmoke.xUx10.test.tsx(60,7): error TS2322: Type 'StudioModule' is not assignable to type 'WorkspaceModule'.
+  Type '"NOVEL"' is not assignable to type 'WorkspaceModule'.
+src/ui/handoffSmoke.xUx10.test.tsx(207,13): error TS2322: Type 'StudioModule' is not assignable to type 'WorkspaceModule'.
+  Type '"NOVEL"' is not assignable to type 'WorkspaceModule'.
+src/ui/handoffSmoke.xUx10.test.tsx(232,11): error TS2322: Type 'StudioModule' is not assignable to type 'WorkspaceModule'.
+  Type '"NOVEL"' is not assignable to type 'WorkspaceModule'.
+EXIT 2

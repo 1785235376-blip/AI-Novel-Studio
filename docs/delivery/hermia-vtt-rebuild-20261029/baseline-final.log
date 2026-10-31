@@ -1,0 +1,176 @@
+FFFF..FFF.FF.F                                                           [100%]
+=================================== FAILURES ===================================
+___________ test_external_ffmpeg_preserves_authored_literal[R&amp;D] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-24/test_external_ffmpeg_preserves0')
+text = 'R&amp;D'
+
+    @pytest.mark.parametrize('text',['R&amp;D','Show &lt;tag&gt;','&amp;amp; and &nbsp;', '中文 &amp; 😀', 'R&D', '&#65; and &copy;'])
+    def test_external_ffmpeg_preserves_authored_literal(tmp_path,text):
+        source=tmp_path/'caption.vtt';source.write_bytes(export_subtitles(timeline(text),'VTT'))
+        result=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(source),'-f','srt','-'],
+                              stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=10)
+>       assert result.stdout.decode().splitlines()[2]==text
+E       AssertionError: assert 'R&D' == 'R&amp;D'
+E         
+E         - R&amp;D
+E         + R&D
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:24: AssertionError
+______ test_external_ffmpeg_preserves_authored_literal[Show &lt;tag&gt;] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-24/test_external_ffmpeg_preserves1')
+text = 'Show &lt;tag&gt;'
+
+    @pytest.mark.parametrize('text',['R&amp;D','Show &lt;tag&gt;','&amp;amp; and &nbsp;', '中文 &amp; 😀', 'R&D', '&#65; and &copy;'])
+    def test_external_ffmpeg_preserves_authored_literal(tmp_path,text):
+        source=tmp_path/'caption.vtt';source.write_bytes(export_subtitles(timeline(text),'VTT'))
+        result=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(source),'-f','srt','-'],
+                              stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=10)
+>       assert result.stdout.decode().splitlines()[2]==text
+E       AssertionError: assert 'Show <tag>' == 'Show &lt;tag&gt;'
+E         
+E         - Show &lt;tag&gt;
+E         + Show <tag>
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:24: AssertionError
+____ test_external_ffmpeg_preserves_authored_literal[&amp;amp; and &nbsp;] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-24/test_external_ffmpeg_preserves2')
+text = '&amp;amp; and &nbsp;'
+
+    @pytest.mark.parametrize('text',['R&amp;D','Show &lt;tag&gt;','&amp;amp; and &nbsp;', '中文 &amp; 😀', 'R&D', '&#65; and &copy;'])
+    def test_external_ffmpeg_preserves_authored_literal(tmp_path,text):
+        source=tmp_path/'caption.vtt';source.write_bytes(export_subtitles(timeline(text),'VTT'))
+        result=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(source),'-f','srt','-'],
+                              stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=10)
+>       assert result.stdout.decode().splitlines()[2]==text
+E       AssertionError: assert '&amp; and \\h' == '&amp;amp; and &nbsp;'
+E         
+E         - &amp;amp; and &nbsp;
+E         + &amp; and \h
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:24: AssertionError
+_ test_external_ffmpeg_preserves_authored_literal[\u4e2d\u6587 &amp; \U0001f600] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-24/test_external_ffmpeg_preserves3')
+text = '中文 &amp; 😀'
+
+    @pytest.mark.parametrize('text',['R&amp;D','Show &lt;tag&gt;','&amp;amp; and &nbsp;', '中文 &amp; 😀', 'R&D', '&#65; and &copy;'])
+    def test_external_ffmpeg_preserves_authored_literal(tmp_path,text):
+        source=tmp_path/'caption.vtt';source.write_bytes(export_subtitles(timeline(text),'VTT'))
+        result=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(source),'-f','srt','-'],
+                              stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=10)
+>       assert result.stdout.decode().splitlines()[2]==text
+E       AssertionError: assert '中文 & 😀' == '中文 &amp; 😀'
+E         
+E         - 中文 &amp; 😀
+E         ?     ----
+E         + 中文 & 😀
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:24: AssertionError
+_____ test_import_decodes_supported_six_reference_subset_once[R&amp;D-R&D] _____
+
+encoded = 'R&amp;D', expected = 'R&D'
+
+    @pytest.mark.parametrize('encoded,expected',[
+        ('R&amp;D','R&D'),('&amp;lt;tag&amp;gt;','&lt;tag&gt;'),
+        ('a&nbsp;b&lrm;c&rlm;d','a\u00a0b\u200ec\u200fd'),
+        ('&#38; &#x26; &copy; &AMP; &amp','&#38; &#x26; &copy; &AMP; &amp'),
+    ])
+    def test_import_decodes_supported_six_reference_subset_once(encoded,expected):
+>       assert import_subtitles(timeline('old'),vtt(encoded),'VTT')['captions'][0]['text']==expected
+E       AssertionError: assert 'R&amp;D' == 'R&D'
+E         
+E         - R&D
+E         + R&amp;D
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:36: AssertionError
+_ test_import_decodes_supported_six_reference_subset_once[&amp;lt;tag&amp;gt;-&lt;tag&gt;] _
+
+encoded = '&amp;lt;tag&amp;gt;', expected = '&lt;tag&gt;'
+
+    @pytest.mark.parametrize('encoded,expected',[
+        ('R&amp;D','R&D'),('&amp;lt;tag&amp;gt;','&lt;tag&gt;'),
+        ('a&nbsp;b&lrm;c&rlm;d','a\u00a0b\u200ec\u200fd'),
+        ('&#38; &#x26; &copy; &AMP; &amp','&#38; &#x26; &copy; &AMP; &amp'),
+    ])
+    def test_import_decodes_supported_six_reference_subset_once(encoded,expected):
+>       assert import_subtitles(timeline('old'),vtt(encoded),'VTT')['captions'][0]['text']==expected
+E       AssertionError: assert '&amp;lt;tag&amp;gt;' == '&lt;tag&gt;'
+E         
+E         - &lt;tag&gt;
+E         + &amp;lt;tag&amp;gt;
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:36: AssertionError
+_ test_import_decodes_supported_six_reference_subset_once[a&nbsp;b&lrm;c&rlm;d-a\xa0b\u200ec\u200fd] _
+
+encoded = 'a&nbsp;b&lrm;c&rlm;d', expected = 'a\xa0b\u200ec\u200fd'
+
+    @pytest.mark.parametrize('encoded,expected',[
+        ('R&amp;D','R&D'),('&amp;lt;tag&amp;gt;','&lt;tag&gt;'),
+        ('a&nbsp;b&lrm;c&rlm;d','a\u00a0b\u200ec\u200fd'),
+        ('&#38; &#x26; &copy; &AMP; &amp','&#38; &#x26; &copy; &AMP; &amp'),
+    ])
+    def test_import_decodes_supported_six_reference_subset_once(encoded,expected):
+>       assert import_subtitles(timeline('old'),vtt(encoded),'VTT')['captions'][0]['text']==expected
+E       AssertionError: assert 'a&nbsp;b&lrm;c&rlm;d' == 'a\xa0b\u200ec\u200fd'
+E         
+E         - a b‎c‏d
+E         + a&nbsp;b&lrm;c&rlm;d
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:36: AssertionError
+________________ test_decoded_markup_still_rejected[&lt;b&gt;] _________________
+
+encoded = '&lt;b&gt;'
+
+    @pytest.mark.parametrize('encoded',['&lt;b&gt;','&gt;'])
+    def test_decoded_markup_still_rejected(encoded):
+>       with pytest.raises(ValueError,match='STUDIO_TIMELINE_CAPTION_LITERAL_TEXT_REQUIRED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:41: Failed
+___________________ test_decoded_markup_still_rejected[&gt;] ___________________
+
+encoded = '&gt;'
+
+    @pytest.mark.parametrize('encoded',['&lt;b&gt;','&gt;'])
+    def test_decoded_markup_still_rejected(encoded):
+>       with pytest.raises(ValueError,match='STUDIO_TIMELINE_CAPTION_LITERAL_TEXT_REQUIRED'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:41: Failed
+_________________ test_lexical_parser_not_general_html_decoder _________________
+
+    def test_lexical_parser_not_general_html_decoder():
+>       assert parse_subtitle_cues(vtt('&lt;&gt;&amp;&nbsp;&lrm;&rlm;'),'VTT')[0]['text']=='<>&\u00a0\u200e\u200f'
+E       AssertionError: assert '&lt;&gt;&amp...sp;&lrm;&rlm;' == '<>&\xa0\u200e\u200f'
+E         
+E         - <>& ‎‏
+E         + &lt;&gt;&amp;&nbsp;&lrm;&rlm;
+
+tests/test_studio_vtt_literal_rebuild_20261029.py:53: AssertionError
+=============================== warnings summary ===============================
+tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[R&amp;D]
+  /tmp/vtt-new-clean-baseline/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[R&amp;D]
+  /tmp/vtt-new-clean-baseline/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[R&amp;D]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[Show &lt;tag&gt;]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[&amp;amp; and &nbsp;]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_external_ffmpeg_preserves_authored_literal[\u4e2d\u6587 &amp; \U0001f600]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[R&amp;D-R&D]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[&amp;lt;tag&amp;gt;-&lt;tag&gt;]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_import_decodes_supported_six_reference_subset_once[a&nbsp;b&lrm;c&rlm;d-a\xa0b\u200ec\u200fd]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_decoded_markup_still_rejected[&lt;b&gt;]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_decoded_markup_still_rejected[&gt;]
+FAILED tests/test_studio_vtt_literal_rebuild_20261029.py::test_lexical_parser_not_general_html_decoder
+10 failed, 4 passed, 2 warnings in 8.11s

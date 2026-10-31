@@ -1,0 +1,21 @@
+{
+  "source_head": "dd1a70b510bc11bfe7b914b7fca5abc1c4777fb7",
+  "source_root": "D:\\PoemSeed\\Worktrees\\file-safety-independent-frozen-dd1a70b5",
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "D:\\PoemSeed\\Worktrees\\file-safety-independent-frozen-dd1a70b5\\scripts\\run_studio_backend_tests.py",
+    "tests/test_file_backend_safety_independent.py",
+    "-q",
+    "-ra",
+    "--junitxml=D:\\PoemSeed\\Worktrees\\file-safety-independent-20261026\\docs\\delivery\\file-backend-safety-integration-20261026\\independent\\candidate-dd1a70b5\\results.xml"
+  ],
+  "timeout_seconds": 600,
+  "timed_out": false,
+  "process_exit_code": 0,
+  "started_unix": 1793028227.7379186,
+  "ended_unix": 1793028238.3937523,
+  "source_manifest_unchanged": true,
+  "foreign_loaded_modules": [],
+  "pytest_terminal_ok": true,
+  "passed": true
+}

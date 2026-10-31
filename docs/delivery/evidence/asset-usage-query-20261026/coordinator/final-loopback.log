@@ -1,0 +1,22 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+F
+================================== FAILURES ===================================
+_________ test_original_loopback_both_aliases_page_all_540_saved_pins _________
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x0000013979FE0FD0>, nid='query-fdd87d0d377c...c', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+
+    def test_original_loopback_both_aliases_page_all_540_saved_pins(usage_rig):
+        e = usage_rig
+        expected = copied_graph_consumers(e, 30, 16) + copied_timeline_consumers(e, count=2)
+        assert expected == 540
+        root = Path(__file__).resolve().parents[6]
+>       assert (root / 'app/main.py').is_file()
+E       AssertionError: assert False
+E        +  where False = is_file()
+E        +    where is_file = (WindowsPath('D:/PoemSeed/Worktrees') / 'app/main.py').is_file
+
+docs\delivery\evidence\asset-usage-query-20261026\coordinator\socket_counterexamples.py:17: AssertionError
+=========================== short test summary info ===========================
+FAILED docs/delivery/evidence/asset-usage-query-20261026/coordinator/socket_counterexamples.py::test_original_loopback_both_aliases_page_all_540_saved_pins
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 6.86s

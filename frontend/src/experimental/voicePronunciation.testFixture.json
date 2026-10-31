@@ -1,0 +1,8 @@
+[
+ {"text":"重庆与重逢","rules":"重=zhong\n重庆=chong qing","expected":"chong qing与zhong逢"},
+ {"text":"A B AA","rules":"A=B\nB=C","expected":"B C BB"},
+ {"text":"a.b [x] $ and aXb","rules":"a.b=dot\n[x]=box\n$=dollar","expected":"dot box dollar and aXb"},
+ {"text":"🙂🙂🙂\n甲乙甲","rules":"🙂=smile\n🙂🙂=pair\n甲乙=AB\n甲=A","expected":"pairsmile\nABA"},
+ {"text":" keep spacing ","rules":" keep = retained ","expected":" retained spacing "},
+ {"text":"unchanged\n文字","rules":"","expected":"unchanged\n文字"}
+]

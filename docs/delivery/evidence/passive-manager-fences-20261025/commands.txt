@@ -1,0 +1,19 @@
+# Run from the independent implementation worktree, base 07d525a6220893109975ea984eaefc060dd61aac.
+# Existing dependency interpreter: ../studio-backend-20261025/.venv/bin/python
+# All pytest invocations use run_tests.py for isolated HOME/XDG/data/tmp, PROJECT_ROOT/PYTHONPATH/cwd,
+# removed provider/database environment, memory credentials and blocked sockets.
+
+# Preliminary original compatibility run (99 passed):
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/passive-manager-fences-20261025/run_tests.py -q tests/test_ordinary_project_binding.py tests/test_ordinary_project_binding_postgres.py tests/test_generation_restart_recovery.py tests/test_jobs_v03.py --junitxml=docs/delivery/evidence/passive-manager-fences-20261025/preliminary-regression.xml
+
+# Preliminary new File suite (44 passed, before additional tests):
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/passive-manager-fences-20261025/run_tests.py -q tests/test_passive_generation_manager_binding.py --junitxml=docs/delivery/evidence/passive-manager-fences-20261025/preliminary-focused.xml
+
+# Draft broad run (430 passed, 2 skipped, 1 production branch-composition lookup failure):
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/passive-manager-fences-20261025/run_tests.py -q tests/test_passive_generation_manager_binding.py tests/test_generation_worker_authority.py tests/test_generation_idempotency_contracts.py tests/test_generation_admission_receipts.py tests/test_generation_restart_recovery.py tests/test_jobs_v03.py tests/test_generation_variants_phase3.py tests/test_generation_snapshot_runtime_v056.py tests/test_taskcenter_query_backend.py tests/test_studio_production_query.py tests/test_ordinary_project_binding.py tests/test_ordinary_project_binding_postgres.py --junitxml=docs/delivery/evidence/passive-manager-fences-20261025/regression-draft.xml
+
+# Final broad run on the corrected, frozen implementation:
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/passive-manager-fences-20261025/run_tests.py -q -rs tests/test_passive_generation_manager_binding.py tests/test_passive_generation_manager_postgres.py tests/test_generation_worker_authority.py tests/test_generation_idempotency_contracts.py tests/test_generation_admission_receipts.py tests/test_generation_restart_recovery.py tests/test_jobs_v03.py tests/test_generation_variants_phase3.py tests/test_generation_snapshot_runtime_v056.py tests/test_taskcenter_query_backend.py tests/test_studio_production_query.py tests/test_ordinary_project_binding.py tests/test_ordinary_project_binding_postgres.py --junitxml=docs/delivery/evidence/passive-manager-fences-20261025/final-regression.xml
+
+# Portable replay of unchanged independent probes from delivered location (duplicate verification, not new coverage):
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/passive-manager-fences-20261025/run_independent.py --junitxml=docs/delivery/evidence/passive-manager-fences-20261025/portable-independent.xml

@@ -1,0 +1,97 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.6.0 -- /workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python
+rootdir: /tmp
+plugins: anyio-4.15.1
+collecting ... collected 5 items
+
+taskcenter-owner-evidence/test_green_contracts.py::test_nested_independent_writer_cannot_be_silently_lost FAILED [ 20%]
+taskcenter-owner-evidence/test_green_contracts.py::test_source_lease_never_accepts_cross_instance_mutation_silently FAILED [ 40%]
+taskcenter-owner-evidence/test_green_contracts.py::test_noop_source_lease_and_rollback_make_zero_scope_atomic_writes PASSED [ 60%]
+taskcenter-owner-evidence/test_green_contracts.py::test_unselected_collection_tail_aba_leaves_semantic_projection_identical PASSED [ 80%]
+taskcenter-owner-evidence/test_green_contracts.py::test_selected_tail_changes_full_projection_even_when_first_page_equal PASSED [100%]
+
+=================================== FAILURES ===================================
+____________ test_nested_independent_writer_cannot_be_silently_lost ____________
+taskcenter-owner-evidence/test_green_contracts.py:26: in test_nested_independent_writer_cannot_be_silently_lost
+    assert rejected or not inner_committed or 'inner' in final, 'Committed inner write silently lost'
+E   AssertionError: Committed inner write silently lost
+E   assert ([] or not True or 'inner' in {'outer': {'x': {'v': 1}}})
+_______ test_source_lease_never_accepts_cross_instance_mutation_silently _______
+taskcenter-owner-evidence/test_green_contracts.py:42: in test_source_lease_never_accepts_cross_instance_mutation_silently
+    assert rejected, 'Read lease silently admitted another store instance committing'
+E   AssertionError: Read lease silently admitted another store instance committing
+E   assert False
+=============================== warnings summary ===============================
+../workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+taskcenter-independent-6363/tests/test_studio_asset_query.py:14
+  /tmp/taskcenter-independent-6363/tests/test_studio_asset_query.py:14: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_studio_asset_query_authority.py:13
+  /tmp/taskcenter-independent-6363/tests/test_studio_asset_query_authority.py:13: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:232
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:232: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:250
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:250: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:264
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:264: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:273
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:273: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:283
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:283: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:294
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:294: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:318
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:318: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:328
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:328: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:347
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:347: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:356
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:356: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:366
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:366: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:407
+  /tmp/taskcenter-independent-6363/tests/test_taskcenter_query_backend.py:407: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+taskcenter-owner-evidence/test_green_contracts.py::test_nested_independent_writer_cannot_be_silently_lost
+  /tmp/taskcenter-independent-6363/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+taskcenter-owner-evidence/test_green_contracts.py::test_nested_independent_writer_cannot_be_silently_lost
+  /tmp/taskcenter-independent-6363/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED taskcenter-owner-evidence/test_green_contracts.py::test_nested_independent_writer_cannot_be_silently_lost
+FAILED taskcenter-owner-evidence/test_green_contracts.py::test_source_lease_never_accepts_cross_instance_mutation_silently
+=================== 2 failed, 3 passed, 17 warnings in 8.91s ===================

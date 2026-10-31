@@ -1,0 +1,202 @@
+{
+  "head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+  "tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+  "results": [
+    {
+      "stage": "build",
+      "cwd": "D:\\PoemSeed-Unified-20261027-94f1c72e\\final-verification-5eec654b\\frontend",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "exec",
+        "--yes",
+        "--package=pnpm@10.6.5",
+        "--",
+        "pnpm",
+        "build"
+      ],
+      "started_utc": "2026-10-28T07:24:05.980053+00:00",
+      "status": "COMPLETED",
+      "exit_code": 0,
+      "duration_seconds": 50.0,
+      "ended_utc": "2026-10-28T07:24:55.971248+00:00"
+    },
+    {
+      "stage": "vitest",
+      "cwd": "D:\\PoemSeed-Unified-20261027-94f1c72e\\final-verification-5eec654b\\frontend",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "exec",
+        "--yes",
+        "--package=pnpm@10.6.5",
+        "--",
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "src/creative/StudioCanvasImageNode.counterexamples.test.ts",
+        "src/creative/StudioCanvasImageNodeLiveContract.test.ts",
+        "src/creative/CanvasImageNodeTask.test.tsx",
+        "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx",
+        "src/creative/CanvasImageNodeCreateRecovery.test.tsx",
+        "src/creative/CanvasImageNodeQueueRecovery.test.tsx",
+        "src/creative/StudioCanvasNodeResume.test.tsx",
+        "src/creative/CanvasImageNodeTargetView.test.tsx",
+        "src/creative/CanvasImageNodeJobObservation.integration.test.tsx",
+        "src/creative/CanvasImageNodeJobDiscard.integration.test.tsx",
+        "--maxWorkers=2",
+        "--minWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\PoemSeed-Unified-20261027-94f1c72e\\evidence\\m6-final\\frontend\\vitest.json"
+      ],
+      "started_utc": "2026-10-28T07:24:55.972964+00:00",
+      "status": "COMPLETED",
+      "exit_code": 0,
+      "duration_seconds": 13.65600000001723,
+      "ended_utc": "2026-10-28T07:25:09.637260+00:00"
+    }
+  ],
+  "tracked_source_unchanged": true,
+  "before_status": "",
+  "after_status": "",
+  "validation_scope": "standard frontend build plus one selected affected group; NOT a final full-suite run",
+  "tests": {
+    "numTotalTests": 119,
+    "numPassedTests": 119,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "test_files": [
+    {
+      "file": "src/creative/CanvasImageNodeCreateRecovery.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 14
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/CanvasImageNodeJobDiscard.integration.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 9
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/CanvasImageNodeJobObservation.integration.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 8
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/CanvasImageNodeQueueRecovery.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 11
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/CanvasImageNodeTargetView.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 24
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/CanvasImageNodeTask.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 8
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/StudioCanvasImageNode.counterexamples.test.ts",
+      "status": "passed",
+      "assertions": {
+        "passed": 7
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/StudioCanvasImageNodeLiveContract.test.ts",
+      "status": "passed",
+      "assertions": {
+        "passed": 6
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/creative/StudioCanvasNodeResume.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 30
+      },
+      "collection_error": null
+    },
+    {
+      "file": "src/rebuild/image/ImageRebuild.canvasQueue.test.tsx",
+      "status": "passed",
+      "assertions": {
+        "passed": 2
+      },
+      "collection_error": null
+    }
+  ],
+  "input_equivalence": {
+    "baseline_head": "c479995fb976044782eac200775e3990083f3902",
+    "baseline_tree": "0d7b338db6286c11a1994209c4ea9b9a28e060d6",
+    "final_head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+    "final_tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+    "frontend_files_compared": 2166,
+    "shared_fixture_files_compared": 22,
+    "all_compared_bytes_identical": true,
+    "differences": [],
+    "excluded_browser_harness_files": [
+      {
+        "path": "frontend/scripts/pw_unified_image_loop.mjs",
+        "c479_sha256": null,
+        "final_sha256": "4a85d3336b44b277e78c0f7d89c4878dcfe41d67ce60534afcca1f7e6f6d84f4"
+      },
+      {
+        "path": "frontend/tests/m5/themeDualCanvas.browser.mjs",
+        "c479_sha256": "fbb22530346eaf79a9d57251ee2d56716a985a28ab7a747273adaa3c9da2f047",
+        "final_sha256": "516c48839745beea1c7748725c7f84fa87dd27537986ad4f70de564bdb545f91"
+      }
+    ],
+    "frontend_and_scripts_git_diff": "A\tfrontend/scripts/pw_unified_image_loop.mjs\nM\tfrontend/tests/m5/themeDualCanvas.browser.mjs\nA\tscripts/run_studio_unified_browser.py",
+    "versions": {
+      "vite": "6.4.3",
+      "vitest": "2.1.9",
+      "typescript": "5.9.3",
+      "react": "18.3.1",
+      "@tanstack/react-query": "5.101.4",
+      "@playwright/test": "1.62.1",
+      "node": "v22.14.0"
+    },
+    "boundary": "This proves tracked direct frontend source/tests/config/lock and shared fixture byte identity, excluding two browser harness files outside Vitest discovery. It does not assert every cross-language input is identical: apiErrorWhitelist.test.ts invokes python3 to scan app/, and app/creative/canvas_views.py changed in final. The full-suite 297 failures are the actual c479 run and are not a claimed new final full-suite execution."
+  },
+  "source-before": {
+    "head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+    "tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+    "tracked_count": 5704,
+    "tracked_manifest_sha256": "c064cc1d41285aaa352a1c46d804362877b594be72c547f7f0c10d724e352513",
+    "git_status": ""
+  },
+  "source-after": {
+    "head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+    "tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+    "tracked_count": 5704,
+    "tracked_manifest_sha256": "c064cc1d41285aaa352a1c46d804362877b594be72c547f7f0c10d724e352513",
+    "git_status": ""
+  },
+  "passed_selected_scope": true
+}

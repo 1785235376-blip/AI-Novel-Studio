@@ -1,0 +1,32 @@
+{
+  "reviewed_delivery": "2acab55d2ef64ca76f2093e376bf6388af364282",
+  "implementation": "2e2fcb79209a3afc03dc7e443f5e1901ff233ee1",
+  "fixed_baseline": "11d8615cccb688462ff814d025b339e1b6eb0efe",
+  "main_comparator": "4fd956e461d3632b55a3b7e84a7ab344b8abc91f",
+  "documentation_destination_before_addition": "d070c9f6354b76a1594e388cb0825fb280933c63",
+  "report": "docs/delivery/HERMIA_AUDIO_HISTORY_REVIEW_20261025.md",
+  "report_sha256": "e7eaa1bd50a997d5deca64fbab2b205fc04649c374444e1eae431d280934fb41",
+  "copied_artifact_count": 26,
+  "static_checks": {
+    "machine_location_markers_absent": true,
+    "high_confidence_secret_patterns_absent": true,
+    "synthetic_sentinel_preserved": true,
+    "runtime_identity_authorization_files_not_copied": true,
+    "probe_sources_not_default_collectable": true,
+    "copied_published_hashes_match": true,
+    "portable_shell_bash_n_passed": true,
+    "python_sources_ast_parsed": [
+      "sources/review_baseline_launch.py.txt",
+      "sources/review_launch.py.txt",
+      "sources/test_owner_independent.py.txt",
+      "sources/test_owner_independent_initial.py.txt",
+      "sources/test_promotion_probe.py.txt",
+      "sources/test_query_source_probe.py.txt",
+      "sources/test_retained_accounting_probe.py.txt",
+      "sources/test_review_retained_baseline.py.txt"
+    ]
+  },
+  "test_rerun_during_packaging": false,
+  "portable_recipe_executed": false,
+  "scope": "Documentation and selected textual evidence only; no production/test edits, commit, push, merge, or publication by this worker."
+}

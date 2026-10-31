@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Portable reproduction recipe. Not executed when this evidence packet was packaged.
+# Requires an already-approved existing venv with repository test dependencies.
+# This script never installs dependencies, fetches, pushes, or changes tracked files.
+set -euo pipefail
+GROUP=${1:?Select initial60, query86, owner13, source2, retained5, chain1, baseline3, baseline1, or promotion1}
+: "${REVIEW_ROOT:?Set to a disposable detached checkout pinned to 2acab55d2ef64ca76f2093e376bf6388af364282}"
+: "${REVIEW_PYTHON:?Set to the absolute Python path in an approved existing venv}"
+BUNDLE_ROOT=$(cd "$(dirname "$0")" && pwd)
+REVIEW_ROOT=$(cd "$REVIEW_ROOT" && pwd)
+[[ "$REVIEW_PYTHON" = /* && -x "$REVIEW_PYTHON" ]]
+[[ "$(git -C "$REVIEW_ROOT" rev-parse HEAD)" == 2acab55d2ef64ca76f2093e376bf6388af364282 ]]
+REV="$REVIEW_ROOT/.runtime/independent-review"
+mkdir -p "$REV"/{home,tmp,portable-logs}
+for name in review_launch.py test_owner_independent.py test_query_source_probe.py test_retained_accounting_probe.py; do
+  cp "$BUNDLE_ROOT/sources/$name.txt" "$REV/$name"
+done
+ROOT="$REVIEW_ROOT"
+ENTRY="$REV/review_launch.py"
+RT="$ROOT/.runtime/audio-history-20261025"
+HOME_DIR="$REV/home"
+TMP_DIR="$REV/tmp"
+EXTRA_ENV=()
+case "$GROUP" in
+  initial60) TESTS=(tests/test_audio_asset_history_owner.py tests/test_audio_asset_history_http.py tests/test_studio_workspace_identity_history_contract.py tests/test_asset_library.py tests/test_studio_asset_query.py::test_pagination_total_stable_ties_and_boundaries tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection) ;;
+  query86) TESTS=(tests/test_studio_asset_query.py tests/test_studio_asset_query_cursor.py) ;;
+  owner13) TESTS=("$REV/test_owner_independent.py") ;;
+  source2) TESTS=("$REV/test_query_source_probe.py") ;;
+  retained5) TESTS=("$REV/test_retained_accounting_probe.py" -k 'not chain_read_budget_excludes_unreachable_prepared_records') ;;
+  chain1) TESTS=("$REV/test_retained_accounting_probe.py::test_chain_read_budget_excludes_unreachable_prepared_records") ;;
+  baseline3|baseline1)
+    ROOT="$REV/baseline-tree"
+    BASE=11d8615cccb688462ff814d025b339e1b6eb0efe
+    if [[ ! -e "$ROOT" ]]; then
+      mkdir -p "$ROOT"
+      git -C "$REVIEW_ROOT" archive "$BASE" | tar -x -C "$ROOT"
+      printf '%s\n' "$BASE" > "$ROOT/.review-base-sha"
+    else
+      [[ -f "$ROOT/.review-base-sha" && "$(cat "$ROOT/.review-base-sha")" == "$BASE" ]] || {
+        echo 'Refusing an unverified existing baseline directory; use a fresh disposable checkout.' >&2; exit 2;
+      }
+    fi
+    cp "$BUNDLE_ROOT/sources/review_baseline_launch.py.txt" "$ROOT/review_baseline_launch.py"
+    cp "$BUNDLE_ROOT/sources/test_review_retained_baseline.py.txt" "$ROOT/test_review_retained_baseline.py"
+    ENTRY="$ROOT/review_baseline_launch.py"
+    RT="$ROOT/.runtime"; HOME_DIR="$RT/home"; TMP_DIR="$RT/tmp"
+    if [[ "$GROUP" == baseline3 ]]; then
+      TESTS=(tests/test_studio_asset_query.py::test_pagination_total_stable_ties_and_boundaries tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection 'tests/test_studio_asset_query_cursor.py::test_changed_asset_source_requires_restart_without_partial_result[kind]')
+    else
+      TESTS=(test_review_retained_baseline.py)
+    fi ;;
+  promotion1)
+    PROMO="$REVIEW_ROOT/.runtime/promotion-history-review"
+    mkdir -p "$PROMO"
+    cp "$BUNDLE_ROOT/sources/test_promotion_probe.py.txt" "$PROMO/test_promotion_probe.py"
+    TESTS=("$PROMO/test_promotion_probe.py")
+    EXTRA_ENV=("PROBE_REPORT=$PROMO/reproduced-report.json") ;;
+  *) echo "Unknown group: $GROUP" >&2; exit 2 ;;
+esac
+mkdir -p "$RT"/{profile,data,local,roaming,xdg-data,xdg-config,xdg-cache,xdg-state,xdg-run} "$HOME_DIR" "$TMP_DIR"
+cd "$ROOT"
+# env -i removes inherited credentials/database/provider settings. The entrypoint
+# asserts actual app module paths and installs socket-connect/DNS audit denial.
+# Promotion replay is hardened through the common launcher; its historical
+# recorded command is separately preserved and did not use this exact wrapper.
+env -i PATH="$(dirname "$REVIEW_PYTHON"):/usr/bin:/bin" LANG=C.UTF-8 \
+  HOME="$HOME_DIR" USERPROFILE="$RT/profile" LOCALAPPDATA="$RT/local" APPDATA="$RT/roaming" \
+  XDG_DATA_HOME="$RT/xdg-data" XDG_CONFIG_HOME="$RT/xdg-config" XDG_CACHE_HOME="$RT/xdg-cache" \
+  XDG_STATE_HOME="$RT/xdg-state" XDG_RUNTIME_DIR="$RT/xdg-run" \
+  TMPDIR="$TMP_DIR" TMP="$TMP_DIR" TEMP="$TMP_DIR" PYTHONPATH="$ROOT:$ROOT/tests" \
+  PROJECT_ROOT="$ROOT" NOVEL_DATA_PATH="$RT/data" STORAGE_BACKEND=file \
+  ENABLE_CLOUD=false ENABLE_PROVIDER_FALLBACK=false MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory \
+  PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 "${EXTRA_ENV[@]}" \
+  "$REVIEW_PYTHON" "$ENTRY" -q -s "${TESTS[@]}" \
+  --basetemp="$TMP_DIR/reproduction-$GROUP" -o cache_dir="$RT/pytest-cache" \
+  2>&1 | tee "$REV/portable-logs/$GROUP.log"

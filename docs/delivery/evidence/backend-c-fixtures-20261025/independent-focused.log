@@ -1,0 +1,28 @@
+.....................                                                    [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <CHECKOUT>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  <CHECKOUT>/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  <CHECKOUT>/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: <CHECKOUT>/.runtime/variant-memory-review-20261025/focused/junit.xml -
+============================= slowest 10 durations =============================
+0.78s call     tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission
+0.08s call     tests/test_generation_variants_phase3.py::test_variant_lifecycle_accepts_one_and_rejects_the_rest
+0.06s call     tests/test_memory_agent_contract.py::test_extract_creates_pending_proposal_with_evidence_and_is_idempotent
+0.04s call     tests/test_memory_agent_contract.py::test_memory_failure_does_not_fall_back_to_remote_provider
+0.04s call     tests/test_memory_agent_contract.py::test_invalid_json_marks_independent_job_failed
+0.03s call     tests/test_memory_agent_contract.py::test_memory_extraction_rejects_unverified_routes_without_egress[packaged]
+0.03s call     tests/test_generation_variants_phase3.py::test_variant_jobs_can_be_cancelled_independently
+0.03s call     tests/test_memory_agent_contract.py::test_memory_extraction_rejects_unverified_routes_without_egress[remote]
+0.03s call     tests/test_memory_agent_contract.py::test_memory_dispatch_revalidates_selected_adapter
+0.03s call     tests/test_memory_agent_contract.py::test_memory_extraction_rejects_unverified_routes_without_egress[unverified-local]
+21 passed, 3 warnings in 7.01s

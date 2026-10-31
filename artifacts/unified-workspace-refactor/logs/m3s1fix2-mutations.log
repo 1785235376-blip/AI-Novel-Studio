@@ -1,0 +1,7 @@
+[HERMIA-FE-20261024 M3-s1fix2] mutations; each line runs m3s1fix2.test.tsx (3) + m3s1fix.test.tsx (5) = 8 tests
+== M3-s1fix one-shot (no wait for size) ->       Tests  3 failed | 5 passed (8)
+== host keeps revealExec (remount re-reveals) ->       Tests  1 failed | 7 passed (8)
+== no rAF fallback ->       Tests  1 failed | 7 passed (8)
+== ResizeObserver callback inert ->       Tests  2 failed | 6 passed (8)
+== consumed guard removed ->       Tests  8 passed (8)
+note: 'consumed guard removed' is equivalent — the observer disconnects after the first successful reveal and the effect is mount-only, so nothing calls tryReveal again in that mount; cross-mount re-reveal is covered by the host onRevealed mutation.

@@ -1,0 +1,7 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+LOOPBACK_RESOURCE alias=/api strict=False consumers=32 references=540 pages=6 snapshots_unchanged=False
+LOOPBACK_RESOURCE alias=/api/v1 strict=False consumers=32 references=540 pages=6 snapshots_unchanged=True
+LOOPBACK_RESOURCE alias=/api strict=True consumers=32 references=540 pages=6 snapshots_unchanged=True
+LOOPBACK_RESOURCE alias=/api/v1 strict=True consumers=32 references=540 pages=6 snapshots_unchanged=True
+.
+1 passed, 3 warnings in 81.70s (0:01:21)

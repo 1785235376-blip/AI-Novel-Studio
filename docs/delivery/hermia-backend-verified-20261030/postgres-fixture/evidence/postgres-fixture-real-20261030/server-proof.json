@@ -1,0 +1,62 @@
+{
+  "SELECT version(),inet_server_addr()::text,inet_server_port()": [
+    [
+      "PostgreSQL 16.15 on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "127.0.0.1/32",
+      55432
+    ]
+  ],
+  "SHOW listen_addresses": [
+    [
+      "127.0.0.1"
+    ]
+  ],
+  "SHOW unix_socket_directories": [
+    [
+      ""
+    ]
+  ],
+  "SHOW password_encryption": [
+    [
+      "scram-sha-256"
+    ]
+  ],
+  "SELECT type,address,auth_method,error FROM pg_hba_file_rules": [
+    [
+      "local",
+      null,
+      "reject",
+      null
+    ],
+    [
+      "host",
+      "127.0.0.1",
+      "scram-sha-256",
+      null
+    ],
+    [
+      "host",
+      "::1",
+      "scram-sha-256",
+      null
+    ],
+    [
+      "local",
+      null,
+      "reject",
+      null
+    ],
+    [
+      "host",
+      "127.0.0.1",
+      "scram-sha-256",
+      null
+    ],
+    [
+      "host",
+      "::1",
+      "scram-sha-256",
+      null
+    ]
+  ]
+}

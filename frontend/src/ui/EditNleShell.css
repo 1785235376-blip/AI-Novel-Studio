@@ -1,0 +1,451 @@
+/* [HERMIA-FE-20261022 W-P0-06] CapCut/PR/AE density for EDIT module — compose, don't invent engine. */
+.edit-nle-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  height: 100%;
+}
+.edit-nle-shell__preview {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.2fr);
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.edit-nle-shell__monitor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 140px;
+  padding: var(--space-4);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 80%, #1a1a22), var(--color-bg-surface));
+  color: var(--color-text-primary);
+}
+.edit-nle-shell__monitor-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-shell__monitor strong {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+.edit-nle-shell__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+}
+.edit-nle-shell__sep {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-default);
+}
+.edit-nle-shell__hero {
+  flex: 1 1 auto;
+  min-height: 320px;
+  padding: var(--space-2);
+  border: var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-subtle);
+  overflow: auto;
+}
+.edit-nle-shell__hero .panel {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.edit-nle-shell__foot {
+  margin: 0;
+  font-size: 12px;
+}
+.edit-nle-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  min-height: 0;
+}
+.edit-nle-rail__eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-rail__hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-rail__bin {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.edit-nle-rail__bin > li {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+.edit-nle-rail__kind {
+  font-size: 10px;
+  font-weight: 650;
+  color: var(--color-accent-primary);
+}
+.edit-nle-rail__bin small {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.edit-nle-rail__future {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: var(--border-default);
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.edit-nle-inspector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+}
+.edit-nle-inspector__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-default);
+}
+.edit-nle-inspector__empty-cta {
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-accent-primary);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+}
+.edit-nle-inspector__empty-cta dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+}
+.edit-nle-inspector__empty-cta dt {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.edit-nle-inspector__empty-cta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Thicken track list toward horizontal timeline feel without engine rewrite */
+.edit-nle-shell__hero .nle-tracks__list {
+  grid-template-columns: 1fr;
+}
+.edit-nle-shell__hero .nle-track {
+  min-height: 72px;
+}
+.edit-nle-shell__hero .nle-track__clips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  min-width: 7rem;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent-subtle) 70%, var(--color-bg-surface));
+}
+
+/* [HERMIA-FE-20261022 overnight] denser CapCut-like chrome */
+.edit-nle-shell__preview {
+  grid-template-columns: 1fr 1fr minmax(260px, 0.9fr);
+}
+.edit-nle-shell__monitor--source {
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 70%, #12141c), var(--color-bg-surface));
+  opacity: 0.95;
+}
+.edit-nle-shell__monitor--source .edit-nle-shell__monitor-label::after {
+  content: " · 源";
+}
+.edit-nle-main {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--layout-header-height, 56px) - var(--layout-context-height, 40px) - var(--layout-status-height, 36px) - 24px);
+}
+.edit-nle-shell__hero {
+  flex: 1 1 auto;
+  min-height: 380px;
+}
+.edit-nle-shell__hero .nle-ruler {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-bg-subtle);
+  padding-top: var(--space-2);
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  min-width: 9rem;
+  min-height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* [HERMIA-FE-20261022] Align toward Vera W-P0-05 nle-* chrome (dark timeline hero). */
+/* [HERMIA-FE-20261022] T-DARK-01 */
+.edit-nle-shell {
+  background: var(--color-bg-app);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.edit-nle-shell__preview {
+  grid-template-columns: minmax(160px, 0.9fr) minmax(220px, 1.2fr) minmax(200px, 0.95fr);
+  gap: 0;
+  background: var(--color-bg-subtle);
+  border-bottom: var(--border-default);
+}
+.edit-nle-shell__monitor {
+  min-height: 160px;
+  border-radius: 0;
+  border: 0;
+  border-right: var(--border-default);
+  background: var(--stg-mon);
+  color: var(--stg-ink);
+}
+.edit-nle-shell__monitor-label { color: var(--stg-ink-muted); }
+.edit-nle-shell__monitor strong {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: var(--stg-ink);
+}
+.edit-nle-shell__monitor small { color: var(--stg-ink-3); }
+.edit-nle-shell__monitor--source {
+  background: radial-gradient(ellipse at 50% 40%, var(--stg-frame-a) 0%, var(--stg-frame-b) 70%);
+}
+.edit-nle-shell__toolbar {
+  border-radius: 0;
+  border: 0;
+  background: var(--stg-tools);
+  color: var(--stg-ink-4);
+}
+.edit-nle-shell__toolbar small { color: var(--stg-ink-4); }
+.edit-nle-shell__hero {
+  background: var(--stg-tl);
+  border: 0;
+  border-radius: 0;
+  color: var(--stg-ink-tl);
+  min-height: 400px;
+}
+.edit-nle-shell__hero .panel,
+.edit-nle-shell__hero .nle-workspace__scope,
+.edit-nle-shell__hero .nle-workspace__note,
+.edit-nle-shell__hero .nle-workspace__foot {
+  color: var(--stg-ink-4);
+}
+.edit-nle-shell__hero .nle-ruler {
+  background: var(--stg-ruler);
+  border-color: var(--stg-line-strong);
+}
+.edit-nle-shell__hero .nle-track {
+  background: var(--stg-ruler);
+  border-color: var(--stg-line-strong);
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  background: color-mix(in srgb, #c9d8f5 55%, var(--stg-tools));
+  border-color: #8eaee6;
+  color: var(--stg-mon);
+}
+.edit-nle-rail {
+  background: var(--color-bg-surface);
+}
+.edit-nle-rail__bin > li {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.edit-nle-inspector__head {
+  background: var(--color-bg-subtle);
+}
+.edit-nle-shell__foot {
+  padding: var(--space-2) var(--space-3);
+  background: var(--stg-ruler);
+  color: var(--stg-ink-muted);
+  border-top: 1px solid var(--stg-line-strong);
+}
+
+/* [HERMIA-FE-20261022 W-UX-05] density polish — dual monitors / tracks / pool */
+.edit-nle-shell[data-edit-density="w-ux-05"] .edit-nle-shell__hero {
+  min-height: 420px;
+}
+.edit-nle-shell__track-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--stg-line-strong);
+  background: var(--stg-track);
+  color: var(--stg-ink-6);
+  font-size: 12px;
+}
+.edit-nle-shell__track-meta small {
+  color: var(--stg-ink-muted);
+}
+.edit-nle-rail__ref {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-accent-primary);
+  letter-spacing: 0.04em;
+}
+.edit-nle-rail__bin > li {
+  position: relative;
+  padding-right: 2.5rem;
+}
+.edit-nle-rail__bin > li .edit-nle-rail__ref {
+  position: absolute;
+  right: var(--space-2);
+  top: var(--space-2);
+}
+.edit-nle-shell__toolbar button[aria-pressed="true"] {
+  outline: 1px solid color-mix(in srgb, #8eaee6 70%, transparent);
+}
+
+/* [HERMIA-FE-20261022 W-UX-09] Honest demo-readonly banner + writable-path discovery */
+.edit-nle-honesty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-left: 3px solid var(--color-border-strong, #888);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty[data-capability-tone="neutral"] {
+  /* ban success/green — intentional neutral chrome */
+}
+.edit-nle-honesty__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.edit-nle-honesty__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: var(--border-default);
+  background: var(--color-bg-surface);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty__path {
+  margin: 0;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+}
+.edit-nle-honesty__path summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty__path ol {
+  margin: var(--space-2) 0;
+  padding-left: 1.25rem;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty__path code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+.edit-nle-honesty__note {
+  margin: 0 0 var(--space-2) !important;
+  font-size: 11px !important;
+  color: var(--color-text-muted) !important;
+}
+.edit-nle-honesty [data-writable-path-status="guidance-only"] {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* [HERMIA-FE-20261022 W-UX-14] Media-pool handoff honest empty + source strip */
+.edit-nle-rail__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+}
+.edit-nle-rail__empty[data-capability-tone="neutral"] {
+  border-left: 3px solid var(--color-border-strong, var(--color-border-default));
+}
+.edit-nle-rail__empty strong {
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+.edit-nle-rail__empty p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.edit-nle-rail__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-rail__bin > li[data-handoff-source] {
+  border-left: 3px solid var(--color-accent-primary);
+}

@@ -11,6 +11,7 @@ from .packaged_processes import PackagedProcessConfig, PackagedProcessFactory
 from .paths import WindowsPackagingPaths
 from .runtime_identity import RuntimeRole
 from .runtime_lifecycle import DefaultPortAllocator, RuntimeLifecycle
+from .launch_profiles import DEFAULT_PROFILE, V2_DIRECTORY, V2_PROFILE, resolve_profile_paths, validate_profile_paths
 from .windows_primitives import (
     WindowsJobObject,
     WindowsNamedMutex,
@@ -27,14 +28,18 @@ def packaged_application_root() -> Path:
 def create_packaged_backend_runtime(
     *, application: Path | None = None, paths: WindowsPackagingPaths | None = None,
     mutex=None, job=None, inspector=None, port_allocator=None,
+    launch_profile: str = DEFAULT_PROFILE,
 ) -> tuple[RuntimeLifecycle, PackagedProcessFactory]:
-    resolved_paths = paths or WindowsPackagingPaths.resolve()
-    config = PackagedProcessConfig.create(application or packaged_application_root(), resolved_paths)
+    resolved_paths = paths or resolve_profile_paths(launch_profile)
+    application_root = application or packaged_application_root()
+    validate_profile_paths(launch_profile, resolved_paths, postgres_root=application_root / "PostgreSQL")
+    config = PackagedProcessConfig.create(application_root, resolved_paths,
+                                          launch_profile=launch_profile)
     process_inspector = inspector or WindowsProcessInspector()
     factory = PackagedProcessFactory(config, process_inspector)
     lifecycle = RuntimeLifecycle(
         paths=resolved_paths,
-        mutex=mutex or WindowsNamedMutex(product_mutex_name()),
+        mutex=mutex or WindowsNamedMutex(product_mutex_name(V2_DIRECTORY) if launch_profile == V2_PROFILE else product_mutex_name()),
         job=job or WindowsJobObject(),
         port_allocator=port_allocator or DefaultPortAllocator(),
         process_factory=factory,

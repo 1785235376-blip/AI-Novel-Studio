@@ -1,0 +1,102 @@
+Browser tab: 2, Title: "图片 · PoemSeed Studio", URL: "http://127.0.0.1:18764/".
+0 AXWebArea 图片 · PoemSeed Studio, URL: 127.0.0.1:18764/
+	1 container root
+		2 container
+			3 container PoemSeed Studio
+				4 text PoemSeed Studio
+			5 tab group 创作模块
+				6 tab (selectable, settable, boolean) 小说, Value: 0, ID: module-tab-novel
+				7 tab (selected, settable, boolean) 图片, Value: 1, ID: module-tab-image
+				8 tab (selectable, settable, boolean) 视频, Value: 0, ID: module-tab-video
+				9 tab (selectable, settable, boolean) 声音, Value: 0, ID: module-tab-audio
+				10 tab (selectable, settable, boolean) 剪辑, Value: 0, ID: module-tab-edit
+				11 tab (selectable, settable, boolean) 资产, Value: 0, ID: module-tab-assets
+			116 pop up button (collapsed) Description: 专业更多工作区, Secondary Actions: Expand
+			12 button 搜索功能、章节或命令 Ctrl K, Help: 搜索功能、章节或命令
+				13 text 搜索功能、章节或命令
+				14 text Ctrl K
+			15 container 界面模式
+				16 checkbox 普通, Value: 0
+				17 checkbox 专业, Value: 1
+			117 pop up button (collapsed) 能力状态, Secondary Actions: Expand
+			18 pop up button (collapsed) 任务, Secondary Actions: Expand
+			19 container 背景明暗
+				20 checkbox 浅色, Help: 浅色背景, Value: 1
+				21 checkbox 深色, Help: 深色背景, Value: 0
+			22 container 界面语言
+				23 checkbox 中, Help: 切换为中文, Value: 1
+				24 checkbox EN, Help: 切换为英文（English）, Value: 0
+			25 pop up button (collapsed) Description: 打开设置（AI 主控与插件）, Secondary Actions: Expand
+			26 text 本机作者
+		27 container 当前创作范围
+			28 text 创作空间： 本机作品
+			29 text /
+			30 text 小说： Synthetic current frontend acceptance
+			31 text /
+			32 text 故事线： 默认故事线
+			33 text /
+			34 text 创作分支： 主线
+		35 container
+			36 heading 图片, Value: 1
+				37 text 图片
+			38 container 图片工作区
+				39 container Description: 当前创作指引, ID: orient
+					40 text 第一次打开
+					41 text 在创作什么
+					42 text ： 这部作品的参考图、角色定妆和关键帧
+					43 text 现在能做什么
+					44 text ： 写一句描述生成候选，或放参考图约束一致性
+					45 text 操作会影响什么
+					46 text ： 生成会调用你在 AI 主控里接好的生图模型，派发前会再确认
+					47 button 收起指引
+					48 button 不再显示
+				49 tab group 工作区视图
+					50 tab (selectable, settable, boolean) 浏览, Value: 0
+					51 tab (selected, settable, boolean) 图片画布, Value: 1
+					118 tab (selectable, settable, boolean) 双画布, Value: 0
+					52 tab (selectable, settable, boolean) 生成, Value: 0
+					53 tab (selectable, settable, boolean) 漫画制作, Value: 0
+				54 toolbar 图片子入口
+					55 heading 图片画布, Value: 2
+						56 text 图片画布
+					115 button 回到预览
+					58 button 漫画制作
+				119 container 图片双画布
+					120 text 双画布
+					121 text 上画布是主线，单独就能用；下画布用来丰富创作， 不会自动 影响上画布。
+					122 text 仅本次会话
+					123 text 生成 / 执行：不可用（后端暂无画布执行接口）
+					124 button (expanded) 收起下画布, Secondary Actions: Collapse
+					125 container
+						126 text 上画布 · 出图主线
+						127 text 仅本机草稿 · 未同步服务端
+						128 container 上画布 · 出图主线（无限画布）
+						129 text 在空白处 右键 添加节点 · 滚轮缩放 · 拖动空白平移
+						130 container 缩放
+							131 button 缩小
+							132 text 100 %
+							133 button 放大
+							134 button 适配
+						135 text 节点  0  · 连线  0  · 只改图结构，不触发生成
+					136 container dstk-lower-image
+						137 text 在下画布选一个节点，才可以接入上画布
+						138 button (disabled) 接入上画布…
+						139 container
+							140 text 下画布 · 丰富（参考 / 风格 / 变体 / 细节）
+							141 text 仅本次会话 · 不保存
+							142 container 下画布 · 丰富（参考 / 风格 / 变体 / 细节）（无限画布）
+							143 text 下画布是空的也没关系，上画布照常可用
+							144 text 在空白处 右键 添加节点 · 滚轮缩放 · 拖动空白平移
+							145 container 缩放
+								146 button 缩小
+								147 text 100 %
+								148 button 放大
+								149 button 适配
+							150 text 节点  0  · 连线  0  · 只改图结构，不触发生成
+				151 button (collapsed) 专业工具：多图约束 · 导入/导出 JSON · 快照, Secondary Actions: Expand
+					152 text 专业工具：多图约束 · 导入/导出 JSON · 快照
+		112 container
+			113 text 图片工作区
+			114 button 问助手
+
+The focused UI element is 20 checkbox 浅色, Help: 浅色背景, Value: 1

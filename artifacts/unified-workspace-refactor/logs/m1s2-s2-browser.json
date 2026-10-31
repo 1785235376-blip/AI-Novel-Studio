@@ -1,0 +1,54 @@
+[
+ {
+  "case": "1366 max sides",
+  "main": {
+   "w": 320,
+   "h": 524
+  },
+  "ok": true,
+  "errs": [],
+  "writes": []
+ },
+ {
+  "case": "800x600 max bottom",
+  "main": {
+   "w": 320,
+   "h": 200
+  },
+  "ok": true,
+  "errs": [],
+  "writes": []
+ },
+ {
+  "case": "drag 1366x768",
+  "from": "outline",
+  "to": "main",
+  "indicator": {
+   "zone": "main",
+   "index": "1",
+   "allowed": "true",
+   "axis": "x"
+  },
+  "after": "creative@main,inspector@right,tasks@bottom",
+  "rawIdsOnScreen": false,
+  "sw": 0,
+  "errs": [],
+  "writes": []
+ },
+ {
+  "case": "drag 1920x1080",
+  "from": "outline",
+  "to": "main",
+  "indicator": {
+   "zone": "main",
+   "index": "1",
+   "allowed": "true",
+   "axis": "x"
+  },
+  "after": "creative@main,inspector@right,tasks@bottom",
+  "rawIdsOnScreen": false,
+  "sw": 0,
+  "errs": [],
+  "writes": []
+ }
+]

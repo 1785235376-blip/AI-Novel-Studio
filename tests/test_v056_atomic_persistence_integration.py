@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from uuid import uuid4
 
 import psycopg
 import pytest
-from dotenv import load_dotenv
 
 from app.application.persistence import FileAtomicChapterAuditPort, PostgresAtomicChapterAuditPort
 from app.config import Settings
@@ -92,17 +90,9 @@ def test_file_atomic_updates_to_different_chapters_do_not_lose_shared_audit(tmp_
         f"audit-parallel-{index}" for index in range(len(chapters))}
 
 
-def _postgres_url() -> str:
-    load_dotenv()
-    url = os.getenv("TEST_POSTGRES_DATABASE_URL") or os.getenv("DATABASE_URL")
-    if not url:
-        pytest.fail("real PostgreSQL URL is required for V0.5.6 integration verification")
-    return url
-
-
 @pytest.mark.postgres_backend_only
-def test_real_postgres_two_clients_one_winner_and_transaction_failure_rolls_back():
-    url = _postgres_url()
+def test_real_postgres_two_clients_one_winner_and_transaction_failure_rolls_back(isolated_postgres_url):
+    url = isolated_postgres_url
     raw_url = url.replace("postgresql+psycopg://", "postgresql://")
     first_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
     second_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))

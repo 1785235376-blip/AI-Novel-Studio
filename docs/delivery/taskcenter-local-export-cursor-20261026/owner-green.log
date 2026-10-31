@@ -1,0 +1,40 @@
+cwd=/workspace/shared/taskcenter-local-export-cursor-20261026
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_export_local_window_observation.py", "tests/test_export_owner_readonly.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-export-evidence/owner-green.xml", "--basetemp=/tmp/tmp05d4te5k/owner-green/pytest-tmp", "-o", "cache_dir=/tmp/tmp05d4te5k/owner-green/pytest-cache"]
+F.........                                                               [100%]
+=================================== FAILURES ===================================
+________________ test_matches_original_empty_and_capped_window _________________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7fc53aaeecc0>
+
+    def test_matches_original_empty_and_capped_window(owner):
+        for count in (0,3,101):
+            seed(owner,count)
+            v=owner.local_task_observation('book')
+            actual=owner.list('book',permission_context=LOCAL,limit=100,offset=0)
+            assert v['rows']==actual['items']
+            assert v['source_more']==(actual['next_offset'] is not None)
+            assert set(v['row_lifecycles'])=={r['id'] for r in v['rows']}
+>           assert 'snapshot' not in json.dumps(v['rows'])
+E           assert 'snapshot' not in '[{"id": "j-..._at": null}]'
+E             
+E             'snapshot' is contained here:
+E             ?           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               unt": 0, "snapshot_id": null, "resource_manifest": {"referenced": [], "available": [], "missing": [], "missing_count": 0}, "missing_resources": [], "source_versions": {}, "captured_at": null}, {"id": "j-001", "novel_id": "book", "format": "txt", "status": "queued", "permission_context": {"mode": "local", "novel_id": "book"}, "created_at": "00001", "progress": 0, "progress_message": "\u6392\u961f\u4e2d", "retry_of": null, "attempt": 1, "cancel_requested": false, "recovery_count": 0, "snapshot_id": null, "resource_m...
+E             
+E             ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/test_export_local_window_observation.py:30: AssertionError
+=============================== warnings summary ===============================
+tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+  /workspace/shared/taskcenter-local-export-cursor-20261026/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+  /workspace/shared/taskcenter-local-export-cursor-20261026/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-export-evidence/owner-green.xml -
+=========================== short test summary info ============================
+FAILED tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+1 failed, 9 passed, 2 warnings in 75.73s (0:01:15)

@@ -1,0 +1,67 @@
+...F......                                                               [100%]
+=================================== FAILURES ===================================
+_____________ test_real_postgres_memory_agent_creates_pending_only _____________
+
+bundle = RepositoryBundle(novels=<app.repositories.postgres.novel.PostgresNovelRepository object at 0x7f8d637292b0>, chapters=<... at 0x7f8d63642e10>, identity=<app.repositories.postgres.identity.PostgresIdentityRepository object at 0x7f8d636423f0>)
+
+    def test_real_postgres_memory_agent_creates_pending_only(bundle):
+     novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters);nid=novels.create({"title":"Agent PG"})["id"];chapter=chapters.create(nid,{"title":"One","content":"Lin changed."});saved=chapters.save(chapter["id"],{"content":"Lin changed.","version":1,"source":"AI_ACCEPT"})
+     with bundle.novels.database.session() as s:
+      novel=s.scalar(select(NovelModel).where(NovelModel.slug==nid));s.add(CharacterModel(novel_id=novel.id,slug="lin",name="Lin",facts={}))
+     output=json.dumps({"proposals":[{"proposal_type":"CHARACTER_MEMORY","payload":{"character_id":"lin","memory_type":"STATE_CHANGE","content":{"state":"changed"}},"confidence":.8,"evidence":[{"chapter_id":chapter["id"],"chapter_version":saved["version"],"excerpt":"Lin changed.","locator":{"kind":"DOCUMENT_RANGE","from":1,"to":12}}]}]})
+     class R:
+      def generate(self,*a):return Generation(output,"fake","memory")
+     class RT:
+      def router(self,*a):return R()
+>    agent=MemoryAgentRunner(bundle.novels,bundle.chapters,LoreService(bundle.lore),GenerationService(bundle.generations),AgentRunner(AgentRegistry()),RT());ids=agent.extract(nid,chapter["id"],saved["version"],job_id="agent-pg-job")
+                                                                                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_lore_postgres_contract.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/lore/memory_agent.py:175: in extract
+    if binding is not None else self._local_generation(prompt,jid,output_schema));parsed=MemoryAgentOutput.model_validate_json(result.text);ids=[]
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.lore.memory_agent.MemoryAgentRunner object at 0x7f8d6365a540>
+prompt = '---\nname: memory_agent\nversion: 0.1.0\ndescription: Extract evidence-backed Lore proposals from one accepted chapte.... Use only known character IDs for CHARACTER_MEMORY. Return {"proposals":[]} only when no durable change is supported.'
+jid = 'agent-pg-job'
+output_schema = {'$defs': {'AgentEvidence': {'properties': {'chapter_id': {'const': 'agent-pg:1', 'minLength': 1, 'title': 'Chapter Id...AgentProposal'}, 'title': 'Proposals', 'type': 'array'}}, 'required': ['proposals'], 'title': 'MemoryAgentOutput', ...}
+owner_check = None
+
+    def _local_generation(self,prompt,jid,output_schema=None,owner_check=None):
+     registry=getattr(self.runtime,"model_registry",None)
+     if registry is not None:
+      for model in registry.descriptors():
+       if model.modality is not Modality.TEXT or not model.enabled:continue
+       try:adapter=self._verified_local_adapter(model.provider_id,model.model_id)
+       except (ModelRuntimeError,ValueError,KeyError):continue
+       node=self.runtime.prepare_text_route(model.provider_id,model.model_id)
+       def dispatch_guard():
+        if self._verified_local_adapter(model.provider_id,model.model_id) is not adapter:
+         raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,"memory local route changed before dispatch")
+        if owner_check is not None:owner_check()
+       if owner_check is not None:owner_check()
+       request=TextGenerationRequest(model.provider_id,model.model_id,prompt,job_id=jid,
+        parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=4000),
+        structured_output_schema=(output_schema or MemoryAgentOutput.model_json_schema()) if getattr(model,'structured_output',False) else None,
+        metadata={"purpose":"memory_extraction","privacy_level":"LOCAL_ONLY"},dispatch_guard=dispatch_guard)
+       # Never fall back after an attempted generation, including to cloud routes.
+       return node.execute(TextModelNodeInput(request)).response
+>    raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
+E    app.model_runtime.ModelRuntimeError: MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED
+
+app/lore/memory_agent.py:156: ModelRuntimeError
+=============================== warnings summary ===============================
+tests/test_postgres_repository_contracts.py::test_postgres_contract_flow
+  <CLOUD_WORKSPACE>/studio-timeline-import-20261030/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_postgres_repository_contracts.py::test_postgres_contract_flow
+  <CLOUD_WORKSPACE>/studio-timeline-import-20261030/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_lore_postgres_contract.py::test_real_postgres_memory_agent_creates_pending_only
+1 failed, 9 passed, 2 warnings in 5.30s

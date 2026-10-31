@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ✓ src/workspace/layout/m5storageLabel.test.tsx (2 tests) 161ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 447ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 20ms
+ ✓ src/workspace/layout/m2s1.test.tsx (4 tests) 630ms
+   ✓ N5 visible main-panel tabs + layout.showPanel > layout.showPanel reopens a closed panel, rejects unknown ids with a reason 368ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 16ms
+ ✓ src/workspace/layout/m4s1.test.tsx (5 tests) 767ms
+   ✓ M4-s1 keyboard + aria > main tabs: tablist with roving tabindex; ArrowRight moves focus and selects 429ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 2814ms
+   ✓ DockLayout interactions > M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates 1485ms
+   ✓ DockLayout interactions > M1-08 reset default asks first, then restores layout but keeps draft text 399ms
+ ✓ src/workspace/layout/slice2fix.test.tsx (13 tests) 1227ms
+   ✓ MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions > Ctrl+K opens the shared registry palette with the 4 layout actions; running split works 398ms
+   ✓ nice-to-have: double-trigger guard + visible busy; shortcut text localized > two real key presses ~50ms apart execute once; aria-busy visible meanwhile 441ms
+ ✓ src/workspace/layout/m4s1fix.test.tsx (5 tests) 5159ms
+   ✓ M4-s1fix tablist > ArrowRight wraps last→first, ArrowLeft wraps first→last, Home/End jump 4224ms
+   ✓ M4-s1fix tablist > split: each main region is named exactly "<its tab> <its header>" 458ms
+   ✓ M4-s1fix tablist > aria-multiselectable only when split shows two tabs selected 426ms
+
+ Test Files  9 passed (9)
+      Tests  93 passed (93)
+   Start at  10:01:10
+   Duration  6.39s (transform 1.74s, setup 196ms, collect 4.57s, tests 11.24s, environment 3.78s, prepare 892ms)
+

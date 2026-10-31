@@ -1,0 +1,56 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api]",
+    "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api/v1]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_local_export_external.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-independent-evidence/baseline-red.xml",
+    "--basetemp=/tmp/tmpfnfgjbvq/baseline-red/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmpfnfgjbvq/baseline-red/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-independent",
+  "failed_reports": [
+    {
+      "failure_message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"cc6b7a76-dbd1-4fc8-9e5e-30422122bb6f\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+      "nodeid": "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api]",
+      "when": "call"
+    },
+    {
+      "failure_message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"203c9d16-6164-4e76-8dc6-3280263d98c7\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+      "nodeid": "tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api/v1]",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_taskcenter_local_export_external",
+        "message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"cc6b7a76-dbd1-4fc8-9e5e-30422122bb6f\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+        "name": "test_original_post_then_cursor_first_next_replay_final_readonly[/api]",
+        "type": null
+      },
+      {
+        "classname": "tests.test_taskcenter_local_export_external",
+        "message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"203c9d16-6164-4e76-8dc6-3280263d98c7\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+        "name": "test_original_post_then_cursor_first_next_replay_final_readonly[/api/v1]",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 2
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

@@ -1,3 +1,4 @@
+import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect, useState } from "react";
 import { Film, Plus } from "lucide-react";
 import { Button, Panel } from "../ui/primitives";
@@ -450,7 +451,7 @@ export function MultimodalDirectorWorkspace({
           <summary>历史快照（{persistence.snapshots.length}）</summary>
           {persistence.snapshots.map((snapshot) => (
             <p className="novel-help" key={snapshot.at}>
-              {new Date(snapshot.at).toLocaleString()} ·{" "}
+              {formatDate(snapshot.at)} ·{" "}
               {snapshot.note || "无备注"} · {snapshot.refs.length} 个参考 ·{" "}
               {snapshot.shots.length} 个镜头{" "}
               <Button

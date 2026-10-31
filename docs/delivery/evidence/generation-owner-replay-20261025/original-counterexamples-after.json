@@ -1,0 +1,73 @@
+{
+  "legal_http_project_recreation": {
+    "first": {
+      "job_id": "job-1",
+      "status": "QUEUED",
+      "events_url": "/api/generation/job-1/events",
+      "base_chapter_version": 1
+    },
+    "delete_status": 204,
+    "recreate_status": 201,
+    "chapter_status": 201,
+    "old_payload": {
+      "novel_id": "idempotency-book",
+      "chapter_id": "idempotency-book:1",
+      "instruction": "继续"
+    },
+    "new_payload": {
+      "novel_id": "idempotency-book",
+      "chapter_id": "idempotency-book:1",
+      "instruction": "继续"
+    },
+    "same_chapter_id": true,
+    "replay_status": 409,
+    "replay_body": {
+      "detail": {
+        "code": "IDEMPOTENCY_OWNER_CHANGED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+      },
+      "code": "IDEMPOTENCY_OWNER_CHANGED",
+      "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。",
+      "details": {
+        "code": "IDEMPOTENCY_OWNER_CHANGED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+      },
+      "request_id": "b39fb907-dc4a-4f4d-a58e-22ea15449b85"
+    },
+    "dispatcher_calls": 1,
+    "new_source": "# New source\n\nNew project source, not the old source\n\n"
+  },
+  "source_deletion_during_cached_job_lookup": {
+    "first": {
+      "job_id": "job-1",
+      "status": "QUEUED",
+      "events_url": "/api/generation/job-1/events",
+      "base_chapter_version": 1
+    },
+    "during_status": 404,
+    "during_body": {
+      "detail": {
+        "code": "CHAPTER_NOT_FOUND"
+      },
+      "code": "CHAPTER_NOT_FOUND",
+      "message": "CHAPTER_NOT_FOUND",
+      "details": {
+        "code": "CHAPTER_NOT_FOUND"
+      },
+      "request_id": "457057d5-a528-4151-b902-5d93513f0d39"
+    },
+    "next_status": 404,
+    "next_body": {
+      "detail": {
+        "code": "CHAPTER_NOT_FOUND"
+      },
+      "code": "CHAPTER_NOT_FOUND",
+      "message": "CHAPTER_NOT_FOUND",
+      "details": {
+        "code": "CHAPTER_NOT_FOUND"
+      },
+      "request_id": "8d2910ad-7478-45ff-8762-1d742bccb792"
+    },
+    "dispatcher_calls": 1
+  }
+}

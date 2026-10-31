@@ -1,0 +1,27 @@
+{"cwd": "<REVIEW_ROOT>", "python": "<MAIN_ROOT>/.venv/bin/python", "project_root": "<REVIEW_ROOT>", "module_files": ["<REVIEW_ROOT>/app/config.py", "<REVIEW_ROOT>/app/services/asset_library_service.py", "<REVIEW_ROOT>/app/services/audio_asset_history_store.py"], "data_path": "<REVIEW_ROOT>/.runtime/audio-history-20261025/data", "home": "<REVIEW_ROOT>/.runtime/independent-review/home", "tmp": "<REVIEW_ROOT>/.runtime/independent-review/tmp", "file_mock_only": true, "network_audit_deny": true}
+............F                                                            [100%]
+=================================== FAILURES ===================================
+___________________ test_noop_edit_does_not_create_revision ____________________
+
+tmp_path = PosixPath('<REVIEW_ROOT>/.runtime/independent-review/owner-extra-temp/test_noop_edit_does_not_create0')
+
+    def test_noop_edit_does_not_create_revision(tmp_path):
+        owner = AssetLibraryService(tmp_path)
+        row = create(owner)
+        before = owner.audio_history(row['id'])
+        owner.update_metadata(row['id'], {'parameters': {}}, expected_version=1)
+>       assert owner.audio_history(row['id']) == before
+E       AssertionError: assert {'asset_id': ...b4fa1eb', ...} == {'asset_id': ...8e1ecbb', ...}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Differing items:
+E         {'head': 'bbddabb6169bcceffed28ff9580a1797de29c57503ba79e118f6235f5b4fa1eb'} != {'head': '20d713515e3add4e483ba0f0440987f429d0163f5096870a4e81f11d28e1ecbb'}
+E         {'items': [{'asset_id': '57aba4a3-224f-4712-9060-67bae5c5c5e6', 'asset_version': 2, 'contract': 'audio-asset-history/1...5e6', 'asset_version': 1, 'contract': 'audio-asset-history/1', 'created_at': '2026-10-25T07:16:58.302318+00:00', ...}]} != {'items': [{'asset_id': '57aba4a3-224f-4712-9060-67bae5c5c5e6', 'asset_version': 1, 'contract': 'audio-asset-history/...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+.runtime/independent-review/test_owner_independent.py:90: AssertionError
+=========================== short test summary info ============================
+FAILED .runtime/independent-review/test_owner_independent.py::test_noop_edit_does_not_create_revision
+1 failed, 12 passed in 2.47s
+exit_code=1

@@ -1,0 +1,5 @@
+*.json -text
+# Raw pytest diff excerpts retain their original trailing whitespace.
+*.log -text -whitespace
+*.xml -text -whitespace
+*.txt -text

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.399" timestamp="2026-10-25T19:03:56.761885+09:00" hostname="8a71deb1dd45"><testcase classname="review-file-adoption-independent.test_independent" name="test_genuine_cold_bound_accept_all_effects" time="0.130"><failure message="AssertionError: assert '海风裹着雨水灌入狭窄的舱...属正有规律地轻响。\n\n' == '海风裹着雨水灌入狭窄的舱...，某种金属正有规律地轻响。'&#10;  &#10;  Skipping 50 identical leading characters in diff, use -v to show&#10;  - 种金属正有规律地轻响。&#10;  + 种金属正有规律地轻响。&#10;  ?            +&#10;  +">ready = namespace(s=namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-a...&gt;, reopen=&lt;function ready.&lt;locals&gt;.reopen at 0x7f947de3df80&gt;, memory_finished=&lt;threading.Event at 0x7f947de337d0: set&gt;)
+
+    def test_genuine_cold_bound_accept_all_effects(ready):
+        r=ready; result=r.manager.accept(r.job.id)
+        assert r.job.status=='ACCEPTED'
+&gt;       assert result['chapter']['content']==r.job.output
+E       AssertionError: assert '海风裹着雨水灌入狭窄的舱...属正有规律地轻响。\n\n' == '海风裹着雨水灌入狭窄的舱...，某种金属正有规律地轻响。'
+E         
+E         Skipping 50 identical leading characters in diff, use -v to show
+E         - 种金属正有规律地轻响。
+E         + 种金属正有规律地轻响。
+E         ?            +
+E         +
+
+../review-file-adoption-independent/test_independent.py:58: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,17 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+WINDOWS_TERMINATE_PROCESS export before_replace paired_commit_and_reopen_passed
+.WINDOWS_TERMINATE_PROCESS experimental before_replace paired_commit_and_reopen_passed
+.WINDOWS_TERMINATE_PROCESS export after_replace paired_commit_and_reopen_passed
+.WINDOWS_TERMINATE_PROCESS experimental after_replace paired_commit_and_reopen_passed
+...
+============================== warnings summary ===============================
+tests/test_file_backend_safety_process.py::test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[before_replace-export]
+  D:\PoemSeed\Worktrees\file-safety-validation-dev2-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_file_backend_safety_process.py::test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired[before_replace-export]
+  D:\PoemSeed\Worktrees\file-safety-validation-dev2-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 2 warnings in 10.27s

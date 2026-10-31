@@ -1,0 +1,4 @@
+ordinary_cross_project_save_refused_before_add_flush: PASS
+ordinary_same_project_save_same_session: PASS
+legacy_cross_project_behavior_unchanged: PASS
+read_side_chapter_reconciliation_still_out_of_scope: CONFIRMED

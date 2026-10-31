@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspace/layout/model.test.ts (10 tests) 8ms
+ ✓ src/workspace/layout/persistence.test.ts (12 tests) 20ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (19 tests) 607ms
+
+ Test Files  3 passed (3)
+      Tests  41 passed (41)
+   Start at  17:36:08
+   Duration  1.46s (transform 229ms, setup 34ms, collect 304ms, tests 635ms, environment 380ms, prepare 173ms)
+
+EXIT 0

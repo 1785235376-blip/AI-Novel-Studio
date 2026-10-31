@@ -1,0 +1,150 @@
+[
+  {
+    "phase": "first-read-warm-os-cache",
+    "entry": "HTTP",
+    "scenario": "mixed-graph",
+    "fixture": "Copied saved valid original owner records; Graph count30 exceeds normal creation cap25",
+    "pages": [
+      {
+        "page": 0,
+        "returned": 100,
+        "response_bytes": 59729,
+        "scanned_consumers": 13,
+        "scanned_references": 199,
+        "read_calls": 1570,
+        "bytes_read": 62532342,
+        "file_read_opens": 1570,
+        "distinct_files_read": 5,
+        "write_opens": 933,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 13
+        },
+        "elapsed_seconds": 22.817825499980245,
+        "python_peak_bytes": 5823344,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      },
+      {
+        "page": 1,
+        "returned": 100,
+        "response_bytes": 59729,
+        "scanned_consumers": 13,
+        "scanned_references": 200,
+        "read_calls": 1570,
+        "bytes_read": 62532342,
+        "file_read_opens": 1570,
+        "distinct_files_read": 5,
+        "write_opens": 933,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 13
+        },
+        "elapsed_seconds": 22.187162299989723,
+        "python_peak_bytes": 5855871,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      },
+      {
+        "page": 2,
+        "returned": 40,
+        "response_bytes": 24586,
+        "scanned_consumers": 6,
+        "scanned_references": 81,
+        "read_calls": 793,
+        "bytes_read": 31261018,
+        "file_read_opens": 793,
+        "distinct_files_read": 5,
+        "write_opens": 499,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 6
+        },
+        "elapsed_seconds": 11.05182279998553,
+        "python_peak_bytes": 5531583,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      }
+    ]
+  },
+  {
+    "phase": "repeat-read-warm-process",
+    "entry": "HTTP",
+    "scenario": "mixed-graph",
+    "fixture": "Copied saved valid original owner records; Graph count30 exceeds normal creation cap25",
+    "pages": [
+      {
+        "page": 0,
+        "returned": 100,
+        "response_bytes": 59729,
+        "scanned_consumers": 13,
+        "scanned_references": 199,
+        "read_calls": 1570,
+        "bytes_read": 62532342,
+        "file_read_opens": 1570,
+        "distinct_files_read": 5,
+        "write_opens": 933,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 13
+        },
+        "elapsed_seconds": 22.65494629999739,
+        "python_peak_bytes": 6250551,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      },
+      {
+        "page": 1,
+        "returned": 100,
+        "response_bytes": 59729,
+        "scanned_consumers": 13,
+        "scanned_references": 200,
+        "read_calls": 1570,
+        "bytes_read": 62532342,
+        "file_read_opens": 1570,
+        "distinct_files_read": 5,
+        "write_opens": 933,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 13
+        },
+        "elapsed_seconds": 22.815970099996775,
+        "python_peak_bytes": 6215154,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      },
+      {
+        "page": 2,
+        "returned": 40,
+        "response_bytes": 24586,
+        "scanned_consumers": 6,
+        "scanned_references": 81,
+        "read_calls": 793,
+        "bytes_read": 31261018,
+        "file_read_opens": 793,
+        "distinct_files_read": 5,
+        "write_opens": 499,
+        "write_calls": 0,
+        "written_bytes": 0,
+        "write_files": [],
+        "owner_reader_calls": {
+          "usage_directory": 3,
+          "usage_get": 6
+        },
+        "elapsed_seconds": 10.984934000007343,
+        "python_peak_bytes": 5266650,
+        "memory_scope": "tracemalloc Python allocations during request; not RSS"
+      }
+    ]
+  }
+]

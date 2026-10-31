@@ -1,0 +1,3 @@
+From primary checkout at 652004ba plus the byte-identical reviewed foundation files, source .runtime/activate-backend.sh then run:
+python docs/delivery/evidence/passive-job-owner-foundation-20261025/run_tests.py -q tests/test_ordinary_project_binding.py::test_cold_reopen_preserves_passive_identity_and_updates tests/test_ordinary_project_binding.py::test_original_owner_delete_recreate_rejects_retained_record tests/test_ordinary_project_binding.py::test_missing_marker_never_provisioned_on_save_get_or_load tests/test_ordinary_project_binding_postgres.py::test_ordinary_mainline_chapter_must_belong_to_locked_owner_in_same_session
+The wrapper sets isolated File state and blocks socket use. Portable log replaces this checkout absolute path with <CHECKOUT>.

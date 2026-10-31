@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_store_consumers.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-lifecycle-evidence/final-consumers.xml",
+    "--basetemp=/tmp/taskcenter-slice-rt3j2uvr/final-consumers/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/taskcenter-slice-rt3j2uvr/final-consumers/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-lifecycle-6363",
+  "returncode": 0,
+  "timed_out": false,
+  "junit": {
+    "present": true,
+    "tests": 14,
+    "failures": [],
+    "errors": []
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "failed_reports": [],
+  "collected_nodeids": [
+    "tests/test_taskcenter_store_consumers.py::test_real_world_ability_create_edit_reads_and_late_exception_rollback[legacy]",
+    "tests/test_taskcenter_store_consumers.py::test_real_world_ability_create_edit_reads_and_late_exception_rollback[protected]",
+    "tests/test_taskcenter_store_consumers.py::test_real_world_ability_create_edit_reads_and_late_exception_rollback[collaboration]",
+    "tests/test_taskcenter_store_consumers.py::test_real_planning_graph_volume_create_edit_and_original_transition_failure[legacy]",
+    "tests/test_taskcenter_store_consumers.py::test_real_planning_graph_volume_create_edit_and_original_transition_failure[protected]",
+    "tests/test_taskcenter_store_consumers.py::test_real_planning_graph_volume_create_edit_and_original_transition_failure[collaboration]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[legacy-1]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[legacy-2]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[protected-1]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[protected-2]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[collaboration-1]",
+    "tests/test_taskcenter_store_consumers.py::test_real_creative_graph_legacy_schemas_draft_idempotence_save_and_rollback[collaboration-2]",
+    "tests/test_taskcenter_store_consumers.py::test_real_raw_consumers_without_project_marker_do_not_create_or_claim_it[world]",
+    "tests/test_taskcenter_store_consumers.py::test_real_raw_consumers_without_project_marker_do_not_create_or_claim_it[planning]"
+  ],
+  "collection_errors": []
+}

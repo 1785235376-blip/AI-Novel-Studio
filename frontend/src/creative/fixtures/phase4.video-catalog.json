@@ -1,0 +1,861 @@
+{
+  "definitions": [
+    {
+      "id": "text_input",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "default": "",
+            "maxLength": 8000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "title": "TextParameters",
+        "type": "object"
+      },
+      "default_parameters": {
+        "text": ""
+      },
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "text_reference",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "asset_reference",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "asset",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          },
+          "digest": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Digest",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "image",
+              "video",
+              "audio"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "version",
+          "digest",
+          "kind"
+        ],
+        "title": "AssetParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "media_review",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "candidate",
+          "type": "VIDEO_CANDIDATE",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "asset",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyParameters",
+        "type": "object"
+      },
+      "default_parameters": {},
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "timeline_export",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "source_1",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_2",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_3",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_4",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_5",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_6",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_7",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source_8",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "candidate",
+          "type": "VIDEO_CANDIDATE",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "TimelineSnapshotParameters": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$",
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "title": "Version",
+                "type": "integer"
+              },
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Digest",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version",
+              "digest"
+            ],
+            "title": "TimelineSnapshotParameters",
+            "type": "object"
+          },
+          "TimelineSourceBinding": {
+            "additionalProperties": false,
+            "properties": {
+              "port": {
+                "enum": [
+                  "source_1",
+                  "source_2",
+                  "source_3",
+                  "source_4",
+                  "source_5",
+                  "source_6",
+                  "source_7",
+                  "source_8"
+                ],
+                "title": "Port",
+                "type": "string"
+              },
+              "clip_id": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$",
+                "title": "Clip Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "port",
+              "clip_id"
+            ],
+            "title": "TimelineSourceBinding",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "timeline_snapshot": {
+            "$ref": "#/$defs/TimelineSnapshotParameters"
+          },
+          "edit_operations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "maxItems": 40,
+            "title": "Edit Operations",
+            "type": "array"
+          },
+          "source_bindings": {
+            "items": {
+              "$ref": "#/$defs/TimelineSourceBinding"
+            },
+            "maxItems": 8,
+            "title": "Source Bindings",
+            "type": "array"
+          },
+          "export_profile": {
+            "additionalProperties": true,
+            "title": "Export Profile",
+            "type": "object"
+          }
+        },
+        "required": [
+          "timeline_snapshot",
+          "export_profile"
+        ],
+        "title": "TimelineNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "director_plan",
+      "version": 1,
+      "inputs": [],
+      "outputs": [
+        {
+          "id": "direction",
+          "type": "DIRECTOR_PLAN",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "PlanningDocumentSnapshot": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "maxLength": 240,
+                "minLength": 1,
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "minimum": 1,
+                "title": "Version",
+                "type": "integer"
+              },
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Digest",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version",
+              "digest"
+            ],
+            "title": "PlanningDocumentSnapshot",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "document_snapshot": {
+            "$ref": "#/$defs/PlanningDocumentSnapshot"
+          }
+        },
+        "required": [
+          "document_snapshot"
+        ],
+        "title": "PlanningNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "storyboard_plan",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "direction",
+          "type": "DIRECTOR_PLAN",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "storyboard",
+          "type": "STORYBOARD_DATA",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "PlanningDocumentSnapshot": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "maxLength": 240,
+                "minLength": 1,
+                "title": "Id",
+                "type": "string"
+              },
+              "version": {
+                "minimum": 1,
+                "title": "Version",
+                "type": "integer"
+              },
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Digest",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "version",
+              "digest"
+            ],
+            "title": "PlanningDocumentSnapshot",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "document_snapshot": {
+            "$ref": "#/$defs/PlanningDocumentSnapshot"
+          }
+        },
+        "required": [
+          "document_snapshot"
+        ],
+        "title": "PlanningNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "storyboard_shot",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "storyboard",
+          "type": "STORYBOARD_DATA",
+          "required": true,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "shot",
+          "type": "STORYBOARD_SHOT",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "shot_id": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Shot Id",
+            "type": "string"
+          },
+          "shot_version": {
+            "minimum": 1,
+            "title": "Shot Version",
+            "type": "integer"
+          },
+          "shot_digest": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Shot Digest",
+            "type": "string"
+          }
+        },
+        "required": [
+          "shot_id",
+          "shot_version",
+          "shot_digest"
+        ],
+        "title": "StoryboardShotParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    },
+    {
+      "id": "video_generate",
+      "version": 1,
+      "inputs": [
+        {
+          "id": "text",
+          "type": "TEXT",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "shot",
+          "type": "STORYBOARD_SHOT",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "source",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        },
+        {
+          "id": "reference",
+          "type": "ASSET_REF",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "candidate",
+          "type": "VIDEO_CANDIDATE",
+          "required": false,
+          "multiple": false
+        }
+      ],
+      "parameters_schema": {
+        "$defs": {
+          "MediaParameters": {
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "height": {
+                "anyOf": [
+                  {
+                    "maximum": 2048,
+                    "minimum": 64,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Height"
+              },
+              "steps": {
+                "anyOf": [
+                  {
+                    "maximum": 150,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Steps"
+              },
+              "seed": {
+                "anyOf": [
+                  {
+                    "maximum": 2147483647,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Seed"
+              },
+              "negative_prompt": {
+                "anyOf": [
+                  {
+                    "maxLength": 8000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Negative Prompt"
+              },
+              "size": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "1024x1024",
+                      "1536x1024",
+                      "1024x1536"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Size"
+              },
+              "quality": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "auto",
+                      "low",
+                      "medium",
+                      "high",
+                      "standard",
+                      "hd"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Quality"
+              },
+              "duration_seconds": {
+                "anyOf": [
+                  {
+                    "maximum": 600,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Duration Seconds"
+              },
+              "frame_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 60,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Frame Rate"
+              },
+              "voice_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 240,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Voice Id"
+              },
+              "speech_rate": {
+                "anyOf": [
+                  {
+                    "maximum": 2,
+                    "minimum": 0.5,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Speech Rate"
+              },
+              "in_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "In Ms"
+              },
+              "out_ms": {
+                "anyOf": [
+                  {
+                    "maximum": 600000,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Out Ms"
+              }
+            },
+            "title": "MediaParameters",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": {
+            "enum": [
+              "m7.video.t2v",
+              "m7.video.i2v",
+              "m7.video.v2v"
+            ],
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "provider_id": {
+            "anyOf": [
+              {
+                "maxLength": 240,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Id"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "maxLength": 240,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Id"
+          },
+          "prompt": {
+            "default": "",
+            "maxLength": 16000,
+            "title": "Prompt",
+            "type": "string"
+          },
+          "parameters": {
+            "$ref": "#/$defs/MediaParameters"
+          },
+          "allow_cloud": {
+            "default": false,
+            "title": "Allow Cloud",
+            "type": "boolean"
+          },
+          "license_note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "License Note",
+            "type": "string"
+          },
+          "reference_purpose": {
+            "anyOf": [
+              {
+                "enum": [
+                  "style",
+                  "action",
+                  "camera"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reference Purpose"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "VideoNodeParameters",
+        "type": "object"
+      },
+      "default_parameters": null,
+      "executable": true,
+      "model_called": false,
+      "blockers": []
+    }
+  ],
+  "limits": {
+    "nodes": 16,
+    "edges": 40,
+    "definition_bytes": 96000,
+    "output_bytes": 64000,
+    "graphs": 25,
+    "runs": 100,
+    "history": 20,
+    "runtime_timeout_seconds": 3600,
+    "node_timeout_seconds": 5
+  },
+  "capabilities": {
+    "local_execution": true,
+    "chapter_required": false,
+    "model_execution": true,
+    "external_reference_execution": true,
+    "external_reference_detach": false,
+    "binary_cache": false,
+    "parallel_execution": false,
+    "automatic_retry": false,
+    "actor_private": true,
+    "cache_mode": "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY",
+    "model_execution_contract": "creative-graph-model/1",
+    "media_execution": true,
+    "media_execution_contract": "creative-graph-media/1",
+    "media_evidence": "LOCAL_REQUIRED",
+    "media_cache": false,
+    "media_parallel_execution": false,
+    "automatic_media_dispatch": false,
+    "timeline_execution": true,
+    "timeline_evidence": "LOCAL_REQUIRED",
+    "automatic_timeline_dispatch": false,
+    "video_graph": true,
+    "video_graph_schema_version": 5,
+    "video_graph_evidence": "LOCAL_REQUIRED",
+    "storyboard_video_approval_required": true,
+    "automatic_video_dispatch": false
+  },
+  "media_limits": {
+    "nodes": 24,
+    "generators": 4,
+    "history": 80
+  }
+}

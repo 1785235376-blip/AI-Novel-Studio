@@ -1,0 +1,8 @@
+# cwd: /workspace/scratch/20a0022d2b33/file-keyed-activation
+# Additional integrator verification commands (worker exact commands retained separately).
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/file-local-bound-review-20261025/run_tests.py -q tests/test_ordinary_project_binding.py tests/test_ordinary_project_binding_postgres.py tests/test_passive_generation_manager_postgres.py --junitxml=.runtime/file-keyed-activation/schema-pg.xml > .runtime/file-keyed-activation/schema-pg.log 2>&1
+../studio-backend-20261025/.venv/bin/python docs/delivery/evidence/file-local-bound-review-20261025/run_tests.py -q tests/test_file_local_bound_review.py tests/test_ordinary_project_binding.py tests/test_ordinary_project_binding_postgres.py tests/test_passive_generation_manager_postgres.py --junitxml=.runtime/file-keyed-activation/schema-review-pg-final.xml > .runtime/file-keyed-activation/schema-review-pg-final.log 2>&1
+../studio-backend-20261025/.venv/bin/python .runtime/file-keyed-activation/run_tests.py -q tests/test_file_writer_binding_v2.py --junitxml=.runtime/file-keyed-activation/binding-v2.xml > .runtime/file-keyed-activation/binding-v2.log 2>&1
+python -m compileall -q app/jobs.py app/api.py app/services/file_generation* app/services/ordinary_writer_ports.py app/file_project_lifecycle.py app/repositories/generation_repository.py app/repositories/chapter_repository.py app/repository.py
+find app -name '*.py' -type f -print0 | sort -z | xargs -0 sha256sum > .runtime/file-keyed-activation/production-freeze-1.sha256
+git diff --check

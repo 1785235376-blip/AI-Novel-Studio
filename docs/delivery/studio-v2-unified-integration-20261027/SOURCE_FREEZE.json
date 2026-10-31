@@ -1,0 +1,19 @@
+{
+  "source_head": "5eec654b0bbcbeb5355a640a5c5109d703ab1cbf",
+  "source_tree": "136628f86ad6c2ada0d29962170d16942688acc1",
+  "source_roots": {
+    "app": "5b6751a5bc54e207a03eb880e876a63dc5f1dffa",
+    "frontend": "4234e4f19e9ce1c2061f3fd2838f64594ec0a7c1",
+    "tests": "9c11ee1ca70f27def567e45965e698c96e1ba8e0",
+    "scripts": "a3e94059eb4849b2160e8cf850f5e92d68ea21fb"
+  },
+  "inputs": {
+    "main": "7b35e4cb4bd9efabe7cff54e67d7b24e8e469385",
+    "A": "457ea4a5a45ab13f351980665e053c5c77d15c82",
+    "B": "f6473e307e9d0501a41dc46dd991645a437103d7",
+    "C": "fe4f55412299fadfada0354725b3ca46e418c46a"
+  },
+  "verification_checkout": "D:\\PoemSeed-Unified-20261027-94f1c72e\\final-verification-5eec654b",
+  "immutable_during_tests": true,
+  "boundary": "fresh isolated Windows clone; synthetic data; real app File+HTTP+browser; local deterministic Mock provider; GPU disabled"
+}

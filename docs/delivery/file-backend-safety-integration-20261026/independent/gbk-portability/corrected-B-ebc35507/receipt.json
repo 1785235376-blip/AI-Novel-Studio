@@ -1,0 +1,25 @@
+{
+  "source_head": "ebc35507ff1991fddef7f7ecdcc76aea73733516",
+  "source_root": "D:\\PoemSeed\\Worktrees\\file-safety-independent-b-utf8-ebc35507",
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "D:\\PoemSeed\\Worktrees\\file-safety-independent-20261026\\docs\\delivery\\file-backend-safety-integration-20261026\\independent\\gbk-portability\\run_portability.py",
+    "D:\\PoemSeed\\Worktrees\\file-safety-independent-b-utf8-ebc35507",
+    "D:\\PoemSeed\\Worktrees\\file-safety-independent-20261026\\docs\\delivery\\file-backend-safety-integration-20261026\\independent\\gbk-portability\\corrected-B-ebc35507",
+    "--child"
+  ],
+  "selectors": [
+    "tests/test_taskcenter_collaboration_rebuilt.py::test_legacy_source_is_zero_write_unsupported",
+    "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes"
+  ],
+  "isolation_overlay_source": "856d1ed3341fe0c24df1daff9a8bc1242c260e6c:scripts/run_studio_backend_tests.py",
+  "isolation_overlay_sha256": "56da22b99915d96a235f9f962f72df72032c0a9606ae6ae17dbb4d59eba88d5b",
+  "overlay_written_to_target": false,
+  "process_exit_code": 0,
+  "timeout_seconds": 180,
+  "timed_out": false,
+  "started_unix": 1793029409.5318918,
+  "ended_unix": 1793029422.9980805,
+  "source_manifest_unchanged": true,
+  "foreign_loaded_modules": []
+}

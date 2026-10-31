@@ -24,6 +24,8 @@ class Settings:
     storage_backend: str = os.getenv("STORAGE_BACKEND", "file").strip().lower()
     database_url: str = os.getenv("DATABASE_URL", "")
     enable_lore_context: bool = _bool("ENABLE_LORE_CONTEXT", False)
+    # Admission-only opt-in; existing bound records keep their immutable fences.
+    enable_experimental_file_keyed_generation: bool = _bool("ENABLE_EXPERIMENTAL_FILE_KEYED_GENERATION", False)
     enable_narrative_context: bool = _bool("ENABLE_NARRATIVE_CONTEXT", False)
     narrative_context_token_budget: int = int(os.getenv("NARRATIVE_CONTEXT_TOKEN_BUDGET", "800"))
     context_policy_token_budget: int = int(os.getenv("CONTEXT_POLICY_TOKEN_BUDGET", "2400"))
@@ -34,6 +36,8 @@ class Settings:
     autosave_periodic_seconds: float = float(os.getenv("AUTOSAVE_PERIODIC_SECONDS", "30"))
     enable_collaboration_runtime: bool = _bool("ENABLE_COLLABORATION_RUNTIME", False)
     enable_packaged_runtime: bool = _bool("ENABLE_PACKAGED_RUNTIME", False)
+    enable_project_capacity_admission: bool = _bool("ENABLE_PROJECT_CAPACITY_ADMISSION", False)
+    enable_audio_asset_history: bool = _bool("ENABLE_AUDIO_ASSET_HISTORY", False)
     collaboration_dev_sessions_json: str = os.getenv("COLLABORATION_DEV_SESSIONS_JSON", "")
     outbound_loopback_allowlist: str = os.getenv("OUTBOUND_LOOPBACK_ALLOWLIST", "")
     credential_vault_backend: str = os.getenv("CREDENTIAL_VAULT_BACKEND", "auto")
@@ -44,3 +48,5 @@ class Settings:
         return self.novel_data if self.novel_data.is_absolute() else self.root / self.novel_data
 
 settings = Settings()
+
+

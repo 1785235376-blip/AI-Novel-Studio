@@ -1,0 +1,130 @@
+{
+  "id": "55e546ef-f729-4855-a9e5-2d4eae9a6181",
+  "version": 1,
+  "definition": {
+    "schema_version": 5,
+    "title": "SYNTHETIC reviewed storyboard video",
+    "nodes": [
+      {
+        "id": "board",
+        "definition_id": "storyboard_plan",
+        "definition_version": 1,
+        "enabled": true,
+        "position": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "parameters": {
+          "document_snapshot": {
+            "id": "7d670733-5a85-4807-b9a5-706ec02587c1",
+            "version": 2,
+            "digest": "e4e635a0a5f0576a002c0108cce3b4fc07eda2ce6f6361e5ef8026ade50f85ec"
+          }
+        }
+      },
+      {
+        "id": "shot",
+        "definition_id": "storyboard_shot",
+        "definition_version": 1,
+        "enabled": true,
+        "position": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "parameters": {
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+        }
+      },
+      {
+        "id": "video",
+        "definition_id": "video_generate",
+        "definition_version": 1,
+        "enabled": true,
+        "position": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "parameters": {
+          "operation_id": "m7.video.t2v",
+          "provider_id": "configured",
+          "model_id": "owned-model",
+          "prompt": "",
+          "parameters": {
+            "width": null,
+            "height": null,
+            "steps": null,
+            "seed": null,
+            "negative_prompt": null,
+            "size": null,
+            "quality": null,
+            "duration_seconds": null,
+            "frame_rate": null,
+            "voice_id": null,
+            "speech_rate": null,
+            "in_ms": null,
+            "out_ms": null
+          },
+          "allow_cloud": false,
+          "license_note": ""
+        }
+      },
+      {
+        "id": "review",
+        "definition_id": "media_review",
+        "definition_version": 1,
+        "enabled": true,
+        "position": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "parameters": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "board_shot_storyboard",
+        "source_node_id": "board",
+        "source_port": "storyboard",
+        "target_node_id": "shot",
+        "target_port": "storyboard"
+      },
+      {
+        "id": "shot_video_shot",
+        "source_node_id": "shot",
+        "source_port": "shot",
+        "target_node_id": "video",
+        "target_port": "shot"
+      },
+      {
+        "id": "video_review_candidate",
+        "source_node_id": "video",
+        "source_port": "candidate",
+        "target_node_id": "review",
+        "target_port": "candidate"
+      }
+    ],
+    "viewport": {
+      "x": 0.0,
+      "y": 0.0,
+      "zoom": 1.0
+    }
+  },
+  "definition_digest": "f3f26169ec38bc5b6592bc678fc55bbf1b9cd087d87ef076686b808ef3b9d4a2",
+  "execution_digest": "ecd6627992e6998be19c3a5f11a9b15db1163526264e122471e8d212ce7bbd3d",
+  "created_at": "2026-10-13T18:15:02.306342+00:00",
+  "updated_at": "2026-10-13T18:15:02.306342+00:00",
+  "can_edit": true,
+  "reference_states": [
+    {
+      "node_id": "board",
+      "state": "CURRENT"
+    }
+  ],
+  "project_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849",
+  "scope": {
+    "mode": "local",
+    "novel_id": "r3-mounted-1387794e357e43ebb903b6be80ae0849"
+  }
+}

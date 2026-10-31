@@ -1,0 +1,62 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\studio-backend-tests\\tmp\\pytest-of-admin\\pytest-6\\test_baseline_asset_query_erro0\\assets\\.asset-query-index\\index.sqlite3-wal'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\studio-backend-tests\\tmp\\pytest-of-admin\\pytest-6\\test_baseline_asset_query_erro0\\assets\\.asset-query-index\\index.sqlite3-shm'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\studio-backend-tests\\tmp\\pytest-of-admin\\pytest-6\\test_baseline_asset_query_erro0\\assets\\.asset-query-index\\index.sqlite3-journal'
+INDEX_EXCEPTION 196 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\studio-backend-tests\\tmp\\pytest-of-admin\\pytest-6\\test_baseline_asset_query_erro0\\assets\\.asset-query-index\\index.sqlite3'
+INDEX_EXCEPTION 381 OSError [Errno 9] Bad file descriptor
+INDEX_EXCEPTION 402 AssetQueryUnavailable ASSET_QUERY_INDEX_UNAVAILABLE
+INDEX_EXCEPTION 430 AssetQueryUnavailable ASSET_QUERY_INDEX_UNAVAILABLE
+BASELINE_ASSET_QUERY_STATUS 503
+BASELINE_ASSET_QUERY_RECEIPT {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"3a3cc79d-4d07-4e28-b2f5-d9cfc2e6abaa"}
+F
+================================== FAILURES ===================================
+___________________ test_baseline_asset_query_error_receipt ___________________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001891BA37C90>, nid='query-fd27c4c2d485430e8ee2e076c9...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001891B3E7110>
+
+    def test_baseline_asset_query_error_receipt(rig, monkeypatch):
+        from app.services.asset_query_index import FileAssetQueryIndex
+        original = FileAssetQueryIndex.snapshot
+        def traced(self, *args, **kwargs):
+            def trace(frame, event, value):
+                if event == "exception" and frame.f_code.co_filename.endswith("asset_query_index.py"):
+                    print("INDEX_EXCEPTION", frame.f_lineno, type(value[1]).__name__, str(value[1]))
+                return trace
+            previous = sys.gettrace()
+            sys.settrace(trace)
+            try:
+                return original(self, *args, **kwargs)
+            finally:
+                sys.settrace(previous)
+        monkeypatch.setattr(FileAssetQueryIndex, "snapshot", traced)
+        rig.seed("Shrine Cover.PNG")
+        rig.seed("shrine ambience.wav", "audio")
+        rig.seed("Forest.png")
+        response = get(rig)
+        print("BASELINE_ASSET_QUERY_STATUS", response.status_code)
+        print("BASELINE_ASSET_QUERY_RECEIPT", response.text)
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"3a3cc79d-4d07-4e28-b2f5-d9cfc2e6abaa"}
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests\test_studio_asset_query_triage_local.py:26: AssertionError
+============================== warnings summary ===============================
+[USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  [USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_studio_asset_query_triage_local.py::test_baseline_asset_query_error_receipt
+  [WORKTREES]\studio-contracts-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_asset_query_triage_local.py::test_baseline_asset_query_error_receipt
+  [WORKTREES]\studio-contracts-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studio_asset_query_triage_local.py::test_baseline_asset_query_error_receipt
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 warnings in 4.66s

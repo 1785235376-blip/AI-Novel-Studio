@@ -1,0 +1,1705 @@
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                       [100%]
+==================================== ERRORS ====================================
+__________ ERROR at setup of test_feature_flag_off_is_v048_compatible __________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+___ ERROR at setup of test_enabled_context_adds_only_approved_active_memory ____
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_______ ERROR at setup of test_cloud_context_excludes_local_only_memory ________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_______ ERROR at setup of test_agent_adapter_only_exposes_lore_to_writer _______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_________ ERROR at setup of test_file_and_postgres_lore_context_match __________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_same_name_character_lore_isolated_by_novel_in_file_and_postgres _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_lore_memory_view_parity_comparator_detects_semantic_difference _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+______ ERROR at setup of test_writer_generation_records_context_snapshot _______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_job_identity_failure_never_executes_legacy_provider __
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_context_intent_resolves_character_location_and_operation _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+___________ ERROR at setup of test_priority_ranking_is_deterministic ___________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+______ ERROR at setup of test_conflict_detection_reports_without_mutation ______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_context_hash_is_reproducible_and_key_order_independent _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__________ ERROR at setup of test_file_context_snapshot_is_persisted ___________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_postgres_context_snapshot_is_idempotently_persisted __
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+____ ERROR at setup of test_context_authority_mapping_and_stable_precedence ____
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_________ ERROR at setup of test_exact_duplicate_merges_reasons_stably _________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_higher_authority_wins_and_advisory_cannot_override ___
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_same_authority_conflict_is_explicit_and_false_conflicts_are_ignored _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_same_source_different_values_are_not_silently_deduplicated _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_budget_and_locality_are_independent_from_authority ___
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_______ ERROR at setup of test_writer_contract_and_other_agent_isolation _______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+______ ERROR at setup of test_disabled_is_strict_empty_compatibility_path ______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+___ ERROR at setup of test_ranking_is_deterministic_and_recent_has_priority ____
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+______ ERROR at setup of test_character_and_lore_relevance_affect_ranking ______
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_________ ERROR at setup of test_deduplication_uses_canonical_content __________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+________ ERROR at setup of test_budget_and_oversized_source_are_stable _________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+______________________ ERROR at setup of test_empty_input ______________________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_local_only_is_rejected_before_cloud_pack_processing __
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+___ ERROR at setup of test_local_only_remains_available_for_local_execution ____
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+__ ERROR at setup of test_candidate_extraction_covers_all_foundation_sources ___
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_context_service_flag_off_is_unchanged_and_enabled_is_cloud_safe _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_ ERROR at setup of test_same_source_id_across_types_has_unique_chunk_identity _
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+_______ ERROR at setup of test_context_service_public_build_flag_matrix ________
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings():
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+>       from app.main import app
+
+tests/conftest.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in <module>
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:23: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/agent/.local/share/AI-Novel-Studio'), mode = 511
+parents = True, exist_ok = True
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: OSError
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/writer-ports/context.xml -
+=========================== short test summary info ============================
+ERROR tests/test_lore_context_contract.py::test_feature_flag_off_is_v048_compatible
+ERROR tests/test_lore_context_contract.py::test_enabled_context_adds_only_approved_active_memory
+ERROR tests/test_lore_context_contract.py::test_cloud_context_excludes_local_only_memory
+ERROR tests/test_lore_context_contract.py::test_agent_adapter_only_exposes_lore_to_writer
+ERROR tests/test_lore_context_contract.py::test_file_and_postgres_lore_context_match
+ERROR tests/test_lore_context_contract.py::test_same_name_character_lore_isolated_by_novel_in_file_and_postgres
+ERROR tests/test_lore_context_contract.py::test_lore_memory_view_parity_comparator_detects_semantic_difference
+ERROR tests/test_context_intelligence.py::test_writer_generation_records_context_snapshot
+ERROR tests/test_context_intelligence.py::test_job_identity_failure_never_executes_legacy_provider
+ERROR tests/test_context_intelligence.py::test_context_intent_resolves_character_location_and_operation
+ERROR tests/test_context_intelligence.py::test_priority_ranking_is_deterministic
+ERROR tests/test_context_intelligence.py::test_conflict_detection_reports_without_mutation
+ERROR tests/test_context_intelligence.py::test_context_hash_is_reproducible_and_key_order_independent
+ERROR tests/test_context_intelligence.py::test_file_context_snapshot_is_persisted
+ERROR tests/test_context_intelligence.py::test_postgres_context_snapshot_is_idempotently_persisted
+ERROR tests/test_context_policy.py::test_context_authority_mapping_and_stable_precedence
+ERROR tests/test_context_policy.py::test_exact_duplicate_merges_reasons_stably
+ERROR tests/test_context_policy.py::test_higher_authority_wins_and_advisory_cannot_override
+ERROR tests/test_context_policy.py::test_same_authority_conflict_is_explicit_and_false_conflicts_are_ignored
+ERROR tests/test_context_policy.py::test_same_source_different_values_are_not_silently_deduplicated
+ERROR tests/test_context_policy.py::test_budget_and_locality_are_independent_from_authority
+ERROR tests/test_context_policy.py::test_writer_contract_and_other_agent_isolation
+ERROR tests/test_context_pack_v2.py::test_disabled_is_strict_empty_compatibility_path
+ERROR tests/test_context_pack_v2.py::test_ranking_is_deterministic_and_recent_has_priority
+ERROR tests/test_context_pack_v2.py::test_character_and_lore_relevance_affect_ranking
+ERROR tests/test_context_pack_v2.py::test_deduplication_uses_canonical_content
+ERROR tests/test_context_pack_v2.py::test_budget_and_oversized_source_are_stable
+ERROR tests/test_context_pack_v2.py::test_empty_input - OSError: [Errno 30] R...
+ERROR tests/test_context_pack_v2.py::test_local_only_is_rejected_before_cloud_pack_processing
+ERROR tests/test_context_pack_v2.py::test_local_only_remains_available_for_local_execution
+ERROR tests/test_context_pack_v2.py::test_candidate_extraction_covers_all_foundation_sources
+ERROR tests/test_context_pack_v2.py::test_context_service_flag_off_is_unchanged_and_enabled_is_cloud_safe
+ERROR tests/test_context_pack_v2.py::test_same_source_id_across_types_has_unique_chunk_identity
+ERROR tests/test_context_pack_v2.py::test_context_service_public_build_flag_matrix
+34 errors in 3.34s

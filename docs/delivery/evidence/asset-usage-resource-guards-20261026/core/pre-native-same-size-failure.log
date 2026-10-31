@@ -1,0 +1,56 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ test_independent_file_changes_are_refused_at_deterministic_read_boundaries[after_chunk-same-size-write] _
+
+tmp_path = WindowsPath('D:/PoemSeed/SyntheticRuns/asset-resource-pre-native/tmp/pytest-of-admin/pytest-0/test_independent_file_changes_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000015440FE3550>
+stage = 'after_chunk', change = 'same-size-write'
+
+    @pytest.mark.parametrize("stage,change", [
+        ("before_open", "grow"), ("before_open", "replace"),
+        ("after_chunk", "grow"), ("after_chunk", "same-size-write"),
+    ])
+    def test_independent_file_changes_are_refused_at_deterministic_read_boundaries(tmp_path, monkeypatch, stage, change):
+        from app.creative import asset_usage_budget as module
+        target = tmp_path / "changing.json"
+        target.write_bytes(b'"' + b"a" * (module.UsageReadBudget.READ_CHUNK_BYTES * 2) + b'"')
+        budget = module.UsageReadBudget()
+        fired = []
+        def hook(observed, path):
+            if observed != stage or Path(path) != target or fired:
+                return
+            fired.append(observed)
+            if change == "grow":
+                with target.open("ab") as handle:
+                    handle.write(b" " * budget.MAX_SCOPE_BYTES)
+            elif change == "replace":
+                replacement = tmp_path / "replacement.json"
+                replacement.write_bytes(target.read_bytes())
+                replacement.replace(target)
+            else:
+                with target.open("r+b") as handle:
+                    handle.seek(1)
+                    handle.write(b"Z")
+        monkeypatch.setattr(module, "_read_checkpoint", hook)
+>       with pytest.raises(module.UsageBudgetError):
+E       Failed: DID NOT RAISE UsageBudgetError
+
+tests\test_studio_asset_usage_resource_independent.py:84: Failed
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\asset-usage-resource-guards-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\asset-usage-resource-guards-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studio_asset_usage_resource_independent.py::test_independent_file_changes_are_refused_at_deterministic_read_boundaries[after_chunk-same-size-write]
+1 failed, 3 warnings in 3.34s

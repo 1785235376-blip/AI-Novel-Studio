@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="230.238" timestamp="2026-10-26T23:23:31.421050+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_taskcenter_mixed_external" name="test_both_original_post_writers_then_mixed_replay_and_final[/api]" time="181.234"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;39e91e6b-c17a-466f-85ab-1d117b075432&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">mixed_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7fa30d25eb10&gt;, nid='query-ba0e7ffb8cae4314...nticImportService object at 0x7fa30ebcb950&gt;, store=&lt;app.experimental.store.ExperimentalStore object at 0x7fa30c234530&gt;)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_both_original_post_writers_then_mixed_replay_and_final(mixed_rig,prefix):
+        e=mixed_rig;before=files(e.rig.root);submitted=list(e.calls)
+&gt;       r=get(e,prefix=prefix);assert r.status_code==200,r.text
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"39e91e6b-c17a-466f-85ab-1d117b075432"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_mixed_external.py:28: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_mixed_external" name="test_both_original_post_writers_then_mixed_replay_and_final[/api/v1]" time="40.366"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;8cfb77e8-c5e9-4da2-9c3e-4b6335e8633c&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">mixed_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7fa30b5b0560&gt;, nid='query-5c08cfc25a9445a5...nticImportService object at 0x7fa30ebcb950&gt;, store=&lt;app.experimental.store.ExperimentalStore object at 0x7fa30a2a07d0&gt;)
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_both_original_post_writers_then_mixed_replay_and_final(mixed_rig,prefix):
+        e=mixed_rig;before=files(e.rig.root);submitted=list(e.calls)
+&gt;       r=get(e,prefix=prefix);assert r.status_code==200,r.text
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"8cfb77e8-c5e9-4da2-9c3e-4b6335e8633c"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_mixed_external.py:28: AssertionError</failure></testcase></testsuite></testsuites>

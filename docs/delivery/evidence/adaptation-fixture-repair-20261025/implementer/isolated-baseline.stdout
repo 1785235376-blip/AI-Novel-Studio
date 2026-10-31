@@ -1,0 +1,60 @@
+COMMAND: ${WORKSPACE}/adaptation-fixture-evidence/run.sh tests/test_phase7_adaptation.py tests/test_phase7_adaptation_authorization.py -q --junitxml=${WORKSPACE}/adaptation-fixture-evidence/isolated-baseline.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+IMPORTS ${WORKSPACE}/studio-adaptation-fixture-repair/app/dependencies.py ${WORKSPACE}/studio-adaptation-fixture-repair/app/adaptation_api.py
+.....FFF                                                                 [100%]
+=================================== FAILURES ===================================
+_____ test_team_adaptation_capability_matrix_and_cross_workspace_rejection _____
+
+    def test_team_adaptation_capability_matrix_and_cross_workspace_rejection():
+        client,novel,branch,_,headers=setup_scope();params={'branch_id':branch}
+>       assert client.get(f'/api/novels/{novel}/adaptations',params=params,headers=headers['member']).status_code==403
+E       AssertionError: assert 404 == 403
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = get('/api/novels/adapt-n-75b971db6f3642bc87dfba08a594cb94/adaptations', params={'branch_id': 'adapt-b-75b971db6f3642bc87dfba08a594cb94'}, headers={'X-Session-Token': 't-member-75b971db6f3642bc87dfba08a594cb94'})
+E        +      where get = <starlette.testclient.TestClient object at 0x7f0803ee07a0>.get
+
+tests/test_phase7_adaptation_authorization.py:29: AssertionError
+__________________ test_team_adaptation_audit_is_content_free __________________
+
+    def test_team_adaptation_audit_is_content_free():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'LITERARY','instruction':'不得写入审计的秘密要求'}).json()
+>       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:40: KeyError
+______ test_team_adaptation_materializes_scoped_project_and_is_idempotent ______
+
+    def test_team_adaptation_materializes_scoped_project_and_is_idempotent():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'SCREEN','title':'影视改编版'}).json()
+>       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:51: KeyError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: ${WORKSPACE}/adaptation-fixture-evidence/isolated-baseline.xml -
+=========================== short test summary info ============================
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_capability_matrix_and_cross_workspace_rejection
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_audit_is_content_free
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_materializes_scoped_project_and_is_idempotent
+3 failed, 5 passed, 4 warnings in 5.64s

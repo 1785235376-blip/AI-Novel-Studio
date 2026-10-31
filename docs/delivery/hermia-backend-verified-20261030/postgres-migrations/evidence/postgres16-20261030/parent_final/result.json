@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "test_args": [
+    "tests/test_studio_otio_postgres_20261030.py",
+    "tests/test_postgres_repository_contracts.py",
+    "tests/test_lore_postgres_contract.py",
+    "tests/test_v059_postgres_admin_concurrency.py",
+    "tests/test_postgres_migration_completeness_20261030.py",
+    "tests/test_packaged_postgres_migrations_v070.py",
+    "-q",
+    "-ra"
+  ],
+  "database_name": "ai_novel_studio_e2e_parent_final",
+  "head": "3139927b997c18048704aa958a73787fa12a7251"
+}

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import os
+import base64
+import ipaddress
+from urllib.parse import urlsplit
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Callable, Protocol
 
 from .audio_provider_config import load as load_audio_provider_config
 
@@ -87,6 +90,7 @@ class AudioGenerationRequest:
     source_video_uri: str | None = None
     duration_seconds: float | None = None
     parameters: dict[str, Any] = field(default_factory=dict)
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
 
 @dataclass(frozen=True)
@@ -105,28 +109,41 @@ class AudioProvider(Protocol):
 
 class HttpAudioProvider:
     """Adapter for local or cloud audio services exposing the studio HTTP contract."""
+    supports_dispatch_guard = True
 
-    def __init__(self, transport, endpoint: str, api_key: str | None = None):
+    def __init__(self, transport, endpoint: str, api_key: str | None = None, *, local: bool = False, emotion_values: tuple[str, ...] = ()):
         if not endpoint:
             raise ValueError("audio provider endpoint is required")
         self.transport = transport
         self.endpoint = endpoint.rstrip("/")
         self.api_key = api_key
+        self.local = bool(local)
+        self.emotion_values = emotion_values
 
     def _headers(self) -> dict[str, str]:
         return {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
 
     def health_check(self) -> bool:
         try:
-            return self.transport.get(self.endpoint + "/models", headers=self._headers(), timeout=1.5).status_code < 500
+            return 200 <= self.transport.get(self.endpoint + "/models", headers=self._headers(), timeout=1.5).status_code < 300
         except Exception:
             return False
 
     def generate(self, request: AudioGenerationRequest) -> AudioGenerationResult:
         capability = request.capability.upper()
         if capability == "TTS":
+            emotion = str(request.parameters.get("emotion") or "neutral")
+            if emotion != "neutral" and emotion not in self.emotion_values:
+                raise ValueError("AUDIO_PARAMETER_UNSUPPORTED: emotion")
+            if set(request.parameters) - {"emotion", "speed", "response_format"}:
+                raise ValueError("AUDIO_PARAMETER_UNSUPPORTED")
             path = "/audio/speech"
-            payload = {"model": request.model_id, "voice": request.voice or "default", "input": request.prompt, "response_format": "mp3"}
+            payload = {"model": request.model_id, "voice": request.voice or "default", "input": request.prompt, "response_format": str(request.parameters.get("response_format") or "mp3")}
+            if emotion in self.emotion_values: payload["emotion"] = emotion
+            if "speed" in request.parameters:
+                speed = float(request.parameters["speed"])
+                if not 0.5 <= speed <= 2.0: raise ValueError("invalid audio speed")
+                payload["speed"] = speed
         else:
             path = "/audio/generations"
             payload = {
@@ -137,10 +154,18 @@ class HttpAudioProvider:
                 "source_audio_uri": request.source_audio_uri,
                 "source_video_uri": request.source_video_uri,
                 "duration_seconds": request.duration_seconds,
-                **request.parameters,
+                **{key: value for key, value in request.parameters.items() if key not in {"model", "capability", "prompt", "task_id", "source_audio_uri", "source_video_uri"}},
             }
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
         response = self.transport.post(self.endpoint + path, headers=self._headers(), json=payload, timeout=300)
         response.raise_for_status()
+        content_type = str(getattr(response, "headers", {}).get("content-type", "")).split(";", 1)[0]
+        if content_type.startswith("audio/") or content_type == "application/octet-stream":
+            content = bytes(response.content)
+            if not content or len(content) > 25 * 1024 * 1024:
+                raise ValueError("audio response is empty or exceeds limit")
+            return AudioGenerationResult(request.provider_id, request.model_id, "data:" + (content_type if content_type.startswith("audio/") else "audio/mpeg") + ";base64," + base64.b64encode(content).decode("ascii"))
         data = response.json() if hasattr(response, "json") else {}
         uri = data.get("url") or data.get("audio_url") or data.get("audio_uri")
         remote = data.get("id") or data.get("task_id")
@@ -172,10 +197,23 @@ def resolve_provider(provider_id: str, capability: str, vault, transport) -> tup
     for config in candidates:
         if capability not in config["capabilities"]:
             continue
+        try:
+            from .net_safety import validate_provider_endpoint
+            validate_provider_endpoint(config["endpoint"])
+        except ValueError:
+            # A hand-edited or environment-supplied config cannot turn a
+            # link-local/metadata transport into a provider.
+            continue
         secret = vault.resolve(config["provider_id"]) if config["requires_credential"] else None
         if config["requires_credential"] and not secret:
             continue
-        adapter = HttpAudioProvider(transport, config["endpoint"], secret)
+        try:
+            address = ipaddress.ip_address(urlsplit(config["endpoint"]).hostname or "")
+            address=getattr(address,"ipv4_mapped",None) or address
+            local = bool(config.get("local")) and (address.is_loopback or address.is_private) and not address.is_link_local and not address.is_unspecified and (not address.is_reserved or address.is_loopback)
+        except ValueError:
+            local = False
+        adapter = HttpAudioProvider(transport, config["endpoint"], secret, local=local)
         if requested != "auto" or adapter.health_check():
             return config["provider_id"], config["default_model"], adapter
     raise ValueError(f"audio provider is not configured for {capability}")

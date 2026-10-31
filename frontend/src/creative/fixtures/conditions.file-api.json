@@ -1,0 +1,850 @@
+{
+  "catalog": {
+    "definitions": [
+      {
+        "id": "draft_prepare",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          },
+          {
+            "id": "direction",
+            "type": "DIRECTOR_NOTES",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "human_review",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "local_condition",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "when_true",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          },
+          {
+            "id": "when_false",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "$defs": {
+            "BooleanCondition": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "boolean",
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "value": {
+                  "title": "Value",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "kind",
+                "value"
+              ],
+              "title": "BooleanCondition",
+              "type": "object"
+            },
+            "EnumCondition": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "enum",
+                  "title": "Kind",
+                  "type": "string"
+                },
+                "value": {
+                  "enum": [
+                    "A",
+                    "B"
+                  ],
+                  "title": "Value",
+                  "type": "string"
+                },
+                "equals": {
+                  "enum": [
+                    "A",
+                    "B"
+                  ],
+                  "title": "Equals",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "value",
+                "equals"
+              ],
+              "title": "EnumCondition",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "predicate": {
+              "discriminator": {
+                "mapping": {
+                  "boolean": "#/$defs/BooleanCondition",
+                  "enum": "#/$defs/EnumCondition"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/BooleanCondition"
+                },
+                {
+                  "$ref": "#/$defs/EnumCondition"
+                }
+              ],
+              "title": "Predicate"
+            }
+          },
+          "required": [
+            "predicate"
+          ],
+          "title": "ConditionParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "predicate": {
+            "kind": "boolean",
+            "value": true
+          }
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "manual_transform",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          },
+          {
+            "id": "direction",
+            "type": "DIRECTOR_NOTES",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "result": {
+              "default": "",
+              "maxLength": 8000,
+              "title": "Result",
+              "type": "string"
+            }
+          },
+          "title": "ManualParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "result": ""
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "text_input",
+        "version": 1,
+        "inputs": [],
+        "outputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "default": "",
+              "maxLength": 8000,
+              "title": "Text",
+              "type": "string"
+            }
+          },
+          "title": "TextParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "text": ""
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "text_reference",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      }
+    ],
+    "limits": {
+      "nodes": 16,
+      "edges": 40,
+      "definition_bytes": 96000,
+      "output_bytes": 64000,
+      "graphs": 25,
+      "runs": 100,
+      "history": 20,
+      "runtime_timeout_seconds": 3600,
+      "node_timeout_seconds": 5
+    },
+    "capabilities": {
+      "local_execution": true,
+      "chapter_required": false,
+      "model_execution": false,
+      "external_reference_execution": false,
+      "external_reference_detach": false,
+      "binary_cache": false,
+      "parallel_execution": false,
+      "automatic_retry": false,
+      "actor_private": true,
+      "cache_mode": "DISABLED_LOCAL_CONDITIONS_V1",
+      "local_conditions_contract": "creative-graph-local-conditions/1",
+      "local_conditions_schema_version": 7,
+      "local_conditions_frontend_entry": true,
+      "whole_graph_required": true,
+      "condition_kinds": [
+        "boolean",
+        "enum"
+      ]
+    }
+  },
+  "graph": {
+    "id": "3cacf67a-a21e-444c-be73-9defcde05718",
+    "version": 2,
+    "definition": {
+      "edges": [
+        {
+          "id": "in",
+          "source_node_id": "input",
+          "source_port": "text",
+          "target_node_id": "condition",
+          "target_port": "text"
+        },
+        {
+          "id": "yes",
+          "source_node_id": "condition",
+          "source_port": "when_true",
+          "target_node_id": "yes",
+          "target_port": "text"
+        },
+        {
+          "id": "yes_review",
+          "source_node_id": "yes",
+          "source_port": "draft",
+          "target_node_id": "yes_review",
+          "target_port": "draft"
+        },
+        {
+          "id": "no",
+          "source_node_id": "condition",
+          "source_port": "when_false",
+          "target_node_id": "no",
+          "target_port": "text"
+        },
+        {
+          "id": "no_review",
+          "source_node_id": "no",
+          "source_port": "draft",
+          "target_node_id": "no_review",
+          "target_port": "draft"
+        }
+      ],
+      "nodes": [
+        {
+          "definition_id": "text_input",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "input",
+          "parameters": {
+            "text": "Pinned authored source"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "local_condition",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "condition",
+          "parameters": {
+            "predicate": {
+              "kind": "boolean",
+              "value": true
+            }
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "manual_transform",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "yes",
+          "parameters": {
+            "result": "Selected A"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "human_review",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "yes_review",
+          "parameters": {},
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "draft_prepare",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "no",
+          "parameters": {},
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "human_review",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "no_review",
+          "parameters": {},
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      ],
+      "schema_version": 7,
+      "title": "Saved bounded choice",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "857ea8938067df84da2f0cca23429d56dfdcc42db10bfa34017d06c9a7c74cb1",
+    "execution_digest": "fe0bdcc6e45f21b4bb80c60d56f895a1b8d52a9c469667c516616bbf20f3f80e",
+    "created_at": "2026-10-20T00:11:25.707445+00:00",
+    "updated_at": "2026-10-20T00:11:25.868464+00:00",
+    "can_edit": true,
+    "reference_states": [],
+    "capacity": {
+      "history_used": 1,
+      "history_limit": 20,
+      "record_bytes": 5103,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+    "scope": {
+      "mode": "collaboration",
+      "novel_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+      "workspace_id": "w-a8b984c7fbd9401998183fa9c2cf00aa",
+      "storyline_id": "s-a8b984c7fbd9401998183fa9c2cf00aa",
+      "branch_id": "b-a8b984c7fbd9401998183fa9c2cf00aa"
+    }
+  },
+  "preflight": {
+    "project_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+    "scope": {
+      "branch_id": "b-a8b984c7fbd9401998183fa9c2cf00aa",
+      "mode": "collaboration",
+      "novel_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+      "storyline_id": "s-a8b984c7fbd9401998183fa9c2cf00aa",
+      "workspace_id": "w-a8b984c7fbd9401998183fa9c2cf00aa"
+    },
+    "graph_id": "3cacf67a-a21e-444c-be73-9defcde05718",
+    "valid": true,
+    "executable": true,
+    "issues": [],
+    "execution_order": [
+      "input",
+      "condition",
+      "yes",
+      "no",
+      "yes_review",
+      "no_review"
+    ],
+    "selected_closure": [
+      "input",
+      "condition",
+      "yes",
+      "no",
+      "yes_review",
+      "no_review"
+    ],
+    "definition_digest": "857ea8938067df84da2f0cca23429d56dfdcc42db10bfa34017d06c9a7c74cb1",
+    "expected_version": 2,
+    "target_node_ids": [
+      "input",
+      "condition",
+      "yes",
+      "yes_review",
+      "no",
+      "no_review"
+    ],
+    "model_called": false,
+    "external_calls": 0,
+    "graph_schema_version": 7,
+    "conditional_plan": {
+      "contract": "creative-graph-local-conditions/1",
+      "condition_node_id": "condition",
+      "selected_port": "when_true",
+      "active_node_ids": [
+        "input",
+        "condition",
+        "yes",
+        "yes_review"
+      ],
+      "skipped_node_ids": [
+        "no",
+        "no_review"
+      ],
+      "plan_digest": "75cbb477ed4a10bd745aa04484dccf7a2b8036f4680c68d4967bdcd77df81e9b"
+    },
+    "source_check": "SAVED_INLINE_DEFINITION_PIN",
+    "cache_enabled": false,
+    "preflight_digest": "79e2821d453419ab6954ec768a975f0624a5317fd45bd0dff6fa3f06a6b4b30a"
+  },
+  "create_body": {
+    "expected_graph_version": 2,
+    "reviewed_preflight_digest": "79e2821d453419ab6954ec768a975f0624a5317fd45bd0dff6fa3f06a6b4b30a",
+    "target_node_ids": [
+      "input",
+      "condition",
+      "yes",
+      "yes_review",
+      "no",
+      "no_review"
+    ],
+    "request_id": "fbbf5d7ac3fe4d77bac51938ee59317a"
+  },
+  "queued": {
+    "id": "85bd125e-6528-413e-b730-634bfe4d2e08",
+    "version": 1,
+    "graph_id": "3cacf67a-a21e-444c-be73-9defcde05718",
+    "graph_version": 2,
+    "status": "QUEUED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "mode": "DISABLED_LOCAL_CONDITIONS_V1"
+    },
+    "created_at": "2026-10-20T00:11:26.260311+00:00",
+    "updated_at": "2026-10-20T00:11:26.260311+00:00",
+    "reviewed": false,
+    "retry_of": null,
+    "attempt": 1,
+    "project_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+    "scope": {
+      "mode": "collaboration",
+      "novel_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+      "workspace_id": "w-a8b984c7fbd9401998183fa9c2cf00aa",
+      "storyline_id": "s-a8b984c7fbd9401998183fa9c2cf00aa",
+      "branch_id": "b-a8b984c7fbd9401998183fa9c2cf00aa"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-20T01:11:26.260311+00:00",
+    "node_states": {
+      "input": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "condition": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "yes": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "yes_review": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "no": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      },
+      "no_review": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "conditional_runtime": {
+      "contract": "creative-graph-local-conditions/1",
+      "cache_enabled": false,
+      "plan": {
+        "contract": "creative-graph-local-conditions/1",
+        "condition_node_id": "condition",
+        "selected_port": "when_true",
+        "active_node_ids": [
+          "input",
+          "condition",
+          "yes",
+          "yes_review"
+        ],
+        "skipped_node_ids": [
+          "no",
+          "no_review"
+        ],
+        "plan_digest": "75cbb477ed4a10bd745aa04484dccf7a2b8036f4680c68d4967bdcd77df81e9b"
+      },
+      "skipped_dispatches": 0,
+      "skipped_outputs": 0
+    }
+  },
+  "waiting": {
+    "id": "85bd125e-6528-413e-b730-634bfe4d2e08",
+    "version": 2,
+    "graph_id": "3cacf67a-a21e-444c-be73-9defcde05718",
+    "graph_version": 2,
+    "status": "WAITING_APPROVAL",
+    "current_node_id": "yes_review",
+    "cache": {
+      "hits": 0,
+      "misses": 3,
+      "mode": "DISABLED_LOCAL_CONDITIONS_V1"
+    },
+    "created_at": "2026-10-20T00:11:26.260311+00:00",
+    "updated_at": "2026-10-20T00:11:29.853452+00:00",
+    "reviewed": false,
+    "retry_of": null,
+    "attempt": 1,
+    "project_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+    "scope": {
+      "mode": "collaboration",
+      "novel_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+      "workspace_id": "w-a8b984c7fbd9401998183fa9c2cf00aa",
+      "storyline_id": "s-a8b984c7fbd9401998183fa9c2cf00aa",
+      "branch_id": "b-a8b984c7fbd9401998183fa9c2cf00aa"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-20T01:11:26.260311+00:00",
+    "node_states": {
+      "condition": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "input": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "no": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      },
+      "no_review": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      },
+      "yes": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "yes_review": {
+        "status": "WAITING_APPROVAL",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": {
+      "node_id": "yes_review",
+      "draft": {
+        "text": "Selected A",
+        "origin": "MANUAL"
+      },
+      "output_digest": "86e1d7e3fdb0670e33ae20cc0bfe3c78bb71ef6e530a7674a2faf5eaea659169"
+    },
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "conditional_runtime": {
+      "contract": "creative-graph-local-conditions/1",
+      "cache_enabled": false,
+      "plan": {
+        "active_node_ids": [
+          "input",
+          "condition",
+          "yes",
+          "yes_review"
+        ],
+        "condition_node_id": "condition",
+        "contract": "creative-graph-local-conditions/1",
+        "plan_digest": "75cbb477ed4a10bd745aa04484dccf7a2b8036f4680c68d4967bdcd77df81e9b",
+        "selected_port": "when_true",
+        "skipped_node_ids": [
+          "no",
+          "no_review"
+        ]
+      },
+      "skipped_dispatches": 0,
+      "skipped_outputs": 0
+    }
+  },
+  "approved": {
+    "id": "85bd125e-6528-413e-b730-634bfe4d2e08",
+    "version": 3,
+    "graph_id": "3cacf67a-a21e-444c-be73-9defcde05718",
+    "graph_version": 2,
+    "status": "SUCCEEDED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 3,
+      "mode": "DISABLED_LOCAL_CONDITIONS_V1"
+    },
+    "created_at": "2026-10-20T00:11:26.260311+00:00",
+    "updated_at": "2026-10-20T00:11:30.613933+00:00",
+    "reviewed": true,
+    "retry_of": null,
+    "attempt": 1,
+    "project_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+    "scope": {
+      "mode": "collaboration",
+      "novel_id": "r3-mounted-4d68753b11204abfb7c89f68b0fe0efc",
+      "workspace_id": "w-a8b984c7fbd9401998183fa9c2cf00aa",
+      "storyline_id": "s-a8b984c7fbd9401998183fa9c2cf00aa",
+      "branch_id": "b-a8b984c7fbd9401998183fa9c2cf00aa"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-20T01:11:26.260311+00:00",
+    "node_states": {
+      "condition": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "when_true": "Pinned authored source"
+        },
+        "error": null
+      },
+      "input": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "text": "Pinned authored source"
+        },
+        "error": null
+      },
+      "no": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      },
+      "no_review": {
+        "status": "SKIPPED",
+        "reviewed": false,
+        "output": null,
+        "error": {
+          "code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"
+        }
+      },
+      "yes": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "draft": {
+            "origin": "MANUAL",
+            "text": "Selected A"
+          }
+        },
+        "error": null
+      },
+      "yes_review": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "conditional_runtime": {
+      "contract": "creative-graph-local-conditions/1",
+      "cache_enabled": false,
+      "plan": {
+        "active_node_ids": [
+          "input",
+          "condition",
+          "yes",
+          "yes_review"
+        ],
+        "condition_node_id": "condition",
+        "contract": "creative-graph-local-conditions/1",
+        "plan_digest": "75cbb477ed4a10bd745aa04484dccf7a2b8036f4680c68d4967bdcd77df81e9b",
+        "selected_port": "when_true",
+        "skipped_node_ids": [
+          "no",
+          "no_review"
+        ]
+      },
+      "skipped_dispatches": 0,
+      "skipped_outputs": 0
+    }
+  }
+}

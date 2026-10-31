@@ -1,0 +1,146 @@
+{
+  "fixture_kind": "ORIGINAL_FILE_EXECUTE_WITH_SYNTHETIC_MEMORY_TRANSPORT",
+  "base_commit": "8738ecb2ecd667dd9d401c4c16c2136f812e2a17",
+  "limitations": "Original owner/API and repository adapter executed with a matching confirmation; memory transport only, no real inference, acceptance, media inspection or network.",
+  "project_id": "owned-synthetic-explicit-execution",
+  "task_id": "973668de-25a0-4b0d-a270-5781980177d9",
+  "queued": {
+    "items": [
+      {
+        "id": "973668de-25a0-4b0d-a270-5781980177d9",
+        "novel_id": "owned-synthetic-explicit-execution",
+        "branch_id": null,
+        "owner_actor_id": null,
+        "prompt": "Author-owned prompt from the selected image node",
+        "provider_id": "synthetic-local-automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "parameters": {
+          "width": 768,
+          "height": 512,
+          "steps": 24,
+          "seed": 101
+        },
+        "character_id": null,
+        "scene_id": null,
+        "allow_cloud_prompt": false,
+        "status": "QUEUED",
+        "approval_status": "PENDING",
+        "attempt": 0,
+        "created_at": "2026-10-23T13:24:31.808669+00:00",
+        "updated_at": "2026-10-23T13:24:31.808680+00:00",
+        "idempotency_key": "synthetic-explicit-execute",
+        "request_sha256": "8b7338a010e9165440616cbc8ec538aee76a5df1ab1e112ccd8469859073666c",
+        "recoverable": false
+      }
+    ]
+  },
+  "execution_capability": {
+    "items": [
+      {
+        "id": "973668de-25a0-4b0d-a270-5781980177d9",
+        "novel_id": "owned-synthetic-explicit-execution",
+        "branch_id": null,
+        "owner_actor_id": null,
+        "prompt": "Author-owned prompt from the selected image node",
+        "provider_id": "synthetic-local-automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "parameters": {
+          "width": 768,
+          "height": 512,
+          "steps": 24,
+          "seed": 101
+        },
+        "character_id": null,
+        "scene_id": null,
+        "allow_cloud_prompt": false,
+        "status": "QUEUED",
+        "approval_status": "PENDING",
+        "attempt": 0,
+        "created_at": "2026-10-23T13:24:31.808669+00:00",
+        "updated_at": "2026-10-23T13:24:31.808680+00:00",
+        "idempotency_key": "synthetic-explicit-execute",
+        "request_sha256": "8b7338a010e9165440616cbc8ec538aee76a5df1ab1e112ccd8469859073666c",
+        "recoverable": false
+      }
+    ],
+    "execution_confirmation": "legacy-image-confirmation/1"
+  },
+  "confirmation": {
+    "confirmed": true,
+    "expected_request_sha256": "8b7338a010e9165440616cbc8ec538aee76a5df1ab1e112ccd8469859073666c",
+    "expected_attempt": 0,
+    "expected_updated_at": "2026-10-23T13:24:31.808680+00:00"
+  },
+  "execute_response": {
+    "id": "973668de-25a0-4b0d-a270-5781980177d9",
+    "novel_id": "owned-synthetic-explicit-execution",
+    "branch_id": null,
+    "owner_actor_id": null,
+    "prompt": "Author-owned prompt from the selected image node",
+    "provider_id": "synthetic-local-automatic1111",
+    "model_id": "synthetic-no-weights.safetensors",
+    "parameters": {
+      "width": 768,
+      "height": 512,
+      "steps": 24,
+      "seed": 101
+    },
+    "character_id": null,
+    "scene_id": null,
+    "allow_cloud_prompt": false,
+    "status": "SUCCEEDED",
+    "approval_status": "PENDING",
+    "attempt": 1,
+    "created_at": "2026-10-23T13:24:31.808669+00:00",
+    "updated_at": "2026-10-23T13:24:31.821054+00:00",
+    "idempotency_key": "synthetic-explicit-execute",
+    "request_sha256": "8b7338a010e9165440616cbc8ec538aee76a5df1ab1e112ccd8469859073666c",
+    "execution_token": "e198a964-3ac6-4521-952e-23ffaa974b93",
+    "asset_uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9skAAAAASUVORK5CYII=",
+    "error": null
+  },
+  "completed": {
+    "items": [
+      {
+        "id": "973668de-25a0-4b0d-a270-5781980177d9",
+        "novel_id": "owned-synthetic-explicit-execution",
+        "branch_id": null,
+        "owner_actor_id": null,
+        "prompt": "Author-owned prompt from the selected image node",
+        "provider_id": "synthetic-local-automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "parameters": {
+          "width": 768,
+          "height": 512,
+          "steps": 24,
+          "seed": 101
+        },
+        "character_id": null,
+        "scene_id": null,
+        "allow_cloud_prompt": false,
+        "status": "SUCCEEDED",
+        "approval_status": "PENDING",
+        "attempt": 1,
+        "created_at": "2026-10-23T13:24:31.808669+00:00",
+        "updated_at": "2026-10-23T13:24:31.821054+00:00",
+        "idempotency_key": "synthetic-explicit-execute",
+        "request_sha256": "8b7338a010e9165440616cbc8ec538aee76a5df1ab1e112ccd8469859073666c",
+        "execution_token": "e198a964-3ac6-4521-952e-23ffaa974b93",
+        "asset_uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9skAAAAASUVORK5CYII=",
+        "error": null,
+        "recoverable": false
+      }
+    ]
+  },
+  "duplicate_execute": {
+    "status": 400,
+    "body": {
+      "detail": "IMAGE_JOB_NOT_QUEUED",
+      "code": "HTTP_400",
+      "message": "IMAGE_JOB_NOT_QUEUED",
+      "details": {},
+      "request_id": "cd8f3b2b-0c64-4f1c-87b9-432a97559d08"
+    }
+  },
+  "transport_calls": 1
+}

@@ -16,3 +16,13 @@ describe('generation recovery metadata',()=>{
     expect(generationRecovery.load('branch-a','c1')).toBeUndefined();
   });
 });
+
+it('preserves candidate metadata when session storage is denied, then allows cleanup',()=>{
+  const original=Object.getOwnPropertyDescriptor(globalThis,'sessionStorage');
+  Object.defineProperty(globalThis,'sessionStorage',{configurable:true,get(){throw new DOMException('Blocked','SecurityError')}});
+  try{
+    expect(()=>generationRecovery.save('blocked',{chapterId:'c',jobId:'recoverable',original:'SYNTHETIC'})).not.toThrow();
+    expect(generationRecovery.load('blocked','c')?.jobId).toBe('recoverable');
+    generationRecovery.remove('blocked','c');expect(generationRecovery.load('blocked','c')).toBeUndefined();
+  }finally{if(original)Object.defineProperty(globalThis,'sessionStorage',original)}
+});

@@ -1,0 +1,57 @@
+{
+  "scope": "diagnostic only; original failure retained; no production or root-F modifications",
+  "sources": {
+    "A": {
+      "root": "D:\\PoemSeed\\Worktrees\\file-backend-safety-asset-order-A-20261026",
+      "commit": "856d1ed3341fe0c24df1daff9a8bc1242c260e6c",
+      "tree": "d6c8057a0595d93eab6d3799787226faf660e834",
+      "status": ""
+    },
+    "F": {
+      "root": "D:\\PoemSeed\\Worktrees\\file-backend-safety-asset-order-F-20261026",
+      "commit": "66e5c97c22ff719aa75f036988073bc24ebf9c57",
+      "tree": "50c1ef09896dc94ad097e806ce9805bacef935ea",
+      "status": ""
+    }
+  },
+  "results": {
+    "original_pair_A": "39 passed; exit0",
+    "original_pair_F": "39 passed; exit0",
+    "diagnostic_full_A": "192 passed; exit0; 175.89 seconds",
+    "diagnostic_full_F": "192 passed; exit0; 174.47 seconds",
+    "collection_selected_first": "1 passed 191 deselected; original index exception observer installed after environment isolation",
+    "original_F_collected_12_executed_first_3": "3 passed 189 deselected; original recorder and runner; complete_pass=true",
+    "initial_driver_failure": "Imported app before isolated runner; settings assertion failed before tests. Preserved and corrected."
+  },
+  "interpretation": "No deterministic collection/order contamination or integration regression reproduced. Diagnostic full runs preload asset_query_index to observe errors, a potential observer perturbation; original recorder first-three run removes that observer. No DIAGNOSTIC_INDEX_UNAVAILABLE event in completed diagnostic full runs. Do not replace original 37-failure record with these passes.",
+  "artifacts": {
+    "diagnostic-owner-A-pair.log": {
+      "bytes": 1360,
+      "sha256": "4857607966f2316540738be6794f3ce268668cbe339ed60d785e1db249e849e4"
+    },
+    "diagnostic-owner-F-pair.log": {
+      "bytes": 1360,
+      "sha256": "aea8c77028c0ab87f8e9acf3f10d2f765225874f14d1d03a1ae20ec805a12894"
+    },
+    "diagnostic-owner-A-full.log": {
+      "bytes": 1485,
+      "sha256": "2be1b6ed188a9958882de0b09d17346e9152f327d7d2e87e3b724abfeec5ec70"
+    },
+    "diagnostic-owner-F-full.log": {
+      "bytes": 1485,
+      "sha256": "5fa9876918be4b8c9c25d00a0f6d2d43672cfac18387bfd17e1665dd714afe87"
+    },
+    "diagnostic-owner-F-collection.log": {
+      "bytes": 433,
+      "sha256": "a48a85f9039c829bb4b2a00324f694dbb5625f1690ff65107314581f8ea1db18"
+    },
+    "diagnostic-owner-F-collection-corrected.log": {
+      "bytes": 1296,
+      "sha256": "745323e968927f7ae8e641d6b3be1a1a9f1fd6b1673f2035784ff45744e6045f"
+    },
+    "diagnostic-owner-index.py": {
+      "bytes": 913,
+      "sha256": "247d47f8406d0b9fda8c31d079f11171be6ef832c1119c8d7ba5619f7414aae2"
+    }
+  }
+}

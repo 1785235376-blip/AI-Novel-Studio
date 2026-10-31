@@ -7,12 +7,47 @@ from sqlalchemy import text
 
 from ..lore.context_intelligence import ContextSnapshot, canonical_hash
 from ..storage import atomic_write
+from functools import wraps
+from .ordinary_writer_ports import current_writer_ports, require_writer_ports
+
+
+def _require_writer_snapshot_state(expected):
+    from ..repositories.generation_repository import GenerationRepository
+    from .generation_project_binding import ordinary_job_binding
+    if expected.binding.get('schema_version') != 2:
+        raise ValueError('GENERATION_WRITER_SNAPSHOT_BINDING_REQUIRED')
+    row = GenerationRepository.get(expected.pins.generation_repository, expected.binding['job_id'])
+    if ordinary_job_binding(row) != dict(expected.binding) or row.get('status') != 'GENERATING':
+        raise ValueError('GENERATION_WRITER_SNAPSHOT_STATE_CHANGED')
+
+
+def _writer_snapshot_port(method):
+    @wraps(method)
+    def call(owner, *args, **kwargs):
+        expected = kwargs.pop("_file_writer", None)
+        if expected is None:
+            expected = current_writer_ports()
+        if expected is None:
+            return method(owner, *args, **kwargs)
+        expected = require_writer_ports(expected, owner.repository)
+        with expected.guard(owner.repository):
+            _require_writer_snapshot_state(expected)
+            chapter_id = args[0] if args else kwargs.get("chapter_id")
+            version = args[1] if len(args) > 1 else kwargs.get("chapter_version")
+            if (chapter_id != expected.binding["chapter_id"]
+                    or ("base_chapter_version" in expected.binding
+                        and version != expected.binding["base_chapter_version"])):
+                raise ValueError("GENERATION_WRITER_SNAPSHOT_SOURCE_CHANGED")
+            return method(owner, *args, **kwargs)
+    return call
+
 
 
 class ContextSnapshotService:
     def __init__(self, lore_repository):
         self.repository = lore_repository
 
+    @_writer_snapshot_port
     def create(
         self,
         chapter_id: str,
@@ -57,7 +92,22 @@ class ContextSnapshotService:
         ).model_dump(mode="json")
         if hasattr(self.repository, "backend"):
             novel_id = chapter_id.rsplit(":", 1)[0]
-            root: Path = self.repository.backend.novels / novel_id / "lore" / "context_snapshots"
+            project_root: Path = self.repository.backend.novels / novel_id
+            if not project_root.is_dir():
+                raise FileNotFoundError(novel_id)
+            # Registered projects must resolve the live immutable source. A
+            # pre-existing detached provenance directory is a storage-only
+            # legacy port, not authority to read, generate or save a chapter.
+            resolver = getattr(self.repository.backend, "chapter", None)
+            if resolver is not None and ((project_root / "novel.json").is_file()
+                                         or (project_root / "chapter_identity.json").exists()):
+                resolver(chapter_id)
+            root: Path = project_root / "lore" / "context_snapshots"
+            expected = current_writer_ports()
+            if expected is not None:
+                expected.check(self.repository)
+                expected.source()
+                _require_writer_snapshot_state(expected)
             root.mkdir(parents=True, exist_ok=True)
             for path in root.glob("*.json"):
                 existing = json.loads(path.read_text(encoding="utf-8"))
@@ -65,19 +115,18 @@ class ContextSnapshotService:
                     "chapter_version_id", "context_pack_hash", "prompt_version", "model"
                 )) and existing.get("generation_id") == generation_id:
                     return {key: existing[key] for key in snapshot}
+            if expected is not None:
+                expected.check(self.repository)
+                expected.source()
+                _require_writer_snapshot_state(expected)
             atomic_write(root / f"{snapshot['id']}.json", json.dumps({**snapshot, "context": context}, ensure_ascii=False, indent=2))
             return snapshot
         database = getattr(self.repository, "database", None)
         if database is None:
             raise RuntimeError("Context snapshot storage is unavailable")
-        novel_slug, chapter_number = chapter_id.rsplit(":", 1)
+        from ..repositories.postgres.common import chapter_or_raise
         with database.session() as session:
-            row = session.execute(text(
-                "SELECT c.id, c.novel_id FROM chapters c JOIN novels n ON n.id=c.novel_id "
-                "WHERE n.slug=:slug AND c.chapter_number=:number"
-            ), {"slug": novel_slug, "number": int(chapter_number)}).one_or_none()
-            if row is None:
-                raise FileNotFoundError(chapter_id)
+            _, row = chapter_or_raise(session, chapter_id)
             inserted = None
             if generation_id is None:
                 inserted = session.execute(text(

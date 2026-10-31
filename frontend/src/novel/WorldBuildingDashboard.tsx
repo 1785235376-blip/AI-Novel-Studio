@@ -43,7 +43,7 @@ export function WorldBuildingDashboard({
   return (
     <section className="world-dashboard" aria-labelledby="world-dashboard-title">
       <header className="world-dashboard__header">
-        <div><h3 id="world-dashboard-title">世界观总览</h3><p>从已保存的故事资料查看人物网络、事件顺序与伏笔状态。</p></div>
+        <div><h3 id="world-dashboard-title">世界观总览</h3><p data-novel-path="story-world">{/* [HERMIA-FE-20261022 N-UX-10] */}从已保存的故事资料（story / World*）查看人物网络、事件顺序与伏笔；小说设定主路径，≠ 分镜 Bible。</p></div>
         <Button variant="ghost" type="button" onClick={() => onOpen(view)}>打开{viewLabels[view]}编辑</Button>
       </header>
       <div className="world-dashboard__tabs" role="tablist" aria-label="世界观视图">

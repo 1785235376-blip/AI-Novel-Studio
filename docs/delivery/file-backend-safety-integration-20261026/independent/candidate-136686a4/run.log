@@ -1,0 +1,143 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+...................FFFF                                                  [100%]
+================================== FAILURES ===================================
+_ test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api] _
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000257EB8566D0>, nid='query-509738bfc954...a', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000257ECF00790>
+prefix = '/api', strict = False
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+>       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError
+_ test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api/v1] _
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000257EC3FB190>, nid='query-8916ee2cfd88...4', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000257EC4E3950>
+prefix = '/api/v1', strict = False
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+>       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError
+_ test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api] _
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000257EEBB5B50>, nid='query-450bcf6915bc...d', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000257ECDD9410>
+prefix = '/api', strict = True
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+>       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError
+_ test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api/v1] _
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x00000257EED30550>, nid='query-1e66dc5c2c8c...1', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000257EC439410>
+prefix = '/api/v1', strict = True
+
+    @pytest.mark.skipif(os.name != "nt", reason="actual Windows native sharing refusal")
+    @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(usage_rig, monkeypatch, prefix, strict):
+        from app.creative import asset_usage_paging
+        e = usage_rig
+        graph_create(e, 3)
+        monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+        url = e.usage_base.replace("/api/", prefix + "/", 1) + "/studio-graph-usages"
+        params = {"limit": 1, **({"strict_read_only": "true"} if strict else {})}
+        path = ExperimentalStore(e.rig.root).path(e.rig.nid, e.rig.scope)
+        before = disk_snapshot(e.rig.root)
+        with path.open("r+b"):
+            rejected = e.client.get(url, headers=e.headers, params=params)
+        assert rejected.status_code == 409, rejected.text
+>       assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+E       AssertionError: assert 'STUDIO_GRAPH...E_UNAVAILABLE' == 'STUDIO_USAGE...E_UNAVAILABLE'
+E         
+E         - STUDIO_USAGE_RESOURCE_UNAVAILABLE
+E         ?            ---------
+E         + STUDIO_GRAPH_USAGE_UNAVAILABLE
+E         ?        ++++++
+
+tests\test_file_backend_safety_independent.py:290: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\file-safety-independent-frozen-136686a4\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\file-safety-independent-frozen-136686a4\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_file_backend_safety_independent.py::test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api]
+FAILED tests/test_file_backend_safety_independent.py::test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[False-/api/v1]
+FAILED tests/test_file_backend_safety_independent.py::test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api]
+FAILED tests/test_file_backend_safety_independent.py::test_actual_native_reader_refusal_never_issues_cursor_and_releases_context[True-/api/v1]
+4 failed, 19 passed, 3 warnings in 8.68s

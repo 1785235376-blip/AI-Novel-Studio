@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 [WORKTREES]/studio-theme-acceptance-20261026/frontend
+
+ ✓ src/ui/themeCanvasTokens.test.ts (3 tests) 12ms
+ ✓ src/rebuild/canvas/DualStack.test.tsx (11 tests) 191ms
+ ✓ src/rebuild/video/VideoDualGate.test.tsx (3 tests) 111ms
+ ✓ src/rebuild/image/ImageDualGate.test.tsx (5 tests) 111ms
+
+ Test Files  4 passed (4)
+      Tests  22 passed (22)
+   Start at  10:57:37
+   Duration  1.79s (transform 405ms, setup 30ms, collect 1.60s, tests 425ms, environment 2.35s, prepare 327ms)
+

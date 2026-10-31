@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.996" timestamp="2026-10-25T20:07:38.735784+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="4.548"><failure message="AssertionError: Internal Server Error&#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-local-bound-review/tmp/p...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+        result, job = queued(f, operation=operation)
+        initial = f.persistence.get(job.id)
+        assert initial['status'] == 'QUEUED' and FIELD in initial
+        binding = deepcopy(initial[FIELD])
+        assert binding['project_incarnation'] == f.incarnation
+        assert binding['schema_version'] == 2
+        assert binding['base_chapter_version'] == f.chapter['version']
+        assert binding['base_chapter_digest'] == chapter_digest(f.chapter)
+        assert FIELD not in job.public() and 'base_chapter_digest' not in job.public()
+        row = finish(f, job)
+        assert row[FIELD] == binding and row['output'] == DRAFT
+        assert f.counts['adapter'] == f.counts['provider'] == 1
+        snapshots = list((f.root/'novels'/job.novel_id/'lore/context_snapshots').glob('*.json'))
+        assert snapshots, 'deferred writer snapshot must not be skipped'
+        accepted_cid = job.novel_id+':2' if operation=='continue' else job.chapter_id
+        accepted_version = 1 if operation=='continue' else 2
+        f.memory.runtime.provider.text = json.dumps({'proposals':[{'proposal_type':'EVENT',
+            'payload':{'description':DRAFT}, 'confidence':.9,
+            'evidence':[{'chapter_id':accepted_cid,'chapter_version':accepted_version,'excerpt':DRAFT,
+                         'locator':{'kind':'DOCUMENT_RANGE','from':0,'to':len(DRAFT)}}]}]})
+        response = f.client.post(f'/api/generation/{job.id}/accept', json={'expected_version':1})
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: Internal Server Error
+E       assert 500 == 200
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests/test_file_keyed_activation.py:180: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,260 @@
+{
+  "source_commit": "66e5c97c22ff719aa75f036988073bc24ebf9c57",
+  "source_tree": "50c1ef09896dc94ad097e806ce9805bacef935ea",
+  "process_exit_code": 0,
+  "timed_out": false,
+  "complete_pass": true,
+  "source_unchanged": true,
+  "elapsed_seconds": 241.62822959999903,
+  "child_process_count": 10,
+  "all_child_modules_verified": true,
+  "totals": {
+    "get_count": 142,
+    "command_calls": 0,
+    "actual_write_calls": 2,
+    "business_write_calls": 0,
+    "coordinator_write_calls": 2,
+    "strict_write_calls": 0,
+    "strict_file_creations": 0,
+    "strict_directory_creations": 0
+  },
+  "children": [
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team0-normal-receipt.json",
+      "sha256": "ed0f38f5de631dd39199a28b26cae3d2590e0c878b177487adb56379cc076697",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 16,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team0-reopened-receipt.json",
+      "sha256": "89f377cc5d5c713100cc8526edfb34bb75d5261c82b275936573e2fc726636b9",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team1-normal-receipt.json",
+      "sha256": "1cbf38e777f26b75943d967ddb7da8812407cf31d5a518091362cb47de892670",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 16,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/collaboration-test_socket_collaboration_team1-reopened-receipt.json",
+      "sha256": "7f1d4d5b7f690b8528dcf21b29e4215b9673c14ccaf16d206f6392a6401c88af",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 72963
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-exhausted-receipt.json",
+      "sha256": "477a5bf5e92ed8117bbd7803778589528b40cf3a4498aa3be15d541b906cec3f",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 2528
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-normal-receipt.json",
+      "sha256": "c836bd0c80d85ec3bd79f8fdde61733574f9aeecb54c61806375f3c8c453369d",
+      "loaded_modules": 480,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 31,
+        "command_calls": 0,
+        "actual_write_calls": 1,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 1,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 3,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 48593156
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw0-reopened-receipt.json",
+      "sha256": "dc24698d02d38910ee2bb7345eb0a0da97b69fd706730ecef5205d38e51d68a0",
+      "loaded_modules": 479,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 12,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 44265742
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-exhausted-receipt.json",
+      "sha256": "5ca97338c5e23ec5b46d656083c63c7d3075b1094dfb5c8104d3cc74f1c77069",
+      "loaded_modules": 478,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 6,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 2528
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-normal-receipt.json",
+      "sha256": "55b7095f9a0428a30dbf5e549bb6cce248eb63b953210b6fc04bbdd78b8608bd",
+      "loaded_modules": 480,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 31,
+        "command_calls": 0,
+        "actual_write_calls": 1,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 1,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 3,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 48593156
+    },
+    {
+      "file": "child-receipts/combined-test_socket_local_asset_and_tw1-reopened-receipt.json",
+      "sha256": "d9748196a2c55b85444690b0a32f6dd9f8addce0ac2452b18def276ed307ff0c",
+      "loaded_modules": 479,
+      "all_module_hashes_match_frozen_source": true,
+      "all_gets_completed": true,
+      "summary": {
+        "get_count": 12,
+        "command_calls": 0,
+        "actual_write_calls": 0,
+        "business_write_calls": 0,
+        "coordinator_write_calls": 0,
+        "strict_write_calls": 0,
+        "strict_file_creations": 0,
+        "strict_directory_creations": 0
+      },
+      "synthetic_exporter": {
+        "mode": "deterministic_stub",
+        "calls": 0,
+        "snapshotter": "original provider-free input snapshot"
+      },
+      "maximum_observed_budget_read_bytes": 44265742
+    }
+  ],
+  "boundaries": [
+    "Synthetic File storage only; export executor is deterministic stub.",
+    "Positive combined collaboration Asset+TaskCenter TCP remains NOT_COVERED; dev-session Host 403 retained.",
+    "Disk audit does not prove unchanged RAM lock registry.",
+    "Command absence applies only to explicitly registered observed methods.",
+    "Budget exhaustion lowers the real request byte admission ceiling to 4096; no default 256MiB exhaustion claim."
+  ]
+}

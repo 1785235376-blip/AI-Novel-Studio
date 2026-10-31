@@ -1,0 +1,98 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+........................................................................ [ 71%]
+...........FF.....ss.........                                            [100%]
+================================== FAILURES ===================================
+_____ test_original_export_create_serializes_independent_processes[False] _____
+
+tmp_path = WindowsPath('D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/export-consumers-corrected/tmp/pytest-of-admin/pytest-0/test_original_export_create_se0')
+same_key = False
+
+    @pytest.mark.parametrize('same_key',[False,True])
+    def test_original_export_create_serializes_independent_processes(tmp_path,same_key):
+        data=tmp_path/'data';data.mkdir();control=tmp_path/'control';control.mkdir()
+        source=Path(__file__).resolve().parents[1]
+        children=[]
+        try:
+            for role in ('a','b'):
+                key='same' if same_key else role
+                children.append(subprocess.Popen([sys.executable,'-c',WORKER,str(data),str(control),role,key],cwd=source,env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+            assert wait_file(control/'a-ready') and wait_file(control/'b-ready')
+            (control/'a-go').touch();assert wait_file(control/'a-read')
+            (control/'b-go').touch()
+            # Old independent RLocks let B commit over A's retained snapshot.
+            # A serialized owner instead keeps B blocked until A releases.
+            wait_file(control/'b-done',3)
+            (control/'a-release').touch()
+            for child in children:
+                stdout,stderr=child.communicate(timeout=30)
+                assert child.returncode==0,(stdout,stderr)
+            a=json.loads((control/'a-result').read_text());b=json.loads((control/'b-result').read_text())
+>           rows=json.loads((data/'export_jobs.json').read_text())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_export_owner_independent_process.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/export-consumers-corrected/tmp/pytest-of-admin/pytest-0/test_original_export_create_se0/data/export_jobs.json')
+encoding = 'locale', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+        with self.open(mode='r', encoding=encoding, errors=errors) as f:
+>           return f.read()
+                   ^^^^^^^^
+E           UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 392: illegal multibyte sequence
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: UnicodeDecodeError
+_____ test_original_export_create_serializes_independent_processes[True] ______
+
+tmp_path = WindowsPath('D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/export-consumers-corrected/tmp/pytest-of-admin/pytest-0/test_original_export_create_se1')
+same_key = True
+
+    @pytest.mark.parametrize('same_key',[False,True])
+    def test_original_export_create_serializes_independent_processes(tmp_path,same_key):
+        data=tmp_path/'data';data.mkdir();control=tmp_path/'control';control.mkdir()
+        source=Path(__file__).resolve().parents[1]
+        children=[]
+        try:
+            for role in ('a','b'):
+                key='same' if same_key else role
+                children.append(subprocess.Popen([sys.executable,'-c',WORKER,str(data),str(control),role,key],cwd=source,env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+            assert wait_file(control/'a-ready') and wait_file(control/'b-ready')
+            (control/'a-go').touch();assert wait_file(control/'a-read')
+            (control/'b-go').touch()
+            # Old independent RLocks let B commit over A's retained snapshot.
+            # A serialized owner instead keeps B blocked until A releases.
+            wait_file(control/'b-done',3)
+            (control/'a-release').touch()
+            for child in children:
+                stdout,stderr=child.communicate(timeout=30)
+                assert child.returncode==0,(stdout,stderr)
+            a=json.loads((control/'a-result').read_text());b=json.loads((control/'b-result').read_text())
+>           rows=json.loads((data/'export_jobs.json').read_text())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_export_owner_independent_process.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/SyntheticRuns/file-safety-integration-20261026/final/runs/export-consumers-corrected/tmp/pytest-of-admin/pytest-0/test_original_export_create_se1/data/export_jobs.json')
+encoding = 'locale', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+        with self.open(mode='r', encoding=encoding, errors=errors) as f:
+>           return f.read()
+                   ^^^^^^^^
+E           UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 395: illegal multibyte sequence
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: UnicodeDecodeError
+=========================== short test summary info ===========================
+FAILED tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[False]
+FAILED tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[True]
+2 failed, 97 passed, 2 skipped, 3 warnings in 26.03s

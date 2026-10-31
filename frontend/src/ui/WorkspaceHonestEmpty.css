@@ -1,0 +1,25 @@
+/* [HERMIA-FE-20261022 X-UX-01] Honest empty — neutral tone, never success green. */
+.ws-honest-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-border-strong, var(--color-border-default));
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.ws-honest-empty .ui-empty {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.ws-honest-empty__mark {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+.ws-honest-empty[data-capability-tone="success"] {
+  /* defensive: never style as connected */
+  border-left-color: var(--color-border-strong, var(--color-border-default));
+}

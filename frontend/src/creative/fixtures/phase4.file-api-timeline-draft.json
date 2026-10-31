@@ -1,0 +1,147 @@
+{
+  "contract": "studio-storyboard-timeline-draft/1",
+  "timeline": {
+    "id": "1bdc33db-4679-4908-a1a6-508a74d38e98",
+    "novel_id": "r3-mounted-234337e0bf254528a3a7764526af350d",
+    "title": "SYNTHETIC storyboard timeline",
+    "version": 1,
+    "timeline_digest": "9e2761e8280d2842e8cc617aa0a8d2090947c44ba06cd1b078479106b6693814",
+    "timeline": {
+      "schema_version": 2,
+      "duration_ms": 5000,
+      "width": 1280,
+      "height": 720,
+      "fps": 24,
+      "tracks": [
+        {
+          "id": "storyboard-video",
+          "kind": "VIDEO",
+          "order": 0,
+          "role": "PRIMARY",
+          "muted": false,
+          "gain_db": 0.0,
+          "clips": [
+            {
+              "id": "storyboard-1",
+              "source_snapshot": {
+                "id": "68bc2dce-60c3-4285-b8c4-aea92944588f",
+                "kind": "ASSET",
+                "asset_kind": "image",
+                "version": 2,
+                "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4"
+              },
+              "start_ms": 0,
+              "in_ms": 0,
+              "out_ms": 3000,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 720,
+              "opacity": 1.0,
+              "include_audio": false
+            },
+            {
+              "id": "storyboard-2",
+              "source_snapshot": {
+                "id": "68bc2dce-60c3-4285-b8c4-aea92944588f",
+                "kind": "ASSET",
+                "asset_kind": "image",
+                "version": 2,
+                "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4"
+              },
+              "start_ms": 3000,
+              "in_ms": 0,
+              "out_ms": 2000,
+              "speed_num": 1,
+              "speed_den": 1,
+              "muted": false,
+              "gain_db": 0.0,
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 720,
+              "opacity": 1.0,
+              "include_audio": false
+            }
+          ]
+        }
+      ],
+      "captions": []
+    },
+    "created_at": "2026-10-13T17:56:00.614515+00:00",
+    "updated_at": "2026-10-13T17:56:00.614515+00:00",
+    "branch_id": null,
+    "storyboard_origin": {
+      "contract": "studio-storyboard-timeline-draft/1",
+      "document_snapshot": {
+        "id": "89a4c387-9ff4-4b5b-919f-6755259868d5",
+        "version": 4,
+        "digest": "7a69da2cb03e50c417695077bbffbb3b3f83189a834311179d519674feef664b"
+      },
+      "content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+      "timeline_snapshot": {
+        "id": "1bdc33db-4679-4908-a1a6-508a74d38e98",
+        "version": 1,
+        "digest": "9e2761e8280d2842e8cc617aa0a8d2090947c44ba06cd1b078479106b6693814"
+      },
+      "shots": [
+        {
+          "clip_id": "storyboard-1",
+          "shot_id": "shot-1",
+          "shot_version": 1,
+          "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+        },
+        {
+          "clip_id": "storyboard-2",
+          "shot_id": "shot-2",
+          "shot_version": 1,
+          "shot_digest": "88852c9688df3c33db9d828adba7675b26348e0790398b0c3908802a61716d29"
+        }
+      ],
+      "model_called": false,
+      "rendered": false
+    }
+  },
+  "storyboard_origin": {
+    "contract": "studio-storyboard-timeline-draft/1",
+    "document_snapshot": {
+      "id": "89a4c387-9ff4-4b5b-919f-6755259868d5",
+      "version": 4,
+      "digest": "7a69da2cb03e50c417695077bbffbb3b3f83189a834311179d519674feef664b"
+    },
+    "content_digest": "8e2366299200eedd10c650a67756f37dc8028caf3f478a10c9164431bb42588e",
+    "shots": [
+      {
+        "clip_id": "storyboard-1",
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "6c36bfa51abaaa1bbfb2a671e39f4c5efbbba3fe67032805a4128cdcc6eaa471"
+      },
+      {
+        "clip_id": "storyboard-2",
+        "shot_id": "shot-2",
+        "shot_version": 1,
+        "shot_digest": "88852c9688df3c33db9d828adba7675b26348e0790398b0c3908802a61716d29"
+      }
+    ],
+    "timeline_snapshot": {
+      "id": "1bdc33db-4679-4908-a1a6-508a74d38e98",
+      "version": 1,
+      "digest": "9e2761e8280d2842e8cc617aa0a8d2090947c44ba06cd1b078479106b6693814"
+    },
+    "model_called": false,
+    "rendered": false
+  },
+  "automatic_dispatch": false,
+  "model_called": false,
+  "rendered": false,
+  "product_acceptance": "LOCAL_REQUIRED"
+}

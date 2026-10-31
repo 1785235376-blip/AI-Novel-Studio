@@ -1,0 +1,69 @@
+cwd=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_external_adversarial.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/../taskcenter-rebuild-independent-evidence/candidate-97ab.xml", "--basetemp=/tmp/independent-taskcenter-rmevtyup/candidate-97ab/pytest-tmp", "-o", "cache_dir=/tmp/independent-taskcenter-rmevtyup/candidate-97ab/pytest-cache"]
+FF....................                                                   [100%]
+=================================== FAILURES ===================================
+________ test_real_post_and_repeated_pages_are_private_zero_write[/api] ________
+
+env = namespace(r=namespace(client=<starlette.testclient.TestClient object at 0x7f14ea0081a0>, nid='query-85cf14e56b8446b799...t': '2026-10-26T12:00:40.616757+00:00', 'history': []}], mp=<_pytest.monkeypatch.MonkeyPatch object at 0x7f14eedafec0>)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+            r=read(e,token,prefix); assert r.status_code==200,r.text
+            b=r.json(); seen.extend(x['id'] for x in b['items'])
+            assert b['observed_total']==3 and r.headers['cache-control']=='no-store'
+            assert 'private-manuscript' not in r.text and str(e.r.root) not in r.text
+            assert 'row_lifecycles' not in r.text and 'token-reader' not in r.text
+>           assert read(e,token,prefix).json()==b
+E           AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}
+E             
+E             Omitting 13 identical items, use -vv to show
+E             Differing items:
+E             {'next_cursor': 'tc1.XER_Fx9bj8euHEXowrFv1jV5zRRRnw9oMCU6rotmBP0.1.p1yQBLHhBEStYpPGjzjP6MYZlkMXrK7HT3BLaVH8drc'} != {'next_cursor': 'tc1.fVVJTNVqBAXF70IXqwwAvXE4JaZR5MIhFT6RlZl1rKM.1.R89sp_wOEzfr01APTXdyolDSQihpliYtfn5brQbl4Qc'}
+E             Use -v to get more diff
+
+tests/test_taskcenter_external_adversarial.py:64: AssertionError
+______ test_real_post_and_repeated_pages_are_private_zero_write[/api/v1] _______
+
+env = namespace(r=namespace(client=<starlette.testclient.TestClient object at 0x7f14e8b98380>, nid='query-f856cae1129e41869f...t': '2026-10-26T12:01:13.585294+00:00', 'history': []}], mp=<_pytest.monkeypatch.MonkeyPatch object at 0x7f14e856da60>)
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+            r=read(e,token,prefix); assert r.status_code==200,r.text
+            b=r.json(); seen.extend(x['id'] for x in b['items'])
+            assert b['observed_total']==3 and r.headers['cache-control']=='no-store'
+            assert 'private-manuscript' not in r.text and str(e.r.root) not in r.text
+            assert 'row_lifecycles' not in r.text and 'token-reader' not in r.text
+>           assert read(e,token,prefix).json()==b
+E           AssertionError: assert {'automatic_r...': False, ...} == {'automatic_r...': False, ...}
+E             
+E             Omitting 13 identical items, use -vv to show
+E             Differing items:
+E             {'next_cursor': 'tc1.1Ao7Z2Om_jtDozPiChROgW0N5HJO5qwZDPSnzV874-s.1.o4uMhGtRMo3uAAwzo2hvnz4rAf7zX0J96W5VppGdRu0'} != {'next_cursor': 'tc1.qLzsmed1AbZvuLhafLxFoJ-_hdJuUIYzO3vY6HDsSAA.1.__qBjUFBET3IR3M6VCeJqwu4FdxnskpEs1RAoLeOxhY'}
+E             Use -v to get more diff
+
+tests/test_taskcenter_external_adversarial.py:64: AssertionError
+=============================== warnings summary ===============================
+../studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+  /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent-evidence/candidate-97ab.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]
+FAILED tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api/v1]
+2 failed, 20 passed, 3 warnings in 135.60s (0:02:15)

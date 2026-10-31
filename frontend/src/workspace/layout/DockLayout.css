@@ -1,0 +1,65 @@
+/* [HERMIA-FE-20261023 M1] Unified DockLayout — only existing tokens from src/rebuild/protoShell.css / design system. */
+.uw-layout{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;min-height:0;background:var(--color-bg-app);color:var(--color-text-primary);font-size:13px}
+.uw-toolbar{display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-surface);flex-wrap:wrap}
+.uw-toolbar__status{margin-left:auto;color:var(--color-text-secondary)}
+.uw-toolbar__status[data-tone="warn"]{color:var(--color-text-primary);font-weight:600}
+.uw-body{display:flex;min-height:0;min-width:0}
+.uw-col{display:flex;flex-direction:column;min-height:0;background:var(--color-bg-surface);border-color:var(--color-border-default)}
+.uw-col--left{border-right:1px solid var(--color-border-default)}
+.uw-col--right{border-left:1px solid var(--color-border-default)}
+.uw-main{flex:1 1 0;display:flex;min-width:0;min-height:0}
+.uw-main[data-split="split-v"]{flex-direction:column}
+.uw-main>.uw-panel{flex:1 1 0}
+.uw-bottom{border-top:1px solid var(--color-border-default);background:var(--color-bg-surface);display:flex;min-width:0}
+.uw-bottom>.uw-panel{flex:1 1 0}
+.uw-panel{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--color-bg-surface);outline:none}
+.uw-panel[data-focused="true"]{box-shadow:inset 0 0 0 2px var(--color-accent-primary)} /* [HERMIA-FE-20261024 VW-fix1 P3] 1px→2px */
+.uw-panel__head{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-subtle);cursor:grab;user-select:none;touch-action:none}
+.uw-panel__title{flex:1 1 auto;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uw-panel__body{flex:1 1 auto;min-height:0;overflow:auto;padding:8px}
+.uw-panel[data-collapsed="true"] .uw-panel__body{display:none}
+.uw-btn{border:1px solid var(--color-border-default);background:var(--color-bg-surface);color:var(--color-text-primary);border-radius:6px;padding:2px 8px;font:inherit;cursor:pointer}
+.uw-btn:focus-visible,.uw-select:focus-visible,.uw-resize:focus-visible{outline:2px solid var(--color-accent-primary);outline-offset:1px}
+.uw-select{border:1px solid var(--color-border-default);background:var(--color-bg-surface);color:var(--color-text-primary);border-radius:6px;font:inherit}
+.uw-resize{flex:none;background:transparent;transition:background var(--motion-fast) var(--ease-standard)}
+.uw-resize:hover,.uw-resize:focus-visible{background:var(--color-accent-subtle)}
+.uw-resize--x{width:5px;cursor:col-resize}
+.uw-resize--y{height:5px;cursor:row-resize}
+.uw-float{position:absolute;display:flex;flex-direction:column;border:1px solid var(--color-border-strong);border-radius:8px;background:var(--color-bg-elevated);box-shadow:0 8px 24px rgba(0,0,0,.25);overflow:hidden}
+.uw-dropzones{position:absolute;inset:0;pointer-events:none}
+.uw-dialog{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.35);z-index:10000}
+.uw-dialog__card{min-width:300px;max-width:min(480px,90%);padding:16px;border-radius:10px;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);display:grid;gap:12px}
+.uw-dialog__actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.uw-panel__host{display:contents} /* [HERMIA-FE-20261023 M1-fix] MF-1 stable content host */
+.uw-panel__content{display:contents}
+/* [HERMIA-FE-20261023 M1-s2] precise drop indicator */
+.uw-drop-indicator{position:absolute;pointer-events:none;background:var(--color-accent-primary);border-radius:2px;z-index:9999}
+.uw-drop-indicator[data-allowed="false"]{background:var(--color-border-strong)}
+.uw-drop-indicator--zone{background:var(--color-accent-subtle);outline:2px dashed var(--color-accent-primary);outline-offset:-2px}
+.uw-drop-note{position:absolute;left:50%;top:8px;transform:translateX(-50%);padding:4px 10px;border-radius:6px;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);z-index:9999}
+/* [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 1: zone overlay is translucent and limited to the target box. */
+.uw-drop-indicator--zone{background:color-mix(in srgb,var(--color-accent-primary) 14%,transparent)}
+.uw-drop-indicator--zone[data-allowed="false"]{background:color-mix(in srgb,var(--color-border-strong) 18%,transparent);outline-color:var(--color-border-strong)}
+.uw-zone-ghost{position:absolute;pointer-events:none;border:1px dashed var(--color-border-default);border-radius:4px;z-index:9998}
+.uw-toolbar__hint{color:var(--color-text-secondary);font-size:12px}
+/* [HERMIA-FE-20261024 M4-s1] keyboard + zoom usability */
+.uw-layout{overflow:hidden;max-width:100%;min-width:0}
+.uw-layout :focus-visible{outline:2px solid var(--color-accent-primary);outline-offset:1px}
+.uw-panel:focus-visible,.uw-main:focus-visible{outline:2px solid var(--color-accent-primary);outline-offset:-2px}
+.uw-main{min-width:min(320px,100%);min-height:200px;outline:none}
+.uw-skip{position:absolute;left:8px;top:-40px;z-index:10001;padding:4px 10px;border-radius:6px;background:var(--color-bg-elevated);color:var(--color-text-primary);border:1px solid var(--color-accent-primary);text-decoration:none}
+.uw-skip:focus,.uw-skip:focus-visible{top:6px}
+.uw-toolbar{row-gap:4px;min-width:0;max-width:100%}
+.uw-toolbar>*{min-width:0;max-width:100%}
+.uw-toolbar label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.uw-toolbar__status{min-width:0;overflow-wrap:anywhere;flex:1 1 160px;text-align:right}
+.uw-main-tabs{display:inline-flex;flex-wrap:wrap;gap:4px}
+.uw-tab[aria-selected="true"]{border-color:var(--color-accent-primary);font-weight:600}
+.uw-panel__head{flex-wrap:wrap;row-gap:4px}
+.uw-panel__head .uw-select{max-width:100%}
+.uw-resize--x{width:6px}
+@media (prefers-reduced-motion:reduce){.uw-resize{transition:none}}
+/* [HERMIA-FE-20261024 M4-s1fix] skip link appears just below the toolbar so it never covers 「搜索功能」. */
+.uw-skip:focus,.uw-skip:focus-visible{top:calc(var(--uw-toolbar-h,40px) + 4px)}
+/* [HERMIA-FE-20261024 M4-s1fix2] centre the focused skip link so it clears panel-header buttons (折叠/dock/关闭) as well as 搜索功能. */
+.uw-skip:focus,.uw-skip:focus-visible{left:50%;transform:translateX(-50%)}
