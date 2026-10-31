@@ -81,3 +81,52 @@ export async function saveRemoteComfyGraph(kind: 'image' | 'video', remote: Comf
   if (!Number.isSafeInteger(version) || version < 1) throw new Error('COMFY_REMOTE_SAVE_INVALID');
   return {ok: true, version};
 }
+
+
+export type RunQuote = {
+  quote_id: string; quote_digest: string; kind: 'image' | 'video'; draft_version: number;
+  provider_id: string; node_count: number; edge_count: number; output_nodes: string[];
+  price: {currency: string; amount_micros: number; reason: string};
+  expires_at: string; confirmation_required: boolean;
+};
+export type RunAsset = {id: string; filename?: string; media_type?: string; sha256?: string; size?: number; width?: number; height?: number};
+export type LowerCanvasRun = {
+  id: string; contract: string; kind: 'image' | 'video'; status: 'RUNNING' | 'COMPLETED' | 'FAILED';
+  draft_version: number; quote_digest: string; provider_id: string; node_count: number; edge_count: number;
+  output_nodes: string[]; assets: RunAsset[]; error: {code?: string; reason?: string} | null; created_at: string; updated_at: string;
+};
+
+// [HERMIA-FE-20261031 DUALCANVAS-COMFY RUN] Local ComfyUI only; quote must be confirmed and
+// consumed; the backend records the run and writes assets. Nothing here calls a model directly.
+export async function preflightLowerCanvasRun(remote: ComfyRemoteContext, kind: 'image' | 'video',
+                                              expectedVersion: number): Promise<RunQuote> {
+  const f = fetchImpl();
+  if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
+  const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/lower-canvas/${kind}/runs/preflight`,
+    {method: 'POST', headers: headers(remote, true),
+     body: JSON.stringify({expected_version: expectedVersion})});
+  if (!response.ok) throw new Error('COMFY_RUN_PREFLIGHT_' + response.status);
+  return await parseJson(response) as RunQuote;
+}
+
+export async function dispatchLowerCanvasRun(remote: ComfyRemoteContext, kind: 'image' | 'video',
+                                             quote: RunQuote): Promise<LowerCanvasRun> {
+  const f = fetchImpl();
+  if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
+  const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/lower-canvas/${kind}/runs`,
+    {method: 'POST', headers: headers(remote, true),
+     body: JSON.stringify({expected_version: quote.draft_version, quote_id: quote.quote_id,
+       quote_digest: quote.quote_digest})});
+  if (!response.ok) throw new Error('COMFY_RUN_DISPATCH_' + response.status);
+  return await parseJson(response) as LowerCanvasRun;
+}
+
+export async function fetchLowerCanvasRun(remote: ComfyRemoteContext, kind: 'image' | 'video',
+                                           runId: string): Promise<LowerCanvasRun> {
+  const f = fetchImpl();
+  if (!f) throw new Error('COMFY_REMOTE_UNAVAILABLE');
+  const response = await f(`/api/projects/${encodeURIComponent(remote.projectId)}/studio/lower-canvas/${kind}/runs/${encodeURIComponent(runId)}`,
+    {method: 'GET', headers: headers(remote), cache: 'no-store'});
+  if (!response.ok) throw new Error('COMFY_RUN_GET_' + response.status);
+  return await parseJson(response) as LowerCanvasRun;
+}
