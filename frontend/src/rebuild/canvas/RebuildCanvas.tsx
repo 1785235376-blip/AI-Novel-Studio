@@ -7,7 +7,7 @@ import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNod
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
-import {useLocale, useTz} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
+import {useLocale, useT, useTz} from '../../i18n'; // [HERMIA-FE-20261031 VERA-EN]
 import {displayNodeTitle} from '../../i18n/defaultNodeTitle';
 
 export type CanvasKind = 'image' | 'video';
@@ -69,6 +69,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
   storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
   onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
   const locale = useLocale(); // [HERMIA-FE-20261031 VERA-EN]
+  const tk = useT(); // [HERMIA-FE-20261031 VERA-P3 zoom] keyed: 「放大」 must not resolve to Upscale
   const z = useTz();
   const key = storageKey ?? canvasStorageKey(kind, scope);
   const palette = typesProp ?? NODE_TYPES[kind];
@@ -222,9 +223,9 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
         </g>
       </svg>
       {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{z(emptyHint)}<br /></> : null}{z('在空白处右键添加节点 · 滚轮缩放 · 拖动空白平移')}</p> : null}
-      <div className="rcv-zoom" aria-label={z('缩放')}>
-        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label={z('缩小')}>−</button><span>{Math.round(vp.k * 100)}%</span>
-        <button type="button" onClick={() => zoom(1.2)} aria-label={z('放大')}>＋</button><button type="button" onClick={fit}>{z('适配')}</button>
+      <div className="rcv-zoom" aria-label={tk('zoom.group')}>
+        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label={tk('zoom.out')}>−</button><span>{Math.round(vp.k * 100)}%</span>
+        <button type="button" onClick={() => zoom(1.2)} aria-label={tk('zoom.in')}>＋</button><button type="button" onClick={fit}>{tk('zoom.fit')}</button>
       </div>
       <div className="rcv-status">{z('节点')} {g.nodes.length} · {z('连线')} {g.edges.length} · {z('只改图结构，不触发生成')}</div>
       {menu ? <div className="rcv-menu" role="menu" data-add-node-menu="rebuild" style={{left: menu.cx, top: menu.cy}} onPointerDown={e => e.stopPropagation()}>

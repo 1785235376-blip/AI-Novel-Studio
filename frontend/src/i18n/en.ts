@@ -1516,4 +1516,8 @@ export const en: Record<MessageKey, string> = {
   'rough.933': 'Not enough free disk space for assets. Free some space and retry the import.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.934': 'Cannot confirm free asset storage space right now. Check the storage location is reachable and retry.', // [HERMIA-FE-20261031 VERA-EN]
   'rough.935': 'Private preview is closed. Check your identity and scope, then open it again.', // [HERMIA-FE-20261031 VERA-EN]
+  'zoom.group': 'Zoom', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.out': 'Zoom out', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.in': 'Zoom in', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.fit': 'Fit to view', // [HERMIA-FE-20261031 VERA-P3 zoom]
 };

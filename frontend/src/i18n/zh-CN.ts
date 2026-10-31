@@ -1507,5 +1507,9 @@ export const zhCN = {
   'rough.933': '资产所在磁盘的可用空间不足。请释放空间后重试导入。', // [HERMIA-FE-20261031 VERA-EN]
   'rough.934': '暂时无法确认资产存储的可用空间。请检查存储位置是否可访问后重试。', // [HERMIA-FE-20261031 VERA-EN]
   'rough.935': '私人预览已关闭。重新核对身份与范围后再打开。', // [HERMIA-FE-20261031 VERA-EN]
+  'zoom.group': '缩放', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.out': '缩小', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.in': '放大', // [HERMIA-FE-20261031 VERA-P3 zoom]
+  'zoom.fit': '适配', // [HERMIA-FE-20261031 VERA-P3 zoom]
 } as const;
 export type MessageKey = keyof typeof zhCN;

@@ -47,3 +47,15 @@ it.each([['图片画布', 'Image canvas'], ['视频画布', 'Video canvas'], ['�
   expect(container.querySelector('.rcv-label')?.textContent).toBe(en);
   expect(chinese(container)).toEqual([]);
 });
+// [HERMIA-FE-20261031 VERA-P3] zoom controls must not reuse 「放大」=Upscale (node type) for screen readers.
+it('zoom controls have zoom-specific English names in en and unchanged zh names', () => {
+  const a = render(<RebuildCanvas kind="image" scope="en-z" seed={{nodes: [], edges: []}} />);
+  const zoom = a.container.querySelector('.rcv-zoom')!;
+  const names = [zoom.getAttribute('aria-label'), ...[...zoom.querySelectorAll('button')].map(b => b.getAttribute('aria-label') ?? b.textContent)];
+  expect(names).toEqual(['Zoom', 'Zoom out', 'Zoom in', 'Fit to view']);
+  a.unmount();
+  act(() => setLocale('zh-CN'));
+  const b = render(<RebuildCanvas kind="image" scope="zh-z" seed={{nodes: [], edges: []}} />);
+  const zz = b.container.querySelector('.rcv-zoom')!;
+  expect([zz.getAttribute('aria-label'), ...[...zz.querySelectorAll('button')].map(x => x.getAttribute('aria-label') ?? x.textContent)]).toEqual(['缩放', '缩小', '放大', '适配']);
+});
