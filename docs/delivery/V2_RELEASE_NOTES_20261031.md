@@ -16,3 +16,13 @@
 - CJK 字体授权、真实 Provider 授权、远程 frame provider 抓取策略、音频 canvas_return、额度策略等仍需产品/人员决定；
 - 历史产品线（`#36`–`#49`、`#26` 等）未合入 main，保持原分支；`#47` 等仍为 DIRTY/超大分叉，合入会回退已验证的 V2 后端，未执行批量合并。
 - 证据索引与逐分支状态见 `docs/delivery/BACKEND_FINALIZE_FINAL_REPORT_20261031.md`；历史合并回退：`git revert -m 1 <merge-commit>`。
+
+## 2026-10-31 能力补充（V2.0 后）
+
+### 容量 admission 覆盖全部 AssetLibraryService.create 调用方
+`ENABLE_PROJECT_CAPACITY_ADMISSION` 开启时，容量 admission 从手工导入路由下沉到共享资产 owner `AssetLibraryService.create`：所有原始资产写入（模型 clady 参考、手工遮罩、视频参考帧、生产任务产物、prompt authoring、comic/portable/媒体/音频服务等 16+ 调用点）统一先 reconcile/UNKNOWN 拒绝/预留，成功后按实际 `bin+json` 字节 commit，失败先 reconcile 残渣再释放；手工导入路由传 `_capacity_admitted=True` 避免双重计费。默认 flag 关闭，默认行为不变。
+
+测试：`test_project_capacity_create_coverage.py` 5 passed；容量组回归 75 passed；相关子组 71 passed（2 项旧 `/novels/{nid}/assets` 503 期望在合并前 main 同样失败，属于既有关闭门预存失败）。
+
+未完成：非资产 owner 项目文件/导出/共享文档写入口、启动自动对账门、审批/撤权竞争、真实 PG/崩溃窗口；真实环境验收仍未执行。
+
